@@ -31,7 +31,7 @@
             $i = 1;
             // insert every student attendance
             foreach ($attendances as $attendance) {
-                $aRprt = $DBC->insertAttendances($sRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), (int)$attendance['index']);
+                $aRprt = $DBC->insertAttendances($sRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
                 // if insretion isn't successful
                 if (!$aRprt['id_attendances'])
                     echo "Napaka: {$i}. študijski program ni uspešno vstavljen.";
