@@ -20,7 +20,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     <p class="h2">Evidenca študentov</p>
     <div class="d-flex justify-content-end mr-3">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Vstavi študenta</button>
-        <button id="rBtn" class="d-none" type="button" data-toggle="modal" data-target="#rMdl"></button>
+        <button id="rMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#rMdl"></button>
     </div>
     <div class="table-responsive mt-3">
         <table class="table">
@@ -51,8 +51,21 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         <td><?php echo $student->faculty; ?></td>
                         <td><a href="#">Pregled</a></td>
                         <td><a href="#">Pregled</a></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            <?php
+                            // if assigned an account 
+                            if ($DBC->checkStudentAccount($student->id_attendances)) {
+                            ?>
+                                <button class="btn btn-warning" type="button">Podrobnosti</button>
+                            <?php
+                            } // if
+                            else {
+                            ?>
+                                <button class="btn btn-warning acc-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#aIMdl">Ustvari</button>
+                            <?php
+                            } // else
+                            ?>
+                        </td>
                     </tr>
                 <?php
                 } // foreach
@@ -65,7 +78,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="iFrm">
+            <form id="sIFrm">
                 <p class="h4 pt-2 px-3">Osnovni podatki</p>
                 <div id="fundamentals" class="row px-3">
                     <div class="form-group col-6">
@@ -87,7 +100,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                     <p class="h6 col-12">Rojen</p>
                     <div class="form-group col-6">
                         <label for="cSlct">Država</label>
-                        <select id="cSlct" class="form-control">
+                        <select id="cSlct" class="form-control" data-target="pCSlct">
                             <?php
                             $countries = $DBC->selectCountries();
                             foreach ($countries as $id_countries) {
@@ -117,10 +130,10 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                 </div>
                 <div id="residences" class="px-3">
                     <div class="row">
-                    <p class="col-12 h6">Stalno prebivališče</p>
+                        <p class="col-12 h6">Stalno prebivališče</p>
                         <div class="form-group col-4">
                             <label for="cSlct1">Država</label>
-                            <select id="cSlct1" class="form-control">
+                            <select id="cSlct1" class="form-control" data-target="pCSlct1">
                                 <?php
                                 $countries = $DBC->selectCountries();
                                 foreach ($countries as $id_countries) {
@@ -150,7 +163,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         </div>
                     </div>
                     <div class="d-flex justify-content-center col-12">
-                        <button id="addSojourn" class="btn btn-secondary" type="button">&plus;</button>
+                        <button id="aRBtn" class="btn btn-secondary" type="button">&plus;</button>
                     </div>
                 </div>
                 <div id="attendances" class="px-3 pb-3">
@@ -197,7 +210,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         </div>
                     </div>
                     <div class="d-flex justify-content-center col-12">
-                        <button id="addAttendance" class="btn btn-secondary" type="button">&plus;</button>
+                        <button id="aABtn" class="btn btn-secondary" type="button">&plus;</button>
                     </div>
                 </div>
                 <input class="btn btn-warning offset-5 col-2 my-2" type="submit" value="Vstavi">
@@ -205,7 +218,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
         </div>
     </div>
 </div>
-<!-- Modal -->
+<!-- Report modal -->
 <div class="modal fade" id="rMdl" tabindex="-1" role="dialog" aria-labelledby="rMdlLbl" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -221,6 +234,30 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
         </div>
     </div>
 </div>
+<!-- Account insertion modal -->
+<div class="modal fade" id="aIMdl" tabindex="-1" role="dialog" aria-labelledby="exampleiAccFrm" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Ustvarjanje računa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="aIFrm">
+                    <input type="hidden" name="id_attendances" value="">
+                    <div class="form-group">
+                        <label for="pass">Geslo</label>
+                        <input id="pass" class="form-control" type="password" name="pass" required>
+                    </div>
+                    <input id="aIBtn" class="btn btn-warning" type="submit" value="Ustvari račun">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Custom core JavaScript -->
 <script src="/eArchive/custom/js/studentRecord.js"></script>
 <?php
