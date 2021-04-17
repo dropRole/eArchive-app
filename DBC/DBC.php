@@ -231,6 +231,7 @@ class DBC extends PDO
             case 'ASC':
                 $stmt = "   SELECT 
                                 id_students,
+                                id_attendances,
                                 (students.name  || ' ' || students.surname) AS fullname, 
                                 faculties.name AS faculty, 
                                 programs.name AS program,
@@ -250,6 +251,7 @@ class DBC extends PDO
             case 'DESC':
                 $stmt = "   SELECT 
                                 id_students,
+                                id_attendances,
                                 (students.name || ' ' || surname) AS fullname, 
                                 faculties.name AS faculty, 
                                 programs.name AS program,
@@ -715,7 +717,7 @@ class DBC extends PDO
     *   @param DateTime $enrolled 
     *   @param int $enrolled 
     */
-    public function insertAttendances(int $id_students, int $id_faculties, int $id_programs, DateTime $enrolled, int $index)
+    public function insertAttendances(int $id_students, int $id_faculties, int $id_programs, DateTime $enrolled, string $index)
     {
         // insertion report
         $report = [
@@ -1549,27 +1551,27 @@ class DBC extends PDO
 
     /*
     *   check for student account 
-    *   @param int $id_students
+    *   @param int $id_attendances
     */
-    public function checkStudentAccount($id_students)
+    public function checkStudentAccount($id_attendances)
     {
         $stmt = '   SELECT 
                         * 
                     FROM 
                         accounts 
                     WHERE 
-                        id_students = :id_students  ';
+                    id_attendances = :id_attendances  ';
         try {
             // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare([PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
             return "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
-        if($prpStmt->rowCount()){
+        if ($prpStmt->rowCount() == 1) {
             return TRUE;
         } // if
         return FALSE;
@@ -1641,70 +1643,41 @@ class DBC extends PDO
 
     /*
     *   insert student account
-    *   @param int $id_students
+    *   @param int $id_attendances
     *   @param string $pass
     */
-    public function insertAccount(int $id_students, string $pass)
+    public function insertAccount(int $id_attendances, string $pass)
     {
-        // if not already in a transaction
-        if ($this->inTransaction()) {
-            try {
-                // begin new transaction
-                $this->beginTransaction();
-                $stmt = '   INSERT INTO 
+        $stmt = '   INSERT INTO 
                         accounts
                     (  
-                        id_students,
+                        id_attendances,
                         pass,
                         granted,
                         avatar
                     )
                     VALUES(
-                        :id_students,
+                        :id_attendances,
                         :pass,
                         :granted,
                         DEFAULT
                     )   ';
-                // prepare, bind params to and execute stmt
-                $prpStmt = $this->prepare($stmt);
-                $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-                $prpStmt->bindValue(':pass', password_hash($pass, PASSWORD_BCRYPT), PDO::PARAM_STR);
-                $prpStmt->bindValue(':granted', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
-                $prpStmt->execute($stmt);
-                // if single row is affected 
-                if ($prpStmt->rowCount() == 1) {
-                    $id_accounts = $this->lastInsertId('accounts_id_accounts_seq');
-                    $stmt = '   UPDATE
-                                students 
-                            SET 
-                                id_accounts = :id_accounts
-                            WHERE 
-                                id_students = :id_students  ';
-                    // prepare, bind params to and execute stmt
-                    $prpStmt = $this->prepare($stmt);
-                    $prpStmt->bindParam(':id_accounts', $id_accounts, PDO::PARAM_INT);
-                    $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-                    $prpStmt->execute();
-                    // if single one row was affected
-                    if ($prpStmt->rowCount() == 1) {
-                        return 'Račun je študentu uspešno dodeljen.';
-                        // commit transaction
-                        $this->commit();
-                    } // if
-                    else {
-                        return 'Napaka: račun študentu ni uspešno dodeljen.';
-                        // rollback transaction
-                        $this->rollBack();
-                    } // else
-                } // if
-                else
-                    return 'Napaka: Račun ni uspešno ustvarjen.';
-            } // try
-            catch (PDOException $e) {
-                // output error message
-                echo "Napaka: {$e->getMessage()}.";
-            } // catch
-        } // if 
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->bindValue(':pass', password_hash($pass, PASSWORD_BCRYPT), PDO::PARAM_STR);
+            $prpStmt->bindValue(':granted', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            // output error message
+            return "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single row is affected 
+        if ($prpStmt->rowCount() == 1)
+            return 'Račun je uspešno ustvarjen.';
+        return 'Račun ni uspešno ustvarjen.';
     } // insertAccount
 
     /*
