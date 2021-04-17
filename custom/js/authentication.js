@@ -2,7 +2,7 @@
 (() => {
     // global variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
-        lFrm = document.getElementById('lFrm')
+        lFrm = document.getElementById('lFrm') // login form
     lFrm.addEventListener('submit', checkAccountCredentials)
         // check out account credentials and respond respectively
     function checkAccountCredentials(e) {
