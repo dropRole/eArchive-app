@@ -2,25 +2,27 @@
 (() => {
     // global variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
-        iFrm = document.getElementById('iFrm'),
-        rMdl = document.getElementById('rMdl'),
-        addBtn = document.getElementById('addSojourn'),
-        addBtn1 = document.getElementById('addAttendance'),
-        rBtn = document.getElementById('rBtn'),
-        cSlct = document.getElementById('cSlct'),
-        cSlct1 = document.getElementById('cSlct1'),
-        fSlct = document.getElementById('fSlct'),
-        gCb = document.getElementById('gCb'),
-        rLblCntr = 2,
-        rIndx = 1,
-        aLblCntr = 1,
-        aIndx = 1
-    iFrm.addEventListener('submit', insertStudent)
-    addBtn.addEventListener('click', addSojourn)
-    addBtn1.addEventListener('click', addAttendance)
+        sIFrm = document.getElementById('sIFrm'), // student insert form
+        aIFrm = document.getElementById('aIFrm'), // account insert form
+        rMdl = document.getElementById('rMdl'), // report modal 
+        aRBtn = document.getElementById('aRBtn'), // add residence button 
+        aABtn = document.getElementById('aABtn'), // add attendance button
+        aBtnLst = document.querySelectorAll('.acc-btn'), // node list of buttons for account generation
+        rMdlBtn = document.getElementById('rMdlBtn'), // button to toggle the report modal
+        cSlct = document.getElementById('cSlct'), // country select input 
+        fSlct = document.getElementById('fSlct'), // faculty select input
+        gCb = document.getElementById('gCb'), // graduation checkbox
+        rLbl = 2, // residence label counter
+        rIndx = 1, // residence array index 
+        aLbl = 1, // attendance label counter
+        aIndx = 1 // attendance array index 
+    sIFrm.addEventListener('submit', insertStudent)
+    aIFrm.addEventListener('submit', insertAccount)
+    aRBtn.addEventListener('click', addSojourn)
+    aABtn.addEventListener('click', addAttendance)
         // propagate postal codes by country selection
     cSlct.addEventListener('change', e => {
-            propagateSelectElement(document.getElementById('pCSlct'), `/eArchive/PostalCodes/select.php?id_countries=${e.target.selectedOptions[0].value}`)
+            propagateSelectElement(document.getElementById(e.target.getAttribute('data-target')), `/eArchive/PostalCodes/select.php?id_countries=${e.target.selectedOptions[0].value}`)
         }) // addEventListener
         // propagate postal codes by country selection
     cSlct1.addEventListener('change', e => {
@@ -34,6 +36,12 @@
     gCb.addEventListener('change', e => {
             addGraduation(e, document.getElementById('rDiv'))
         }) // addEventListener
+    aBtnLst.forEach(element => {
+            element.addEventListener('click', () => {
+                    let hInpt = aIFrm.querySelector('input[type=hidden]')
+                    hInpt.value = element.value
+                }) //addEventListener
+        }) // forEach
         // create and append additional form residence section controls 
     function addSojourn() {
         // create form controls 
@@ -54,33 +62,33 @@
         rDiv.className = 'row'
         rDiv.style.position = 'relative'
         p.classList = 'col-12 h6'
-        p.textContent = `${rLblCntr - 1}. začasno bivališče`
+        p.textContent = `${rLbl - 1}. začasno bivališče`
         span.style.float = 'right'
         span.style.transform = 'scale(1.2)'
         span.style.cursor = 'pointer'
             // remove selected residence section
         span.addEventListener('click', () => {
                 div.removeChild(rDiv)
-                rLblCntr--
+                rLbl--
             }) // addEventListener
         span.innerHTML = '&#10007;'
         fGDiv.className = 'form-group col-4'
         fGDiv1.className = 'form-group col-4'
         fGDiv2.className = 'form-group col-4'
-        cLbl.setAttribute('for', `cSlct${rLblCntr}`)
+        cLbl.setAttribute('for', `cSlct${rLbl}`)
         cLbl.textContent = 'Država'
-        pCLbl.setAttribute('for', `pCSlct${rLblCntr}`)
+        pCLbl.setAttribute('for', `pCSlct${rLbl}`)
         pCLbl.textContent = 'Kraj'
-        aLbl.setAttribute('for', `aInpt${rLblCntr}`)
+        aLbl.setAttribute('for', `aInpt${rLbl}`)
         aLbl.textContent = 'Naslov'
-        aInpt.id = `aInpt${rLblCntr}`
-        cSlct.id = `cSlct${rLblCntr}`
+        aInpt.id = `aInpt${rLbl}`
+        cSlct.id = `cSlct${rLbl}`
         cSlct.classList = 'form-control'
             // propagate postal codes by country selection
         cSlct.addEventListener('change', e => {
                 propagateSelectElement(pCSlct, `/eArchive/PostalCodes/select.php?id_countries=${e.target.selectedOptions[0].value}`)
             }) // addEventListener
-        pCSlct.id = `pCSlct${rLblCntr}`
+        pCSlct.id = `pCSlct${rLbl}`
         pCSlct.classList = 'form-control'
         pCSlct.name = `residences[${rIndx}][id_postal_codes]`
         pCSlct.required = true
@@ -113,7 +121,7 @@
         xmlhttp.open('GET', '/eArchive/Countries/select.php')
         xmlhttp.send()
         rIndx++
-        rLblCntr++
+        rLbl++
     } // addSojourn
 
     // propagate select control with suitable options
@@ -240,7 +248,7 @@
                 addGraduation(e, rDiv)
             }) // addEventListener
         p.className = 'col-12 h6'
-        p.textContent = `${aLblCntr + 1}. študijski program`
+        p.textContent = `${aLbl + 1}. študijski program`
         span.style.float = 'right'
         span.style.transform = 'scale(1.2)'
         span.style.cursor = 'pointer'
@@ -248,7 +256,7 @@
             // remove selected attendance section
         span.addEventListener('click', () => {
                 div.removeChild(rDiv)
-                aLblCntr--
+                aLbl--
             }) // addEventListener
         span.innerHTML = '&#10007;'
         rDiv.className = 'row'
@@ -257,40 +265,40 @@
         fGDiv2.className = 'form-group col-4'
         fGDiv3.className = 'form-group col-4'
         fGDiv4.className = 'd-flex align-items-center justify-content-center form-group col-4'
-        fLbl.setAttribute('for', `fSlct${aLblCntr}`)
+        fLbl.setAttribute('for', `fSlct${aLbl}`)
         fLbl.textContent = 'Fakulteta'
         pLbl.textContent = 'Program'
-        pLbl.setAttribute('for', `pSlct${aLblCntr}`)
+        pLbl.setAttribute('for', `pSlct${aLbl}`)
         eLbl.textContent = 'Vpisan'
-        eLbl.setAttribute('for', `enInpt${aLblCntr}`)
+        eLbl.setAttribute('for', `enInpt${aLbl}`)
         iLbl.textContent = 'Indeks'
-        iLbl.setAttribute('for', `iInpt${aLblCntr}`)
+        iLbl.setAttribute('for', `iInpt${aLbl}`)
         gLbl.textContent = 'Diplomiral'
-        gLbl.setAttribute('for', `gCb${aLblCntr}`)
+        gLbl.setAttribute('for', `gCb${aLbl}`)
         gLbl.className = 'mt-2'
         fSlct.className = 'form-control'
-        fSlct.id = `fSlct${aLblCntr}`
+        fSlct.id = `fSlct${aLbl}`
         fSlct.name = `attendances[${aIndx}][id_faculties]`
         fSlct.required = true
         pSlct.className = 'form-control'
-        pSlct.id = `pSlct${aLblCntr}`
+        pSlct.id = `pSlct${aLbl}`
         pSlct.name = `attendances[${aIndx}][id_programs]`
         pSlct.required = true
         eInpt.className = 'form-control'
-        eInpt.id = `enInpt${aLblCntr}`
+        eInpt.id = `enInpt${aLbl}`
         eInpt.type = 'date'
         eInpt.name = `attendances[${aIndx}][enrolled]`
         eInpt.required = true
         iInpt.className = 'form-control'
-        iInpt.id = `iInpt${aLblCntr}`
+        iInpt.id = `iInpt${aLbl}`
         iInpt.type = 'text'
         iInpt.name = `attendances[${aIndx}][index]`
         iInpt.required = true
-        gCb.id = `gCb${aLblCntr}`
+        gCb.id = `gCb${aLbl}`
         gCb.type = 'checkbox'
         gCb.classList = 'mr-2'
         gCb.setAttribute('data-index', aIndx)
-        gCb.setAttribute('data-counter', aLblCntr)
+        gCb.setAttribute('data-counter', aLbl)
             // append controls to a form attendances section
         fGDiv.appendChild(fLbl)
         fGDiv.appendChild(fSlct)
@@ -311,21 +319,36 @@
         rDiv.appendChild(fGDiv4)
         div.appendChild(rDiv)
         aIndx++
-        aLblCntr++
+        aLbl++
     } // addAttendance 
 
-    // pass and isert student data
+    // pass and insert student data
     function insertStudent(e) {
         // prevent default action by submitting student data insert form
         e.preventDefault()
         let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(iFrm)
+            fData = new FormData(sIFrm)
             // report on student data insertion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
-                rBtn.click()
+                rMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/Students/insert.php', true)
         xmlhttp.send(fData)
     } // insertStudent
+
+    // generate and assign student account
+    function insertAccount(e) {
+        // prevent default action by submitting student data insert form
+        e.preventDefault()
+        let xmlhttp = new XMLHttpRequest,
+            fData = new FormData(aIFrm)
+            // report on student data insertion
+        xmlhttp.addEventListener('load', () => {
+                rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
+                rMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/Accounts/insert.php', true)
+        xmlhttp.send(fData)
+    } // insertAccount
 })()
