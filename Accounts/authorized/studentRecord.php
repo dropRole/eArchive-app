@@ -61,7 +61,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             } // if
                             else {
                             ?>
-                                <button class="btn btn-warning acc-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#aIMdl">Ustvari</button>
+                                <button class="btn btn-warning acc-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#aMdl">Ustvari</button>
                             <?php
                             } // else
                             ?>
@@ -234,8 +234,8 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
         </div>
     </div>
 </div>
-<!-- Account insertion modal -->
-<div class="modal fade" id="aIMdl" tabindex="-1" role="dialog" aria-labelledby="exampleiAccFrm" aria-hidden="true">
+<!-- Account modal -->
+<div class="modal fade" id="aMdl" tabindex="-1" role="dialog" aria-labelledby="exampleAMdl" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -245,14 +245,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                 </button>
             </div>
             <div class="modal-body">
-                <form id="aIFrm">
-                    <input type="hidden" name="id_attendances" value="">
-                    <div class="form-group">
-                        <label for="pass">Geslo</label>
-                        <input id="pass" class="form-control" type="password" name="pass" required>
-                    </div>
-                    <input id="aIBtn" class="btn btn-warning" type="submit" value="Ustvari račun">
-                </form>
+                                
             </div>
         </div>
     </div>
