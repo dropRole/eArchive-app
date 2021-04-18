@@ -3,8 +3,8 @@
     // global variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
         sIFrm = document.getElementById('sIFrm'), // student insert form
-        aIFrm = document.getElementById('aIFrm'), // account insert form
         rMdl = document.getElementById('rMdl'), // report modal 
+        aMdl = document.getElementById('aMdl'), // account modal 
         aRBtn = document.getElementById('aRBtn'), // add residence button 
         aABtn = document.getElementById('aABtn'), // add attendance button
         aBtnLst = document.querySelectorAll('.acc-btn'), // node list of buttons for account generation
@@ -17,7 +17,6 @@
         aLbl = 1, // attendance label counter
         aIndx = 1 // attendance array index 
     sIFrm.addEventListener('submit', insertStudent)
-    aIFrm.addEventListener('submit', insertAccount)
     aRBtn.addEventListener('click', addSojourn)
     aABtn.addEventListener('click', addAttendance)
         // propagate postal codes by country selection
@@ -37,10 +36,7 @@
             addGraduation(e, document.getElementById('rDiv'))
         }) // addEventListener
     aBtnLst.forEach(element => {
-            element.addEventListener('click', () => {
-                    let hInpt = aIFrm.querySelector('input[type=hidden]')
-                    hInpt.value = element.value
-                }) //addEventListener
+            element.addEventListener('click', createAccountForm) //addEventListener
         }) // forEach
         // create and append additional form residence section controls 
     function addSojourn() {
@@ -338,11 +334,11 @@
     } // insertStudent
 
     // generate and assign student account
-    function insertAccount(e) {
+    function insertAccount(e, form) {
         // prevent default action by submitting student data insert form
         e.preventDefault()
         let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(aIFrm)
+            fData = new FormData(form)
             // report on student data insertion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
@@ -351,4 +347,48 @@
         xmlhttp.open('POST', '/eArchive/Accounts/insert.php', true)
         xmlhttp.send(fData)
     } // insertAccount
+
+    // create a student account insert form
+    function createAccountForm(e) {
+        // if modal already contains form 
+        if (aMdl.querySelector('.modal-body').firstChild)
+            aMdl.querySelector('.modal-body').removeChild(aMdl.querySelector('.modal-body').firstChild)
+            // create form elements
+        let form = document.createElement('form'), // insert form
+            hInpt = document.createElement('input'), // hidden input    
+            fGDiv = document.createElement('div'), // form group div
+            pLbl = document.createElement('label'), // password input label
+            pInpt = document.createElement('input'), // password input
+            sInpt = document.createElement('input') // submit input
+        form.id = 'aIFrm'
+            // generate new account on form submission
+        form.addEventListener('submit', ev => {
+                insertAccount(ev, form)
+                    // close modal a second after form submisson
+                setTimeout(() => {
+                        e.target.click()
+                    }, 500) // setTimeout
+            }) // addEventListener
+        hInpt.setAttribute('name', 'id_attendances')
+        hInpt.type = 'hidden'
+        hInpt.value = e.target.getAttribute('value')
+        fGDiv.classList = 'form-group'
+        pLbl.setAttribute('for', 'pInpt')
+        pLbl.textContent = 'Geslo'
+        pInpt.id = 'pInpt'
+        pInpt.classList = 'form-control'
+        pInpt.type = 'password'
+        pInpt.setAttribute('name', 'pass')
+        pInpt.required = true
+        sInpt.classList = 'btn btn-warning'
+        sInpt.type = 'submit'
+        sInpt.value = 'Ustvari račun'
+            // append created form nodes 
+        fGDiv.appendChild(pLbl)
+        fGDiv.appendChild(pInpt)
+        form.appendChild(hInpt)
+        form.appendChild(fGDiv)
+        form.appendChild(sInpt)
+        aMdl.querySelector('.modal-body').appendChild(form)
+    } // createForm
 })()
