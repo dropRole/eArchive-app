@@ -61,7 +61,6 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             } // if
                             else {
                             ?>
-                                <button class="btn btn-warning acc-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#aMdl">Ustvari</button>
                             <?php
                             } // else
                             ?>
