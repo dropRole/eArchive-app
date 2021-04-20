@@ -7,7 +7,8 @@
         aMdl = document.getElementById('aMdl'), // account modal 
         aRBtn = document.getElementById('aRBtn'), // add residence button 
         aABtn = document.getElementById('aABtn'), // add attendance button
-        aBtnLst = document.querySelectorAll('.acc-btn'), // node list of buttons for account generation
+        aIBtnLst = document.querySelectorAll('.acc-ins-btn'), // node list of buttons for account generation
+        aDBtnLst = document.querySelectorAll('.acc-del-btn'), // node list of buttons for account deletion
         rMdlBtn = document.getElementById('rMdlBtn'), // button to toggle the report modal
         cSlct = document.getElementById('cSlct'), // country select input 
         fSlct = document.getElementById('fSlct'), // faculty select input
@@ -36,8 +37,14 @@
             addGraduation(e, document.getElementById('rDiv'))
         }) // addEventListener
         // populate modals body with created account insert form 
-    aBtnLst.forEach(element => {
+    aIBtnLst.forEach(element => {
             element.addEventListener('click', createAccountForm) //addEventListener
+        }) // forEach
+        // asynchronous execution of account deletion script 
+    aDBtnLst.forEach(element => {
+            element.addEventListener('click', () => {
+                    deleteAccount(element.getAttribute('data-id'))
+                }) //addEventListener
         }) // forEach
         // create and append additional form residence section controls 
     function addSojourn() {
@@ -334,21 +341,6 @@
         xmlhttp.send(fData)
     } // insertStudent
 
-    // generate and assign student account
-    function insertAccount(e, form) {
-        // prevent default action by submitting data insert form
-        e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(form)
-            // report on data insertion
-        xmlhttp.addEventListener('load', () => {
-                rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
-                rMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Accounts/insert.php', true)
-        xmlhttp.send(fData)
-    } // insertAccount
-
     // create a student account insert form
     function createAccountForm(e) {
         // if modal already contains form 
@@ -393,4 +385,32 @@
         aMdl.querySelector('.modal-body').appendChild(form)
         return
     } // createAccountForm
+
+    // generate and assign student account
+    function insertAccount(e, form) {
+        // prevent default action by submitting data insert form
+        e.preventDefault()
+        let xmlhttp = new XMLHttpRequest,
+            fData = new FormData(form)
+            // report on data insertion
+        xmlhttp.addEventListener('load', () => {
+                rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
+                rMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/Accounts/authorized/insert.php', true)
+        xmlhttp.send(fData)
+    } // insertAccount
+
+    // asynchronous run of a script for deletion of the given account 
+    function deleteAccount(idAttendances) {
+        let xmlhttp = new XMLHttpRequest
+            // report on account deletion
+        xmlhttp.addEventListener('load', () => {
+                rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
+                rMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`, true)
+        xmlhttp.send()
+        return
+    } // deleteAccount
 })()
