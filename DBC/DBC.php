@@ -1577,6 +1577,7 @@ class DBC extends PDO
         return FALSE;
     } // checkStudentAccount
 
+
     /*
     *   check for account credentials
     *   @param int $index
@@ -1678,36 +1679,6 @@ class DBC extends PDO
             return 'Račun je uspešno ustvarjen.';
         return 'Račun ni uspešno ustvarjen.';
     } // insertAccount
-
-    /*
-    *   get particulars of the given account
-    *   @param int $id_attendances
-    */
-
-    public function getAccountParticulars($id_attendances)
-    {
-        $stmt = '   SELECT
-                        granted
-                    FROM 
-                        accounts
-                    WHERE 
-                        id_attendances = :id_attendances  ';
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
-            $prpStmt->execute();
-        } // try
-        catch (PDOException $e) {
-            return "Napaka: {$e->getMessage()}.";
-        } // catch
-        // if single row is affected
-        if($prpStmt->rowCount() == 1){
-            $account = $prpStmt->fetch(PDO::FETCH_COLUMN);
-            return (new DateTime($account))->format('d-m-Y');
-        } // if
-        return NULL;
-    } // getAccountParticulars
 
     /*
     *   update an account password

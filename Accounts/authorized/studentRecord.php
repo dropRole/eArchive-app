@@ -56,7 +56,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             // if assigned an account 
                             if ($DBC->checkStudentAccount($student->id_attendances)) {
                             ?>
-                                Dodeljen: <span class="text-warning"><?php echo $DBC->getAccountParticulars($student->id_attendances); ?></span>
+                                <button class="btn btn-warning" type="button">Podrobnosti</button>
                             <?php
                             } // if
                             else {
@@ -245,7 +245,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                 </button>
             </div>
             <div class="modal-body">
-
+                                
             </div>
         </div>
     </div>

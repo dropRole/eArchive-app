@@ -2,7 +2,7 @@
 (() => {
     // global variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
-        sIFrm = document.getElementById('sIFrm'), // student data insert form
+        sIFrm = document.getElementById('sIFrm'), // student insert form
         rMdl = document.getElementById('rMdl'), // report modal 
         aMdl = document.getElementById('aMdl'), // account modal 
         aRBtn = document.getElementById('aRBtn'), // add residence button 
@@ -35,7 +35,6 @@
     gCb.addEventListener('change', e => {
             addGraduation(e, document.getElementById('rDiv'))
         }) // addEventListener
-        // populate modals body with created account insert form 
     aBtnLst.forEach(element => {
             element.addEventListener('click', createAccountForm) //addEventListener
         }) // forEach
@@ -321,11 +320,11 @@
 
     // pass and insert student data
     function insertStudent(e) {
-        // prevent default action by submitting insert form
+        // prevent default action by submitting student data insert form
         e.preventDefault()
         let xmlhttp = new XMLHttpRequest,
             fData = new FormData(sIFrm)
-            // report on data insertion
+            // report on student data insertion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
                 rMdlBtn.click()
@@ -336,11 +335,11 @@
 
     // generate and assign student account
     function insertAccount(e, form) {
-        // prevent default action by submitting data insert form
+        // prevent default action by submitting student data insert form
         e.preventDefault()
         let xmlhttp = new XMLHttpRequest,
             fData = new FormData(form)
-            // report on data insertion
+            // report on student data insertion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
                 rMdlBtn.click()
@@ -354,7 +353,7 @@
         // if modal already contains form 
         if (aMdl.querySelector('.modal-body').firstChild)
             aMdl.querySelector('.modal-body').removeChild(aMdl.querySelector('.modal-body').firstChild)
-            // create form and form controls
+            // create form elements
         let form = document.createElement('form'), // insert form
             hInpt = document.createElement('input'), // hidden input    
             fGDiv = document.createElement('div'), // form group div
@@ -391,6 +390,5 @@
         form.appendChild(fGDiv)
         form.appendChild(sInpt)
         aMdl.querySelector('.modal-body').appendChild(form)
-        return
-    } // createAccountForm
+    } // createForm
 })()
