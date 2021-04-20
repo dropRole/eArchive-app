@@ -33,8 +33,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                     <th>Fakulteta</th>
                     <th>Znanstvena dela</th>
                     <th>Certifikat</th>
-                    <th>Račun</th>
-                    <th></th>
+                    <th colspan="2">Račun</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,10 +56,12 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             if ($DBC->checkStudentAccount($student->id_attendances)) {
                             ?>
                                 Dodeljen: <span class="text-warning"><?php echo $DBC->getAccountParticulars($student->id_attendances); ?></span>
+                                <span class="acc-del-btn" data-id="<?php echo $student->id_attendances; ?>">&#10007;</span>
                             <?php
                             } // if
                             else {
                             ?>
+                                <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#aMdl">Ustvari</button>
                             <?php
                             } // else
                             ?>
