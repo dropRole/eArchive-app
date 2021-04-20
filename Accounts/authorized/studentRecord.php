@@ -56,7 +56,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             if ($DBC->checkStudentAccount($student->id_attendances)) {
                             ?>
                                 Dodeljen: <span class="text-warning"><?php echo $DBC->getAccountParticulars($student->id_attendances); ?></span>
-                                <span class="acc-del-btn" data-id="<?php echo $student->id_attendances; ?>">&#10007;</span>
+                                <span class="acc-del-btn" data-id="<?php echo $student->id_attendances; ?>">&#10007;</span> 
                             <?php
                             } // if
                             else {
