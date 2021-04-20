@@ -1702,7 +1702,7 @@ class DBC extends PDO
             return "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
-        if($prpStmt->rowCount() == 1){
+        if ($prpStmt->rowCount() == 1) {
             $account = $prpStmt->fetch(PDO::FETCH_COLUMN);
             return (new DateTime($account))->format('d-m-Y');
         } // if
@@ -1742,16 +1742,16 @@ class DBC extends PDO
     *   delete student account 
     *   @param int $id_accounts
     */
-    public function deleteAccount($id_accounts)
+    public function deleteAccount($id_attendances)
     {
         $stmt = '   DELETE FROM 
                         accounts
                     WHERE 
-                        id_accoutn = :id_account    ';
+                        id_attendances = :id_attendances    ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_account', $id_accounts, PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
@@ -1760,8 +1760,7 @@ class DBC extends PDO
         // if single row is affected
         if ($prpStmt->rowCount() == 1)
             return 'Račun je uspešno izbrisan.';
-        else
-            return 'Račun ni uspešno izbrisan.';
+        return 'Račun ni uspešno izbrisan.';
     } // deleteAccount
 
 } // DBC
