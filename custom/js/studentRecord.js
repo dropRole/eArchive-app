@@ -3,12 +3,14 @@
     // global variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
         sIFrm = document.getElementById('sIFrm'), // student data insert form
-        rMdl = document.getElementById('rMdl'), // report modal 
+        sPMdl = document.getElementById('sPMdl'), // scientific papers modal
         aMdl = document.getElementById('aMdl'), // account modal 
-        aRBtn = document.getElementById('aRBtn'), // add residence button 
-        aABtn = document.getElementById('aABtn'), // add attendance button
-        aIBtnLst = document.querySelectorAll('.acc-ins-btn'), // node list of buttons for account generation
-        aDBtnLst = document.querySelectorAll('.acc-del-btn'), // node list of buttons for account deletion
+        rMdl = document.getElementById('rMdl'), // report modal 
+        aRBtn = document.getElementById('aRBtn'), // button for residence addition 
+        aABtn = document.getElementById('aABtn'), // button for attendance addition
+        aIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account generation
+        aDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
+        sPALst = document.querySelectorAll('.sp-vw-btn'), // anchor list for scientific papers selection
         rMdlBtn = document.getElementById('rMdlBtn'), // button to toggle the report modal
         cSlct = document.getElementById('cSlct'), // country select input 
         fSlct = document.getElementById('fSlct'), // faculty select input
@@ -44,6 +46,12 @@
     aDBtnLst.forEach(element => {
             element.addEventListener('click', () => {
                     deleteAccount(element.getAttribute('data-id'))
+                }) //addEventListener
+        }) // forEach
+        // asynchronous execution of scientific papers seletion script 
+    sPALst.forEach(element => {
+            element.addEventListener('click', () => {
+                    selectScientificPapers(element.getAttribute('data-id'))
                 }) //addEventListener
         }) // forEach
         // create and append additional form residence section controls 
@@ -401,7 +409,10 @@
         xmlhttp.send(fData)
     } // insertAccount
 
-    // asynchronous run of a script for deletion of the given account 
+    /*
+     *   async script execution for deletion of the given account 
+     *   @param idAttendances
+     */
     function deleteAccount(idAttendances) {
         let xmlhttp = new XMLHttpRequest
             // report on account deletion
@@ -413,4 +424,19 @@
         xmlhttp.send()
         return
     } // deleteAccount
+
+    /*
+     *   async script execution for selection of scientific papers per student program attendance 
+     *   @param idAttendances
+     */
+    function selectScientificPapers(idAttendances) {
+        let xmlhttp = new XMLHttpRequest
+            // report on scientific papers selection
+        xmlhttp.addEventListener('load', () => {
+                sPMdl.querySelector('.modal-content').innerHTML = xmlhttp.responseText
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, true)
+        xmlhttp.send()
+        return
+    }
 })()
