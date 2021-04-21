@@ -7,7 +7,7 @@
     // script import declaration
 
     require_once '../DBC/DBC.php';
-    require_once '../Students/Students.php';
+    require_once './Students.php';
 
     session_start();
 

@@ -7,7 +7,7 @@ use DBC\DBC;
 // script import declaration
 
 require_once '../../DBC/DBC.php';
-require_once '../../Accounts/Accounts.php';
+require_once '../Accounts.php';
 
 // proceed with the session
 session_start();

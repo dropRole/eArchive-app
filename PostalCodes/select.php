@@ -7,7 +7,7 @@ use DBC\DBC;
 // script import declaration
 
 require_once '../DBC/DBC.php';
-require_once '../PostalCodes/PostalCodes.php';
+require_once './PostalCodes.php';
 
 $id_countries = $_GET['id_countries'];
 

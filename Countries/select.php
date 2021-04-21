@@ -7,7 +7,7 @@ use DBC\DBC;
 // script import declaration
 
 require_once '../DBC/DBC.php';
-require_once '../Countries/Countries.php';
+require_once './Countries.php';
 // create a new instance
 $DBC = new DBC();
 $countries = $DBC->selectCountries();

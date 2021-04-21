@@ -7,7 +7,7 @@ use DBC\DBC;
 // script import declaration
 
 require_once '../DBC/DBC.php';
-require_once '../Programs/Programs.php';
+require_once './Programs.php';
 
 $id_faculties = $_GET['id_faculties'];
 
