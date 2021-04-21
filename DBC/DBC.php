@@ -4,7 +4,7 @@ namespace DBC;
 
 // namespace import declaration
 
-use PDO, PDOException, finfo, DateTime, Documents\Documents, PostalCodes\PostalCodes, Countries\Countries, Faculties\Faculties, Programs\Programs;
+use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Documents\Documents, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
 
 class DBC extends PDO
 {
@@ -25,17 +25,47 @@ class DBC extends PDO
     } // __construct
 
     /*
+    *   select every scientific paper by student university program attendance
+    *   @param int $id_attendances
+    */
+    public function selectScientificPapers($id_attendances)
+    {
+        $resultSet = [];
+        $stmt = '   SELECT 
+                        scientific_papers.*
+                        documents.*
+                    FROM
+                        scientific_papers
+                        INNER JOIN documents
+                        USING(id_scientific_papers)
+                    WHERE 
+                        id_attendances = :id_attendances    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            return "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1)
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+        return $resultSet;
+    } // selectScientificPapers
+
+    /*
     *   select scientific papers by keywords 
     *   @param string $keywords
     */
     public function selectPapersByKeywords(string $keywords)
     {
-        // result set
         $resultSet = [];
-        $stmt = '   SELECT 
+        $stmt = "   SELECT 
                         documents.*,
                         certificates.*,
-                        (name || // // || surname) AS fullname,
+                        (name || ' ' || surname) AS fullname,
                         part,
                         topic,
                         written,
@@ -58,7 +88,7 @@ class DBC extends PDO
                         LEFT JOIN certificates 
                         USING (id_certificates)
                     WHERE 
-                        UPPER(name || surname) LIKE UPPER(:keywords)  ';
+                        UPPER(name || surname) LIKE UPPER(:keywords)  ";
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
@@ -79,12 +109,11 @@ class DBC extends PDO
     */
     public function selectPapersByAutor(string $author)
     {
-        // result set
         $resultSet = [];
-        $stmt = '   SELECT 
+        $stmt = "   SELECT 
                         documents.*,
                         certificates.*,
-                        (name || // // || surname) AS fullname,
+                        (name || ' ' || surname) AS fullname,
                         part,
                         topic,
                         written,
@@ -107,7 +136,7 @@ class DBC extends PDO
                         LEFT JOIN certificates 
                         USING (id_certificates)
                     WHERE 
-                        UPPER(name || surname) LIKE UPPER(:author)  ';
+                        UPPER(name || surname) LIKE UPPER(:author)  ";
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
@@ -128,12 +157,11 @@ class DBC extends PDO
     */
     public function selectPapersByMentor($mentor)
     {
-        // result set
         $resultSet = [];
-        $stmt = '   SELECT 
+        $stmt = "   SELECT 
                         documents.*,
                         certificates.*,
-                        (name || // // || surname) AS fullname,
+                        (name || ' ' || surname) AS fullname,
                         part,
                         topic,
                         written,
@@ -156,7 +184,7 @@ class DBC extends PDO
                         LEFT JOIN certificates 
                         USING (id_certificates)
                     WHERE 
-                        UPPER(mentor) LIKE UPPER(:mentor)  ';
+                        UPPER(mentor) LIKE UPPER(:mentor)  ";
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
@@ -172,60 +200,11 @@ class DBC extends PDO
     } // selectPapersByMentor
 
     /*
-    *   select scientific papers by year of writing 
-    *   @param DateTime $year
-    */
-    public function selectPapersByYear(DateTime $year)
-    {
-        // result set
-        $resultSet = [];
-        $stmt = '   SELECT 
-                        documents.*,
-                        certificates.*,
-                        (name || // // || surname) AS fullname,
-                        part,
-                        topic,
-                        written,
-                        id_mentorings,
-                        mentor
-                    FROM 
-                        students 
-                        INNER JOIN scientific_papers 
-                        USING (id_students)
-                        INNER JOIN documents 
-                        USING (id_scientific_papers)
-                        INNER JOIN mentorings  
-                        USING (id_scientific_papers)
-                        INNER JOIN partaking 
-                        USING (id_students)
-                        INNER JOIN attendances 
-                        USING(id_students) 
-                        INNER JOIN graduations 
-                        USING (id_attendances) 
-                        LEFT JOIN certificates 
-                        USING (id_certificates)
-                    WHERE 
-                        DATE_PART(//year//, written) = :year ';
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':year', $mentor, PDO::PARAM_STR);
-            $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        return $resultSet;
-    } // selectPapersByPublishing
-
-    /*
     *   select all students 
     *   @param string $order
     */
     public function selectStudents(string $order = 'ASC')
     {
-        // restult set
         $resultSet = [];
         switch ($order) {
             case 'ASC':
@@ -429,7 +408,6 @@ class DBC extends PDO
     */
     public function selectPostalCodes(int $id_countries)
     {
-        // result set
         $resultSet = [];
         $stmt = '   SELECT 
                         * 
@@ -453,7 +431,6 @@ class DBC extends PDO
     // select every country
     public function selectCountries()
     {
-        // result set
         $resultSet = [];
         $stmt = '   SELECT 
                         * 
@@ -473,7 +450,7 @@ class DBC extends PDO
 
     public function selectFaculties()
     {
-        // result set
+
         $resultSet = [];
         $stmt = '   SELECT 
                         * 
@@ -497,7 +474,6 @@ class DBC extends PDO
     */
     public function selectPrograms(int $id_faculties)
     {
-        // result set
         $resultSet = [];
         $stmt = '   SELECT 
                         DISTINCT(programs.*) 
@@ -688,7 +664,7 @@ class DBC extends PDO
                     $prpStmt->execute();
                 } // try
                 catch (PDOException $e) {
-                    echo "Napaka: $e->getMessage()";
+                    echo "Napaka: $e->getMessage().";
                 } // catch
                 // if single row is affected 
                 if ($prpStmt->rowCount() == 1)
@@ -849,7 +825,7 @@ class DBC extends PDO
                             $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
                             // if it's not a PDF document
                             if (strpos($mimetype, 'pdf') == FALSE)
-                                return $report = "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno dodan saj ni tipa .pdf";
+                                return $report = "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno dodan saj ni tipa .pdf .";
                             $upload = TRUE;
                             // if document meets the condition 
                             if ($upload) {
@@ -914,7 +890,7 @@ class DBC extends PDO
                 return "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return $report = 'Nakapa: transakcija s podatkovni zbirko je v izvajanju';
+        return $report = 'Nakapa: transakcija s podatkovni zbirko je v izvajanju.';
     } // insertGraduation
 
     /*
@@ -1071,7 +1047,7 @@ class DBC extends PDO
                 $prpStmt->execute();
                 // if single row is affected
                 if ($prpStmt->rowCount() == 1) {
-                    $report .= "{$topic} je uspešno ustavljeno v zbirko. ";
+                    $report .= "{$topic} je uspešno ustavljeno v zbirko.";
                     $id_scientific_papers = $this->lastInsertId('scientific_papers_id_scientific_papers_seq');
                     $this->insertDocuments($id_scientific_papers);
                     // commit the transaction
@@ -1080,7 +1056,7 @@ class DBC extends PDO
                 else {
                     // rollback the transaction
                     $this->rollBack();
-                    $report .= "{$topic} ni uspešno vstavljen v zbirko. ";
+                    $report .= "{$topic} ni uspešno vstavljen v zbirko.";
                 } // else
             } // try
             catch (PDOException $e) {
@@ -1470,7 +1446,7 @@ class DBC extends PDO
     {
         // action report
         $report = '';
-        // result set
+
         $resultSet = [];
         $stmt = '   SELECT 
                         id_documents,
