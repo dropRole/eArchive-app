@@ -49,7 +49,10 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         <td><?php echo $student->program; ?></td>
                         <td><?php echo $student->degree; ?></td>
                         <td><?php echo $student->faculty; ?></td>
-                        <td><a class="sp-vw-btn" href="#sPMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a></td>
+                        <td>
+                            <a class="sp-vw-a" href="#sPMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
+                            <a class="sp-ins-a" href="#sPIMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Dodajanje</a>
+                        </td>
                         <td><a href="#">Pregled</a></td>
                         <td>
                             <?php
