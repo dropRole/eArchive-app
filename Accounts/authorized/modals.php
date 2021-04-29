@@ -145,8 +145,62 @@
 <!-- Scientific papers review modal -->
 <div id="sPMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
+        <div class="modal-content"></div>
+    </div>
+</div>
+<!-- Scientific papers insert modal -->
+<div class="modal fade" id="sPIMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPIMdl" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-        
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Dodajanje znanstvenega dela</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="sPIFrm">
+                    <input type="hidden" name="id_attendances" value="">
+                    <div class="form-group">
+                        <label for="tInpt">Predmet</label>
+                        <input id="tInpt" class="form-control" type="text" name="topic" required>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label for="tSlct">Vrsta</label>
+                            <select id="tSlct" class="form-control" name="type">
+                                <option value="DOKTORSKO DELO">Doktorsko delo</option>
+                                <option value="MAGISTRSKO DELO">Magistrsko delo</option>
+                                <option value="DIPLOMSKO DELO">Diplomsko delo</option>
+                                <option value="RAZISKOVALNO DELO">Raziskovalno delo</option>
+                                <option value="SEMINARSKO DELO">Seminarsko delo</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="wInpt">Napisano</label>
+                            <input id="wInpt" class="form-control" type="date" name="written" required>
+                        </div>
+                    </div>
+                    <div id="sPDocs">
+                        <p class="h6">Dokumentacija</p>
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label for="vInpt">Verzija</label>
+                                <input id="vInpt" class="form-control" type="text" name="documents[0][version]" required>
+                            </div>
+                            <div class="form-group col-6">
+                                <input id="docHInpt" type="hidden" name="documents[0][name]" value="">
+                                <label for="docInpt">Dokument</label>
+                                <input id="docInpt" type="file" name="document[]" accept=".pdf" required>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center col-12">
+                            <button id="aDBtn" class="btn btn-secondary" type="button">&plus;</button>
+                        </div>
+                    </div>
+                    <input class="btn btn-secondary float-right" type="submit" value="Dodaj">
+                </form>
+            </div>
         </div>
     </div>
 </div>
