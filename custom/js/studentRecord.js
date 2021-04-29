@@ -1,25 +1,29 @@
 // IIFE
 (() => {
-    // global variable declaration
+    // global scope variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
         sIFrm = document.getElementById('sIFrm'), // student data insert form
-        sPMdl = document.getElementById('sPMdl'), // scientific papers modal
+        sPIFrm = document.getElementById('sPIFrm'), // form for inserting scientific paper and its documentation
         aMdl = document.getElementById('aMdl'), // account modal 
         rMdl = document.getElementById('rMdl'), // report modal 
         aRBtn = document.getElementById('aRBtn'), // button for residence addition 
         aABtn = document.getElementById('aABtn'), // button for attendance addition
+        aDBtn = document.getElementById('aDBtn'), // button for documentation addition
         aIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account generation
         aDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
-        sPALst = document.querySelectorAll('.sp-vw-btn'), // anchor list for scientific papers selection
-        rMdlBtn = document.getElementById('rMdlBtn'), // button to toggle the report modal
+        sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
+        sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
         cSlct = document.getElementById('cSlct'), // country select input 
         fSlct = document.getElementById('fSlct'), // faculty select input
         gCb = document.getElementById('gCb'), // graduation checkbox
+        docInpt = document.getElementById('docInpt'), // document input
         rLbl = 2, // residence label counter
         rIndx = 1, // residence array index 
         aLbl = 1, // attendance label counter
-        aIndx = 1 // attendance array index 
+        aIndx = 1, // attendance array index 
+        dLbl = 1 // documentation label counter
     sIFrm.addEventListener('submit', insertStudent)
+    sPIFrm.addEventListener('submit', insertScientificPapers)
     aRBtn.addEventListener('click', addSojourn)
     aABtn.addEventListener('click', addAttendance)
         // propagate postal codes by country selection
@@ -49,11 +53,23 @@
                 }) //addEventListener
         }) // forEach
         // asynchronous execution of scientific papers seletion script 
-    sPALst.forEach(element => {
+    sPVALst.forEach(element => {
             element.addEventListener('click', () => {
                     selectScientificPapers(element.getAttribute('data-id'))
                 }) //addEventListener
         }) // forEach
+        // assign a value to the hidden input type of scientific paper insertion form 
+    sPIALst.forEach(element => {
+            element.addEventListener('click', () => {
+                    document.getElementById('sPIFrm').querySelector('input[type=hidden]').value = element.getAttribute('data-id')
+                }) //addEventListener
+        }) // forEach
+        // add controls for scientific paper documentation upload
+    aDBtn.addEventListener('click', addDocumentation) // addEventListener
+        // give hidden input type value of chosens document name
+    docInpt.addEventListener('change', e => {
+            document.getElementById('docHInpt').value = e.target.files[0].name
+        }) // addEventListener        
         // create and append additional form residence section controls 
     function addSojourn() {
         // create form controls 
@@ -343,7 +359,7 @@
             // report on data insertion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
-                rMdlBtn.click()
+                document.getElementById('rMdlBtn').click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/Students/insert.php', true)
         xmlhttp.send(fData)
@@ -384,7 +400,7 @@
         sInpt.classList = 'btn btn-warning'
         sInpt.type = 'submit'
         sInpt.value = 'Ustvari račun'
-            // append created form nodes 
+            // append created form controls
         fGDiv.appendChild(pLbl)
         fGDiv.appendChild(pInpt)
         form.appendChild(hInpt)
@@ -403,7 +419,7 @@
             // report on data insertion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
-                rMdlBtn.click()
+                document.getElementById('rMdlBtn').click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/Accounts/authorized/insert.php', true)
         xmlhttp.send(fData)
@@ -418,7 +434,7 @@
             // report on account deletion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
-                rMdlBtn.click()
+                document.getElementById('rMdlBtn').click()
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`, true)
         xmlhttp.send()
@@ -433,10 +449,92 @@
         let xmlhttp = new XMLHttpRequest
             // report on scientific papers selection
         xmlhttp.addEventListener('load', () => {
-                sPMdl.querySelector('.modal-content').innerHTML = xmlhttp.responseText
+                // compose node tree structure
+                fragment = xmlhttp.response
+                    // reflect body of a fragment into modals inner HTML    
+                document.getElementById('sPMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, true)
+        xmlhttp.responseType = 'document'
         xmlhttp.send()
         return
-    }
+    } // selectScientificPapers
+
+    //  create and append additional form controls for scientific papers documentation upload
+    function addDocumentation() {
+        // create form controls 
+        let rDiv = document.createElement('div'), // row
+            fGDiv = document.createElement('div'), // form group
+            fGDiv1 = document.createElement('div'), // form group
+            vLbl = document.createElement('label'), // version label
+            vInpt = document.createElement('input'), // version input
+            docLbl = document.createElement('label'), // document label
+            docInpt = document.createElement('input'), // document input 
+            docHInpt = document.createElement('input'), // document hidden input 
+            span = document.createElement('span') // removal sign
+            // give hidden input type value of chosens document name
+        docInpt.addEventListener('change', e => {
+                docHInpt.value = e.target.files[0].name
+            }) // addEventListener
+            // remove appended controls
+        span.addEventListener('click', () => {
+                document.getElementById('sPDocs').removeChild(rDiv)
+                dLbl--
+            }) // addEventListener
+        rDiv.classList = 'row mt-2'
+        rDiv.style.position = 'relative'
+        fGDiv.classList = 'form-group col-6'
+        fGDiv1.classList = 'form-group col-6'
+        vLbl.setAttribute('for', `vInpt${dLbl}`)
+        vLbl.textContent = 'Verzija'
+        docLbl.setAttribute('for', `docInpt${dLbl}`)
+        docLbl.textContent = 'Dokument'
+        vInpt.id = `vInpt${dLbl}`
+        vInpt.classList = 'form-control'
+        vInpt.type = 'text'
+        vInpt.name = `documents[${dLbl}][version]`
+        docInpt.id = `docInpt${dLbl}`
+        docInpt.type = 'file'
+        docInpt.accept = '.pdf'
+        docInpt.name = 'document[]'
+        docInpt.required = true
+        docHInpt.type = 'hidden'
+        docHInpt.name = `documents[${dLbl}][name]`
+        span.style.position = 'absolute'
+        span.style.top = 0
+        span.style.right = '10px'
+        span.style.zIndex = 1
+        span.style.cursor = 'pointer'
+        span.innerHTML = '&#10007;'
+        fGDiv.appendChild(vLbl)
+        fGDiv.appendChild(vInpt)
+        fGDiv1.appendChild(docHInpt)
+        fGDiv1.appendChild(docLbl)
+        fGDiv1.appendChild(docInpt)
+        rDiv.appendChild(span)
+        rDiv.appendChild(fGDiv)
+        rDiv.appendChild(fGDiv1)
+            // append controls to scientific paper insert form
+        document.getElementById('sPDocs').appendChild(rDiv)
+        dLbl++
+        return
+    } // addDocumentation
+
+
+    // async script execution for scientific papers and documentation insertion 
+    function insertScientificPapers(e) {
+        // prevent default action of submitting scientific paper data    
+        e.preventDefault()
+        let xmlhttp = new XMLHttpRequest,
+            frm = new FormData(e.target)
+            // report on scientific papers selection
+        xmlhttp.addEventListener('load', () => {
+                // report the result
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                console.log(xmlhttp.responseText)
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/ScientificPapers/insert.php', true)
+        xmlhttp.send(frm)
+        return
+    } // insertScientificPapers
 })()
