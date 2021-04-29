@@ -32,7 +32,7 @@ class DBC extends PDO
     {
         $resultSet = [];
         $stmt = '   SELECT 
-                        scientific_papers.*
+                        scientific_papers.*,
                         documents.*
                     FROM
                         scientific_papers
@@ -49,9 +49,9 @@ class DBC extends PDO
         catch (PDOException $e) {
             return "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+        // if single or more rows are affected
+        if ($prpStmt->rowCount() >= 1)
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
         return $resultSet;
     } // selectScientificPapers
 
@@ -809,7 +809,7 @@ class DBC extends PDO
     */
     public function insertGraduation(int $id_attendances, string $certificate, DateTime $issued, DateTime $defended)
     {
-        // report
+        // action report
         $report = '';
         // if not already running a transaction
         if (!$this->inTransaction()) {
@@ -849,7 +849,7 @@ class DBC extends PDO
                                 $prpStmt->execute();
                                 // if certificate was inserted into db and moved to a new destination  
                                 if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, $destination)) {
-                                    $report .= "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno vstavljena." . PHP_EOL;
+                                    $report = "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno vstavljen." . PHP_EOL;
                                     $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
                                     $stmt = '   INSERT INTO
                                                     graduations
@@ -871,26 +871,30 @@ class DBC extends PDO
                                     $prpStmt->execute();
                                     // if single row is affected 
                                     if ($prpStmt->rowCount() == 1) {
-                                        $report .= 'Podatki o zaključku študiranja in certifikatu so uspešno vstavljeni.' . PHP_EOL;
-                                        // commit transaction
+                                        $report .= 'Podatki o zaključku študiranja in certifikatu so uspešno vstavljeni.';
+                                        // commit current transaction
                                         $this->commit();
                                         return $report;
                                     } // if
+                                    // rollback current transaction
+                                    $this->rollBack();
+                                    return $report = 'Napaka: podatki o zaključku študiranja in certifikatu niso uspešno vstavljeni.';
                                 } // if
-                                // rollback transaction
+                                // rollback current transaction
                                 $this->rollBack();
                                 return $report = 'Napaka: podatki certifikata niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.';
                             } // if
                         } // if
+                        return $report = "Napaka: certifikat {$_FILES['certificate']['name'][$indx]} ni uspešno naložen.";
                     } // if
                 } // foreach
             } // try
             catch (PDOException $e) {
                 // output error message 
-                return "Napaka: {$e->getMessage()}.";
+                return $report = "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return $report = 'Nakapa: transakcija s podatkovni zbirko je v izvajanju.';
+        return $report = 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.';
     } // insertGraduation
 
     /*
@@ -1018,54 +1022,45 @@ class DBC extends PDO
     *   @param DateTime $written
     *   @param string $type
     */
-    public function insertScientificPapers(string $topic, DateTime $written, string $type)
+    public function insertScientificPapers(int $id_attendances, string $topic, string $type, DateTime $written)
     {
-        // report
-        $report = '';
-        // if not already running a transaction
-        if ($this->inTransaction()) {
-            try {
-                // begin new transaction
-                $this->beginTransaction();
-                $stmt = '   INSERT INTO 
-                                scientific_papers
-                            (
-                                topic, 
-                                wirtten,
-                                type
-                            )
-                            VALUES(
-                                :topic,
-                                :written,
-                                :type
-                            )   ';
-                // prepare, bind params to and execute stmt
-                $prpStmt = $this->prepare($stmt);
-                $prpStmt->bindParam(':topic', $topic, PDO::PARAM_STR);
-                $prpStmt->bindParam(':written', $written, PDO::PARAM_STR);
-                $prpStmt->bindParam(':type', $type, PDO::PARAM_STR);
-                $prpStmt->execute();
-                // if single row is affected
-                if ($prpStmt->rowCount() == 1) {
-                    $report .= "{$topic} je uspešno ustavljeno v zbirko.";
-                    $id_scientific_papers = $this->lastInsertId('scientific_papers_id_scientific_papers_seq');
-                    $this->insertDocuments($id_scientific_papers);
-                    // commit the transaction
-                    $this->commit();
-                } // if
-                else {
-                    // rollback the transaction
-                    $this->rollBack();
-                    $report .= "{$topic} ni uspešno vstavljen v zbirko.";
-                } // else
-            } // try
-            catch (PDOException $e) {
-                // output error message 
-                return "Napaka: {$e->getMessage()}.";
-            } // catch
-        } // if
-        else
-            return 'Opozorilo: Transakcija s podatkovno zbirko je v izvajanju.';
+        // action report
+        $report = [
+            'id_scientific_papers' => 0,
+            'message' => ''
+        ];
+        $stmt = '   INSERT INTO 
+                        scientific_papers
+                    (
+                        id_attendances,
+                        topic, 
+                        type,
+                        written
+                    )
+                    VALUES(
+                        :id_attendances,
+                        :topic,
+                        :type,
+                        :written
+                    )   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->bindParam(':topic', $topic, PDO::PARAM_STR);
+            $prpStmt->bindParam(':type', $type, PDO::PARAM_STR);
+            $prpStmt->bindValue(':written', $written->format('d-m-Y'), PDO::PARAM_STR);
+            $prpStmt->execute();
+            // if single row is affected
+            if ($prpStmt->rowCount() == 1) {
+                $report['id_scientific_papers'] = $this->lastInsertId('scientific_papers_id_scientific_papers_seq');
+                $report['message'] = "Delo '{$topic}' je uspešno ustavljeno v zbirko." . PHP_EOL;
+            } // if
+        } // try
+        catch (PDOException $e) {
+            // output error message 
+            $report['message'] = "Napaka: {$e->getMessage()}.";
+        } // catch
         return $report;
     } // insertScientificPapers
 
@@ -1345,67 +1340,78 @@ class DBC extends PDO
     } // deleteMentorings
 
     /*
-    *   insert documents of scientific paper
+    *   insert document of scientific paper
     *   @param int $id_scientific_papers
     */
-    public function insertDocuments(int $id_scientific_papers)
+    public function insertDocument(int $id_scientific_papers, string $version, string $document)
     {
-        // report
+        // action report
         $report = '';
-        // check if any file is uploaded 
-        $upload = FALSE;
-        foreach ($_FILES['documents']['tmp_name'] as $index => $tmpName) {
-            // if there was no error while uploading
-            if ($_FILES['documents']['error'][$index] == UPLOAD_ERR_OK) {
-                $finfo = new finfo();
-                $mimetype = $finfo->file($tmpName, FILEINFO_EXTENSION);
-                // if it's a PDF document
-                if (strpos(strtoupper($mimetype), 'PDF'))
-                    $upload = TRUE;
-                else
-                    $report .= 'Napaka: dokument ni naložen saj ni tipa PDF.' . PHP_EOL;
-                // if document meets the condition 
-                if ($upload) {
-                    // set destination of the uploded file
-                    $dir = 'uploads/documents/';
-                    $destination = $dir . new DateTime('dmYHsi') . basename($_FILES['documents']['name'][$index]);
-                    $stmt = '   INSERT INTO
-                                        documents
-                                    (
-                                        id_scientific_papers,
-                                        source,
-                                        published,
-                                        version
-                                    )
-                                    VALUES(
-                                        :id_scientific_papers,
-                                        :source,
-                                        :published,
-                                        :version
-                                    )   ';
-                    try {
-                        // prepare, bind params to and execute stmt
-                        $prpStmt = $this->prepare($stmt);
-                        $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
-                        $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
-                        $prpStmt->bindValue(':published', (new DateTime('d-m-Y')), PDO::PARAM_STR);
-                        $prpStmt->bindParam(':version', $version, PDO::PARAM_STR);
-                        $prpStmt->execute();
-                    } // try
-                    catch (PDOException $e) {
-                        echo "Napaka: {$e->getMessage()}.";
-                    } // catch
-                    // if documents were inserted into db and moved to a new destination  
-                    if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmpName, $destination))
-                        $report .= "Dokument {$_FILES['documents']['name'][$index]} je uspešno naložen." . PHP_EOL;
-                    else
-                        $report .= "Napaka: dokument {$_FILES['documents']['name'][$index]} ni naložen." . PHP_EOL;
-                } // if
-            } // if
-            else
-                return "Napaka: dokument {$_FILES['documents']['name'][$index]} ni uspešno naložen.";
-        } // foreach
-    } // insertDocuments
+        // if not already running a transaction
+        if (!$this->inTransaction()) {
+            try {
+                // begin a new transaction
+                $this->beginTransaction();
+                foreach ($_FILES['document']['tmp_name'] as $indx => $tmp_name) {
+                    // if document is among uploaded files
+                    if ($_FILES['document']['name'][$indx] == $document) {
+                        // if document is uploaded successfully 
+                        if ($_FILES['document']['error'][$indx] == UPLOAD_ERR_OK) {
+                            $finfo = new finfo();
+                            $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
+                            // if it's not a PDF document
+                            if (strpos($mimetype, 'pdf') == FALSE)
+                                return $report = "Napaka: dokument '{$_FILES['document']['name'][$indx]}' ni uspešno dodan saj ni tipa .pdf .";
+                            $upload = TRUE;
+                            // if document meets the condition 
+                            if ($upload) {
+                                // set destination of the uploded file
+                                $dir = 'uploads/documents/';
+                                $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['document']['name'][$indx]);
+                                $stmt = '   INSERT INTO
+                                                documents
+                                            (
+                                                id_scientific_papers,
+                                                source,
+                                                published,
+                                                version
+                                            )
+                                            VALUES(
+                                                :id_scientific_papers,
+                                                :source,
+                                                :published,
+                                                :version
+                                            )   ';
+                                // prepare, bind params to and execute stmt
+                                $prpStmt = $this->prepare($stmt);
+                                $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
+                                $prpStmt->bindValue(':source', "/eArchive/{$destination}", PDO::PARAM_STR);
+                                $prpStmt->bindValue(':published', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
+                                $prpStmt->bindValue(':version', $version, PDO::PARAM_STR);
+                                $prpStmt->execute();
+                                // if documnet was inserted into db and moved to a new destination  
+                                if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
+                                    $report = "Dokument {$_FILES['document']['name'][$indx]} je uspešno vstavljen." . PHP_EOL;
+                                    // commit current transaction
+                                    $this->commit();
+                                    return $report;
+                                } // if
+                                // rollback current transaction
+                                $this->rollBack();
+                                return $report = 'Napaka: podatki dokumenta niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.';
+                            } // if
+                        } // if
+                        return $report = "Napaka: dokument {$_FILES['document']['name'][$indx]} ni uspešno naložen.";
+                    } // if
+                } // foreach
+            } // try
+            catch (PDOException $e) {
+                // output error message 
+                return $report = "Napaka: {$e->getMessage()}.";
+            } // catch 
+        } // if
+        return $report = 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.';
+    } // insertDocument
 
     /*
     *   update version of a document
