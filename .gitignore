@@ -1,8 +1,11 @@
 .history
 uploads
+<<<<<<< HEAD
 vendor
 RD.vsdx
 ERD.txp
 DFD.vsdx
 script.SQL
 eArchive.docx
+=======
+>>>>>>> parent of 64e17bc (Added filenames to be ignored.)
