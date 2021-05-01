@@ -1,11 +1,13 @@
 <?php
 
-namespace ScientificPapers;
-
 // namespace and class import declaration
 
+namespace ScientificPapers;
+
+use JsonSerializable;
+
 // table scientific_papers class definition
-class ScientificPapers
+class ScientificPapers implements JsonSerializable
 {
 
     // encapsulation
@@ -31,6 +33,12 @@ class ScientificPapers
         $this->type = $type;
         $this->written = $written;
     } // __construct
+
+    // implement jsonSerialize function
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    } // jsonSerialize
 
     /*
     *   set id of scientific papers
