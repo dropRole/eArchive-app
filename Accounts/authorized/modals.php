@@ -1,4 +1,4 @@
-<!-- Student data insertion modal -->
+<!--Modal for student data insertion -->
 <div id="sMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -142,14 +142,14 @@
         </div>
     </div>
 </div>
-<!-- Scientific papers review modal -->
-<div id="sPMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<!-- Modal for scientific papers view  -->
+<div id="sPVMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content"></div>
     </div>
 </div>
-<!-- Scientific papers insert modal -->
-<div class="modal fade" id="sPIMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPIMdl" aria-hidden="true">
+<!-- Modal for scientific paper insertion or alteration -->
+<div class="modal fade" id="sPIUMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPIUMdl" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -159,7 +159,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="sPIFrm">
+                <form id="sPFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div class="form-group">
                         <label for="tInpt">Predmet</label>
@@ -204,7 +204,7 @@
         </div>
     </div>
 </div>
-<!-- Account insert modal -->
+<!-- Modal for account insertion -->
 <div class="modal fade" id="aMdl" tabindex="-1" role="dialog" aria-labelledby="exampleAMdl" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -218,7 +218,7 @@
         </div>
     </div>
 </div>
-<!-- Report modal -->
+<!-- Modal for action reports -->
 <div class="modal fade" id="rMdl" tabindex="-1" role="dialog" aria-labelledby="rMdlLbl" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
