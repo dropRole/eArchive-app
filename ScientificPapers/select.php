@@ -12,10 +12,9 @@ require_once './ScientificPapers.php';
 // proceed with the session
 session_start();
 
-$id_attendances = $_GET['id_attendances'];
-
 // if id of attendance is prosperously passed
-if (isset($id_attendances)) {
+if (isset($_GET['id_attendances'])) {
+    $id_attendances = $_GET['id_attendances'];
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // fetch scientific papers
@@ -35,11 +34,23 @@ if (isset($id_attendances)) {
                     <h5 class="card-title"><?php echo $scientificPaper->topic; ?></h5>
                     <h6 class="card-subtitle mb-2 text-muted"><?php echo $scientificPaper->type; ?></h6>
                     <p class="card-text"><a href="#"><?php echo $scientificPaper->source; ?></a></p>
-                    <a href="#" class="card-link">Uredi</a>
-                    <a href="#" class="card-link">Izbriši</a>
+                    <a href="#" class="card-link sp-upd-а" data-id="<?php echo $scientificPaper->id_scientific_papers; ?>" data-toggle="modal" data-target="#sPIUMdl">Uredi</a>
+                    <a href="#" class="card-link sp-del-a" data-id="<?php echo $scientificPaper->id_scientific_papers; ?>">Izbriši</a>
                 </div>
             </div>
 <?php
         } // foreach
     } // if
+} // if
+
+// if id of a scientific paper is successfully passed
+if (isset($_GET['id_scientific_papers'])) {
+    $id_scientific_papers = $_GET['id_scientific_papers'];
+    // establish a new database connection
+    $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
+    // fetch scientific papers
+    $scientificPaper = $DBC->selectScientificPaper($id_scientific_papers);
+    // if paper is returned
+    if (isset($scientificPaper))
+        echo json_encode($scientificPaper);
 } // if
