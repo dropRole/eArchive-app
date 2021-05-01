@@ -3,7 +3,7 @@
     // global scope variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
         sIFrm = document.getElementById('sIFrm'), // student data insert form
-        sPIFrm = document.getElementById('sPIFrm'), // form for inserting scientific paper and its documentation
+        sPFrm = document.getElementById('sPFrm'), // form for inserting scientific paper and its documentation
         aMdl = document.getElementById('aMdl'), // account modal 
         rMdl = document.getElementById('rMdl'), // report modal 
         aRBtn = document.getElementById('aRBtn'), // button for residence addition 
@@ -23,7 +23,7 @@
         aIndx = 1, // attendance array index 
         dLbl = 1 // documentation label counter
     sIFrm.addEventListener('submit', insertStudent)
-    sPIFrm.addEventListener('submit', insertScientificPapers)
+    sPFrm.addEventListener('submit', insertScientificPapers)
     aRBtn.addEventListener('click', addSojourn)
     aABtn.addEventListener('click', addAttendance)
         // propagate postal codes by country selection
@@ -42,26 +42,30 @@
     gCb.addEventListener('change', e => {
             addGraduation(e, document.getElementById('rDiv'))
         }) // addEventListener
-        // populate modals body with created account insert form 
-    aIBtnLst.forEach(element => {
-            element.addEventListener('click', createAccountForm) //addEventListener
+    aIBtnLst.forEach(btn => {
+            // populate modals body with created account insert form 
+            btn.addEventListener('click', createAccountForm) //addEventListener
         }) // forEach
-        // asynchronous execution of account deletion script 
-    aDBtnLst.forEach(element => {
-            element.addEventListener('click', () => {
-                    deleteAccount(element.getAttribute('data-id'))
+    aDBtnLst.forEach(btn => {
+            // asynchronoushronous execution of account deletion script 
+            btn.addEventListener('click', () => {
+                    deleteAccount(btn.getAttribute('data-id'))
                 }) //addEventListener
         }) // forEach
-        // asynchronous execution of scientific papers seletion script 
-    sPVALst.forEach(element => {
-            element.addEventListener('click', () => {
-                    selectScientificPapers(element.getAttribute('data-id'))
+    sPVALst.forEach(anchor => {
+            // asynchronoushronous execution of scientific papers seletion script 
+            anchor.addEventListener('click', () => {
+                    selectScientificPapers(anchor.getAttribute('data-id'))
                 }) //addEventListener
         }) // forEach
-        // assign a value to the hidden input type of scientific paper insertion form 
-    sPIALst.forEach(element => {
-            element.addEventListener('click', () => {
-                    document.getElementById('sPIFrm').querySelector('input[type=hidden]').value = element.getAttribute('data-id')
+    sPIALst.forEach(anchor => {
+            // assign a value to the hidden input type of scientific paper insertion form 
+            anchor.addEventListener('click', () => {
+                    document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
+                }) //addEventListener
+                // modify form for scientific paper insertion
+            anchor.addEventListener('click', () => {
+                    modifySPFrm('insert')
                 }) //addEventListener
         }) // forEach
         // add controls for scientific paper documentation upload
@@ -426,7 +430,7 @@
     } // insertAccount
 
     /*
-     *   async script execution for deletion of the given account 
+     *   asynchronous script execution for deletion of the given account 
      *   @param idAttendances
      */
     function deleteAccount(idAttendances) {
@@ -442,17 +446,42 @@
     } // deleteAccount
 
     /*
-     *   async script execution for selection of scientific papers per student program attendance 
+     *   asynchronous script execution for selection of scientific papers per student program attendance 
      *   @param idAttendances
      */
     function selectScientificPapers(idAttendances) {
-        let xmlhttp = new XMLHttpRequest
+        let xmlhttp = new XMLHttpRequest()
             // report on scientific papers selection
         xmlhttp.addEventListener('load', () => {
                 // compose node tree structure
                 fragment = xmlhttp.response
                     // reflect body of a fragment into modals inner HTML    
-                document.getElementById('sPMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
+                document.getElementById('sPVMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
+                    // if anchors for scientific papers edit are rendered
+                if (document.querySelectorAll('.sp-upd-а'))
+                    document.querySelectorAll('.sp-upd-а').forEach(anchor => {
+                        // fill form fields and modify the form
+                        anchor.addEventListener('click', () => {
+                                // report on scientific paper selection
+                                (xmlhttp = new XMLHttpRequest()).addEventListener('load', () => {
+                                        // return JSON of ScientificPapers object 
+                                        let sPpr = {
+                                                id_attendances: xmlhttp.response.id_attendances,
+                                                id_scientific_papers: xmlhttp.response.id_scientific_papers,
+                                                topic: xmlhttp.response.topic,
+                                                type: xmlhttp.response.type,
+                                                written: xmlhttp.response.written
+                                            } // scientific paper object
+                                        modifySPFrm(sPpr, 'update')
+                                    }) // addEventListener
+                                xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id')}`, true)
+                                xmlhttp.responseType = 'json'
+                                xmlhttp.send()
+                                    // assign a value to the hidden input type of scientific paper insertion form 
+                                document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
+                                return
+                            }) // addEventListener
+                    }) // forEach
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, true)
         xmlhttp.responseType = 'document'
@@ -521,7 +550,7 @@
     } // addDocumentation
 
 
-    // async script execution for scientific papers and documentation insertion 
+    // asynchronous script execution for scientific papers and documentation insertion 
     function insertScientificPapers(e) {
         // prevent default action of submitting scientific paper data    
         e.preventDefault()
@@ -531,10 +560,72 @@
         xmlhttp.addEventListener('load', () => {
                 // report the result
                 rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                console.log(xmlhttp.responseText)
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/ScientificPapers/insert.php', true)
         xmlhttp.send(frm)
         return
     } // insertScientificPapers
+
+    // asynchronous script execution for scientific paper data alteration 
+    function updateScientificPapers(e) {
+        // prevent default action of submitting scientific paper data    
+        e.preventDefault()
+        let xmlhttp = new XMLHttpRequest,
+            frm = new FormData(this)
+            // report on scientific paper update
+        xmlhttp.addEventListener('load', () => {
+                console.log(xmlhttp.responseText)
+                    // report the result
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                document.getElementById('rMdlBtn').click()
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/ScientificPapers/update.php', true)
+        xmlhttp.send(frm)
+        return
+    } // updateScientificPapers
+
+    /*
+     *  modify form for scientific paper insertion or data alteration 
+     *  @param frm
+     */
+    function modifySPFrm(sPpr = null, action) {
+        // store modal and form elements
+        let mdl = document.getElementById('sPIUMdl'),
+            frm = document.getElementById('sPFrm'),
+            inpts = frm.querySelectorAll('input, select')
+            // if inserting 
+        if (action == 'update') {
+            mdl.querySelector('.modal-header .modal-title').textContent = 'Urejanje znanstvenega dela'
+            frm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
+            frm.querySelector('input[name="topic"]').value = sPpr.topic
+            frm.querySelector('select[name="type"]').value = sPpr.type
+            frm.querySelector('input[name="written"]').value = sPpr.written
+            frm.querySelector('input[type=submit]').value = 'Uredi'
+                // disable documentation section form controls
+            frm.querySelector('#sPDocs').querySelectorAll('input').forEach(ctlr => {
+                    ctlr.disabled = true
+                }) // forEach
+            frm.querySelector('#sPDocs').style.display = 'none'
+                // exchange callbacks
+            frm.removeEventListener('submit', insertScientificPapers)
+            frm.addEventListener('submit', updateScientificPapers)
+            return
+        } // if
+        mdl.querySelector('.modal-header .modal-title').textContent = 'Dodajanje znanstvenega dela'
+        frm.querySelector('input[type=hidden]').name = 'id_attendances'
+        frm.querySelector('#sPDocs').style.display = 'block'
+            // enable documentation section form controls
+        frm.querySelector('#sPDocs').querySelectorAll('input').forEach(ctlr => {
+                ctlr.disabled = false
+            }) // forEach
+            // empty each input fields value and disable it
+        inpts.forEach(inpt => {
+                inpt.value = ''
+            }) // forEach
+        frm.querySelector('input[type=submit]').value = 'Vstavi'
+            // exchange callbacks
+        frm.removeEventListener('submit', updateScientificPapers)
+        frm.addEventListener('submit', insertScientificPapers)
+        return
+    } // modifySPFrm
 })()
