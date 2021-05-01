@@ -25,7 +25,7 @@ class DBC extends PDO
     } // __construct
 
     /*
-    *   select every scientific paper by student university program attendance
+    *   select every scientific paper by students faculty program attendance
     *   @param int $id_attendances
     */
     public function selectScientificPapers($id_attendances)
@@ -54,6 +54,35 @@ class DBC extends PDO
             $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
         return $resultSet;
     } // selectScientificPapers
+
+    /*
+    *   select particular scientific paper 
+    *   @param int $id_scientific_papers
+    */
+    public function selectScientificPaper($id_scientific_papers)
+    {
+        $result = NULL;
+        $stmt = '   SELECT 
+                        scientific_papers.*
+                    FROM
+                        scientific_papers
+                    WHERE 
+                        id_scientific_papers = :id_scientific_papers    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            return "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1)
+            $result = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written'])[0];
+        return $result;
+    } // selectScientificPaper
+
 
     /*
     *   select scientific papers by keywords 
@@ -1071,22 +1100,22 @@ class DBC extends PDO
     *   @param DateTime $written
     *   @param string $type
     */
-    public function updateScientificPapers(int $id_scientific_papers, string $topic, DateTime $written, string $type)
+    public function updateScientificPapers(int $id_scientific_papers, string $topic, string $type, DateTime $written)
     {
         try {
             $stmt = '   UPDATE  
-                                scientific_papers
+                            scientific_papers
                         SET 
                             topic = :topic, 
-                            written = :written, 
-                            type  = :type 
+                            type  = :type,
+                            written = :written 
                         WHERE 
                             id_scientific_papers = :id_scientific_papers    ';
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':topic', $topic, PDO::PARAM_STR);
-            $prpStmt->bindParam(':written', $written, PDO::PARAM_STR);
             $prpStmt->bindParam(':type', $type, PDO::PARAM_STR);
+            $prpStmt->bindValue(':written', $written->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
@@ -1094,6 +1123,10 @@ class DBC extends PDO
             // output error message 
             return "Napaka: {$e->getMessage()}.";
         } // catch
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1)
+            return 'Podatki znanstvenega dela so uspešno ažurirani.';
+        return 'Podatki znanstvenega dela niso uspešno ažurirani.';
     } // updateScientificPapers
 
     /*
@@ -1506,7 +1539,7 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_documents', $id_documents, PDO::PARAM_INT);
             $prpStmt->execute();
-            $document = $prpStmt->fetch(PDO::FETCH_CLASS, Documents::class, ['id_documents', 'id_scientific_papers', 'source', 'published', 'version']);
+            $document = $prpStmt->fetch(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Documents::class, ['id_documents', 'id_scientific_papers', 'source', 'published', 'version']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
