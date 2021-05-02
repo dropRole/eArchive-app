@@ -7,6 +7,7 @@ use DBC\DBC;
 // script import declaration
 
 require_once '../DBC/DBC.php';
+require_once '../Documents/Documents.php';
 require_once './ScientificPapers.php';
 
 // proceed with the session
@@ -29,11 +30,25 @@ if (isset($_GET['id_attendances'])) {
     if (count($scientificPapers) >= 1) {
         foreach ($scientificPapers as $scientificPaper) {
         ?>
-            <div class="card m-3" style="width:15rem;">
+            <div class="card m-3 col-6">
                 <div class="card-body">
                     <h5 class="card-title"><?php echo $scientificPaper->topic; ?></h5>
                     <h6 class="card-subtitle mb-2 text-muted"><?php echo $scientificPaper->type; ?></h6>
-                    <p class="card-text"><a href="#"><?php echo $scientificPaper->source; ?></a></p>
+                    <ul class="list-group">
+                        <?php
+                        $documents = $DBC->selectDocuments($scientificPaper->id_scientific_papers);
+                        // if there's evidence of the documentation
+                        if (count($documents))
+                            foreach ($documents as $document) {
+                        ?>
+                            <li class="list-group-item"><a href="#"><?php echo basename($document->getSource()); ?></a><span class="doc-del-spn ml-3" data-id="<?php echo $document->getIdDocuments(); ?>">&#10007;</span></li>
+                        <?php
+                            } // foreach
+                        // if there's no evidence of the documentation
+                        else
+                            echo 'Ni predane dokumentacije.';
+                        ?>
+                    </ul>
                     <a href="#" class="card-link sp-upd-а" data-id="<?php echo $scientificPaper->id_scientific_papers; ?>" data-toggle="modal" data-target="#sPIUMdl">Uredi</a>
                     <a href="#" class="card-link sp-del-a" data-id="<?php echo $scientificPaper->id_scientific_papers; ?>">Izbriši</a>
                 </div>
