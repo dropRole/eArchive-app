@@ -47,13 +47,13 @@
             btn.addEventListener('click', createAccountForm) //addEventListener
         }) // forEach
     aDBtnLst.forEach(btn => {
-            // asynchronoushronous execution of account deletion script 
+            // delete particular account 
             btn.addEventListener('click', () => {
                     deleteAccount(btn.getAttribute('data-id'))
                 }) //addEventListener
         }) // forEach
     sPVALst.forEach(anchor => {
-            // asynchronoushronous execution of scientific papers seletion script 
+            // preview scientific papers   
             anchor.addEventListener('click', () => {
                     selectScientificPapers(anchor.getAttribute('data-id'))
                 }) //addEventListener
@@ -457,7 +457,7 @@
                 fragment = xmlhttp.response
                     // reflect body of a fragment into modals inner HTML    
                 document.getElementById('sPVMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
-                    // if anchors for scientific papers edit are rendered
+                    // if anchors for scientific papers update are rendered
                 if (document.querySelectorAll('.sp-upd-а'))
                     document.querySelectorAll('.sp-upd-а').forEach(anchor => {
                         // fill form fields and modify the form
@@ -479,7 +479,14 @@
                                 xmlhttp.send()
                                     // assign a value to the hidden input type of scientific paper insertion form 
                                 document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
-                                return
+                            }) // addEventListener
+                    }) // forEach
+                    // if anchors for scientific paper documentation deletion are rendered
+                if (document.querySelectorAll('.doc-del-spn'))
+                    document.querySelectorAll('.doc-del-spn').forEach(span => {
+                        // delete particular document
+                        span.addEventListener('click', () => {
+                                deleteDocument(span.getAttribute('data-id'))
                             }) // addEventListener
                     }) // forEach
             }) // addEventListener
@@ -628,4 +635,23 @@
         frm.addEventListener('submit', insertScientificPapers)
         return
     } // modifySPFrm
+
+    /*
+     *  asynchronous script execution for scientific paper documentation deletion    
+     *  @param idDocuments  
+     */
+    function deleteDocument(idDocument) {
+        // instantiate XHR 
+        let xmlhttp = new XMLHttpRequest
+            // report on docuement deletion
+        xmlhttp.addEventListener('load', () => {
+                console.log(xmlhttp.responseText)
+                    // report the result
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                document.getElementById('rMdlBtn').click()
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/Documents/delete.php?id_documents=${idDocument}`, true)
+        xmlhttp.send()
+        return
+    } // deleteDocument
 })()
