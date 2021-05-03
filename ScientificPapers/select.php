@@ -41,7 +41,7 @@ if (isset($_GET['id_attendances'])) {
                         if (count($documents))
                             foreach ($documents as $document) {
                         ?>
-                            <li class="list-group-item"><a href="#"><?php echo basename($document->getSource()); ?></a><span class="doc-del-spn ml-3" data-id="<?php echo $document->getIdDocuments(); ?>">&#10007;</span></li>
+                            <li class="list-group-item"><a href="#"><?php echo basename($document->getSource()); ?></a><span class="doc-del-spn ml-3" data-source="<?php echo $document->getSource(); ?>">&#10007;</span></li>
                         <?php
                             } // foreach
                         // if there's no evidence of the documentation
