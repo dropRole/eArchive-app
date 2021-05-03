@@ -23,7 +23,7 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt an insert
-    $report = $DBC->insertScientificPapers($id_attendances, $topic, $type, (new DateTime($written)));
+    $report = $DBC->insertScientificPaper($id_attendances, $topic, $type, (new DateTime($written)));
     echo $report['message'];
     // if an attempt was successful 
     if ($report['id_scientific_papers']) {
