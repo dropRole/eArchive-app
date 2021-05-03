@@ -6,6 +6,7 @@
         sPFrm = document.getElementById('sPFrm'), // form for inserting scientific paper and its documentation
         aMdl = document.getElementById('aMdl'), // account modal 
         rMdl = document.getElementById('rMdl'), // report modal 
+        rMdlBtn = document.getElementById('rMdlBtn'), // button for report modal toggle
         aRBtn = document.getElementById('aRBtn'), // button for residence addition 
         aABtn = document.getElementById('aABtn'), // button for attendance addition
         aDBtn = document.getElementById('aDBtn'), // button for documentation addition
@@ -23,7 +24,7 @@
         aIndx = 1, // attendance array index 
         dLbl = 1 // documentation label counter
     sIFrm.addEventListener('submit', insertStudent)
-    sPFrm.addEventListener('submit', insertScientificPapers)
+    sPFrm.addEventListener('submit', insertScientificPaper)
     aRBtn.addEventListener('click', addSojourn)
     aABtn.addEventListener('click', addAttendance)
         // propagate postal codes by country selection
@@ -59,13 +60,9 @@
                 }) //addEventListener
         }) // forEach
     sPIALst.forEach(anchor => {
-            // assign a value to the hidden input type of scientific paper insertion form 
-            anchor.addEventListener('click', () => {
-                    document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
-                }) //addEventListener
-                // modify form for scientific paper insertion
-            anchor.addEventListener('click', () => {
-                    modifySPFrm('insert')
+            // modify form for scientific paper insertion
+            anchor.addEventListener('click', e => {
+                    modifySPFrm(e, 'insert')
                 }) //addEventListener
         }) // forEach
         // add controls for scientific paper documentation upload
@@ -363,7 +360,7 @@
             // report on data insertion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
-                document.getElementById('rMdlBtn').click()
+                rMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/Students/insert.php', true)
         xmlhttp.send(fData)
@@ -423,7 +420,7 @@
             // report on data insertion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
-                document.getElementById('rMdlBtn').click()
+                rMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/Accounts/authorized/insert.php', true)
         xmlhttp.send(fData)
@@ -438,63 +435,12 @@
             // report on account deletion
         xmlhttp.addEventListener('load', () => {
                 rMdl.querySelector('.modal-body').innerHTML = xmlhttp.responseText
-                document.getElementById('rMdlBtn').click()
+                rMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`, true)
         xmlhttp.send()
         return
     } // deleteAccount
-
-    /*
-     *   asynchronous script execution for selection of scientific papers per student program attendance 
-     *   @param idAttendances
-     */
-    function selectScientificPapers(idAttendances) {
-        let xmlhttp = new XMLHttpRequest()
-            // report on scientific papers selection
-        xmlhttp.addEventListener('load', () => {
-                // compose node tree structure
-                fragment = xmlhttp.response
-                    // reflect body of a fragment into modals inner HTML    
-                document.getElementById('sPVMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
-                    // if anchors for scientific papers update are rendered
-                if (document.querySelectorAll('.sp-upd-а'))
-                    document.querySelectorAll('.sp-upd-а').forEach(anchor => {
-                        // fill form fields and modify the form
-                        anchor.addEventListener('click', () => {
-                                // report on scientific paper selection
-                                (xmlhttp = new XMLHttpRequest()).addEventListener('load', () => {
-                                        // return JSON of ScientificPapers object 
-                                        let sPpr = {
-                                                id_attendances: xmlhttp.response.id_attendances,
-                                                id_scientific_papers: xmlhttp.response.id_scientific_papers,
-                                                topic: xmlhttp.response.topic,
-                                                type: xmlhttp.response.type,
-                                                written: xmlhttp.response.written
-                                            } // scientific paper object
-                                        modifySPFrm(sPpr, 'update')
-                                    }) // addEventListener
-                                xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id')}`, true)
-                                xmlhttp.responseType = 'json'
-                                xmlhttp.send()
-                                    // assign a value to the hidden input type of scientific paper insertion form 
-                                document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
-                            }) // addEventListener
-                    }) // forEach
-                    // if anchors for scientific paper documentation deletion are rendered
-                if (document.querySelectorAll('.doc-del-spn'))
-                    document.querySelectorAll('.doc-del-spn').forEach(span => {
-                        // delete particular document
-                        span.addEventListener('click', () => {
-                                deleteDocument(span.getAttribute('data-id'))
-                            }) // addEventListener
-                    }) // forEach
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, true)
-        xmlhttp.responseType = 'document'
-        xmlhttp.send()
-        return
-    } // selectScientificPapers
 
     //  create and append additional form controls for scientific papers documentation upload
     function addDocumentation() {
@@ -556,46 +502,11 @@
         return
     } // addDocumentation
 
-
-    // asynchronous script execution for scientific papers and documentation insertion 
-    function insertScientificPapers(e) {
-        // prevent default action of submitting scientific paper data    
-        e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            frm = new FormData(e.target)
-            // report on scientific papers selection
-        xmlhttp.addEventListener('load', () => {
-                // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/ScientificPapers/insert.php', true)
-        xmlhttp.send(frm)
-        return
-    } // insertScientificPapers
-
-    // asynchronous script execution for scientific paper data alteration 
-    function updateScientificPapers(e) {
-        // prevent default action of submitting scientific paper data    
-        e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            frm = new FormData(this)
-            // report on scientific paper update
-        xmlhttp.addEventListener('load', () => {
-                console.log(xmlhttp.responseText)
-                    // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                document.getElementById('rMdlBtn').click()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/ScientificPapers/update.php', true)
-        xmlhttp.send(frm)
-        return
-    } // updateScientificPapers
-
     /*
      *  modify form for scientific paper insertion or data alteration 
      *  @param frm
      */
-    function modifySPFrm(sPpr = null, action) {
+    function modifySPFrm(e, sPpr = null, action) {
         // store modal and form elements
         let mdl = document.getElementById('sPIUMdl'),
             frm = document.getElementById('sPFrm'),
@@ -614,12 +525,11 @@
                 }) // forEach
             frm.querySelector('#sPDocs').style.display = 'none'
                 // exchange callbacks
-            frm.removeEventListener('submit', insertScientificPapers)
+            frm.removeEventListener('submit', insertScientificPaper)
             frm.addEventListener('submit', updateScientificPapers)
             return
         } // if
         mdl.querySelector('.modal-header .modal-title').textContent = 'Dodajanje znanstvenega dela'
-        frm.querySelector('input[type=hidden]').name = 'id_attendances'
         frm.querySelector('#sPDocs').style.display = 'block'
             // enable documentation section form controls
         frm.querySelector('#sPDocs').querySelectorAll('input').forEach(ctlr => {
@@ -629,29 +539,142 @@
         inpts.forEach(inpt => {
                 inpt.value = ''
             }) // forEach
+        frm.querySelector('input[type=hidden]').name = 'id_attendances'
+        frm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
         frm.querySelector('input[type=submit]').value = 'Vstavi'
             // exchange callbacks
         frm.removeEventListener('submit', updateScientificPapers)
-        frm.addEventListener('submit', insertScientificPapers)
+        frm.addEventListener('submit', insertScientificPaper)
         return
     } // modifySPFrm
+
+    /*
+     *   asynchronous script execution for selection of scientific papers per student program attendance 
+     *   @param idAttendances
+     */
+    function selectScientificPapers(idAttendances) {
+        let xmlhttp = new XMLHttpRequest()
+            // report on scientific papers selection
+        xmlhttp.addEventListener('load', () => {
+                // compose node tree structure
+                fragment = xmlhttp.response
+                    // reflect body of a fragment into modals inner HTML    
+                document.getElementById('sPVMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
+                    // if anchors for scientific papers update are rendered
+                if (document.querySelectorAll('.sp-upd-а'))
+                    document.querySelectorAll('.sp-upd-а').forEach(anchor => {
+                        // fill form fields and modify the form
+                        anchor.addEventListener('click', () => {
+                                // report on scientific paper selection
+                                (xmlhttp = new XMLHttpRequest()).addEventListener('load', () => {
+                                        // return JSON of ScientificPapers object 
+                                        let sPpr = {
+                                                id_attendances: xmlhttp.response.id_attendances,
+                                                id_scientific_papers: xmlhttp.response.id_scientific_papers,
+                                                topic: xmlhttp.response.topic,
+                                                type: xmlhttp.response.type,
+                                                written: xmlhttp.response.written
+                                            } // scientific paper object
+                                        modifySPFrm(sPpr, 'update')
+                                    }) // addEventListener
+                                xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id')}`, true)
+                                xmlhttp.responseType = 'json'
+                                xmlhttp.send()
+                                    // assign a value to the hidden input type of scientific paper insertion form 
+                                document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
+                            }) // addEventListener
+                    }) // forEach
+                    // if anchors for scientific paper deletion are rendered
+                if (document.querySelectorAll('.sp-del-a'))
+                    document.querySelectorAll('.sp-del-a').forEach(anchor => {
+                        anchor.addEventListener('click', () => {
+                                deleteScientficPaper(anchor.getAttribute('data-id'))
+                            }) // addEventListener
+                    }) // forEach
+                    // if anchors for scientific paper documentation deletion are rendered
+                if (document.querySelectorAll('.doc-del-spn'))
+                    document.querySelectorAll('.doc-del-spn').forEach(span => {
+                        // delete particular document
+                        span.addEventListener('click', () => {
+                                deleteDocument(span.getAttribute('data-source'))
+                            }) // addEventListener
+                    }) // forEach
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, true)
+        xmlhttp.responseType = 'document'
+        xmlhttp.send()
+        return
+    } // selectScientificPapers
+
+    // asynchronous script execution for scientific papers and documentation insertion 
+    function insertScientificPaper(e) {
+        // prevent default action of submitting scientific paper data    
+        e.preventDefault()
+        let xmlhttp = new XMLHttpRequest,
+            frm = new FormData(this)
+            // report on scientific papers selection
+        xmlhttp.addEventListener('load', () => {
+                // report the result
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                rMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/ScientificPapers/insert.php', true)
+        xmlhttp.send(frm)
+        return
+    } // insertScientificPaper
+
+    // asynchronous script execution for scientific paper data alteration 
+    function updateScientificPapers(e) {
+        // prevent default action of submitting scientific paper data    
+        e.preventDefault()
+        let xmlhttp = new XMLHttpRequest,
+            frm = new FormData(this)
+            // report on scientific paper update
+        xmlhttp.addEventListener('load', () => {
+                console.log(xmlhttp.responseText)
+                    // report the result
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                rMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/ScientificPapers/update.php', true)
+        xmlhttp.send(frm)
+        return
+    } // updateScientificPapers
+
 
     /*
      *  asynchronous script execution for scientific paper documentation deletion    
      *  @param idDocuments  
      */
-    function deleteDocument(idDocument) {
+    function deleteDocument(source) {
         // instantiate XHR 
         let xmlhttp = new XMLHttpRequest
             // report on docuement deletion
         xmlhttp.addEventListener('load', () => {
-                console.log(xmlhttp.responseText)
-                    // report the result
+                // report the result
                 rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                document.getElementById('rMdlBtn').click()
+                rMdlBtn.click()
             }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Documents/delete.php?id_documents=${idDocument}`, true)
+        xmlhttp.open('GET', `/eArchive/Documents/delete.php?source=${source}`, true)
         xmlhttp.send()
         return
     } // deleteDocument
+
+    /*
+     *  asynchronous script execution for scientific paper deletion with its belonging documentation     
+     *  @param idScientificPapers
+     */
+    function deleteScientficPaper(idScientificPapers) {
+        // instantiate XHR interface object
+        let xmlhttp = new XMLHttpRequest
+            // report on the deletion
+        xmlhttp.addEventListener('load', () => {
+                // report the result
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                rMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`, true)
+        xmlhttp.send()
+        return
+    } // deleteScientificPaper
 })()
