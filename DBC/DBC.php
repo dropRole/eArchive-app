@@ -35,8 +35,6 @@ class DBC extends PDO
                         scientific_papers.*
                     FROM
                         scientific_papers
-                        LEFT JOIN documents
-                        USING(id_scientific_papers)
                     WHERE 
                         id_attendances = :id_attendances    ';
         try {
@@ -1050,7 +1048,7 @@ class DBC extends PDO
     *   @param DateTime $written
     *   @param string $type
     */
-    public function insertScientificPapers(int $id_attendances, string $topic, string $type, DateTime $written)
+    public function insertScientificPaper(int $id_attendances, string $topic, string $type, DateTime $written)
     {
         // action report
         $report = [
@@ -1090,7 +1088,7 @@ class DBC extends PDO
             $report['message'] = "Napaka: {$e->getMessage()}.";
         } // catch
         return $report;
-    } // insertScientificPapers
+    } // insertScientificPaper
 
     /*
     *   update scientific paper particulars
@@ -1129,17 +1127,18 @@ class DBC extends PDO
     } // updateScientificPapers
 
     /*
-    *   delete scientific paper particulars 
+    *   delete scientific paper and its belonging documents 
     *   @param int $id_scientific_papers
     */
-    public function deleteScientificPapers(int $id_scientific_papers)
+    public function deleteScientificPaper(int $id_scientific_papers)
     {
         // action report
         $report = '';
-        $stmt = '   DELETE FROM 
-                            scientific_papers 
-                        WHERE 
-                            id_scientific_papers = :id_scientific_papers ';
+        $report .= $this->deleteDocuments($id_scientific_papers);
+        $stmt = '   DELETE FROM
+                        scientific_papers 
+                    WHERE 
+                        id_scientific_papers = :id_scientific_papers    ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
@@ -1150,14 +1149,10 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
-        if ($prpStmt->rowCount()) {
-            $report .= 'Podatki o znanstvenem delu so uspešno izbrisani.';
-            $report .= $this->deleteDocuments($id_scientific_papers);
-        } // if
-        else
-            $report .= 'Podatki o znanstvenem delu niso uspešno izbrisani.';
-        return $report;
-    } // deleteScientificPapers
+        if ($prpStmt->rowCount() == 1)
+            return $report .= 'Znanstveno delo je uspešno izbrisano.';
+        return $report .= 'Znanstevno delo ni uspešno izbrisano.';
+    } // deleteScientificPaper
 
     /*
     *   insert partaking particulars 
@@ -1372,7 +1367,7 @@ class DBC extends PDO
     } // deleteMentorings
 
     /*
-    *   select scientific paper documentation
+    *   select scientific paper belonging document
     *   @param int id_scientific_papers
     */
     public function selectDocuments($id_scientific_papers)
@@ -1445,7 +1440,7 @@ class DBC extends PDO
                                 // prepare, bind params to and execute stmt
                                 $prpStmt = $this->prepare($stmt);
                                 $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
-                                $prpStmt->bindValue(':source', "/eArchive/{$destination}", PDO::PARAM_STR);
+                                $prpStmt->bindParam(':source', $destination, PDO::PARAM_STR);
                                 $prpStmt->bindValue(':published', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
                                 $prpStmt->bindValue(':version', $version, PDO::PARAM_STR);
                                 $prpStmt->execute();
@@ -1508,26 +1503,25 @@ class DBC extends PDO
     *   delete particular document of a scientific paper
     *   @param int $id_documents
     */
-    public function deleteDocument(int $id_documents)
+    public function deleteDocument(string $source)
     {
         $stmt = '   DELETE FROM 
                             documents
                     WHERE 
-                            id_documents = :id_documents    ';
+                            source = :source    ';
         try {
             // prepare, bind param to and execute stmt 
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindValue(':id_documents', $id_documents, PDO::PARAM_INT);
+            $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected and document deleted
-        if ($prpStmt->rowCount() == 1)
-            return 'Dokument je uspešno izbrisan.';
-        else
-            return 'Dokument ni uspešno izbrisan.';
+        // if single row is affected and document physically deleted
+        if ($prpStmt->rowCount() == 1 && unlink("../{$source}"))
+            return 'Dokument ' . basename($source) . ' je uspešno izbrisan.';
+        return 'Dokument ' . basename($source) . ' ni uspešno izbrisan.';
     } // deleteDocument
 
     /*
@@ -1538,26 +1532,9 @@ class DBC extends PDO
     {
         // action report
         $report = '';
-
-        $resultSet = [];
-        $stmt = '   SELECT 
-                        id_documents,
-                        source
-                    FROM 
-                        documents 
-                    WHERE 
-                        id_scientific_papers = :id_scientific_papers    ';
-        try {
-            // prepare, bind param to and execute stmt 
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
-            $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS, Documents::class, ['id_documents', 'id_scientific_papers', 'source', 'published', 'version']);
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        foreach ($resultSet as $document) {
+        // belonging documents of a scientific paper
+        $documents = $this->selectDocuments($id_scientific_papers);
+        foreach ($documents as $document) {
             $stmt = '   DELETE FROM 
                             documents
                         WHERE 
@@ -1567,10 +1544,12 @@ class DBC extends PDO
             $prpStmt->bindValue(':id_documents', $document->getIdDocuments(), PDO::PARAM_INT);
             $prpStmt->execute();
             // if single row is affected and document deleted
-            if ($prpStmt->rowCount() == 1 && unlink($document->getSource()))
-                $report .= 'Dokument' . basename($document->getSource()) . ' je uspešno izbrisan.' . PHP_EOL;
-            else
-                $report .= 'Dokument' . basename($document->getSource()) . ' ni uspešno izbrisan.' . PHP_EOL;
+            if ($prpStmt->rowCount() == 1 && unlink("../{$document->getSource()}")) {
+                $report .= 'Dokument ' . basename($document->getSource()) . ' je uspešno izbrisan.' . PHP_EOL;
+                continue;
+            } // if
+            $report .= 'Dokument ' . basename($document->getSource()) . ' ni uspešno izbrisan.' . PHP_EOL;
+            continue;
         } // foreach
         return $report;
     } // deleteDocuments          
