@@ -12,12 +12,12 @@ require_once '../Documents/Documents.php';
 // proceed with the session
 session_start();
 
-$id_documents = $_GET['id_documents'];
+$source = $_GET['source'];
 
-// if id of a document was passed
-if (isset($id_documents)) {
+// if document source was passed
+if (isset($source)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt a document deletion
-    echo $DBC->deleteDocument($id_documents);
+    echo $DBC->deleteDocument($source);
 } // if
