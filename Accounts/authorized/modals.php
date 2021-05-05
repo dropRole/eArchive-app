@@ -148,7 +148,7 @@
         <div class="modal-content"></div>
     </div>
 </div>
-<!-- Modal for scientific paper insertion or alteration -->
+<!-- Modal for scientific paper insertion or update -->
 <div class="modal fade" id="sPIUMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPIUMdl" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -161,11 +161,11 @@
             <div class="modal-body">
                 <form id="sPFrm">
                     <input type="hidden" name="id_attendances" value="">
-                    <div class="form-group">
-                        <label for="tInpt">Predmet</label>
-                        <input id="tInpt" class="form-control" type="text" name="topic" required>
-                    </div>
                     <div class="row">
+                        <div class="form-group col-12">
+                            <label for="tInpt">Predmet</label>
+                            <input id="tInpt" class="form-control" type="text" name="topic" required>
+                        </div>
                         <div class="form-group col-6">
                             <label for="tSlct">Vrsta</label>
                             <select id="tSlct" class="form-control" name="type">
