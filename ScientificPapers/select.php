@@ -35,6 +35,14 @@ if (isset($_GET['id_attendances'])) {
                     <h5 class="card-title"><?php echo $scientificPaper->topic; ?></h5>
                     <h6 class="card-subtitle mb-2 text-muted"><?php echo $scientificPaper->type; ?></h6>
                     <ul class="list-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="font-weight-bold">Dokumentacija</span>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="card-link float-right doc-ins-a" data-id="<?php echo $scientificPaper->id_scientific_papers; ?>" data-toggle="modal" data-target="#sPIUMdl">Naloži</a>
+                            </div>
+                        </div>
                         <?php
                         $documents = $DBC->selectDocuments($scientificPaper->id_scientific_papers);
                         // if there's evidence of the documentation
