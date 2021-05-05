@@ -51,7 +51,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         <td><?php echo $student->faculty; ?></td>
                         <td>
                             <a class="sp-vw-a" href="#sPVMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
-                            <a class="sp-ins-a" href="#sPIUMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Dodajanje</a>
+                            <a class="sp-ins-a" href="#sPIUMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                         </td>
                         <td><a href="#">Pregled</a></td>
                         <td>
