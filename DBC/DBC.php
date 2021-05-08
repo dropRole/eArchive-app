@@ -4,7 +4,7 @@ namespace DBC;
 
 // namespace import declaration
 
-use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Documents\Documents, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
+use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
 
 class DBC extends PDO
 {
@@ -856,7 +856,7 @@ class DBC extends PDO
                             // if document meets the condition 
                             if ($upload) {
                                 // set destination of the uploded file
-                                $dir = '../uploads/certificates/';
+                                $dir = 'uploads/certificates/';
                                 $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['certificate']['name'][$indx]);
                                 $stmt = '   INSERT INTO
                                                 certificates
@@ -874,7 +874,7 @@ class DBC extends PDO
                                 $prpStmt->bindValue(':issued', $issued->format('d-m-Y'), PDO::PARAM_STR);
                                 $prpStmt->execute();
                                 // if certificate was inserted into db and moved to a new destination  
-                                if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, $destination)) {
+                                if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
                                     $report = "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno vstavljen." . PHP_EOL;
                                     $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
                                     $stmt = '   INSERT INTO
@@ -982,6 +982,35 @@ class DBC extends PDO
         else
             return 'Napaka: podatki o zaključku študiranja ni uspešno izbrisan.';
     } // deleteGraduation
+
+    /*
+    *   select graduation certificate for given program attendance
+    *   @param int $id_attendances
+    */
+    public function selectCertificate($id_attendances)
+    {
+        $certificate = NULL;
+        $stmt = '   SELECT 
+                        id_certificates,
+                        source 
+                    FROM 
+                        certificates
+                        INNER JOIN graduations
+                        USING(id_certificates)
+                    WHERE
+                        id_attendances = :id_attendances  ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        $certificate = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued'])[0];
+        return $certificate;
+    } // selectCertificate
 
     /*
     *   update date of issuing 
