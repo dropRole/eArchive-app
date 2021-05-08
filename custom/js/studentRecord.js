@@ -14,6 +14,7 @@
         sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
         sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
         certIALst = document.querySelectorAll('.cert-ins-a'), // anchor list for certificate insertion
+        certVALst = document.querySelectorAll('.cert-vw-a'), // anchor list for certificate view
         aIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account generation
         aDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
         cSlct = document.getElementById('cSlct'), // country select input 
@@ -76,6 +77,12 @@
             anchor.addEventListener('click', e => {
                     certFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
                 }) //addEventListener
+        }) // forEach
+    certVALst.forEach(anchor => {
+            // view certificate particulars in a form of a card in the modal
+            anchor.addEventListener('click', () => {
+                    selectCertificate(anchor.getAttribute('data-id'))
+                }) // addEventListener
         }) // forEach
         // give hidden input type value of chosens document name
     docInpt.addEventListener('change', e => {
@@ -725,10 +732,7 @@
         return
     } // deleteScientificPaper
 
-    /*
-     *  asynchronous script execution for graduation certificate upload/insertion     
-     *  @param
-     */
+    // asynchronous script execution for graduation certificate upload/insertion     
     function insertCertificate(e) {
         // prevent default action of submitting certificate insertion form
         e.preventDefault()
@@ -744,5 +748,25 @@
         xmlhttp.open('POST', '/eArchive/Graduations/insert.php', true)
         xmlhttp.send(frmData)
         return
-    } // deleteScientificPaper
+    } // insertCertificate
+
+    /*
+     *  asynchronous script execution for graduation certificate selection    
+     *  @param idAttendance
+     */
+    function selectCertificate(idAttendances) {
+        // instantiate XHR interface object
+        let xmlhttp = new XMLHttpRequest
+            // report on the seletion
+        xmlhttp.addEventListener('load', () => {
+                // compose node tree structure
+                fragment = xmlhttp.response
+                    // reflect body of a fragment into modals inner HTML    
+                document.getElementById('certMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`, true)
+        xmlhttp.responseType = 'document'
+        xmlhttp.send()
+        return
+    } // selectCertificate
 })()
