@@ -153,7 +153,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Dodajanje znanstvenega dela</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Vstavljanje znanstvenega dela</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -199,6 +199,46 @@
                         </div>
                     </div>
                     <input class="btn btn-secondary float-right" type="submit" value="Dodaj">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for certificate view  -->
+<div id="certMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+<!-- Modal for certificate insertion or update -->
+<div class="modal fade" id="certIUMdl" tabindex="-1" role="dialog" aria-labelledby="exampleCertIUMdl" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Vstavljanje certifikata</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="certFrm">
+                    <input type="hidden" name="id_attendances" value="">
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <input type="hidden" name="certificate" value="">
+                            <label for="certInpt">Certifikat</label>
+                            <input id="certInpt" type="file" name="certificate[]" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="defInpt">Zagovarjan</label>
+                            <input id="defInpt" class="form-control" type="date" name="defended" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="issInpt">Izdan</label>
+                            <input id="issInpt" class="form-control" type="date" name="issued" required>
+                        </div>
+                    </div>
+                    <input class="btn btn-secondary float-right" type="submit" value="Vstavi">
                 </form>
             </div>
         </div>
