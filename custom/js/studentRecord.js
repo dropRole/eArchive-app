@@ -4,16 +4,18 @@
     var fragment = new DocumentFragment(), // minimal document object structure
         sIFrm = document.getElementById('sIFrm'), // student data insert form
         sPFrm = document.getElementById('sPFrm'), // scientific paper insert form
+        certFrm = document.getElementById('certFrm'), // certificate upload/insertion form
         sPFrmClone = sPFrm.cloneNode(true), // sPFrm clone node
         aMdl = document.getElementById('aMdl'), // account modal 
         rMdl = document.getElementById('rMdl'), // report modal 
         rMdlBtn = document.getElementById('rMdlBtn'), // button for report modal toggle
         aRBtn = document.getElementById('aRBtn'), // button for residence addition 
         aABtn = document.getElementById('aABtn'), // button for attendance addition
-        aIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account generation
-        aDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
         sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
         sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
+        certIALst = document.querySelectorAll('.cert-ins-a'), // anchor list for certificate insertion
+        aIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account generation
+        aDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
         cSlct = document.getElementById('cSlct'), // country select input 
         fSlct = document.getElementById('fSlct'), // faculty select input
         gCb = document.getElementById('gCb'), // graduation checkbox
@@ -25,6 +27,10 @@
         dLbl = 1 // documentation label counter
     sIFrm.addEventListener('submit', insertStudent)
     sPFrm.addEventListener('submit', insertScientificPaper)
+    certFrm.addEventListener('submit', insertCertificate)
+    certFrm.querySelector('input[type=file').addEventListener('change', () => {
+            certFrm.querySelector('input[name=certificate]').value = certFrm.querySelector('input[type=file]').files[0].name
+        }) // addEventListener
     aRBtn.addEventListener('click', addSojourn)
     aABtn.addEventListener('click', addAttendance)
         // propagate postal codes by country selection
@@ -63,6 +69,12 @@
             // modify form for scientific paper insertion
             anchor.addEventListener('click', e => {
                     modifySPFrm(e, null, 'insert')
+                }) //addEventListener
+        }) // forEach
+    certIALst.forEach(anchor => {
+            // assign an attendance id value to an upload forms hidden input type 
+            anchor.addEventListener('click', e => {
+                    certFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
                 }) //addEventListener
         }) // forEach
         // give hidden input type value of chosens document name
@@ -518,7 +530,7 @@
                 sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
                     // exchange listener callbacks 
                 frm.removeEventListener('submit', updateScientificPapers)
-                frm.removeEventListener('submit', uploadDocuments)
+                frm.removeEventListener('submit', insertDocuments)
                 frm.addEventListener('submit', insertScientificPaper)
                 break;
             case 'update':
@@ -533,7 +545,7 @@
                 frm.removeChild(frm.querySelector('#sPDocs'))
                     // exchange listener callbacks 
                 frm.removeEventListener('submit', insertScientificPaper)
-                frm.removeEventListener('submit', uploadDocuments)
+                frm.removeEventListener('submit', insertDocuments)
                 frm.addEventListener('submit', updateScientificPapers)
                 break;
             case 'upload':
@@ -551,7 +563,7 @@
                     // exchange listener callbacks 
                 frm.removeEventListener('submit', insertScientificPaper)
                 frm.removeEventListener('submit', updateScientificPapers)
-                frm.addEventListener('submit', uploadDocuments)
+                frm.addEventListener('submit', insertDocuments)
                 break;
         } // switch
         return
@@ -678,7 +690,7 @@
     } // deleteDocument
 
     //  asynchronous script execution for scientific paper documents upload    
-    function uploadDocuments(e) {
+    function insertDocuments(e) {
         // prevent default action by submitting upload form
         e.preventDefault()
             // instantiate XHR 
@@ -690,10 +702,10 @@
                 rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
                 rMdlBtn.click()
             }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Documents/upload.php', true)
+        xmlhttp.open('POST', '/eArchive/Documents/insert.php', true)
         xmlhttp.send(fData)
         return
-    } // uploadDocuments
+    } // insertDocuments
 
     /*
      *  asynchronous script execution for scientific paper deletion with its belonging documentation     
@@ -710,6 +722,27 @@
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`, true)
         xmlhttp.send()
+        return
+    } // deleteScientificPaper
+
+    /*
+     *  asynchronous script execution for graduation certificate upload/insertion     
+     *  @param
+     */
+    function insertCertificate(e) {
+        // prevent default action of submitting certificate insertion form
+        e.preventDefault()
+            // instantiate XHR interface object
+        let xmlhttp = new XMLHttpRequest,
+            frmData = new FormData(this)
+            // report on the deletion
+        xmlhttp.addEventListener('load', () => {
+                // report the result
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                rMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/Graduations/insert.php', true)
+        xmlhttp.send(frmData)
         return
     } // deleteScientificPaper
 })()
