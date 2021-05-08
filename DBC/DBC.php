@@ -991,8 +991,7 @@ class DBC extends PDO
     {
         $certificate = NULL;
         $stmt = '   SELECT 
-                        id_certificates,
-                        source 
+                        certificates.* 
                     FROM 
                         certificates
                         INNER JOIN graduations
