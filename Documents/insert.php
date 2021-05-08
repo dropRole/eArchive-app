@@ -19,7 +19,7 @@ $documents = $_POST['documents'];
 if (isset($id_scientific_papers, $documents)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
-    // upload each document
+    // insert and upload each document
     foreach($documents as $document){
         echo $DBC->insertDocument($id_scientific_papers, $document['version'], $document['name']);
     } // foreach
