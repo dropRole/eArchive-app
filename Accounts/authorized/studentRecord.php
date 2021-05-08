@@ -11,6 +11,7 @@ require_once '../../PostalCodes/PostalCodes.php';
 require_once '../../Countries/Countries.php';
 require_once '../../Faculties/Faculties.php';
 require_once '../../Programs/Programs.php';
+require_once '../../Certificates/Certificates.php';
 include_once '../../header.php';
 
 $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
@@ -53,7 +54,22 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             <a class="sp-vw-a" href="#sPVMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
                             <a class="sp-ins-a" href="#sPIUMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                         </td>
-                        <td><a href="#">Pregled</a></td>
+                        <td>
+                            <?php
+                            // if student possesses a certificate
+                            if ($DBC->selectCertificate($student->id_attendances) != NULL) {
+                            ?>
+                                <a class="cert-vw-a" href="#certMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
+                            <?php
+                            } // if
+                            // if student doesn't  possess a certificate
+                            if ($DBC->selectCertificate($student->id_attendances) == NULL) {
+                            ?>
+                                <a class="cert-ins-a" href="#certIUMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                            <?php
+                            } // if
+                            ?>
+                        </td>
                         <td>
                             <?php
                             // if assigned an account 
