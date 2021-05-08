@@ -5,9 +5,10 @@ namespace Certificates;
 // namespace and class import declaration
 
 use DateTime;
+use JsonSerializable;
 
 // table certificates class definition
-class Certificates
+class Certificates implements JsonSerializable
 {
 
     // encapsulation
@@ -27,6 +28,13 @@ class Certificates
         $this->source = $source;
         $this->issued = $issued;
     } // __construct
+
+    // implement jsonSerialize function
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    } // jsonSerialize
 
     /*
     *   set id of a certificate
