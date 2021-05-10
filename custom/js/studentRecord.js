@@ -763,10 +763,37 @@
                 fragment = xmlhttp.response
                     // reflect body of a fragment into modals inner HTML    
                 document.getElementById('certMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
+                    // if anchor element for certificate deletion is contained
+                if (document.getElementById('certMdl').querySelector('.modal-content').querySelector('.cert-del-a'))
+                    document.getElementById('certMdl').querySelector('.modal-content').querySelector('.cert-del-a').addEventListener('click', e => {
+                        deleteCertificate(e.target.getAttribute('data-att-id'), e.target.getAttribute('data-source'))
+                    }) // addEventListner
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`, true)
         xmlhttp.responseType = 'document'
         xmlhttp.send()
         return
     } // selectCertificate
+
+    /*
+     *  asynchronous script execution for graduation certificate deletion    
+     *  @param idAttendance
+     * *  @param idCertificates
+     */
+    function deleteCertificate(idAttendances, source) {
+        // instantiate XHR interface object
+        let xmlhttp = new XMLHttpRequest
+            // report on the seletion
+        xmlhttp.addEventListener('load', () => {
+                // report the result
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                rMdlBtn.click()
+            }) // addEventListener
+            // reflect body of a fragment into modals inner HTML    
+        document.getElementById('certMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
+        xmlhttp.open('GET', `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`, true)
+        xmlhttp.responseType = 'text'
+        xmlhttp.send()
+        return
+    } // deleteCertificate
 })()
