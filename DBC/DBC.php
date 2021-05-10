@@ -958,29 +958,39 @@ class DBC extends PDO
     *   @param int $id_attendances
     *   @param int $id_students
     */
-    public function deleteGraduation(int $id_attendances, int $id_certificates)
+    public function deleteGraduation(int $id_attendances, string $source)
     {
-        $stmt = '   DELETE FROM 
-                            graduations 
-                        WHERE 
-                            id_attendances = :id_attendance AND id_certificates = :id_certificates  ';
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_attendance', $id_attendances, PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_attendance', $id_certificates, PDO::PARAM_INT);
-            $prpStmt->execute();
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount()) {
-            $this->deleteCertificate($id_certificates);
-            return 'Podatki o zaključku študiranja so uspešno izbrisani.';
+        // if not already issuing a transaction
+        if (!$this->inTransaction()) {
+            try {
+                // initialize a new transaction
+                $this->beginTransaction();
+                $stmt = '   DELETE FROM
+                                graduations 
+                            WHERE 
+                                id_attendances = :id_attendances    ';
+                // prepare, bind param to and execute stmt
+                $prpStmt = $this->prepare($stmt);
+                $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+                $prpStmt->execute();
+                // if single row is affected
+                if ($prpStmt->rowCount() == 1) {
+                    // attempt graduation certificate deletion
+                    if ($this->deleteCertificate($source) && unlink("../{$source}")) {
+                        // committ the current transation
+                        $this->commit();
+                        return 'Podatki o maturi ter certifikat ' . basename($source) . ' so uspešno izbrisani.';
+                    } // if
+                    // roll back current transaction
+                    $this->rollBack();
+                } // if 
+                return 'Podatki o maturi ter certifiakt niso uspešno izbrisani.';
+            } // try
+            catch (PDOException $e) {
+                return "Napaka: {$e->getMessage()}.";
+            } // catch
         } // if
-        else
-            return 'Napaka: podatki o zaključku študiranja ni uspešno izbrisan.';
+        return 'Opozorilo: druga transakcija je v izvajanju.';
     } // deleteGraduation
 
     /*
@@ -1007,7 +1017,7 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        $certificate = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued'])[0];
+        $certificate = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued']);
         return $certificate;
     } // selectCertificate
 
@@ -1043,31 +1053,21 @@ class DBC extends PDO
 
     /*
     *   delete particular certificate 
-    *   @param int $id_certificates
+    *   @param string $source
     */
-    public function deleteCertificate(int $id_certificates)
+    public function deleteCertificate(string $source)
     {
-        // report
-        $report = '';
         $stmt = '   DELETE FROM
                         certificates 
                     WHERE 
-                        id_certificates = :id_certificates  ';
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
-            $prpStmt->execute();
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
+                        source = :source  ';
+        $prpStmt = $this->prepare($stmt);
+        $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
+        $prpStmt->execute();
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
-            $report .= 'Certifiakt je uspešno izbrisan.';
-        else
-            $report .= 'Certifiakt ni uspešno izbrisan.';
-        return $report;
+            return true;
+        return false;
     } // deleteCertificate
 
     /*
