@@ -24,7 +24,7 @@
         $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
         // insertion report
         $sRprt = $DBC->insertStudent($id_postal_codes, $name, $surname, $email, $telephone, $residences);
-        echo $sRprt['message'];
+        echo $sRprt['message'] . PHP_EOL;
         // if insertion is successful
         if ($sRprt['id_students']) {
             // attendance counter
@@ -34,12 +34,15 @@
                 $aRprt = $DBC->insertAttendances($sRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
                 // if insretion isn't successful
                 if (!$aRprt['id_attendances'])
-                    echo "Napaka: {$i}. študijski program ni uspešno vstavljen.";
+                    echo "Napaka: {$i}. študijski program ni uspešno vstavljen." . PHP_EOL;
                 // if insertion is successful
                 if ($aRprt['id_attendances']) {
                     echo "{$i}. študijski program je uspešno vstavljen." . PHP_EOL;
-                    $gRprt = $DBC->insertGraduation($aRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['issued'])), (new DateTime($attendance['defended'])));
-                    echo $gRprt;
+                    // if student graduated
+                    if (isset($attendance['certficate'])) {
+                        $gRprt = $DBC->insertGraduation($aRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['issued'])), (new DateTime($attendance['defended'])));
+                        echo $gRprt . PHP_EOL;
+                    } // if
                 } // if 
                 $i++;
             } // foreach
