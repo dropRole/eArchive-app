@@ -86,6 +86,9 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             } // else
                             ?>
                         </td>
+                        <td>
+                            <a class="stu-upd-a" href="#studentMdl" data-toggle="modal" data-id="<?php echo $student->id_students; ?>">Uredi</a>
+                        </td>
                     </tr>
                 <?php
                 } // foreach
