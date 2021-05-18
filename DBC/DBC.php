@@ -429,14 +429,104 @@ class DBC extends PDO
     } // selectStudentsByIndex 
 
     /*
-    *   select postal codes of given country 
+    *   select particulars of a student
+    *   @param int $id_students
+    */
+    public function selectStudent($id_students)
+    {
+        $student = [
+            'particulars' => NULL,
+            'permResidence' => NULL,
+            'tempResidence' => []
+        ];
+        $stmt = '   SELECT 
+                        students.*,
+                        id_countries
+                    FROM
+                        students
+                        INNER JOIN postal_codes
+                        USING(id_postal_codes)
+                    WHERE 
+                        id_students = :id_students  ';
+        $stmt2 = '  SELECT 
+                        id_residences,
+                        id_postal_codes,
+                        id_countries,
+                        address,
+                        status
+                    FROM
+                        residences
+                        INNER JOIN postal_codes
+                        USING(id_postal_codes)
+                    WHERE 
+                        id_students = :id_students
+                    ORDER BY 
+                        status ';
+        try {
+            // prepare, bind params to and execute stmts
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt2 = $this->prepare($stmt2, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt2->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->execute();
+            $prpStmt2->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if student particulars and merely one permanent residence were fetched    
+        if ($prpStmt->rowCount() == 1 && $prpStmt2->rowCount() >= 0) {
+            $student['particulars'] = $prpStmt->fetch(PDO::FETCH_ASSOC);
+            foreach ($prpStmt2->fetchAll(PDO::FETCH_ASSOC) as $residence) {
+                // designate residence according to its status
+                if ($residence['status'] == 'STALNO')
+                    $student['permResidence'] = $residence;
+                else
+                    array_push($student['tempResidence'], $residence);
+            } // foreach
+        } // if
+        return json_encode($student);
+    } // selectStudent
+
+    /*
+    *   check if student resides at 
+    *   @param int id_students
+    */
+    private function checkIfResides(int $id_students, int $id_postal_codes)
+    {
+        $stmt = '   SELECT 
+                        TRUE 
+                    FROM 
+                        residences
+                    WHERE 
+                        id_students = :id_students AND id_postal_codes = :id_postal_codes   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_postal_codes', $id_postal_codes, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1)
+            return true;
+        return false;
+    } // checkIfResides
+
+    /*
+    *   select postal codes of the given country 
     *   @param int $id_countries
     */
     public function selectPostalCodes(int $id_countries)
     {
         $resultSet = [];
         $stmt = '   SELECT 
-                        * 
+                        id_postal_codes,
+                        municipality,
+                        code 
                     FROM 
                         postal_codes    
                     WHERE 
@@ -446,11 +536,13 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam('id_countries', $id_countries, PDO::PARAM_INT);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, PostalCodes::class, ['id_postal_codes', 'id_countries', 'municipality', 'code']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // is single or more rows are affected
+        if ($prpStmt->rowCount() >= 1)
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, PostalCodes::class, ['id_postal_codes', 'id_countries', 'municipality', 'code']);
         return $resultSet;
     } // selectPostalCodes
 
@@ -473,6 +565,33 @@ class DBC extends PDO
         } // catch
         return $resultSet;
     } // selectCountries
+
+    /*
+    *   delete given student residence 
+    *   @param int $id_students
+    *   @param int $id_residences
+    */
+    public function deleteStudentResidence($id_students, $id_residences)
+    {
+        $stmt = '   DELETE FROM
+                        residences
+                    WHERE 
+                        id_students = :id_students AND id_residences = :id_residences   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_residences', $id_residences, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            return "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1)
+            return 'Bivališče je uspešno izbrisano.';
+        return 'Bivališče ni uspešno izbrisano.';
+    } // deleteStudentResidence
 
     public function selectFaculties()
     {
@@ -637,16 +756,15 @@ class DBC extends PDO
     *   @param string $telephone
     *   @param array $residences
     */
-    public function updateStudent(int $id_students, int $id_postal_codes, int $id_accounts, string $name, string $surname, string $email = NULL, string $telephone = NULL, $residences = [])
+    public function updateStudent(int $id_students, int $id_postal_codes, string $name, string $surname, string $email = NULL, string $telephone = NULL, $residences = [])
     {
-        // result
+        // report on action
         $report = '';
         $stmt = '   UPDATE 
                         students 
                     SET
                         id_postal_codes = :id_postal_codes,
-                        id_accounts = :id_accounts, 
-                        name = :name, 
+                        name = :name,   
                         surname = :surname, 
                         email = :email, 
                         telephone = :telephone
@@ -655,53 +773,115 @@ class DBC extends PDO
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindValue(':id_students', $id_students, PDO::PARAM_INT);
-            $prpStmt->bindValue(':id_postal_codes', $id_postal_codes, PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_accounts', $id_accounts, PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_postal_codes', $id_postal_codes, PDO::PARAM_INT);
             $prpStmt->bindParam(':name', $name, PDO::PARAM_STR);
             $prpStmt->bindParam(':surname', $surname, PDO::PARAM_STR);
             $prpStmt->bindParam(':email', $email, PDO::PARAM_STR);
             $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
+            return "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
-        if ($prpStmt->rowCount() == 1) {
-            $report .= 'Osnovni podatki študenta uspešno ažurirani.' . PHP_EOL;
-            $i = 1; // counter
-            foreach ($residences as $residence) {
-                $stmt = '   UPDATE 
+        if ($prpStmt->rowCount() == 1)
+            $report = 'Osnovni podatki študenta so uspešno posodobljeni.' . PHP_EOL;
+        else
+            $report = 'Osnovni podatki študenta niso uspešno posodobljeni.' . PHP_EOL;
+
+        return ($report .= $this->updateStudentResidences($id_students, $residences));
+    } // updateStudent
+
+    /*
+    *   insert student temporal residence
+    *   @param int $id_students
+    *   @param Array $residence
+    */
+    private function insertStudentTemporalResidence(int $id_students, Array $residence)
+    {
+        $stmt = '   INSERT INTO
+                        residences
+                    (
+                        id_postal_codes,
+                        id_students,
+                        address,
+                        status
+                    )
+                    VALUES(
+                        :id_postal_codes,
+                        :id_students,
+                        :address,
+                        :status
+                    )   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
+            $prpStmt->bindValue(':status', 'ZAČASNO', PDO::PARAM_STR);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            return "Napaka {$e->getMessage()}.";
+        } // catch
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1)
+            return 'so uspešno vstavljeni.' . PHP_EOL;
+        return 'niso uspešno vstavljeni.' . PHP_EOL;
+    } // insertStudentTemporalResidence
+
+    /*
+    *   update permanent and temporal residence of a student 
+    *   @param int $id_students
+    *   @param Array $residences
+    */
+    private function updateStudentResidences(int $id_students, array $residences)
+    {
+        // action report 
+        $report = '';
+        // flag for permament residence
+        $permanent = TRUE;
+        // temporal residences counter
+        $i = 1;
+        foreach ($residences as $residence) {
+            // check whether student resides
+            if ($this->checkIfResides($id_students, $residence['id_postal_codes'])) {
+                $stmt = '   UPDATE
                                 residences
                             SET 
                                 id_postal_codes = :id_postal_codes,
-                                address = :address,
-                                status = :status
+                                address = :address
                             WHERE 
-                                id_students = :id_students  ';
+                                id_students = :id_students AND id_residences = :id_residences  ';
                 try {
                     // prepare, bind params to and execute stmt
                     $prpStmt = $this->prepare($stmt);
-                    $prpStmt->bindParam(':id_postal_codes', $residences['id_postal_codes'], PDO::PARAM_INT);
+                    $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
+                    $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
                     $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-                    $prpStmt->bindParam(':address', $residences['address'], PDO::PARAM_STR);
-                    $prpStmt->bindParam(':status', $residences['status'], PDO::PARAM_STR);
+                    $prpStmt->bindValue(':id_residences', $residence['id_residences'], PDO::PARAM_INT);
                     $prpStmt->execute();
                 } // try
                 catch (PDOException $e) {
-                    echo "Napaka: $e->getMessage().";
+                    return "Napaka: {$e->getMessage()}." . PHP_EOL;
                 } // catch
-                // if single row is affected 
+                // if single row is affected
                 if ($prpStmt->rowCount() == 1)
-                    $report .= "Podatki o {$i}. bivališču so uspešno ažurirani.";
-                else
-                    $report .= "Podatki o {$i}. bivališču niso uspešno ažurirani.";
-            } // foreach         
-        } // if
-        else
-            return 'Napaka: osnovni podakti študenta ter podatki o bivališču niso uspešno ažurirani.' . PHP_EOL;
-    } // updateStudent
+                    if (!$permanent) {
+                        $report .= "Podatki o {$i}. začasnem bivališču so uspešno posodobljeni." . PHP_EOL;
+                        $i++;
+                    } // if
+                    else {
+                        $report = 'Podatki o stalnem prebivališču so uspešno posodobljeni.' . PHP_EOL;
+                        $permanent = FALSE;
+                    } // else
+            } else
+                $report .= "Podatki o {$i}. začasnem bivališču {$this->insertStudentTemporalResidence($id_students,$residence)}";
+        } // foreach
+        return $report;
+    } // updateStudentResidences
 
     /*
     *   delete all student data  
