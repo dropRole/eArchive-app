@@ -1,43 +1,43 @@
-<!--Modal for student data insertion -->
-<div id="sMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<!--Modal for student data insertion and update -->
+<div id="studentMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="sIFrm">
+            <form id="studentIUFrm">
                 <p class="h4 pt-2 px-3">Osnovni podatki</p>
                 <div id="fundamentals" class="row px-3">
                     <div class="form-group col-6">
-                        <label for="nInpt">Ime</label>
-                        <input id="nInpt" class="form-control" type="text" name="name" required>
+                        <label for="nameInpt">Ime</label>
+                        <input id="nameInpt" class="form-control" type="text" name="name" required>
                     </div>
                     <div class="form-group col-6">
-                        <label for="sInpt">Priimek</label>
-                        <input id="sInpt" class="form-control" type="text" name="surname" required>
+                        <label for="surnameInpt">Priimek</label>
+                        <input id="surnameInpt" class="form-control" type="text" name="surname" required>
                     </div>
                     <div class="form-group col-6">
-                        <label for="emInpt">E-naslov</label>
-                        <input id="emInpt" class="form-control" type="email" name="email">
+                        <label for="emailInpt">E-naslov</label>
+                        <input id="emailInpt" class="form-control" type="email" name="email">
                     </div>
                     <div class="form-group col-6">
-                        <label for="tInpt">Telefon</label>
-                        <input id="tInpt" class="form-control" type="text" name="telephone">
+                        <label for="telephoneInpt">Telefon</label>
+                        <input id="telephoneInpt" class="form-control" type="text" name="telephone">
                     </div>
                     <p class="h6 col-12">Rojen</p>
                     <div class="form-group col-6">
-                        <label for="cSlct">Država</label>
-                        <select id="cSlct" class="form-control" data-target="pCSlct">
+                        <label for="bCoutrySlct">Država</label>
+                        <select id="bCountrySlct" class="form-control country-select"  data-target="bPCSlct">
                             <?php
                             $countries = $DBC->selectCountries();
-                            foreach ($countries as $id_countries) {
+                            foreach ($countries as $country) {
                             ?>
-                                <option value="<?php echo $id_countries->getIdCountries(); ?>"><?php echo "{$id_countries->getName()}({$id_countries->getISO3Code()})"; ?></option>
+                                <option value="<?php echo $country->getIdCountries(); ?>"><?php echo "{$country->getName()}({$country->getISO3Code()})"; ?></option>
                             <?php
                             } // foreach
                             ?>
                         </select>
                     </div>
                     <div class="form-group col-6">
-                        <label for="pCSlct">Kraj</label>
-                        <select id="pCSlct" class="form-control" name="id_postal_codes" required>
+                        <label for="bPCSlct">Kraj</label>
+                        <select id="bPCSlct" class="form-control" name="id_postal_codes" required>
                             <?php
                             $postalCodes = $DBC->selectPostalCodes($DBC->selectCountries()[0]->getIdCountries());
                             foreach ($postalCodes as $postalCode) {
@@ -56,8 +56,8 @@
                     <div class="row">
                         <p class="col-12 h6">Stalno prebivališče</p>
                         <div class="form-group col-4">
-                            <label for="cSlct1">Država</label>
-                            <select id="cSlct1" class="form-control" data-target="pCSlct1">
+                            <label for="PRCountrySlct">Država</label>
+                            <select id="PRCountrySlct" class="form-control country-select" data-target="PRPCSlct">
                                 <?php
                                 $countries = $DBC->selectCountries();
                                 foreach ($countries as $id_countries) {
@@ -69,8 +69,8 @@
                             </select>
                         </div>
                         <div class="form-group col-4">
-                            <label for="pCSlct1">Kraj</label>
-                            <select id="pCSlct1" class="form-control" name="residences[0][id_postal_codes]" required>
+                            <label for="PRPCSlct">Kraj</label>
+                            <select id="PRPCSlct" class="form-control" name="residences[0][id_postal_codes]" required>
                                 <?php
                                 $postalCodes = $DBC->selectPostalCodes($DBC->selectCountries()[0]->getIdCountries());
                                 foreach ($postalCodes as $postalCode) {
@@ -82,21 +82,21 @@
                             </select>
                         </div>
                         <div class="form-group col-4">
-                            <label for="aInpt">Naslov</label>
-                            <input id="aInpt" class="form-control" type="text" name="residences[0][address]" required>
+                            <label for="PRAddressInpt">Naslov</label>
+                            <input id="PRAddressInpt" class="form-control" type="text" name="residences[0][address]" required>
                         </div>
                     </div>
                     <div class="d-flex justify-content-center col-12">
-                        <button id="aRBtn" class="btn btn-secondary" type="button">&plus;</button>
+                        <button id="addTRBtn" class="btn btn-secondary" type="button">&plus;</button>
                     </div>
                 </div>
                 <div id="attendances" class="px-3 pb-3">
                     <p class="h4 pt-2">Podatki o študiranju</p>
-                    <div id="rDiv" class="row">
+                    <div class="row">
                         <p class="col-12 h6">1. študijski program</p>
                         <div class="form-group col-6">
-                            <label for="fSlct">Fakulteta</label>
-                            <select id="fSlct" class="form-control" name="attendances[0][id_faculties]" required>
+                            <label for="facultySlct">Fakulteta</label>
+                            <select id="facultySlct" class="form-control" name="attendances[0][id_faculties]" required>
                                 <?php
                                 $faculties = $DBC->selectFaculties();
                                 foreach ($faculties as $faculty) {
@@ -108,8 +108,8 @@
                             </select>
                         </div>
                         <div class="form-group col-6">
-                            <label for="pSlct">Program(polje, stopnja, trajanje)</label>
-                            <select id="pSlct" class="form-control" name="attendances[0][id_programs]" required>
+                            <label for="programSlct">Program(polje, stopnja, trajanje)</label>
+                            <select id="programSlct" class="form-control" name="attendances[0][id_programs]" required>
                                 <?php
                                 $programs = $DBC->selectPrograms($DBC->selectFaculties()[0]->getIdFaculties());
                                 foreach ($programs as $program) {
@@ -121,20 +121,20 @@
                             </select>
                         </div>
                         <div class="form-group col-4">
-                            <label for="enInpt">Vpisan</label>
-                            <input id="enInpt" class="form-control" type="date" name="attendances[0][enrolled]" required>
+                            <label for="enrolledInpt">Vpisan</label>
+                            <input id="enrolledInpt" class="form-control" type="date" name="attendances[0][enrolled]" required>
                         </div>
                         <div class="form-group col-4">
-                            <label for="iInpt">Indeks</label>
-                            <input id="iInpt" class="form-control" type="text" name="attendances[0][index]" required>
+                            <label for="indexInpt">Indeks</label>
+                            <input id="indexInpt" class="form-control" type="text" name="attendances[0][index]" required>
                         </div>
                         <div class="d-flex align-items-center justify-content-center form-group col-4">
-                            <input id="gCb" class="mr-2" type="checkbox" data-counter="" data-index="0">
-                            <label class="mt-2" for="gCb">Diplomiral</label>
+                            <input id="graduationCB" class="mr-2" type="checkbox" data-counter="" data-index="0">
+                            <label class="mt-2" for="graduationCB">Diplomiral</label>
                         </div>
                     </div>
                     <div class="d-flex justify-content-center col-12">
-                        <button id="aABtn" class="btn btn-secondary" type="button">&plus;</button>
+                        <button id="addAttendanceBtn" class="btn btn-secondary" type="button">&plus;</button>
                     </div>
                 </div>
                 <input class="btn btn-warning offset-5 col-2 my-2" type="submit" value="Vstavi">
