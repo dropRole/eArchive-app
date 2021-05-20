@@ -48,7 +48,7 @@ class DBC extends PDO
         } // catch
         // if single or more rows are affected
         if ($prpStmt->rowCount() >= 1)
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         return $resultSet;
     } // selectScientificPapers
 
@@ -567,11 +567,11 @@ class DBC extends PDO
     } // selectCountries
 
     /*
-    *   delete given student residence 
+    *   delete the given student temporal residence 
     *   @param int $id_students
     *   @param int $id_residences
     */
-    public function deleteStudentResidence($id_students, $id_residences)
+    public function deleteStudentTemporalResidence($id_students, $id_residences)
     {
         $stmt = '   DELETE FROM
                         residences
@@ -591,7 +591,7 @@ class DBC extends PDO
         if ($prpStmt->rowCount() == 1)
             return 'Bivališče je uspešno izbrisano.';
         return 'Bivališče ni uspešno izbrisano.';
-    } // deleteStudentResidence
+    } // deleteStudentTemporalResidence
 
     public function selectFaculties()
     {
@@ -794,11 +794,63 @@ class DBC extends PDO
     } // updateStudent
 
     /*
+    *   delete all data related to a particular program attendance by student 
+    *   @param int $id_students 
+    */
+    public function deleteStudent(int $id_students, int $id_attendances)
+    {
+        // deletion report 
+        $report = '';
+        // if transaction with the server isn't already running
+        if (!$this->inTransaction()) {
+            try {
+                // begin a new transaction
+                $this->beginTransaction();
+                $this->deleteStudentResidences($id_students);
+                // if graduated, select certificate and delete it
+                $certificate = $this->selectCertificate($id_attendances);
+                if ($certificate)
+                    $this->deleteGraduation($id_attendances, $certificate['source']);
+                // if any scientific paper was written, delete it 
+                $scientificPapers = $this->selectScientificPapers($id_attendances);
+                if (count($scientificPapers) >= 1)
+                    foreach ($scientificPapers as $scientificPaper) {
+                        $this->deleteScientificPaper($scientificPaper->getIdScientificPapers());
+                    } // foreach
+                // if account was granted to, delete if
+                if ($this->checkStudentAccount($id_attendances))
+                    $this->deleteStudentAccount($id_attendances);
+                $this->deleteStudentProgramAttendance($id_attendances);
+                $stmt = '   DELETE FROM
+                                students
+                            WHERE 
+                                id_students = :id_students  ';
+                $prpStmt = $this->prepare($stmt);
+                $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+                $prpStmt->execute();
+            } // try
+            catch (PDOException $e) {
+                return "Napaka: {$e->getMessage()}.";
+            } // catch
+            // if single row is affected
+            if ($prpStmt->rowCount() == 1)
+                // if transaction was committed with success
+                if ($this->commit())
+                    return 'Podatki o študentu ter znanstvenih dosežkih so uspešno izbrisani.';
+                else
+                    $this->rollBack();
+            return 'Podatki o študentu ter znanstvenih dosežkih niso uspešno izbrisani.';
+        } // if
+        else
+            return 'Opomba: transakcija s podatkovno zbirko je že v izvajanju.';
+    } // deleteStudent
+
+    /*
     *   insert student temporal residence
     *   @param int $id_students
     *   @param Array $residence
     */
-    private function insertStudentTemporalResidence(int $id_students, Array $residence)
+    private function insertStudentTemporalResidence(int $id_students, array $residence)
     {
         $stmt = '   INSERT INTO
                         residences
@@ -884,12 +936,19 @@ class DBC extends PDO
     } // updateStudentResidences
 
     /*
-    *   delete all student data  
-    *   @param int $id_students 
+    *   delete all of student residences
+    *   @param int $id_students
     */
-    public function deleteStudent(int $id_students)
+    private function deleteStudentResidences(int $id_students)
     {
-    } // deleteStudent
+        $stmt = '   DELETE FROM 
+                        residences
+                    WHERE 
+                        id_students = :id_students  ';
+        $prpStmt = $this->prepare($stmt);
+        $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+        $prpStmt->execute();
+    } // deleteStudentResidences
 
     /*
     *   insert attendance of a student
@@ -983,15 +1042,15 @@ class DBC extends PDO
     } // updateAttendaces
 
     /*
-    *   delete attendance of a student
+    *   delete program attendance of a student
     *   @param int $id_attendances
     */
-    public function deleteAttendances(int $id_attendances)
+    public function deleteStudentProgramAttendance(int $id_attendances)
     {
         $stmt = '   DELETE FROM 
-                                attendances 
-                            WHERE 
-                                id_attendances = :id_attendances  ';
+                        attendances 
+                    WHERE 
+                        id_attendances = :id_attendances  ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
@@ -1003,10 +1062,9 @@ class DBC extends PDO
         } // catch
         // if single row is affected
         if ($prpStmt->rowCount() == 1)
-            return 'Podatki o študiranju so uspešno izbrisani.';
-        else
-            return 'Podakti o študiranju niso uspešno izbrisani.';
-    } // deleteAttendances
+            return 'Podatki o poteku izobraževanja na danem študijskem programu so uspešno izbrisani.';
+        return 'Podatki o poteku izobraževanja na danem študijskem programu niso uspešno izbrisani.';
+    } // deleteStudentProgramAttendance
 
     /*
     *   insert graduation of a student
@@ -1955,7 +2013,7 @@ class DBC extends PDO
     *   delete student account 
     *   @param int $id_accounts
     */
-    public function deleteAccount($id_attendances)
+    public function deleteStudentAccount($id_attendances)
     {
         $stmt = '   DELETE FROM 
                         accounts
@@ -1974,6 +2032,6 @@ class DBC extends PDO
         if ($prpStmt->rowCount() == 1)
             return 'Račun je uspešno izbrisan.';
         return 'Račun ni uspešno izbrisan.';
-    } // deleteAccount
+    } // deleteStudentAccount
 
 } // DBC
