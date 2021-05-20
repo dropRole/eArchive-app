@@ -21,7 +21,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     <p class="h2">Evidenca študentov</p>
     <div class="d-flex justify-content-end mr-3">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="
-        #sMdl">Vstavi študenta</button>
+        #studentMdl">Vstavi študenta</button>
         <button id="rMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#rMdl"></button>
     </div>
     <div class="table-responsive mt-3">
@@ -88,6 +88,9 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         </td>
                         <td>
                             <a class="stu-upd-a" href="#studentMdl" data-toggle="modal" data-id="<?php echo $student->id_students; ?>">Uredi</a>
+                        </td>
+                        <td>
+                            <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>">Izbriši</a>
                         </td>
                     </tr>
                 <?php
