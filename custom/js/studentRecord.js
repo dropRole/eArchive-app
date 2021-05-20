@@ -37,11 +37,11 @@
         }) // forEach
         // propagate programs by faculty selection
     facultySlct.addEventListener('change', e => {
-            propagateSelectElement(document.getElementById('pSlct'), `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
+            propagateSelectElement(document.getElementById('programSlct'), `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
         }) // addEventListener
         // append graduation section if graduated
     graduationCB.addEventListener('change', e => {
-            addGraduation(e, document.getElementById('rDiv'))
+            addGraduation(e, document.querySelector('#attendances .row'))
         }) // addEventListener
         // give hidden input type value of chosens document name
     docInpt.addEventListener('change', e => {
@@ -49,30 +49,31 @@
         }) // addEventListener        
         // attach listeners to student evidence table elements  
     function attachTableListeners() {
-        let sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
-            sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
+        let SPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
+            SPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
             certIALst = document.querySelectorAll('.cert-ins-a'), // anchor list for certificate insertion
             certVALst = document.querySelectorAll('.cert-vw-a'), // anchor list for certificate view
-            aIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account generation
-            aDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
-            sUALst = document.querySelectorAll('.stu-upd-a') // anchor list for student data update
-        aIBtnLst.forEach(btn => {
+            accIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account generation
+            accDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
+            stuUALst = document.querySelectorAll('.stu-upd-a'), // anchor list for student data update
+            stuDALst = document.querySelectorAll('.stu-del-a') // anchor list for student data deletion
+        accIBtnLst.forEach(btn => {
                 // populate modals body with created account insert form 
                 btn.addEventListener('click', createAccountForm) //addEventListener
             }) // forEach
-        aDBtnLst.forEach(btn => {
+        accDBtnLst.forEach(btn => {
                 // delete particular account 
                 btn.addEventListener('click', () => {
                         deleteAccount(btn.getAttribute('data-id'))
                     }) //addEventListener
             }) // forEach
-        sPVALst.forEach(anchor => {
+        SPVALst.forEach(anchor => {
                 // preview scientific papers   
                 anchor.addEventListener('click', () => {
                         selectScientificPapers(anchor.getAttribute('data-id'))
                     }) //addEventListener
             }) // forEach
-        sPIALst.forEach(anchor => {
+        SPIALst.forEach(anchor => {
                 // modify form for scientific paper insertion
                 anchor.addEventListener('click', e => {
                         modifySPFrm(e, null, 'insert')
@@ -90,10 +91,18 @@
                         selectCertificate(anchor.getAttribute('data-id'))
                     }) // addEventListener
             }) // forEach
-        sUALst.forEach(anchor => {
+        stuUALst.forEach(anchor => {
                 // propagate update form with student particulars
                 anchor.addEventListener('click', e => {
                         selectStudent(e, anchor.getAttribute('data-id'))
+                    }) // addEventListener
+            }) // forEach
+        stuDALst.forEach(anchor => {
+                // delete student from the student evidence table
+                anchor.addEventListener('click', () => {
+                        // if record deletion was confirmed
+                        if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
+                            deleteStudent(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
                     }) // addEventListener
             }) // forEach
     } // attachTableListeners
@@ -180,17 +189,17 @@
     } // addResidence
 
     // propagate select control with suitable options
-    function propagateSelectElement(postalCodeSlct, script) {
+    function propagateSelectElement(select, script) {
         let xmlhttp = new XMLHttpRequest()
         xmlhttp.addEventListener('load', () => {
                 fragment = xmlhttp.response
                     // remove options while on disposal
-                while (postalCodeSlct.options.length) {
-                    postalCodeSlct.remove(0)
+                while (select.options.length) {
+                    select.remove(0)
                 } // while
                 // traverse through nodes 
                 fragment.body.querySelectorAll('option').forEach(element => {
-                        postalCodeSlct.add(element)
+                        select.add(element)
                     }) // forEach
             }) // addEventListener
         xmlhttp.open('GET', script)
@@ -427,6 +436,25 @@
         xmlhttp.responseType = 'text'
         xmlhttp.send(fData)
     } // updateStudent
+
+    /*
+     *   delete overall student data
+     *   @param Number idStudents
+     *   @param Number idAttendances
+     */
+
+    function deleteStudent(idStudents, idAttendances) {
+        let xmlhttp = new XMLHttpRequest
+            // report on deletion
+        xmlhttp.addEventListener('load', () => {
+                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                rMdlBtn.click()
+                refreshStudentsTable()
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`, true)
+        xmlhttp.responseType = 'text'
+        xmlhttp.send()
+    } // deleteStudent
 
     // refresh students evidence table upon latterly data amendmantion 
     function refreshStudentsTable() {
