@@ -80,6 +80,9 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                 <td>
                     <a class="stu-upd-a" href="#" data-id="<?php echo $student->id_students; ?>">Uredi</a>
                 </td>
+                <td>
+                    <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>">Izbriši</a>
+                </td>
             </tr>
         <?php
         } // foreach
