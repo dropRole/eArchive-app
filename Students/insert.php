@@ -39,7 +39,7 @@
                 if ($aRprt['id_attendances']) {
                     echo "{$i}. študijski program je uspešno vstavljen." . PHP_EOL;
                     // if student graduated
-                    if (isset($attendance['certficate'])) {
+                    if (isset($attendance['certificate'])) {
                         $gRprt = $DBC->insertGraduation($aRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['issued'])), (new DateTime($attendance['defended'])));
                         echo $gRprt . PHP_EOL;
                     } // if
