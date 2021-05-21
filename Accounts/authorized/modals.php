@@ -2,7 +2,7 @@
 <div id="studentMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="studentIUFrm">
+            <form id="studentFrm">
                 <p class="h4 pt-2 px-3">Osnovni podatki</p>
                 <div id="fundamentals" class="row px-3">
                     <div class="form-group col-6">
@@ -24,7 +24,7 @@
                     <p class="h6 col-12">Rojen</p>
                     <div class="form-group col-6">
                         <label for="bCountrySlct">Država</label>
-                        <select id="bCountrySlct" class="form-control country-select"  data-target="bPCSlct">
+                        <select id="bCountrySlct" class="form-control country-select" data-target="bPCSlct">
                             <?php
                             $countries = $DBC->selectCountries();
                             foreach ($countries as $country) {
@@ -129,7 +129,7 @@
                             <input id="indexInpt" class="form-control" type="text" name="attendances[0][index]" required>
                         </div>
                         <div class="d-flex align-items-center justify-content-center form-group col-4">
-                            <input id="graduationCB" class="mr-2" type="checkbox" data-counter="" data-index="0">
+                            <input id="graduationCB" class="mr-2" type="checkbox" data-indx="0" data-lbl-num="0">
                             <label class="mt-2" for="graduationCB">Diplomiral</label>
                         </div>
                     </div>
@@ -148,8 +148,8 @@
         <div class="modal-content"></div>
     </div>
 </div>
-<!-- Modal for scientific paper insertion or update -->
-<div class="modal fade" id="sPIUMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPIUMdl" aria-hidden="true">
+<!-- Modal for scientific paper insertion and update -->
+<div class="modal fade" id="sPMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPMdl" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -163,12 +163,12 @@
                     <input type="hidden" name="id_attendances" value="">
                     <div class="row">
                         <div class="form-group col-12">
-                            <label for="tInpt">Predmet</label>
-                            <input id="tInpt" class="form-control" type="text" name="topic" required>
+                            <label for="topicInpt">Predmet</label>
+                            <input id="topicInpt" class="form-control" type="text" name="topic" required>
                         </div>
                         <div class="form-group col-6">
-                            <label for="tSlct">Vrsta</label>
-                            <select id="tSlct" class="form-control" name="type">
+                            <label for="typeInpt">Vrsta</label>
+                            <select id="typeInpt" class="form-control" name="type">
                                 <option value="DOKTORSKO DELO">Doktorsko delo</option>
                                 <option value="MAGISTRSKO DELO">Magistrsko delo</option>
                                 <option value="DIPLOMSKO DELO">Diplomsko delo</option>
@@ -177,21 +177,21 @@
                             </select>
                         </div>
                         <div class="form-group col-6">
-                            <label for="wInpt">Napisano</label>
-                            <input id="wInpt" class="form-control" type="date" name="written" required>
+                            <label for="writtenInpt">Napisano</label>
+                            <input id="writtenInpt" class="form-control" type="date" name="written" required>
                         </div>
                     </div>
                     <div id="sPDocs">
                         <p class="h6">Dokumentacija</p>
                         <div class="row">
                             <div class="form-group col-6">
-                                <label for="vInpt">Verzija</label>
-                                <input id="vInpt" class="form-control" type="text" name="documents[0][version]" required>
+                                <label for="versionInpt">Verzija</label>
+                                <input id="versionInpt" class="form-control" type="text" name="documents[0][version]" required>
                             </div>
                             <div class="form-group col-6">
-                                <input id="docHInpt" type="hidden" name="documents[0][name]" value="">
-                                <label for="docInpt">Dokument</label>
-                                <input id="docInpt" type="file" name="document[]" accept=".pdf" required>
+                                <input id="docHiddInpt" type="hidden" name="documents[0][name]" value="">
+                                <label for="documentInpt">Dokument</label>
+                                <input id="documentInpt" type="file" name="document[]" accept=".pdf" required>
                             </div>
                         </div>
                         <div class="d-flex justify-content-center col-12">
@@ -205,13 +205,13 @@
     </div>
 </div>
 <!-- Modal for certificate view  -->
-<div id="certMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="cetificateMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content"></div>
     </div>
 </div>
 <!-- Modal for certificate insertion or update -->
-<div class="modal fade" id="certIUMdl" tabindex="-1" role="dialog" aria-labelledby="exampleCertIUMdl" aria-hidden="true">
+<div class="modal fade" id="certificateMdl" tabindex="-1" role="dialog" aria-labelledby="exampleCertificateMdl" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -221,21 +221,21 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="certFrm">
+                <form id="certificateFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div class="row">
                         <div class="form-group col-12">
                             <input type="hidden" name="certificate" value="">
-                            <label for="certInpt">Certifikat</label>
-                            <input id="certInpt" type="file" name="certificate[]" required>
+                            <label for="certificateInpt">Certifikat</label>
+                            <input id="certificateInpt" type="file" name="certificate[]" required>
                         </div>
                         <div class="form-group col-6">
-                            <label for="defInpt">Zagovarjan</label>
-                            <input id="defInpt" class="form-control" type="date" name="defended" required>
+                            <label for="defendedInpt">Zagovarjan</label>
+                            <input id="defendedInpt" class="form-control" type="date" name="defended" required>
                         </div>
                         <div class="form-group col-6">
-                            <label for="issInpt">Izdan</label>
-                            <input id="issInpt" class="form-control" type="date" name="issued" required>
+                            <label for="issuedInpt">Izdan</label>
+                            <input id="issuedInpt" class="form-control" type="date" name="issued" required>
                         </div>
                     </div>
                     <input class="btn btn-secondary float-right" type="submit" value="Vstavi">
@@ -245,7 +245,7 @@
     </div>
 </div>
 <!-- Modal for account insertion -->
-<div class="modal fade" id="aMdl" tabindex="-1" role="dialog" aria-labelledby="exampleAMdl" aria-hidden="true">
+<div class="modal fade" id="accountMdl" tabindex="-1" role="dialog" aria-labelledby="exampleAccountMdl" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -254,12 +254,20 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body"></div>
+            <div class="modal-body">
+                <form id="accountFrm">
+                    <div class="form-group">
+                        <label for="passInpt">Geslo</label>
+                        <input id="passInpt" class="form-control" name="pass" required>
+                    </div>
+                    <input class="btn btn-warning float-right" type="submit" value="Ustvari">
+                </form>
+            </div>
         </div>
     </div>
 </div>
 <!-- Modal for action reports -->
-<div class="modal fade" id="rMdl" tabindex="-1" role="dialog" aria-labelledby="rMdlLbl" aria-hidden="true">
+<div class="modal fade" id="reportMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

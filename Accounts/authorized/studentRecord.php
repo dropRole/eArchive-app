@@ -22,7 +22,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     <div class="d-flex justify-content-end mr-3">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="
         #studentMdl">Vstavi študenta</button>
-        <button id="rMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#rMdl"></button>
+        <button id="reportMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#reportMdl"></button>
     </div>
     <div class="table-responsive mt-3">
         <table class="table">
@@ -52,20 +52,20 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         <td><?php echo $student->faculty; ?></td>
                         <td>
                             <a class="sp-vw-a" href="#sPVMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
-                            <a class="sp-ins-a" href="#sPIUMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                            <a class="sp-ins-a" href="#sPMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                         </td>
                         <td>
                             <?php
                             // if student possesses a certificate
                             if ($DBC->selectCertificate($student->id_attendances) != NULL) {
                             ?>
-                                <a class="cert-vw-a" href="#certMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
+                                <a class="cert-vw-a" href="#certificateMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
                             <?php
                             } // if
                             // if student doesn't  possess a certificate
                             if ($DBC->selectCertificate($student->id_attendances) == NULL) {
                             ?>
-                                <a class="cert-ins-a" href="#certIUMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                                <a class="cert-ins-a" href="#certificateMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                             <?php
                             } // if
                             ?>
@@ -81,7 +81,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             } // if
                             else {
                             ?>
-                                <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#aMdl">Ustvari</button>
+                                <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#accountMdl">Ustvari</button>
                             <?php
                             } // else
                             ?>
