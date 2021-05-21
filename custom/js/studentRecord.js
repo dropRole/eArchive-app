@@ -2,34 +2,34 @@
 (() => {
     // global scope variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
-        studentIUFrm = document.getElementById('studentIUFrm'), // form for student data insertion and update
-        studentIUFrmClone = studentIUFrm.cloneNode(true), // studentIUFrm clone node
+        studentFrm = document.getElementById('studentFrm'), // form for student data insertion and update
+        studentFrmClone = studentFrm.cloneNode(true), // studentFrm clone node
         sPFrm = document.getElementById('sPFrm'), // scientific paper insert form
-        certFrm = document.getElementById('certFrm'), // certificate upload/insertion form
         sPFrmClone = sPFrm.cloneNode(true), // sPFrm clone node
-        aMdl = document.getElementById('aMdl'), // account modal 
-        rMdl = document.getElementById('rMdl'), // report modal 
-        rMdlBtn = document.getElementById('rMdlBtn'), // button for report modal toggle
+        accountFrm = document.getElementById('accountFrm'), // form for creating student account and its credentials   
+        certificateFrm = document.getElementById('certificateFrm'), // certificate upload/insertion form
+        reportMdl = document.getElementById('reportMdl'), // report modal 
+        reportMdlBtn = document.getElementById('reportMdlBtn'), // button for report modal toggle
         addTRBtn = document.getElementById('addTRBtn'), // button for residence addition 
         addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for attendance addition
-        countrySlctLst = document.querySelectorAll('.country-select'), // select elements for birth, permanent and temporal residence country 
+        countryLst = document.querySelectorAll('.country-select'), // select elements for birth, permanent and temporal residence country 
         facultySlct = document.getElementById('facultySlct'), // faculty select input
         graduationCB = document.getElementById('graduationCB'), // graduation checkbox
-        docInpt = document.getElementById('docInpt'), // document input
-        rLbl = 2, // residence label counter
-        rIndx = 1, // residence array index 
-        addressLbl = 1, // attendance label counter
-        aIndx = 1, // attendance array index 
-        dLbl = 1 // documentation label counter
-    studentIUFrm.addEventListener('submit', insertStudent)
+        documentInpt = document.getElementById('documentInpt') // document input
+    studentFrm.addEventListener('submit', insertStudent)
     sPFrm.addEventListener('submit', insertScientificPaper)
-    certFrm.addEventListener('submit', insertCertificate)
-    certFrm.querySelector('input[type=file').addEventListener('change', () => {
-            certFrm.querySelector('input[name=certificate]').value = certFrm.querySelector('input[type=file]').files[0].name
+    accountFrm.addEventListener('submit', e => {
+            // prevent form from submitting account details  
+            e.preventDefault()
+            insertStudentAccount(e, accountFrm)
+        }) // addEventListener
+    certificateFrm.addEventListener('submit', insertCertificate)
+    certificateFrm.querySelector('input[type=file').addEventListener('change', () => {
+            certificateFrm.querySelector('input[name=certificate]').value = certificateFrm.querySelector('input[type=file]').files[0].name
         }) // addEventListener
     addTRBtn.addEventListener('click', addResidence)
     addAttendanceBtn.addEventListener('click', addAttendance)
-    countrySlctLst.forEach(select => {
+    countryLst.forEach(select => {
             // propagate target select element with postal codes of the chosen country
             select.addEventListener('input', () => {
                     propagateSelectElement(document.querySelector(`#${select.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${select.selectedOptions[0].value}`)
@@ -41,48 +41,51 @@
         }) // addEventListener
         // append graduation section if graduated
     graduationCB.addEventListener('change', e => {
-            addGraduation(e, document.querySelector('#attendances .row'))
+            // if it's checked
+            if (graduationCB.checked)
+                addGraduation(e)
+            else {
+                // remove selected graduation section
+                graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+            } // else
         }) // addEventListener
         // give hidden input type value of chosens document name
-    docInpt.addEventListener('change', e => {
+    documentInpt.addEventListener('change', e => {
             document.getElementById('docHInpt').value = e.target.files[0].name
         }) // addEventListener        
         // attach listeners to student evidence table elements  
     function attachTableListeners() {
-        let SPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
-            SPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
+        let sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
+            sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
             certIALst = document.querySelectorAll('.cert-ins-a'), // anchor list for certificate insertion
             certVALst = document.querySelectorAll('.cert-vw-a'), // anchor list for certificate view
-            accIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account generation
             accDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
             stuUALst = document.querySelectorAll('.stu-upd-a'), // anchor list for student data update
             stuDALst = document.querySelectorAll('.stu-del-a') // anchor list for student data deletion
-        accIBtnLst.forEach(btn => {
-                // populate modals body with created account insert form 
-                btn.addEventListener('click', createAccountForm) //addEventListener
-            }) // forEach
         accDBtnLst.forEach(btn => {
                 // delete particular account 
                 btn.addEventListener('click', () => {
-                        deleteAccount(btn.getAttribute('data-id'))
+                        deleteStudentAccount(btn.getAttribute('data-id'))
                     }) //addEventListener
             }) // forEach
-        SPVALst.forEach(anchor => {
+        sPVALst.forEach(anchor => {
                 // preview scientific papers   
                 anchor.addEventListener('click', () => {
                         selectScientificPapers(anchor.getAttribute('data-id'))
                     }) //addEventListener
             }) // forEach
-        SPIALst.forEach(anchor => {
+        sPIALst.forEach(anchor => {
                 // modify form for scientific paper insertion
                 anchor.addEventListener('click', e => {
-                        modifySPFrm(e, null, 'insert')
+                        modifysPFrm(e, null, 'insert')
                     }) //addEventListener
             }) // forEach
         certIALst.forEach(anchor => {
                 // assign an attendance id value to an upload forms hidden input type 
                 anchor.addEventListener('click', e => {
-                        certFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
+                        certificateFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
                     }) //addEventListener
             }) // forEach
         certVALst.forEach(anchor => {
@@ -107,87 +110,22 @@
             }) // forEach
     } // attachTableListeners
     attachTableListeners()
-        // create and append additional form residence section controls 
-    function addResidence() {
-        // create form controls 
-        let xmlhttp = new XMLHttpRequest(),
-            container = document.createElement('div'),
-            headline = document.createElement('p'),
-            cross = document.createElement('span'),
-            FGCountry = document.createElement('div'),
-            FGPostalCode = document.createElement('div'),
-            FGAddress = document.createElement('div'),
-            countryLbl = document.createElement('label'),
-            postalCodeLbl = document.createElement('label'),
-            addressLbl = document.createElement('label'),
-            postalCodeSlct = document.createElement('select'),
-            countrySlct = document.createElement('select'),
-            addressInpt = document.createElement('input')
-        container.className = 'row'
-        container.style.position = 'relative'
-        headline.classList = 'col-12 h6'
-        headline.textContent = `${rLbl - 1}. začasno bivališče`
-        cross.style.float = 'right'
-        cross.style.transform = 'scale(1.2)'
-        cross.style.cursor = 'pointer'
-            // remove selected residence section
-        cross.addEventListener('click', () => {
-                document.getElementById('residences').removeChild(container)
-                rLbl--
-            }) // addEventListener
-        cross.innerHTML = '&#10007;'
-        FGCountry.className = 'form-group col-4'
-        FGPostalCode.className = 'form-group col-4'
-        FGAddress.className = 'form-group col-4'
-        countryLbl.setAttribute('for', `TRCountrySlct${rLbl}`)
-        countryLbl.textContent = 'Država'
-        postalCodeLbl.setAttribute('for', `TRPCSlct${rLbl}`)
-        postalCodeLbl.textContent = 'Kraj'
-        addressLbl.setAttribute('for', `TRAddressSlct${rLbl}`)
-        addressLbl.textContent = 'Naslov'
-        countrySlct.id = `TRCountrySlct${rLbl}`
-        countrySlct.classList = 'form-control country-select'
-            // propagate postal codes by country selection
-        countrySlct.addEventListener('input', e => {
-                propagateSelectElement(postalCodeSlct, `/eArchive/PostalCodes/select.php?id_countries=${e.target.selectedOptions[0].value}`)
-            }) // addEventListener
-        postalCodeSlct.id = `TRPCSlct${rLbl}`
-        addressInpt.id = `TRAddressInpt${rLbl}`
-        postalCodeSlct.classList = 'form-control'
-        postalCodeSlct.name = `residences[${rIndx}][id_postal_codes]`
-        postalCodeSlct.required = true
-        addressInpt.classList = 'form-control'
-        addressInpt.type = 'text'
-        addressInpt.name = `residences[${rIndx}][address]`
-        addressInpt.required = true
-            // propagate countries by adding new residence
+        // refresh students evidence table upon latterly data amendmantion 
+    function refreshStudentsTable() {
+        let xmlhttp = new XMLHttpRequest
+            // report on data insertion
         xmlhttp.addEventListener('load', () => {
+                let tblCtr = document.querySelector('.table-responsive')
+                    // compose node tree structure
                 fragment = xmlhttp.response
-                    // traverse through nodes
-                fragment.body.querySelectorAll('option').forEach(element => {
-                        countrySlct.add(element)
-                    }) // forEach
-                    // append controls to a form residence section
-                headline.appendChild(cross)
-                FGCountry.appendChild(countryLbl)
-                FGCountry.appendChild(countrySlct)
-                FGPostalCode.appendChild(postalCodeLbl)
-                FGPostalCode.appendChild(postalCodeSlct)
-                FGAddress.appendChild(addressLbl)
-                FGAddress.appendChild(addressInpt)
-                container.appendChild(headline)
-                container.appendChild(FGCountry)
-                container.appendChild(FGPostalCode)
-                container.appendChild(FGAddress)
-                document.querySelector('#residences').appendChild(container)
+                    // reflect fragments body innerHTML 
+                tblCtr.innerHTML = fragment.body.innerHTML
+                attachTableListeners()
             }) // addEventListener
+        xmlhttp.open('GET', '/eArchive/Students/selectAll.php', true)
         xmlhttp.responseType = 'document'
-        xmlhttp.open('GET', '/eArchive/Countries/select.php')
         xmlhttp.send()
-        rIndx++
-        rLbl++
-    } // addResidence
-
+    } // refreshStudentsTable
     // propagate select control with suitable options
     function propagateSelectElement(select, script) {
         let xmlhttp = new XMLHttpRequest()
@@ -207,201 +145,260 @@
         xmlhttp.send()
     } // propagateSelectElement
 
-    // create and append graduation form controls
-    function addGraduation(e, pNode) {
-        // if it's not checked
-        if (e.target.checked) {
-            // get graduation section label counter 
-            let cntr = e.target.getAttribute('data-counter'),
-                // get attendances array current row index
-                indx = e.target.getAttribute('data-index'),
-                // create form controls 
-                FGDiv = document.createElement('div'),
-                FGDiv1 = document.createElement('div'),
-                FGDiv2 = document.createElement('div'),
-                fLbl = document.createElement('label'),
-                dLbl = document.createElement('label'),
-                fInpt = document.createElement('input'),
-                dInpt = document.createElement('input'),
-                cInpt = document.createElement('input')
-            iLbl = document.createElement('label'),
-                iInpt = document.createElement('input')
-            FGDiv.className = 'form-group col-4'
-            FGDiv1.className = 'form-group col-4'
-            FGDiv2.className = 'form-group col-4'
-            fLbl.textContent = 'Certifikat'
-            fLbl.setAttribute('for', `fInpt${cntr}`)
-            dLbl.textContent = 'Zagovorjen'
-            dLbl.setAttribute('for', `dInpt${cntr}`)
-            iLbl.textContent = 'Izdan'
-            iLbl.setAttribute('for', `iInpt${cntr}`)
-            fInpt.id = `fInpt${cntr}`
-            fInpt.type = 'file'
-            fInpt.setAttribute('name', 'certificate[]')
-            fInpt.accept = '.pdf'
-            fInpt.required = true
-                // determine hidden input type value if graduated
-            fInpt.addEventListener('change', e => {
-                    cInpt.value = e.target.files[0].name
-                }) // addEventListener
-            cInpt.type = 'hidden'
-            cInpt.name = `attendances[${indx}][certificate]`
-            dInpt.id = `dInpt${cntr}`
-            dInpt.className = 'form-control'
-            dInpt.type = 'date'
-            dInpt.required = true
-            dInpt.name = `attendances[${indx}][defended]`
-            iInpt.id = `iInpt${cntr}`
-            iInpt.className = 'form-control'
-            iInpt.type = 'date'
-            iInpt.name = `attendances[${indx}][issued]`
-            iInpt.required = true
-                // append graduation form controls to a particular attendance section
-            FGDiv.appendChild(fLbl)
-            FGDiv.appendChild(fInpt)
-            FGDiv1.appendChild(dLbl)
-            FGDiv1.appendChild(dInpt)
-            FGDiv2.appendChild(iLbl)
-            FGDiv2.appendChild(iInpt)
-            pNode.appendChild(cInpt)
-            pNode.appendChild(FGDiv)
-            pNode.appendChild(FGDiv1)
-            pNode.appendChild(FGDiv2)
-            return
-        } // if
-        // remove selected graduation section
-        pNode.removeChild(pNode.lastChild)
-        pNode.removeChild(pNode.lastChild)
-        pNode.removeChild(pNode.lastChild)
-        return
+    // create and append additional form residence section controls 
+    function addResidence() {
+        // create form controls 
+        let xmlhttp = new XMLHttpRequest(),
+            container = document.createElement('div'),
+            headline = document.createElement('p'),
+            cross = document.createElement('span'),
+            countryFG = document.createElement('div'),
+            postalCodeFG = document.createElement('div'),
+            addressFG = document.createElement('div'),
+            countryLbl = document.createElement('label'),
+            postalCodeLbl = document.createElement('label'),
+            addressLbl = document.createElement('label'),
+            postalCodeSlct = document.createElement('select'),
+            countrySlct = document.createElement('select'),
+            addressInpt = document.createElement('input'),
+            lblNum = document.querySelectorAll('#residences .row').length, // number of added temporal residences 
+            indx = lblNum - 1 // the following index for an array of data on student residences 
+        container.className = 'row'
+        container.style.position = 'relative'
+        headline.classList = 'col-12 h6'
+        headline.textContent = `${lblNum}. začasno bivališče`
+        cross.style.float = 'right'
+        cross.style.transform = 'scale(1.2)'
+        cross.style.cursor = 'pointer'
+            // remove selected residence section
+        cross.addEventListener('click', () => {
+                document.getElementById('residences').removeChild(container)
+            }) // addEventListener
+        cross.innerHTML = '&#10007;'
+        countryFG.className = 'form-group col-4'
+        postalCodeFG.className = 'form-group col-4'
+        addressFG.className = 'form-group col-4'
+        countryLbl.setAttribute('for', `TRCountrySlct${lblNum}`)
+        countryLbl.textContent = 'Država'
+        postalCodeLbl.setAttribute('for', `TRPCSlct${lblNum}`)
+        postalCodeLbl.textContent = 'Kraj'
+        addressLbl.setAttribute('for', `TRAddressInpt${lblNum}`)
+        addressLbl.textContent = 'Naslov'
+        countrySlct.id = `TRCountrySlct${lblNum}`
+        countrySlct.classList = 'form-control country-select'
+            // propagate postal codes by country selection
+        countrySlct.addEventListener('input', e => {
+                propagateSelectElement(postalCodeSlct, `/eArchive/PostalCodes/select.php?id_countries=${e.target.selectedOptions[0].value}`)
+            }) // addEventListener
+        postalCodeSlct.id = `TRPCSlct${lblNum}`
+        addressInpt.id = `TRAddressInpt${lblNum}`
+        postalCodeSlct.classList = 'form-control'
+        postalCodeSlct.name = `residences[${indx}][id_postal_codes]`
+        postalCodeSlct.required = true
+        addressInpt.classList = 'form-control'
+        addressInpt.type = 'text'
+        addressInpt.name = `residences[${indx}][address]`
+        addressInpt.required = true
+            // propagate countries by adding new residence
+        xmlhttp.addEventListener('load', () => {
+                fragment = xmlhttp.response
+                    // traverse through nodes
+                fragment.body.querySelectorAll('option').forEach(element => {
+                        countrySlct.add(element)
+                    }) // forEach
+                    // append controls to a form residence section
+                headline.appendChild(cross)
+                countryFG.appendChild(countryLbl)
+                countryFG.appendChild(countrySlct)
+                postalCodeFG.appendChild(postalCodeLbl)
+                postalCodeFG.appendChild(postalCodeSlct)
+                addressFG.appendChild(addressLbl)
+                addressFG.appendChild(addressInpt)
+                container.appendChild(headline)
+                container.appendChild(countryFG)
+                container.appendChild(postalCodeFG)
+                container.appendChild(addressFG)
+                document.querySelector('#residences').appendChild(container)
+            }) // addEventListener
+        xmlhttp.responseType = 'document'
+        xmlhttp.open('GET', '/eArchive/Countries/select.php')
+        xmlhttp.send()
+    } // addResidence
+
+    // create and append subsequent graduation form controls 
+    function addGraduation(e) {
+        let lblNum = e.target.getAttribute('data-lbl-nm'), // get ordinal number for label numeration   
+            indx = e.target.getAttribute('data-indx'), // get next index position for attendances array 
+            // create form controls 
+            certificateFG = document.createElement('div'),
+            defendedFG = document.createElement('div'),
+            issuedFG = document.createElement('div'),
+            certificateLbl = document.createElement('label'),
+            defendedLbl = document.createElement('label'),
+            issuedLbl = document.createElement('label'),
+            certificateHiddInpt = document.createElement('input'),
+            certificateInpt = document.createElement('input'),
+            defendedInpt = document.createElement('input'),
+            issuedInpt = document.createElement('input')
+        certificateFG.className = 'form-group col-4'
+        defendedFG.className = 'form-group col-4'
+        issuedFG.className = 'form-group col-4'
+        certificateLbl.textContent = 'Certifikat'
+        certificateLbl.setAttribute('for', `certificateInpt${lblNum}`)
+        defendedLbl.textContent = 'Zagovorjen'
+        defendedLbl.setAttribute('for', `defendedInpt${lblNum}`)
+        issuedLbl.textContent = 'Izdan'
+        issuedLbl.setAttribute('for', `issuedInpt${lblNum}`)
+        issuedInpt.textContent = 'Izdan'
+        issuedInpt.setAttribute('for', `iInpt${lblNum}`)
+        certificateInpt.id = `certificateInpt${lblNum}`
+        certificateInpt.type = 'file'
+        certificateInpt.setAttribute('name', 'certificate[]')
+        certificateInpt.accept = '.pdf'
+        certificateInpt.required = true
+            // determine hidden input type value if graduated
+        certificateInpt.addEventListener('change', e => {
+                certificateInpt.value = e.target.files[0].name
+            }) // addEventListener
+        certificateHiddInpt.type = 'hidden'
+        certificateHiddInpt.name = `attendances[${indx}][certificate]`
+        defendedInpt.id = `defendedInpt${lblNum}`
+        defendedInpt.className = 'form-control'
+        defendedInpt.type = 'date'
+        defendedInpt.required = true
+        defendedInpt.name = `attendances[${indx}][defended]`
+        issuedInpt.id = `issuedInpt${lblNum}`
+        issuedInpt.className = 'form-control'
+        issuedInpt.type = 'date'
+        issuedInpt.name = `attendances[${indx}][issued]`
+        issuedInpt.required = true
+            // append graduation form controls to a particular attendance section
+        certificateFG.appendChild(certificateLbl)
+        certificateFG.appendChild(certificateInpt)
+        defendedFG.appendChild(defendedLbl)
+        defendedFG.appendChild(defendedInpt)
+        issuedFG.appendChild(issuedLbl)
+        issuedFG.appendChild(issuedInpt)
+        e.target.closest('.row').appendChild(certificateHiddInpt)
+        e.target.closest('.row').appendChild(certificateFG)
+        e.target.closest('.row').appendChild(defendedFG)
+        e.target.closest('.row').appendChild(issuedFG)
     } // addGraduation
 
-    // create and append attendance form controls 
+    // create and append subsequent attendance form controls 
     function addAttendance() {
         // create form controls
-        let div = document.getElementById('attendances'),
-            rDiv = document.createElement('div'),
-            p = document.createElement('p'),
-            span = document.createElement('span'),
-            FGDiv = document.createElement('div'),
-            FGDiv1 = document.createElement('div'),
-            FGDiv2 = document.createElement('div'),
-            FGDiv3 = document.createElement('div'),
-            FGDiv4 = document.createElement('div'),
-            fLbl = document.createElement('label'),
-            pLbl = document.createElement('label'),
-            eLbl = document.createElement('label'),
-            iLbl = document.createElement('label'),
+        let container = document.createElement('div'),
+            headline = document.createElement('p'),
+            cross = document.createElement('span'),
+            facultyFG = document.createElement('div'),
+            programFG = document.createElement('div'),
+            enrolledFG = document.createElement('div'),
+            indexFG = document.createElement('div'),
+            graduationFG = document.createElement('div'),
+            facultyLbl = document.createElement('label'),
+            programLbl = document.createElement('label'),
+            enrolledLbl = document.createElement('label'),
+            graduationLbl = document.createElement('label'),
+            indexLbl = document.createElement('label'),
             facultySlct = document.createElement('select'),
-            pSlct = document.createElement('select'),
-            eInpt = document.createElement('input'),
-            iInpt = document.createElement('input'),
-            gLbl = document.createElement('label'),
-            graduationCB = document.createElement('input')
+            programSlct = document.createElement('select'),
+            enrolledInpt = document.createElement('input'),
+            indexInpt = document.createElement('input'),
+            graduationCB = document.createElement('input'),
+            lblNum = document.querySelectorAll('#attendances .row').length, // number of added program attendances  
+            indx = lblNum - 1 // the following index for an array od data on program attendance 
             // initial propagation
         propagateSelectElement(facultySlct, '/eArchive/Faculties/select.php')
         setTimeout(() => {
-                propagateSelectElement(pSlct, `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
+                propagateSelectElement(programSlct, `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
             }, 500) // setTimeout
             // propagate programs by faculty selection
         facultySlct.addEventListener('change', e => {
-                propagateSelectElement(pSlct, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
+                propagateSelectElement(programSlct, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
             }) // addEventListener
             // append graduation section if graduated        
         graduationCB.addEventListener('change', e => {
-                addGraduation(e, rDiv)
+                // if it's checked
+                if (graduationCB.checked)
+                    addGraduation(e)
+                else {
+                    // remove selected graduation section
+                    graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                    graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                    graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                } // else
             }) // addEventListener
-        p.className = 'col-12 h6'
-        p.textContent = `${addressLbl + 1}. študijski program`
-        span.style.float = 'right'
-        span.style.transform = 'scale(1.2)'
-        span.style.cursor = 'pointer'
-        span.innerHTML = '&#10007'
+        headline.className = 'col-12 h6'
+        headline.textContent = `${lblNum + 1}. študijski program`
+        cross.style.float = 'right'
+        cross.style.transform = 'scale(1.2)'
+        cross.style.cursor = 'pointer'
+        cross.innerHTML = '&#10007'
             // remove selected attendance section
-        span.addEventListener('click', () => {
-                div.removeChild(rDiv)
-                addressLbl--
+        cross.addEventListener('click', () => {
+                document.getElementById('attendances').removeChild(container)
             }) // addEventListener
-        span.innerHTML = '&#10007;'
-        rDiv.className = 'row'
-        FGDiv.className = 'form-group col-6'
-        FGDiv1.className = 'form-group col-6'
-        FGDiv2.className = 'form-group col-4'
-        FGDiv3.className = 'form-group col-4'
-        FGDiv4.className = 'd-flex align-items-center justify-content-center form-group col-4'
-        fLbl.setAttribute('for', `facultySlct${addressLbl}`)
-        fLbl.textContent = 'Fakulteta'
-        pLbl.textContent = 'Program'
-        pLbl.setAttribute('for', `pSlct${addressLbl}`)
-        eLbl.textContent = 'Vpisan'
-        eLbl.setAttribute('for', `enInpt${addressLbl}`)
-        iLbl.textContent = 'Indeks'
-        iLbl.setAttribute('for', `iInpt${addressLbl}`)
-        gLbl.textContent = 'Diplomiral'
-        gLbl.setAttribute('for', `graduationCB${addressLbl}`)
-        gLbl.className = 'mt-2'
+        container.className = 'row'
+        facultyFG.className = 'form-group col-6'
+        programFG.className = 'form-group col-6'
+        enrolledFG.className = 'form-group col-4'
+        indexFG.className = 'form-group col-4'
+        graduationFG.className = 'd-flex align-items-center justify-content-center form-group col-4'
+        facultyLbl.setAttribute('for', `facultySlct${lblNum}`)
+        facultyLbl.textContent = 'Fakulteta'
+        programLbl.textContent = 'Program'
+        programLbl.setAttribute('for', `pSlct${lblNum}`)
+        enrolledLbl.textContent = 'Vpisan'
+        enrolledLbl.setAttribute('for', `enInpt${lblNum}`)
+        indexLbl.textContent = 'Indeks'
+        indexLbl.setAttribute('for', `iInpt${lblNum}`)
+        graduationLbl.textContent = 'Diplomiral'
+        graduationLbl.setAttribute('for', `graduationCB${lblNum}`)
+        graduationLbl.className = 'mt-2'
         facultySlct.className = 'form-control'
-        facultySlct.id = `facultySlct${addressLbl}`
-        facultySlct.name = `attendances[${aIndx}][id_faculties]`
+        facultySlct.id = `facultySlct${lblNum}`
+        facultySlct.name = `attendances[${indx}][id_faculties]`
         facultySlct.required = true
-        pSlct.className = 'form-control'
-        pSlct.id = `pSlct${addressLbl}`
-        pSlct.name = `attendances[${aIndx}][id_programs]`
-        pSlct.required = true
-        eInpt.className = 'form-control'
-        eInpt.id = `enInpt${addressLbl}`
-        eInpt.type = 'date'
-        eInpt.name = `attendances[${aIndx}][enrolled]`
-        eInpt.required = true
-        iInpt.className = 'form-control'
-        iInpt.id = `iInpt${addressLbl}`
-        iInpt.type = 'text'
-        iInpt.name = `attendances[${aIndx}][index]`
-        iInpt.required = true
-        graduationCB.id = `graduationCB${addressLbl}`
+        programSlct.className = 'form-control'
+        programSlct.id = `pSlct${lblNum}`
+        programSlct.name = `attendances[${indx}][id_programs]`
+        programSlct.required = true
+        enrolledInpt.className = 'form-control'
+        enrolledInpt.id = `enInpt${lblNum}`
+        enrolledInpt.type = 'date'
+        enrolledInpt.name = `attendances[${indx}][enrolled]`
+        enrolledInpt.required = true
+        indexInpt.className = 'form-control'
+        indexInpt.id = `iInpt${lblNum}`
+        indexInpt.type = 'text'
+        indexInpt.name = `attendances[${indx}][index]`
+        indexInpt.required = true
+        graduationCB.id = `graduationCB${lblNum}`
         graduationCB.type = 'checkbox'
         graduationCB.classList = 'mr-2'
-        graduationCB.setAttribute('data-index', aIndx)
-        graduationCB.setAttribute('data-counter', addressLbl)
+        graduationCB.setAttribute('data-index', indx)
+        graduationCB.setAttribute('data-lbl-num', lblNum)
             // append controls to a form attendances section
-        FGDiv.appendChild(fLbl)
-        FGDiv.appendChild(facultySlct)
-        FGDiv1.appendChild(pLbl)
-        FGDiv1.appendChild(pSlct)
-        FGDiv2.appendChild(eLbl)
-        FGDiv2.appendChild(eInpt)
-        FGDiv3.appendChild(iLbl)
-        FGDiv3.appendChild(iInpt)
-        FGDiv4.appendChild(graduationCB)
-        FGDiv4.appendChild(gLbl)
-        p.appendChild(span)
-        rDiv.appendChild(p)
-        rDiv.appendChild(FGDiv)
-        rDiv.appendChild(FGDiv1)
-        rDiv.appendChild(FGDiv2)
-        rDiv.appendChild(FGDiv3)
-        rDiv.appendChild(FGDiv4)
-        div.appendChild(rDiv)
-        aIndx++
-        addressLbl++
+        facultyFG.appendChild(facultyLbl)
+        facultyFG.appendChild(facultySlct)
+        programFG.appendChild(programLbl)
+        programFG.appendChild(programSlct)
+        enrolledFG.appendChild(enrolledLbl)
+        enrolledFG.appendChild(enrolledInpt)
+        indexFG.appendChild(indexLbl)
+        indexFG.appendChild(indexInpt)
+        graduationFG.appendChild(graduationCB)
+        graduationFG.appendChild(graduationLbl)
+        headline.appendChild(cross)
+        container.appendChild(headline)
+        container.appendChild(facultyFG)
+        container.appendChild(programFG)
+        container.appendChild(enrolledFG)
+        container.appendChild(indexFG)
+        container.appendChild(graduationFG)
+        document.getElementById('attendances').appendChild(container)
     } // addAttendance 
-
-    // pass and insert student data
-    function insertStudent(e) {
-        // prevent default action of submitting student data through a form
-        e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(studentIUFrm)
-            // report on data insertion
-        xmlhttp.addEventListener('load', () => {
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
-                refreshStudentsTable()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Students/insert.php', true)
-        xmlhttp.responseType = 'text'
-        xmlhttp.send(fData)
-    } // insertStudent
 
     /*
      *   select particulars of the given student
@@ -413,260 +410,29 @@
             // report on data seletion
         xmlhttp.addEventListener('load', () => {
                 // pass JSON response
-                alterIUStudentFrm(e, xmlhttp.response, 'update')
+                alterStudentFrm(e, xmlhttp.response, 'update')
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/Students/select.php?id_students=${idStudents}`, true)
         xmlhttp.responseType = 'json'
         xmlhttp.send()
     } // selectStudent
 
-    // update overall student data
-    function updateStudent(e) {
-        // prevent default action of submitting updated student data through a form
+    // pass and insert student data
+    function insertStudent(e) {
+        // prevent default action of submitting student data through a form
         e.preventDefault()
         let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(studentIUFrm)
-            // report on update
-        xmlhttp.addEventListener('load', () => {
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
-                refreshStudentsTable()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Students/update.php', true)
-        xmlhttp.responseType = 'text'
-        xmlhttp.send(fData)
-    } // updateStudent
-
-    /*
-     *   delete overall student data
-     *   @param Number idStudents
-     *   @param Number idAttendances
-     */
-
-    function deleteStudent(idStudents, idAttendances) {
-        let xmlhttp = new XMLHttpRequest
-            // report on deletion
-        xmlhttp.addEventListener('load', () => {
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
-                refreshStudentsTable()
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`, true)
-        xmlhttp.responseType = 'text'
-        xmlhttp.send()
-    } // deleteStudent
-
-    // refresh students evidence table upon latterly data amendmantion 
-    function refreshStudentsTable() {
-        let xmlhttp = new XMLHttpRequest
+            frmData = new FormData(studentFrm)
             // report on data insertion
         xmlhttp.addEventListener('load', () => {
-                let tContainer = document.querySelector('.table-responsive')
-                    // compose node tree structure
-                fragment = xmlhttp.response
-                    // reflect fragments body innerHTML 
-                tContainer.innerHTML = fragment.body.innerHTML
-                attachTableListeners()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
+                refreshStudentsTable()
             }) // addEventListener
-        xmlhttp.open('GET', '/eArchive/Students/selectAll.php', true)
-        xmlhttp.responseType = 'document'
-        xmlhttp.send()
-    } // refreshStudentsTable
-
-    // create a student account insert form
-    function createAccountForm(e) {
-        // if modal already contains form 
-        if (aMdl.querySelector('.modal-body').firstChild)
-            aMdl.querySelector('.modal-body').removeChild(aMdl.querySelector('.modal-body').firstChild)
-            // create form and form controls
-        let form = document.createElement('form'), // insert form
-            hInpt = document.createElement('input'), // hidden input    
-            FGDiv = document.createElement('div'), // form group div
-            pLbl = document.createElement('label'), // password input label
-            pInpt = document.createElement('input'), // password input
-            sInpt = document.createElement('input') // submit input
-        form.id = 'aIFrm'
-            // generate new account on form submission
-        form.addEventListener('submit', ev => {
-                insertAccount(ev, form)
-                    // close modal a second after form submisson
-                setTimeout(() => {
-                        e.target.click()
-                    }, 500) // setTimeout
-            }) // addEventListener
-        hInpt.setAttribute('name', 'id_attendances')
-        hInpt.type = 'hidden'
-        hInpt.value = e.target.getAttribute('value')
-        FGDiv.classList = 'form-group'
-        pLbl.setAttribute('for', 'pInpt')
-        pLbl.textContent = 'Geslo'
-        pInpt.id = 'pInpt'
-        pInpt.classList = 'form-control'
-        pInpt.type = 'password'
-        pInpt.setAttribute('name', 'pass')
-        pInpt.required = true
-        sInpt.classList = 'btn btn-warning'
-        sInpt.type = 'submit'
-        sInpt.value = 'Ustvari račun'
-            // append created form controls
-        FGDiv.appendChild(pLbl)
-        FGDiv.appendChild(pInpt)
-        form.appendChild(hInpt)
-        form.appendChild(FGDiv)
-        form.appendChild(sInpt)
-        aMdl.querySelector('.modal-body').appendChild(form)
-        return
-    } // createAccountForm
-
-    // generate and assign student account
-    function insertAccount(e, form) {
-        // prevent default action by submitting data insert form
-        e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(form)
-            // report on data insertion
-        xmlhttp.addEventListener('load', () => {
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Accounts/authorized/insert.php', true)
-        xmlhttp.send(fData)
-    } // insertAccount
-
-    /*
-     *   asynchronous script execution for deletion of the given account 
-     *   @param idAttendances
-     */
-    function deleteAccount(idAttendances) {
-        let xmlhttp = new XMLHttpRequest
-            // report on account deletion
-        xmlhttp.addEventListener('load', () => {
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`, true)
-        xmlhttp.send()
-        return
-    } // deleteAccount
-
-    //  create and append additional form controls for scientific papers documentation upload
-    function addDocuments() {
-        // create form controls 
-        let rDiv = document.createElement('div'), // row
-            FGDiv = document.createElement('div'), // form group
-            FGDiv1 = document.createElement('div'), // form group
-            vLbl = document.createElement('label'), // version label
-            vInpt = document.createElement('input'), // version input
-            docountryLbl = document.createElement('label'), // document label
-            docInpt = document.createElement('input'), // document input 
-            docHInpt = document.createElement('input'), // document hidden input 
-            span = document.createElement('span') // removal sign
-            // give hidden input type value of chosens document name
-        docInpt.addEventListener('change', e => {
-                docHInpt.value = e.target.files[0].name
-            }) // addEventListener
-            // remove appended controls
-        span.addEventListener('click', () => {
-                document.getElementById('sPDocs').removeChild(rDiv)
-                dLbl--
-            }) // addEventListener
-        rDiv.classList = 'row mt-2'
-        rDiv.style.position = 'relative'
-        FGDiv.classList = 'form-group col-6'
-        FGDiv1.classList = 'form-group col-6'
-        vLbl.setAttribute('for', `vInpt${dLbl}`)
-        vLbl.textContent = 'Verzija'
-        docountryLbl.setAttribute('for', `docInpt${dLbl}`)
-        docountryLbl.textContent = 'Dokument'
-        vInpt.id = `vInpt${dLbl}`
-        vInpt.classList = 'form-control'
-        vInpt.type = 'text'
-        vInpt.name = `documents[${dLbl}][version]`
-        docInpt.id = `docInpt${dLbl}`
-        docInpt.type = 'file'
-        docInpt.accept = '.pdf'
-        docInpt.name = 'document[]'
-        docInpt.required = true
-        docHInpt.type = 'hidden'
-        docHInpt.name = `documents[${dLbl}][name]`
-        span.style.position = 'absolute'
-        span.style.top = 0
-        span.style.right = '10px'
-        span.style.zIndex = 1
-        span.style.cursor = 'pointer'
-        span.innerHTML = '&#10007;'
-        FGDiv.appendChild(vLbl)
-        FGDiv.appendChild(vInpt)
-        FGDiv1.appendChild(docHInpt)
-        FGDiv1.appendChild(docountryLbl)
-        FGDiv1.appendChild(docInpt)
-        rDiv.appendChild(span)
-        rDiv.appendChild(FGDiv)
-        rDiv.appendChild(FGDiv1)
-            // append controls to scientific paper insert form
-        document.getElementById('sPDocs').appendChild(rDiv)
-        dLbl++
-        return
-    } // addDocuments
-
-    /*
-     *  modify form for scientific paper insertion or data alteration 
-     *  @param Event e
-     *  @param object sPpr
-     *  @param string action
-     */
-    function modifySPFrm(e, sPpr = null, action) {
-        // store modal and form elements
-        let mdl = document.getElementById('sPIUMdl'),
-            frm = document.getElementById('sPFrm')
-            // lookup for a case  
-        switch (action) {
-            case 'insert':
-                mdl.querySelector('.modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
-                sPFrm.innerHTML = sPFrmClone.innerHTML
-                sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
-                    // add controls for scientific paper document upload
-                sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
-                    // exchange listener callbacks 
-                frm.removeEventListener('submit', updateScientificPapers)
-                frm.removeEventListener('submit', insertDocuments)
-                frm.addEventListener('submit', insertScientificPaper)
-                break;
-            case 'update':
-                mdl.querySelector('.modal-header .modal-title').textContent = 'Urejanje znanstvenega dela'
-                frm.innerHTML = sPFrmClone.innerHTML
-                frm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
-                frm.querySelector('input[name="topic"]').value = sPpr.topic
-                frm.querySelector('select[name="type"]').value = sPpr.type
-                frm.querySelector('input[name="written"]').value = sPpr.written
-                frm.querySelector('input[type=submit]').value = 'Uredi'
-                    // disable documents section form controls
-                frm.removeChild(frm.querySelector('#sPDocs'))
-                    // exchange listener callbacks 
-                frm.removeEventListener('submit', insertScientificPaper)
-                frm.removeEventListener('submit', insertDocuments)
-                frm.addEventListener('submit', updateScientificPapers)
-                break;
-            case 'upload':
-                mdl.querySelector('.modal-header .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
-                frm.innerHTML = sPFrmClone.innerHTML
-                frm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
-                frm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
-                frm.removeChild(frm.querySelector('.row'))
-                    // add controls for scientific paper document upload
-                sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
-                    // give hidden input type value of chosens document name
-                frm.querySelector('#docInpt').addEventListener('change', e => {
-                        frm.querySelector('#docHInpt').value = e.target.files[0].name
-                    }) // addEventListener        
-                    // exchange listener callbacks 
-                frm.removeEventListener('submit', insertScientificPaper)
-                frm.removeEventListener('submit', updateScientificPapers)
-                frm.addEventListener('submit', insertDocuments)
-                break;
-        } // switch
-        return
-    } // modifySPFrm
+        xmlhttp.open('POST', '/eArchive/Students/insert.php', true)
+        xmlhttp.responseType = 'text'
+        xmlhttp.send(frmData)
+    } // insertStudent
 
     /*
      *  fill out form fields with student birthplace particulars
@@ -744,31 +510,32 @@
                         // while section is being generated
                     setTimeout(() => {
                             // create hidden input type for id of a residence
-                            let idResidencesInpt = document.createElement('input')
+                            let idResidencesInpt = document.createElement('input'),
+                                lblNum = document.querySelectorAll('#residences .row') // number of added temporal residences 
                             idResidencesInpt.type = 'hidden'
-                            idResidencesInpt.name = `residences[${rLbl - 1}][id_residences]`
+                            idResidencesInpt.name = `residences[${lblNum}][id_residences]`
                             idResidencesInpt.value = residence.id_residences
-                            frm.querySelector(`#TRCountrySlct${rLbl - 1}`).parentElement.prepend(idResidencesInpt)
-                            frm.querySelector(`#TRCountrySlct${rLbl - 1}`).parentElement.parentElement.querySelector('span').addEventListener('click', () => {
+                            frm.querySelector(`#TRCountrySlct${lblNum}`).parentElement.prepend(idResidencesInpt)
+                            frm.querySelector(`#TRCountrySlct${lblNum}`).parentElement.parentElement.querySelector('span').addEventListener('click', () => {
                                     deleteStudentTemporalResidence(frm.querySelector('input[type=hidden]').value, residence.id_residences)
                                 }) // addEventListener
                                 // put country of a residence as selected option
-                            Array.from(frm.querySelector(`#TRCountrySlct${rLbl - 1}`).options).forEach(option => {
+                            Array.from(frm.querySelector(`#TRCountrySlct${lblNum}`).options).forEach(option => {
                                     // if postal codes match
                                     if (option.value == residence.id_countries)
                                         option.selected = true
                                 }) // forEach
                                 // dispatch synthetically generated event
-                            frm.querySelector(`#TRCountrySlct${rLbl - 1}`).dispatchEvent((new Event('input')))
+                            frm.querySelector(`#TRCountrySlct${lblNum}`).dispatchEvent((new Event('input')))
                                 // put postal code of a residence as selected option 
                             setTimeout(() => {
-                                    Array.from(frm.querySelector(`#TRPCSlct${rLbl - 1}`).options).forEach(option => {
+                                    Array.from(frm.querySelector(`#TRPCSlct${lblNum}`).options).forEach(option => {
                                             // if countries match
                                             if (option.value == residence.id_postal_codes)
                                                 option.selected = true
                                         }) // forEach
                                 }, 1000) // setTimeout
-                            frm.querySelector(`#TRAddressInpt${rLbl - 1}`).value = residence.address
+                            frm.querySelector(`#TRAddressInpt${lblNum}`).value = residence.address
                         }, 500) // setTimeout
                 }) // forEach
         } // if
@@ -785,13 +552,195 @@
             // upon successful transaction completion 
         xmlhttp.addEventListener('load', () => {
                 // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/Residences/delete.php?id_students=${idStudents}&id_residences=${idResidences}`, true)
         xmlhttp.send()
-        return
     } // deleteStudentTemoralResidence
+
+    // update overall student data
+    function updateStudent(e) {
+        // prevent default action of submitting updated student data through a form
+        e.preventDefault()
+        let xmlhttp = new XMLHttpRequest,
+            frmData = new FormData(studentFrm)
+            // report on update
+        xmlhttp.addEventListener('load', () => {
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
+                refreshStudentsTable()
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/Students/update.php', true)
+        xmlhttp.responseType = 'text'
+        xmlhttp.send(frmData)
+    } // updateStudent
+
+    /*
+     *   delete overall student data
+     *   @param Number idStudents
+     *   @param Number idAttendances
+     */
+
+    function deleteStudent(idStudents, idAttendances) {
+        let xmlhttp = new XMLHttpRequest
+            // report on deletion
+        xmlhttp.addEventListener('load', () => {
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
+                refreshStudentsTable()
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`, true)
+        xmlhttp.responseType = 'text'
+        xmlhttp.send()
+    } // deleteStudent
+
+    // generate and assign student account
+    function insertStudentAccount(e, form) {
+        // prevent default action by submitting data insert form
+        e.preventDefault()
+        let xmlhttp = new XMLHttpRequest,
+            frmData = new FormData(form)
+            // report on data insertion
+        xmlhttp.addEventListener('load', () => {
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('POST', '/eArchive/Accounts/authorized/insert.php', true)
+        xmlhttp.send(frmData)
+    } // insertStudentAccount
+
+    /*
+     *   asynchronous script execution for deletion of the given account 
+     *   @param idAttendances
+     */
+    function deleteStudentAccount(idAttendances) {
+        let xmlhttp = new XMLHttpRequest
+            // report on account deletion
+        xmlhttp.addEventListener('load', () => {
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
+            }) // addEventListener
+        xmlhttp.open('GET', `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`, true)
+        xmlhttp.send()
+    } // deleteStudentAccount
+
+    //  create and append additional form controls for scientific papers documentation upload
+    function addDocuments() {
+        // create form controls 
+        let container = document.createElement('div'), // row
+            versionFG = document.createElement('div'), // form group
+            documentFG = document.createElement('div'), // form group
+            versionLbl = document.createElement('label'), // version label
+            versionInpt = document.createElement('input'), // version input
+            documentLbl = document.createElement('label'), // document label
+            documentInpt = document.createElement('input'), // document input 
+            docHiddInpt = document.createElement('input'), // document hidden input 
+            cross = document.createElement('span'), // removal sign
+            lblNum = document.querySelectorAll('#documents .row').length, // number of added documents  
+            indx = lblNum - 1 // the following index for an array of data on documents of scientific paper  
+            // give hidden input type value of chosens document name
+        documentInpt.addEventListener('change', e => {
+                docHiddInpt.value = e.target.files[0].name
+            }) // addEventListener
+            // remove appended controls
+        cross.addEventListener('click', () => {
+                document.getElementById('sPDocs').removeChild(container)
+            }) // addEventListener
+        container.classList = 'row mt-2'
+        container.style.position = 'relative'
+        versionFG.classList = 'form-group col-6'
+        documentFG.classList = 'form-group col-6'
+        versionLbl.setAttribute('for', `vInpt${lblNum}`)
+        versionLbl.textContent = 'Verzija'
+        documentLbl.setAttribute('for', `documentInpt${lblNum}`)
+        documentLbl.textContent = 'Dokument'
+        versionInpt.id = `vInpt${lblNum}`
+        versionInpt.classList = 'form-control'
+        versionInpt.type = 'text'
+        versionInpt.name = `documents[${lblNum}][version]`
+        documentInpt.id = `documentInpt${lblNum}`
+        documentInpt.type = 'file'
+        documentInpt.accept = '.pdf'
+        documentInpt.name = 'document[]'
+        documentInpt.required = true
+        docHiddInpt.type = 'hidden'
+        docHiddInpt.name = `documents[${lblNum}][name]`
+        cross.style.position = 'absolute'
+        cross.style.top = 0
+        cross.style.right = '10px'
+        cross.style.zIndex = 1
+        cross.style.cursor = 'pointer'
+        cross.innerHTML = '&#10007;'
+        versionFG.appendChild(versionLbl)
+        versionFG.appendChild(versionInpt)
+        documentFG.appendChild(docHiddInpt)
+        documentFG.appendChild(documentLbl)
+        documentFG.appendChild(documentInpt)
+        container.appendChild(cross)
+        container.appendChild(versionFG)
+        container.appendChild(documentFG)
+            // append controls to scientific paper insert form
+        document.getElementById('sPDocs').appendChild(container)
+    } // addDocuments
+
+    /*
+     *  modify form for scientific paper insertion or data alteration 
+     *  @param Event e
+     *  @param object sPpr
+     *  @param string action
+     */
+    function modifysPFrm(e, sPpr = null, action) {
+        // store modal and form elements
+        let mdl = document.getElementById('sPMdl'),
+            frm = document.getElementById('sPFrm')
+            // lookup for a case  
+        switch (action) {
+            case 'insert':
+                mdl.querySelector('.modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
+                sPFrm.innerHTML = sPFrmClone.innerHTML
+                sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
+                    // add controls for scientific paper document upload
+                sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
+                    // exchange listener callbacks 
+                frm.removeEventListener('submit', updateScientificPapers)
+                frm.removeEventListener('submit', insertDocuments)
+                frm.addEventListener('submit', insertScientificPaper)
+                break;
+            case 'update':
+                mdl.querySelector('.modal-header .modal-title').textContent = 'Urejanje znanstvenega dela'
+                frm.innerHTML = sPFrmClone.innerHTML
+                frm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
+                frm.querySelector('input[name="topic"]').value = sPpr.topic
+                frm.querySelector('select[name="type"]').value = sPpr.type
+                frm.querySelector('input[name="written"]').value = sPpr.written
+                frm.querySelector('input[type=submit]').value = 'Uredi'
+                    // disable documents section form controls
+                frm.removeChild(frm.querySelector('#sPDocs'))
+                    // exchange listener callbacks 
+                frm.removeEventListener('submit', insertScientificPaper)
+                frm.removeEventListener('submit', insertDocuments)
+                frm.addEventListener('submit', updateScientificPapers)
+                break;
+            case 'upload':
+                mdl.querySelector('.modal-header .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+                frm.innerHTML = sPFrmClone.innerHTML
+                frm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
+                frm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
+                frm.removeChild(frm.querySelector('.row'))
+                    // add controls for scientific paper document upload
+                sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
+                    // give hidden input type value of chosens document name
+                frm.querySelector('#documentInpt').addEventListener('change', e => {
+                        frm.querySelector('#docHInpt').value = e.target.files[0].name
+                    }) // addEventListener        
+                    // exchange listener callbacks 
+                frm.removeEventListener('submit', insertScientificPaper)
+                frm.removeEventListener('submit', updateScientificPapers)
+                frm.addEventListener('submit', insertDocuments)
+                break;
+        } // switch
+    } // modifysPFrm
 
     /*
      *  modify form for student particulars insertion or update  
@@ -799,13 +748,13 @@
      *  @param object student
      *  @param string action
      */
-    function alterIUStudentFrm(e, student = null, action) {
+    function alterStudentFrm(e, student = null, action) {
         // store form node   
-        frm = document.getElementById('studentIUFrm')
+        frm = document.getElementById('studentFrm')
             // lookup for a case  
         switch (action) {
             case 'insert':
-                frm.innerHTML = studentIUFrmClone.innerHTML
+                frm.innerHTML = studentFrmClone.innerHTML
                     // clear up all input field values 
                 frm.querySelectorAll('input').forEach(input => {
                         input.value = ''
@@ -816,12 +765,12 @@
                 frm.addEventListener('submit', insertStudent)
                 break;
             case 'update':
-                let idInpt = document.createElement('input')
-                idInpt.type = 'hidden'
-                idInpt.name = 'id_students'
-                idInpt.value = e.target.getAttribute('data-id')
-                frm.innerHTML = studentIUFrmClone.innerHTML
-                frm.prepend(idInpt)
+                let idefendedInpt = document.createElement('input')
+                idefendedInpt.type = 'hidden'
+                idefendedInpt.name = 'id_students'
+                idefendedInpt.value = e.target.getAttribute('data-id')
+                frm.innerHTML = studentFrmClone.innerHTML
+                frm.prepend(idefendedInpt)
                     // fill out input fields with student particulars
                 frm.querySelector('input[name=name]').value = student.particulars.name
                 frm.querySelector('input[name=surname]').value = student.particulars.surname
@@ -838,8 +787,7 @@
                 frm.addEventListener('submit', updateStudent)
                 break;
         } // switch
-        return
-    } // alterIUStudentFrm
+    } // alterStudentFrm
 
     /*
      *   asynchronous script execution for selection of scientific papers per student program attendance 
@@ -858,7 +806,7 @@
                     document.querySelectorAll('.doc-ins-a').forEach(anchor => {
                         // render only document section form controls
                         anchor.addEventListener('click', e => {
-                                modifySPFrm(e, null, 'upload')
+                                modifysPFrm(e, null, 'upload')
                             }) // addEventListener
                     }) // forEach
                     // if anchors for scientific papers update are rendered
@@ -870,13 +818,13 @@
                                 (xmlhttp = new XMLHttpRequest()).addEventListener('load', () => {
                                         // return JSON of ScientificPapers object 
                                         let sPpr = {
-                                                id_attendances: xmlhttp.response.id_attendances,
-                                                id_scientific_papers: xmlhttp.response.id_scientific_papers,
+                                                idAttendances: xmlhttp.response.id_attendances,
+                                                idScientificPapers: xmlhttp.response.id_scientific_papers,
                                                 topic: xmlhttp.response.topic,
                                                 type: xmlhttp.response.type,
                                                 written: xmlhttp.response.written
                                             } // scientific paper object
-                                        modifySPFrm(e, sPpr, 'update')
+                                        modifysPFrm(e, sPpr, 'update')
                                     }) // addEventListener
                                 xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id')}`, true)
                                 xmlhttp.responseType = 'json'
@@ -904,7 +852,6 @@
         xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, true)
         xmlhttp.responseType = 'document'
         xmlhttp.send()
-        return
     } // selectScientificPapers
 
     // asynchronous script execution for scientific papers and documentation insertion 
@@ -912,16 +859,15 @@
         // prevent default action of submitting scientific paper data    
         e.preventDefault()
         let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(this)
+            frmData = new FormData(this)
             // report on scientific papers selection
         xmlhttp.addEventListener('load', () => {
                 // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/ScientificPapers/insert.php', true)
-        xmlhttp.send(fData)
-        return
+        xmlhttp.send(frmData)
     } // insertScientificPaper
 
     // asynchronous script execution for scientific paper data alteration 
@@ -929,17 +875,16 @@
         // prevent default action of submitting scientific paper data    
         e.preventDefault()
         let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(this)
+            frmData = new FormData(this)
             // report on scientific paper update
         xmlhttp.addEventListener('load', () => {
                 console.log(xmlhttp.responseText)
                     // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/ScientificPapers/update.php', true)
-        xmlhttp.send(fData)
-        return
+        xmlhttp.send(frmData)
     } // updateScientificPapers
 
 
@@ -953,12 +898,11 @@
             // report on docuement deletion
         xmlhttp.addEventListener('load', () => {
                 // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/Documents/delete.php?source=${source}`, true)
         xmlhttp.send()
-        return
     } // deleteDocument
 
     //  asynchronous script execution for scientific paper documents upload    
@@ -967,16 +911,15 @@
         e.preventDefault()
             // instantiate XHR 
         let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(this)
+            frmData = new FormData(this)
             // report on docuement deletion
         xmlhttp.addEventListener('load', () => {
                 // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/Documents/insert.php', true)
-        xmlhttp.send(fData)
-        return
+        xmlhttp.send(frmData)
     } // insertDocuments
 
     /*
@@ -989,12 +932,11 @@
             // report on the deletion
         xmlhttp.addEventListener('load', () => {
                 // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('GET', `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`, true)
         xmlhttp.send()
-        return
     } // deleteScientificPaper
 
     // asynchronous script execution for graduation certificate upload/insertion     
@@ -1003,16 +945,15 @@
         e.preventDefault()
             // instantiate XHR interface object
         let xmlhttp = new XMLHttpRequest,
-            fData = new FormData(this)
+            frmData = new FormData(this)
             // report on the deletion
         xmlhttp.addEventListener('load', () => {
                 // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
             }) // addEventListener
         xmlhttp.open('POST', '/eArchive/Graduations/insert.php', true)
-        xmlhttp.send(fData)
-        return
+        xmlhttp.send(frmData)
     } // insertCertificate
 
     /*
@@ -1037,7 +978,6 @@
         xmlhttp.open('GET', `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`, true)
         xmlhttp.responseType = 'document'
         xmlhttp.send()
-        return
     } // selectCertificate
 
     /*
@@ -1051,14 +991,13 @@
             // report on the seletion
         xmlhttp.addEventListener('load', () => {
                 // report the result
-                rMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                rMdlBtn.click()
+                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdlBtn.click()
             }) // addEventListener
             // reflect fragments body innerHTML    
         document.getElementById('certMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
         xmlhttp.open('GET', `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`, true)
         xmlhttp.responseType = 'text'
         xmlhttp.send()
-        return
     } // deleteCertificate
 })()
