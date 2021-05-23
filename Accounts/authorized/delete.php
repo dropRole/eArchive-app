@@ -19,5 +19,5 @@ if (isset($id_attendances)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt an account deletion
-    echo $DBC->deleteAccount($id_attendances);
+    echo $DBC->deleteStudentAccount($id_attendances);
 } // if
