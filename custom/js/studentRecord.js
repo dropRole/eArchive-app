@@ -22,6 +22,7 @@
             // prevent form from submitting account details  
             e.preventDefault()
             insertStudentAccount(e, accountFrm)
+            refreshStudentsTable()
         }) // addEventListener
     certificateFrm.addEventListener('submit', insertCertificate)
     certificateFrm.querySelector('input[type=file').addEventListener('change', () => {
@@ -51,25 +52,22 @@
                 graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
             } // else
         }) // addEventListener
-        // give hidden input type value of chosens document name
+
+    // give hidden input type value of chosens document name
     documentInpt.addEventListener('change', e => {
             document.getElementById('docHInpt').value = e.target.files[0].name
         }) // addEventListener        
-        // attach listeners to student evidence table elements  
+
+    // attach listeners to student evidence table elements  
     function attachTableListeners() {
         let sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
             sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
             certIALst = document.querySelectorAll('.cert-ins-a'), // anchor list for certificate insertion
             certVALst = document.querySelectorAll('.cert-vw-a'), // anchor list for certificate view
+            accIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account insertion
             accDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
             stuUALst = document.querySelectorAll('.stu-upd-a'), // anchor list for student data update
             stuDALst = document.querySelectorAll('.stu-del-a') // anchor list for student data deletion
-        accDBtnLst.forEach(btn => {
-                // delete particular account 
-                btn.addEventListener('click', () => {
-                        deleteStudentAccount(btn.getAttribute('data-id'))
-                    }) //addEventListener
-            }) // forEach
         sPVALst.forEach(anchor => {
                 // preview scientific papers   
                 anchor.addEventListener('click', () => {
@@ -79,7 +77,7 @@
         sPIALst.forEach(anchor => {
                 // modify form for scientific paper insertion
                 anchor.addEventListener('click', e => {
-                        modifysPFrm(e, null, 'insert')
+                        alterSPFrm(e, null, 'insert')
                     }) //addEventListener
             }) // forEach
         certIALst.forEach(anchor => {
@@ -108,48 +106,81 @@
                             deleteStudent(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
                     }) // addEventListener
             }) // forEach
+        accDBtnLst.forEach(btn => {
+                // delete particular account 
+                btn.addEventListener('click', () => {
+                        deleteStudentAccount(btn.getAttribute('data-id'))
+                    }) //addEventListener
+            }) // forEach
+        accIBtnLst.forEach(btn => {
+                // pass an id of attendance through forms hidden input type 
+                accountFrm.querySelector('input[name=id_attendances]').value = btn.value
+            }) // forEach
     } // attachTableListeners
     attachTableListeners()
-        // refresh students evidence table upon latterly data amendmantion 
+
+    /*
+     *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
+     *   @param String script
+     *   @param String method
+     *   @param String responseType 
+     */
+    function request(script, method, resType = '', frmData = null) {
+        return new Promise((resolve, reject) => {
+            let xmlhttp = new XMLHttpRequest()
+                // resolve the promise if transaction was successful
+            xmlhttp.addEventListener('load', () => {
+                    resolve(xmlhttp.response)
+                }) // addEventListener
+            xmlhttp.addEventListener('error', () => {
+                    // reject the promise if transaction encountered an error
+                    reject(alert('Prišlo je do napake na strežniku!'))
+                }) // addEventListener
+            xmlhttp.open(method, script, true)
+            xmlhttp.responseType = resType
+            xmlhttp.send(frmData)
+        })
+    } // request
+
+    // refresh students evidence table upon latterly data amendmantion 
     function refreshStudentsTable() {
-        let xmlhttp = new XMLHttpRequest
-            // report on data insertion
-        xmlhttp.addEventListener('load', () => {
+        request('/eArchive/Students/selectAll.php', 'GET', 'document').then(response => {
                 let tblCtr = document.querySelector('.table-responsive')
                     // compose node tree structure
-                fragment = xmlhttp.response
-                    // reflect fragments body innerHTML 
+                fragment = response
+                    // reflect fragments body  
                 tblCtr.innerHTML = fragment.body.innerHTML
                 attachTableListeners()
-            }) // addEventListener
-        xmlhttp.open('GET', '/eArchive/Students/selectAll.php', true)
-        xmlhttp.responseType = 'document'
-        xmlhttp.send()
+            }).catch(error => {
+                error()
+            }) // catch
     } // refreshStudentsTable
-    // propagate select control with suitable options
+
+    /*
+     *   propagate passed select element with options from the requested resource 
+     *   @param HTMLSelectElement select
+     *   @param DOMString script
+     */
     function propagateSelectElement(select, script) {
-        let xmlhttp = new XMLHttpRequest()
-        xmlhttp.addEventListener('load', () => {
-                fragment = xmlhttp.response
-                    // remove options while on disposal
-                while (select.options.length) {
-                    select.remove(0)
-                } // while
-                // traverse through nodes 
-                fragment.body.querySelectorAll('option').forEach(element => {
-                        select.add(element)
-                    }) // forEach
-            }) // addEventListener
-        xmlhttp.open('GET', script)
-        xmlhttp.responseType = 'document'
-        xmlhttp.send()
+        request(script, 'GET', 'document').then(response => {
+            fragment = response
+                // remove options while on disposal
+            while (select.options.length) {
+                select.remove(0)
+            } // while
+            // traverse through nodes 
+            fragment.body.querySelectorAll('option').forEach(element => {
+                    select.add(element)
+                }) // forEach
+        }).catch(error => {
+            error()
+        })
     } // propagateSelectElement
 
     // create and append additional form residence section controls 
     function addResidence() {
         // create form controls 
-        let xmlhttp = new XMLHttpRequest(),
-            container = document.createElement('div'),
+        let container = document.createElement('div'),
             headline = document.createElement('p'),
             cross = document.createElement('span'),
             countryFG = document.createElement('div'),
@@ -199,9 +230,9 @@
         addressInpt.type = 'text'
         addressInpt.name = `residences[${indx}][address]`
         addressInpt.required = true
-            // propagate countries by adding new residence
-        xmlhttp.addEventListener('load', () => {
-                fragment = xmlhttp.response
+            // propagate elements for country selection by adding new residence section
+        request('/eArchive/Countries/select.php', 'GET', '').then((response) => {
+                fragment = response
                     // traverse through nodes
                 fragment.body.querySelectorAll('option').forEach(element => {
                         countrySlct.add(element)
@@ -219,13 +250,15 @@
                 container.appendChild(postalCodeFG)
                 container.appendChild(addressFG)
                 document.querySelector('#residences').appendChild(container)
-            }) // addEventListener
-        xmlhttp.responseType = 'document'
-        xmlhttp.open('GET', '/eArchive/Countries/select.php')
-        xmlhttp.send()
+            }).catch(error => {
+                error()
+            }) // catch
     } // addResidence
 
-    // create and append subsequent graduation form controls 
+    /*
+     *  subsequently create and append graduation section of the student insertion form 
+     *  @param Event e
+     */
     function addGraduation(e) {
         let lblNum = e.target.getAttribute('data-lbl-nm'), // get ordinal number for label numeration   
             indx = e.target.getAttribute('data-indx'), // get next index position for attendances array 
@@ -285,7 +318,7 @@
         e.target.closest('.row').appendChild(issuedFG)
     } // addGraduation
 
-    // create and append subsequent attendance form controls 
+    // subsequently create and append attendance section of the student insertion form 
     function addAttendance() {
         // create form controls
         let container = document.createElement('div'),
@@ -401,37 +434,33 @@
     } // addAttendance 
 
     /*
-     *   select particulars of the given student
+     *   asynchronous script execution for selection of student particulars and scientific achievements    
      *   @param Event e
-     *   @param number idStudents
+     *   @param Number idStudents
      */
     function selectStudent(e, idStudents) {
-        let xmlhttp = new XMLHttpRequest
-            // report on data seletion
-        xmlhttp.addEventListener('load', () => {
+        request(`/eArchive/Students/select.php?id_students=${idStudents}`, 'GET', 'json').then(response => {
                 // pass JSON response
-                alterStudentFrm(e, xmlhttp.response, 'update')
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Students/select.php?id_students=${idStudents}`, true)
-        xmlhttp.responseType = 'json'
-        xmlhttp.send()
+                alterStudentFrm(e, response, 'update')
+            }).catch(error => {
+                error()
+            }) // catch
     } // selectStudent
 
-    // pass and insert student data
+    /*
+     *   asynchronous script execution for insretion of student particulars and scientific achievements
+     *   @param Event e
+     */
     function insertStudent(e) {
         // prevent default action of submitting student data through a form
         e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            frmData = new FormData(studentFrm)
-            // report on data insertion
-        xmlhttp.addEventListener('load', () => {
+        request('/eArchive/Students/insert.php', 'POST', 'text', (new FormData(studentFrm))).then(response => {
                 reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
                 reportMdlBtn.click()
                 refreshStudentsTable()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Students/insert.php', true)
-        xmlhttp.responseType = 'text'
-        xmlhttp.send(frmData)
+            }).catch(error => {
+                error()
+            }) // catch
     } // insertStudent
 
     /*
@@ -547,67 +576,61 @@
      *   @param idResidences
      */
     function deleteStudentTemporalResidence(idStudents, idResidences) {
-        // declare an XHR object instance
-        let xmlhttp = new XMLHttpRequest
-            // upon successful transaction completion 
-        xmlhttp.addEventListener('load', () => {
+        request(`/eArchive/Residences/delete.php?id_students=${idStudents}&id_residences=${idResidences}`, 'GET', '').then(response => {
                 // report the result
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Residences/delete.php?id_students=${idStudents}&id_residences=${idResidences}`, true)
-        xmlhttp.send()
+            }).catch(error => {
+                error()
+            }) // catch
     } // deleteStudentTemoralResidence
 
-    // update overall student data
+    /*
+     *  update student particulars and data on scientific achievements
+     *  Event e
+     */
     function updateStudent(e) {
         // prevent default action of submitting updated student data through a form
         e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            frmData = new FormData(studentFrm)
-            // report on update
-        xmlhttp.addEventListener('load', () => {
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+        request('/eArchive/Students/update.php', 'POST', 'text', (new FormData(studentFrm))).then(response => {
+                // report on update
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
                 refreshStudentsTable()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Students/update.php', true)
-        xmlhttp.responseType = 'text'
-        xmlhttp.send(frmData)
+            }).catch(error => {
+                error()
+            }) // catch
     } // updateStudent
 
     /*
-     *   delete overall student data
+     *   delete all student related data
      *   @param Number idStudents
      *   @param Number idAttendances
      */
-
     function deleteStudent(idStudents, idAttendances) {
-        let xmlhttp = new XMLHttpRequest
-            // report on deletion
-        xmlhttp.addEventListener('load', () => {
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+        request(`/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`, 'GET', 'text').then(response => {
+                // report on deletion
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
                 refreshStudentsTable()
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`, true)
-        xmlhttp.responseType = 'text'
-        xmlhttp.send()
+            }).catch(error => {
+                error()
+            }) // catch
     } // deleteStudent
 
-    // generate and assign student account
+    /*
+     *   generate and assign an account to a student
+     *   @param Event e
+     *   @param HTMLFormElement form
+     */
     function insertStudentAccount(e, form) {
         // prevent default action by submitting data insert form
         e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            frmData = new FormData(form)
+        request('/eArchive/Accounts/authorized/insert.php', 'POST', 'text', (new FormData(accountFrm))).then(response => {
             // report on data insertion
-        xmlhttp.addEventListener('load', () => {
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
-                reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Accounts/authorized/insert.php', true)
-        xmlhttp.send(frmData)
+            reportMdl.querySelector('.modal-body').textContent = response
+            reportMdlBtn.click()
+        })
     } // insertStudentAccount
 
     /*
@@ -615,14 +638,14 @@
      *   @param idAttendances
      */
     function deleteStudentAccount(idAttendances) {
-        let xmlhttp = new XMLHttpRequest
-            // report on account deletion
-        xmlhttp.addEventListener('load', () => {
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+        request(`/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`, 'GET', 'text').then(response => {
+                // report on account deletion
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`, true)
-        xmlhttp.send()
+                refreshStudentsTable()
+            }).catch(error => {
+
+            }) // catch
     } // deleteStudentAccount
 
     //  create and append additional form controls for scientific papers documentation upload
@@ -687,10 +710,10 @@
     /*
      *  modify form for scientific paper insertion or data alteration 
      *  @param Event e
-     *  @param object sPpr
-     *  @param string action
+     *  @param Object | null sPpr
+     *  @param DOMString action
      */
-    function modifysPFrm(e, sPpr = null, action) {
+    function alterSPFrm(e, sPpr = null, action) {
         // store modal and form elements
         let mdl = document.getElementById('sPMdl'),
             frm = document.getElementById('sPFrm')
@@ -732,7 +755,7 @@
                 sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
                     // give hidden input type value of chosens document name
                 frm.querySelector('#documentInpt').addEventListener('change', e => {
-                        frm.querySelector('#docHInpt').value = e.target.files[0].name
+                        frm.querySelector('#docHiddInpt').value = e.target.files[0].name
                     }) // addEventListener        
                     // exchange listener callbacks 
                 frm.removeEventListener('submit', insertScientificPaper)
@@ -740,13 +763,13 @@
                 frm.addEventListener('submit', insertDocuments)
                 break;
         } // switch
-    } // modifysPFrm
+    } // alterSPFrm
 
     /*
      *  modify form for student particulars insertion or update  
      *  @param Event e
-     *  @param object student
-     *  @param string action
+     *  @param Object | null student
+     *  @param DOMString action
      */
     function alterStudentFrm(e, student = null, action) {
         // store form node   
@@ -789,215 +812,191 @@
         } // switch
     } // alterStudentFrm
 
+    // attach event listeners to a scientific paper cards when rendered
+    function attachSPCardListeners() {
+        // if anchors for document insertion are rendered
+        if (document.querySelectorAll('.doc-ins-a'))
+            document.querySelectorAll('.doc-ins-a').forEach(anchor => {
+                // form will render merely controls for document insertion
+                anchor.addEventListener('click', e => {
+                        alterSPFrm(e, null, 'upload')
+                    }) // addEventListener
+            }) // forEach
+            // if anchors for scientific papers update are rendered
+        if (document.querySelectorAll('.sp-upd-а'))
+            document.querySelectorAll('.sp-upd-а').forEach(anchor => {
+                // fill form fields and modify the form
+                anchor.addEventListener('click', e => {
+                        request(`/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id')}`, 'GET', 'json').then(response => {
+                                // retrieve JSON of ScientificPapers object 
+                                alterSPFrm(e, response, 'update')
+                            }).catch(error => {
+                                error()
+                            }) // catch
+                    }) // addEventListener
+                    // assign a value to the hidden input type of scientific paper insertion form 
+                document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
+            }) // forEach
+            // if anchors for scientific paper deletion are rendered
+        if (document.querySelectorAll('.sp-del-a'))
+            document.querySelectorAll('.sp-del-a').forEach(anchor => {
+                anchor.addEventListener('click', () => {
+                        deleteScientficPaper(anchor.getAttribute('data-id'))
+                    }) // addEventListener
+            }) // forEach
+            // if anchors for scientific paper documentation deletion are rendered
+        if (document.querySelectorAll('.doc-del-spn'))
+            document.querySelectorAll('.doc-del-spn').forEach(span => {
+                // delete particular document
+                span.addEventListener('click', () => {
+                        deleteDocument(span.getAttribute('data-source'))
+                    }) // addEventListener
+            }) // forEach
+    } // attachSPMdlListeners
+
     /*
      *   asynchronous script execution for selection of scientific papers per student program attendance 
-     *   @param idAttendances
+     *   @param Number idAttendances
      */
     function selectScientificPapers(idAttendances) {
-        let xmlhttp = new XMLHttpRequest()
-            // report on scientific papers selection
-        xmlhttp.addEventListener('load', () => {
+        // fetch resources
+        request(`/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, 'GET', 'document').then(response => {
                 // compose node tree structure
-                fragment = xmlhttp.response
-                    // reflect fragments body innerHTML    
-                document.getElementById('sPVMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
-                    // if anchors for document insertion are rendered
-                if (document.querySelectorAll('.doc-ins-a'))
-                    document.querySelectorAll('.doc-ins-a').forEach(anchor => {
-                        // render only document section form controls
-                        anchor.addEventListener('click', e => {
-                                modifysPFrm(e, null, 'upload')
-                            }) // addEventListener
-                    }) // forEach
-                    // if anchors for scientific papers update are rendered
-                if (document.querySelectorAll('.sp-upd-а'))
-                    document.querySelectorAll('.sp-upd-а').forEach(anchor => {
-                        // fill form fields and modify the form
-                        anchor.addEventListener('click', e => {
-                                // report on scientific paper selection
-                                (xmlhttp = new XMLHttpRequest()).addEventListener('load', () => {
-                                        // return JSON of ScientificPapers object 
-                                        let sPpr = {
-                                                idAttendances: xmlhttp.response.id_attendances,
-                                                idScientificPapers: xmlhttp.response.id_scientific_papers,
-                                                topic: xmlhttp.response.topic,
-                                                type: xmlhttp.response.type,
-                                                written: xmlhttp.response.written
-                                            } // scientific paper object
-                                        modifysPFrm(e, sPpr, 'update')
-                                    }) // addEventListener
-                                xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id')}`, true)
-                                xmlhttp.responseType = 'json'
-                                xmlhttp.send()
-                                    // assign a value to the hidden input type of scientific paper insertion form 
-                                document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
-                            }) // addEventListener
-                    }) // forEach
-                    // if anchors for scientific paper deletion are rendered
-                if (document.querySelectorAll('.sp-del-a'))
-                    document.querySelectorAll('.sp-del-a').forEach(anchor => {
-                        anchor.addEventListener('click', () => {
-                                deleteScientficPaper(anchor.getAttribute('data-id'))
-                            }) // addEventListener
-                    }) // forEach
-                    // if anchors for scientific paper documentation deletion are rendered
-                if (document.querySelectorAll('.doc-del-spn'))
-                    document.querySelectorAll('.doc-del-spn').forEach(span => {
-                        // delete particular document
-                        span.addEventListener('click', () => {
-                                deleteDocument(span.getAttribute('data-source'))
-                            }) // addEventListener
-                    }) // forEach
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, true)
-        xmlhttp.responseType = 'document'
-        xmlhttp.send()
+                fragment = response
+                    // reflect fragments body     
+                document.querySelector('#sPVMdl .modal-content').innerHTML = fragment.body.innerHTML
+                return
+            }).then(() => {
+                attachSPCardListeners()
+            }).catch(error => {
+                error()
+            }) // catch
     } // selectScientificPapers
 
-    // asynchronous script execution for scientific papers and documentation insertion 
+    /*
+     *   asynchronous script execution for scientific papers and documentation insertion 
+     *   @param Event e
+     */
     function insertScientificPaper(e) {
         // prevent default action of submitting scientific paper data    
         e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            frmData = new FormData(this)
-            // report on scientific papers selection
-        xmlhttp.addEventListener('load', () => {
-                // report the result
+        request('/eArchive/ScientificPapers/insert.php', 'POST', (new FormData(sPFrm))).then(response => {
+                // report on scientific papers selection
                 reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
                 reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/ScientificPapers/insert.php', true)
-        xmlhttp.send(frmData)
+            }).catch(error => {
+                error()
+            }) // catch
     } // insertScientificPaper
 
-    // asynchronous script execution for scientific paper data alteration 
+    /*
+     *   asynchronous script execution for scientific paper data alteration 
+     *   @param Event e
+     */
     function updateScientificPapers(e) {
         // prevent default action of submitting scientific paper data    
         e.preventDefault()
-        let xmlhttp = new XMLHttpRequest,
-            frmData = new FormData(this)
-            // report on scientific paper update
-        xmlhttp.addEventListener('load', () => {
-                console.log(xmlhttp.responseText)
-                    // report the result
+        request('/eArchive/ScientificPapers/update.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
+                // report on scientific paper update
                 reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
                 reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/ScientificPapers/update.php', true)
-        xmlhttp.send(frmData)
+            }).catch(error => {
+                error()
+            }) // catch
     } // updateScientificPapers
 
-
     /*
-     *  asynchronous script execution for scientific paper documentation deletion    
-     *  @param source  
+     *  asynchronous script execution for scientific paper documents deletion    
+     *  @param DOMString source  
      */
     function deleteDocument(source) {
-        // instantiate XHR 
-        let xmlhttp = new XMLHttpRequest
-            // report on docuement deletion
-        xmlhttp.addEventListener('load', () => {
-                // report the result
+        request(`/eArchive/Documents/delete.php?source=${source}`, 'GET', 'text').then(response => {
+                // report on document deletion
                 reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
                 reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Documents/delete.php?source=${source}`, true)
-        xmlhttp.send()
+            }).catch(error => {
+                error()
+            }) // catch
     } // deleteDocument
 
-    //  asynchronous script execution for scientific paper documents upload    
+    /*  
+     *   asynchronous script execution for scientific paper documents upload    
+     *   @param Event e
+     */
     function insertDocuments(e) {
         // prevent default action by submitting upload form
         e.preventDefault()
-            // instantiate XHR 
-        let xmlhttp = new XMLHttpRequest,
-            frmData = new FormData(this)
-            // report on docuement deletion
-        xmlhttp.addEventListener('load', () => {
-                // report the result
+        request('/eArchive/Documents/insert.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
+                // report on document deletion
                 reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
                 reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Documents/insert.php', true)
-        xmlhttp.send(frmData)
+            }).catch(error => {
+                error()
+            }) // catch
     } // insertDocuments
 
     /*
-     *  asynchronous script execution for scientific paper deletion with its belonging documentation     
-     *  @param idScientificPapers
+     *  asynchronous script execution for scientific paper deletion with its belonging documents     
+     *  @param Number idScientificPapers
      */
     function deleteScientficPaper(idScientificPapers) {
-        // instantiate XHR interface object
-        let xmlhttp = new XMLHttpRequest
-            // report on the deletion
-        xmlhttp.addEventListener('load', () => {
-                // report the result
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+        request(`/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`, 'GET', 'text').then(response => {
+                // report on the deletion
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`, true)
-        xmlhttp.send()
+            }).catch(error => {
+                error()
+            }) // catch
     } // deleteScientificPaper
 
-    // asynchronous script execution for graduation certificate upload/insertion     
+    /*
+     *   asynchronous script execution for graduation certificate upload/insertion     
+     *   @param Event e
+     */
     function insertCertificate(e) {
         // prevent default action of submitting certificate insertion form
         e.preventDefault()
-            // instantiate XHR interface object
-        let xmlhttp = new XMLHttpRequest,
-            frmData = new FormData(this)
-            // report on the deletion
-        xmlhttp.addEventListener('load', () => {
-                // report the result
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+        request('/eArchive/Certificates/insert.php', 'POST', 'text', (new FormData(certificateFrm))).then(response => {
+                // report on the deletion
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
-            }) // addEventListener
-        xmlhttp.open('POST', '/eArchive/Graduations/insert.php', true)
-        xmlhttp.send(frmData)
+            }).catch(error => {
+                error()
+            }) // catch
     } // insertCertificate
 
     /*
      *  asynchronous script execution for graduation certificate selection    
-     *  @param idAttendance
+     *  @param Number idAttendances
      */
     function selectCertificate(idAttendances) {
-        // instantiate XHR interface object
-        let xmlhttp = new XMLHttpRequest
-            // report on the seletion
-        xmlhttp.addEventListener('load', () => {
+        request(`/eArchive/Certificates/select.php?id_attendances=${idAttendances}`, 'GET', 'document').then(response => {
                 // compose node tree structure
-                fragment = xmlhttp.response
-                    // reflect fragments body innerHTML    
+                fragment = response
+                    // reflect fragments body     
                 document.getElementById('certMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
                     // if anchor element for certificate deletion is contained
                 if (document.getElementById('certMdl').querySelector('.modal-content').querySelector('.cert-del-a'))
                     document.getElementById('certMdl').querySelector('.modal-content').querySelector('.cert-del-a').addEventListener('click', e => {
                         deleteCertificate(e.target.getAttribute('data-att-id'), e.target.getAttribute('data-source'))
                     }) // addEventListner
-            }) // addEventListener
-        xmlhttp.open('GET', `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`, true)
-        xmlhttp.responseType = 'document'
-        xmlhttp.send()
+            }).catch(error => {
+                error()
+            }) // catch
     } // selectCertificate
 
     /*
      *  asynchronous script execution for graduation certificate deletion    
-     *  @param idAttendance
-     * *  @param idCertificates
+     *  @param Number idAttendance
+     *  @param Number idCertificates
      */
     function deleteCertificate(idAttendances, source) {
-        // instantiate XHR interface object
-        let xmlhttp = new XMLHttpRequest
-            // report on the seletion
-        xmlhttp.addEventListener('load', () => {
-                // report the result
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+        request(`/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`, 'GET', 'text').then(response => {
+                // report on the deletion
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
-            }) // addEventListener
-            // reflect fragments body innerHTML    
-        document.getElementById('certMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
-        xmlhttp.open('GET', `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`, true)
-        xmlhttp.responseType = 'text'
-        xmlhttp.send()
+            }).catch(error => {
+                error()
+            }) // catch
     } // deleteCertificate
 })()
