@@ -1731,7 +1731,8 @@ class DBC extends PDO
                 return $report = "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return $report = 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.';
+        else
+            return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.';
     } // insertDocument
 
     /*
