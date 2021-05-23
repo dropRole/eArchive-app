@@ -256,6 +256,7 @@
             </div>
             <div class="modal-body">
                 <form id="accountFrm">
+                    <input type="hidden" name="id_attendances">
                     <div class="form-group">
                         <label for="passInpt">Geslo</label>
                         <input id="passInpt" class="form-control" name="pass" required>
