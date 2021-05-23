@@ -32,19 +32,19 @@ if (isset($_GET['id_attendances'])) {
         ?>
             <div class="card m-3 col-6">
                 <div class="card-body">
-                    <h5 class="card-title"><?php echo $scientificPaper->topic; ?></h5>
-                    <h6 class="card-subtitle mb-2 text-muted"><?php echo $scientificPaper->type; ?></h6>
+                    <h5 class="card-title"><?php echo $scientificPaper->getTopic(); ?></h5>
+                    <h6 class="card-subtitle mb-2 text-muted"><?php echo $scientificPaper->getType(); ?></h6>
                     <ul class="list-group">
                         <div class="row">
                             <div class="col-6">
                                 <span class="font-weight-bold">Dokumentacija</span>
                             </div>
                             <div class="col-6">
-                                <a href="#" class="card-link float-right doc-ins-a" data-id="<?php echo $scientificPaper->id_scientific_papers; ?>" data-toggle="modal" data-target="#sPIUMdl">Naloži</a>
+                                <a href="#" class="card-link float-right doc-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Naloži</a>
                             </div>
                         </div>
                         <?php
-                        $documents = $DBC->selectDocuments($scientificPaper->id_scientific_papers);
+                        $documents = $DBC->selectDocuments($scientificPaper->getIdScientificPapers());
                         // if there's evidence of the documentation
                         if (count($documents))
                             foreach ($documents as $document) {
@@ -57,8 +57,8 @@ if (isset($_GET['id_attendances'])) {
                             echo 'Ni predane dokumentacije.';
                         ?>
                     </ul>
-                    <a href="#" class="card-link sp-upd-а" data-id="<?php echo $scientificPaper->id_scientific_papers; ?>" data-toggle="modal" data-target="#sPIUMdl">Uredi</a>
-                    <a href="#" class="card-link sp-del-a" data-id="<?php echo $scientificPaper->id_scientific_papers; ?>">Izbriši</a>
+                    <a href="#" class="card-link sp-upd-а" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
+                    <a href="#" class="card-link sp-del-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Izbriši</a>
                 </div>
             </div>
 <?php
