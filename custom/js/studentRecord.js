@@ -60,7 +60,8 @@
 
     // attach listeners to student evidence table elements  
     function attachTableListeners() {
-        let sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
+        let insertStudentBtn = document.getElementById('insertStudentBtn'), // button for insertion of student particulars and scientific achievements
+            sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
             sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
             certIALst = document.querySelectorAll('.cert-ins-a'), // anchor list for certificate insertion
             certVALst = document.querySelectorAll('.cert-vw-a'), // anchor list for certificate view
@@ -68,6 +69,7 @@
             accDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
             stuUALst = document.querySelectorAll('.stu-upd-a'), // anchor list for student data update
             stuDALst = document.querySelectorAll('.stu-del-a') // anchor list for student data deletion
+        insertStudentBtn.addEventListener('click', toStudentInsertFrm)
         sPVALst.forEach(anchor => {
                 // preview scientific papers   
                 anchor.addEventListener('click', () => {
@@ -77,7 +79,7 @@
         sPIALst.forEach(anchor => {
                 // modify form for scientific paper insertion
                 anchor.addEventListener('click', e => {
-                        alterSPFrm(e, null, 'insert')
+                        toSPInsertFrm(e)
                     }) //addEventListener
             }) // forEach
         certIALst.forEach(anchor => {
@@ -134,7 +136,7 @@
                 }) // addEventListener
             xmlhttp.addEventListener('error', () => {
                     // reject the promise if transaction encountered an error
-                    reject(alert('Prišlo je do napake na strežniku!'))
+                    reject('Prišlo je do napake na strežniku!')
                 }) // addEventListener
             xmlhttp.open(method, script, true)
             xmlhttp.responseType = resType
@@ -152,7 +154,7 @@
                 tblCtr.innerHTML = fragment.body.innerHTML
                 attachTableListeners()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // refreshStudentsTable
 
@@ -161,98 +163,112 @@
      *   @param HTMLSelectElement select
      *   @param DOMString script
      */
-    function propagateSelectElement(select, script) {
-        request(script, 'GET', 'document').then(response => {
+    async function propagateSelectElement(select, script) {
+        try {
+            const response = await request(script, 'GET', 'document')
             fragment = response
                 // remove options while on disposal
             while (select.options.length) {
                 select.remove(0)
             } // while
+
             // traverse through nodes 
             fragment.body.querySelectorAll('option').forEach(element => {
                     select.add(element)
                 }) // forEach
-        }).catch(error => {
-            error()
-        })
+        } catch (error) {
+            alert(error)
+        }
     } // propagateSelectElement
 
     // create and append additional form residence section controls 
     function addResidence() {
-        // create form controls 
-        let container = document.createElement('div'),
-            headline = document.createElement('p'),
-            cross = document.createElement('span'),
-            countryFG = document.createElement('div'),
-            postalCodeFG = document.createElement('div'),
-            addressFG = document.createElement('div'),
-            countryLbl = document.createElement('label'),
-            postalCodeLbl = document.createElement('label'),
-            addressLbl = document.createElement('label'),
-            postalCodeSlct = document.createElement('select'),
-            countrySlct = document.createElement('select'),
-            addressInpt = document.createElement('input'),
-            lblNum = document.querySelectorAll('#residences .row').length, // number of added temporal residences 
-            indx = lblNum - 1 // the following index for an array of data on student residences 
-        container.className = 'row'
-        container.style.position = 'relative'
-        headline.classList = 'col-12 h6'
-        headline.textContent = `${lblNum}. začasno bivališče`
-        cross.style.float = 'right'
-        cross.style.transform = 'scale(1.2)'
-        cross.style.cursor = 'pointer'
-            // remove selected residence section
-        cross.addEventListener('click', () => {
-                document.getElementById('residences').removeChild(container)
-            }) // addEventListener
-        cross.innerHTML = '&#10007;'
-        countryFG.className = 'form-group col-4'
-        postalCodeFG.className = 'form-group col-4'
-        addressFG.className = 'form-group col-4'
-        countryLbl.setAttribute('for', `TRCountrySlct${lblNum}`)
-        countryLbl.textContent = 'Država'
-        postalCodeLbl.setAttribute('for', `TRPCSlct${lblNum}`)
-        postalCodeLbl.textContent = 'Kraj'
-        addressLbl.setAttribute('for', `TRAddressInpt${lblNum}`)
-        addressLbl.textContent = 'Naslov'
-        countrySlct.id = `TRCountrySlct${lblNum}`
-        countrySlct.classList = 'form-control country-select'
-            // propagate postal codes by country selection
-        countrySlct.addEventListener('input', e => {
-                propagateSelectElement(postalCodeSlct, `/eArchive/PostalCodes/select.php?id_countries=${e.target.selectedOptions[0].value}`)
-            }) // addEventListener
-        postalCodeSlct.id = `TRPCSlct${lblNum}`
-        addressInpt.id = `TRAddressInpt${lblNum}`
-        postalCodeSlct.classList = 'form-control'
-        postalCodeSlct.name = `residences[${indx}][id_postal_codes]`
-        postalCodeSlct.required = true
-        addressInpt.classList = 'form-control'
-        addressInpt.type = 'text'
-        addressInpt.name = `residences[${indx}][address]`
-        addressInpt.required = true
-            // propagate elements for country selection by adding new residence section
-        request('/eArchive/Countries/select.php', 'GET', '').then((response) => {
-                fragment = response
-                    // traverse through nodes
-                fragment.body.querySelectorAll('option').forEach(element => {
-                        countrySlct.add(element)
-                    }) // forEach
-                    // append controls to a form residence section
-                headline.appendChild(cross)
-                countryFG.appendChild(countryLbl)
-                countryFG.appendChild(countrySlct)
-                postalCodeFG.appendChild(postalCodeLbl)
-                postalCodeFG.appendChild(postalCodeSlct)
-                addressFG.appendChild(addressLbl)
-                addressFG.appendChild(addressInpt)
-                container.appendChild(headline)
-                container.appendChild(countryFG)
-                container.appendChild(postalCodeFG)
-                container.appendChild(addressFG)
-                document.querySelector('#residences').appendChild(container)
-            }).catch(error => {
-                error()
-            }) // catch
+        return new Promise((resolve) => {
+                // create form controls 
+                let container = document.createElement('div'),
+                    headline = document.createElement('p'),
+                    cross = document.createElement('span'),
+                    countryFG = document.createElement('div'),
+                    postalCodeFG = document.createElement('div'),
+                    addressFG = document.createElement('div'),
+                    countryLbl = document.createElement('label'),
+                    postalCodeLbl = document.createElement('label'),
+                    addressLbl = document.createElement('label'),
+                    postalCodeSlct = document.createElement('select'),
+                    countrySlct = document.createElement('select'),
+                    addressInpt = document.createElement('input'),
+                    lblNum = document.querySelectorAll('#residences .row').length, // number of added temporal residences 
+                    indx = lblNum - 1 // the following index for an array of data on student residences 
+                container.className = 'row'
+                container.style.position = 'relative'
+                headline.classList = 'col-12 h6'
+                headline.textContent = `${lblNum}. začasno bivališče`
+                cross.style.float = 'right'
+                cross.style.transform = 'scale(1.2)'
+                cross.style.cursor = 'pointer'
+                    // remove selected residence section
+                cross.addEventListener('click', () => {
+                        document.getElementById('residences').removeChild(container)
+                    }) // addEventListener
+                cross.innerHTML = '&#10007;'
+                countryFG.className = 'form-group col-4'
+                postalCodeFG.className = 'form-group col-4'
+                addressFG.className = 'form-group col-4'
+                countryLbl.setAttribute('for', `TRCountrySlct${lblNum}`)
+                countryLbl.textContent = 'Država'
+                postalCodeLbl.setAttribute('for', `TRPCSlct${lblNum}`)
+                postalCodeLbl.textContent = 'Kraj'
+                addressLbl.setAttribute('for', `TRAddressInpt${lblNum}`)
+                addressLbl.textContent = 'Naslov'
+                countrySlct.id = `TRCountrySlct${lblNum}`
+                countrySlct.classList = 'form-control country-select'
+                    // propagate postal codes by country selection
+                countrySlct.addEventListener('input', e => {
+                        propagateSelectElement(postalCodeSlct, `/eArchive/PostalCodes/select.php?id_countries=${e.target.selectedOptions[0].value}`)
+                    }) // addEventListener
+                postalCodeSlct.id = `TRPCSlct${lblNum}`
+                addressInpt.id = `TRAddressInpt${lblNum}`
+                postalCodeSlct.classList = 'form-control'
+                postalCodeSlct.name = `residences[${indx}][id_postal_codes]`
+                postalCodeSlct.required = true
+                addressInpt.classList = 'form-control'
+                addressInpt.type = 'text'
+                addressInpt.name = `residences[${indx}][address]`
+                addressInpt.required = true
+                    // propagate elements for country selection by adding new residence section
+                request('/eArchive/Countries/select.php', 'GET', 'document').then((response) => {
+                        // instantiate a MutationObserver object
+                        let observer = new MutationObserver(() => {
+                                resolve()
+                            }) // MutationObserver
+                            // set the target and options of observation
+                        observer.observe(document.getElementById('residences'), {
+                                attributes: false,
+                                childList: true,
+                                subtree: false
+                            }) // observe
+                        fragment = response
+                            // traverse through nodes
+                        fragment.body.querySelectorAll('option').forEach(element => {
+                                countrySlct.add(element)
+                            }) // forEach
+                            // append controls to a form residence section
+                        headline.appendChild(cross)
+                        countryFG.appendChild(countryLbl)
+                        countryFG.appendChild(countrySlct)
+                        postalCodeFG.appendChild(postalCodeLbl)
+                        postalCodeFG.appendChild(postalCodeSlct)
+                        addressFG.appendChild(addressLbl)
+                        addressFG.appendChild(addressInpt)
+                        container.appendChild(headline)
+                        container.appendChild(countryFG)
+                        container.appendChild(postalCodeFG)
+                        container.appendChild(addressFG)
+                        document.querySelector('#residences').appendChild(container)
+                    }).catch(error => {
+                        alert(error)
+                    }) // catch
+            }) // Promise
     } // addResidence
 
     /*
@@ -441,9 +457,9 @@
     function selectStudent(e, idStudents) {
         request(`/eArchive/Students/select.php?id_students=${idStudents}`, 'GET', 'json').then(response => {
                 // pass JSON response
-                alterStudentFrm(e, response, 'update')
+                toStudentUpdateFrm(e, response)
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // selectStudent
 
@@ -455,23 +471,31 @@
         // prevent default action of submitting student data through a form
         e.preventDefault()
         request('/eArchive/Students/insert.php', 'POST', 'text', (new FormData(studentFrm))).then(response => {
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
                 refreshStudentsTable()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // insertStudent
 
     /*
      *  fill out form fields with student birthplace particulars
+     *  @param HTMLFormElement frm
      *  @param Number idpostalCode
      *  @param Number idCountries
      */
     function determineStudentBirthplace(frm, idPostalCodes, idCountries) {
         // propagate target select element with postal codes of the chosen country
         frm.querySelector('#bCountrySlct').addEventListener('input', () => {
-                propagateSelectElement(document.querySelector(`#${frm.querySelector('#bCountrySlct').getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${frm.querySelector('#bCountrySlct').selectedOptions[0].value}`)
+                propagateSelectElement(document.querySelector(`#${frm.querySelector('#bCountrySlct').getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${frm.querySelector('#bCountrySlct').selectedOptions[0].value}`).then(result => {
+                        // put postal code of a residence as selected option
+                        Array.from(frm.querySelector('#bPCSlct').options).forEach(option => {
+                                // if postal codes match
+                                if (option.value == idPostalCodes)
+                                    option.selected = true
+                            }) // forEach
+                    }) // then
             }) // addEventListener
         Array.from(frm.querySelector('#bCountrySlct').options).forEach(option => {
                 // if countries match
@@ -480,14 +504,6 @@
             }) // forEach
             // dispatch synthetically generated event
         frm.querySelector('#bCountrySlct').dispatchEvent((new Event('input')))
-        setTimeout(() => {
-                // put postal code of a residence as selected option
-                Array.from(frm.querySelector('#bPCSlct').options).forEach(option => {
-                        // if postal codes match
-                        if (option.value == idPostalCodes)
-                            option.selected = true
-                    }) // forEach
-            }, 500) // setTimeout
     } // determineStudenBirthplace
 
     /*
@@ -505,7 +521,14 @@
             // put country of a residence as selected option
             // propagate target select element with postal codes of the chosen country
         frm.querySelector('#PRCountrySlct').addEventListener('input', () => {
-                propagateSelectElement(document.querySelector(`#${frm.querySelector('#PRCountrySlct').getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${frm.querySelector('#PRCountrySlct').selectedOptions[0].value}`)
+                propagateSelectElement(document.querySelector(`#${frm.querySelector('#PRCountrySlct').getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${frm.querySelector('#PRCountrySlct').selectedOptions[0].value}`).then(() => {
+                        // put postal code of a residence as selected option
+                        Array.from(frm.querySelector('#PRPCSlct').options).forEach(option => {
+                                // if postal codes match
+                                if (option.value == residence.id_postal_codes)
+                                    option.selected = true
+                            }) // forEach
+                    }) // then
             }) // addEventListener
         Array.from(frm.querySelector('#PRCountrySlct').options).forEach(option => {
                 // if countries match
@@ -514,14 +537,6 @@
             }) // forEach
             // dispatch synthetically generated event
         frm.querySelector('#PRCountrySlct').dispatchEvent((new Event('input')))
-        setTimeout(() => {
-                // put postal code of a residence as selected option
-                Array.from(frm.querySelector('#PRPCSlct').options).forEach(option => {
-                        // if postal codes match
-                        if (option.value == residence.id_postal_codes)
-                            option.selected = true
-                    }) // forEach
-            }, 500) // setTimeout
         frm.querySelector('input[name="residences[0][address]"').value = residence.address
     } // determineStudentPermanentResidence
 
@@ -535,37 +550,35 @@
         if (residences.length) {
             // add each temporal residence section
             residences.forEach(residence => {
+                    frm.querySelector('#addTRBtn').addEventListener('click', addResidence().then(() => {
+                                let idResidencesInpt = document.createElement('input'),
+                                    lblNum = document.querySelectorAll('#residences .row').length - 1 // number of added temporal residences 
+                                    // create hidden input type for id of a residence
+                                idResidencesInpt.type = 'hidden'
+                                idResidencesInpt.name = `residences[${lblNum}][id_residences]`
+                                idResidencesInpt.value = residence.id_residences
+                                frm.querySelector(`#TRCountrySlct${lblNum}`).parentElement.prepend(idResidencesInpt)
+                                frm.querySelector(`#TRCountrySlct${lblNum}`).parentElement.parentElement.querySelector('span').addEventListener('click', () => {
+                                        deleteStudentTemporalResidence(frm.querySelector('input[type=hidden]').value, residence.id_residences)
+                                    }) // addEventListener
+                                    // put country of a residence as selected option
+                                Array.from(frm.querySelector(`#TRCountrySlct${lblNum}`).options).forEach(option => {
+                                        // if postal codes match
+                                        if (option.value == residence.id_countries)
+                                            option.selected = true
+                                    }) // forEach
+                                    // dispatch synthetically generated event
+                                frm.querySelector(`#TRCountrySlct${lblNum}`).dispatchEvent((new Event('input')))
+                                    // put postal code of a residence as selected option 
+                                Array.from(frm.querySelector(`#TRPCSlct${lblNum}`).options).forEach(option => {
+                                        // if countries match
+                                        if (option.value == residence.id_postal_codes)
+                                            option.selected = true
+                                    }) // forEach
+                                frm.querySelector(`#TRAddressInpt${lblNum}`).value = residence.address
+                            }) // then
+                        ) // addEventListener
                     frm.querySelector('#addTRBtn').click()
-                        // while section is being generated
-                    setTimeout(() => {
-                            // create hidden input type for id of a residence
-                            let idResidencesInpt = document.createElement('input'),
-                                lblNum = document.querySelectorAll('#residences .row') // number of added temporal residences 
-                            idResidencesInpt.type = 'hidden'
-                            idResidencesInpt.name = `residences[${lblNum}][id_residences]`
-                            idResidencesInpt.value = residence.id_residences
-                            frm.querySelector(`#TRCountrySlct${lblNum}`).parentElement.prepend(idResidencesInpt)
-                            frm.querySelector(`#TRCountrySlct${lblNum}`).parentElement.parentElement.querySelector('span').addEventListener('click', () => {
-                                    deleteStudentTemporalResidence(frm.querySelector('input[type=hidden]').value, residence.id_residences)
-                                }) // addEventListener
-                                // put country of a residence as selected option
-                            Array.from(frm.querySelector(`#TRCountrySlct${lblNum}`).options).forEach(option => {
-                                    // if postal codes match
-                                    if (option.value == residence.id_countries)
-                                        option.selected = true
-                                }) // forEach
-                                // dispatch synthetically generated event
-                            frm.querySelector(`#TRCountrySlct${lblNum}`).dispatchEvent((new Event('input')))
-                                // put postal code of a residence as selected option 
-                            setTimeout(() => {
-                                    Array.from(frm.querySelector(`#TRPCSlct${lblNum}`).options).forEach(option => {
-                                            // if countries match
-                                            if (option.value == residence.id_postal_codes)
-                                                option.selected = true
-                                        }) // forEach
-                                }, 1000) // setTimeout
-                            frm.querySelector(`#TRAddressInpt${lblNum}`).value = residence.address
-                        }, 500) // setTimeout
                 }) // forEach
         } // if
     } // determineStudentTemporalResidence
@@ -581,7 +594,7 @@
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // deleteStudentTemoralResidence
 
@@ -598,7 +611,7 @@
                 reportMdlBtn.click()
                 refreshStudentsTable()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // updateStudent
 
@@ -614,7 +627,7 @@
                 reportMdlBtn.click()
                 refreshStudentsTable()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // deleteStudent
 
@@ -681,14 +694,14 @@
         versionInpt.id = `vInpt${lblNum}`
         versionInpt.classList = 'form-control'
         versionInpt.type = 'text'
-        versionInpt.name = `documents[${lblNum}][version]`
+        versionInpt.name = `documents[${indx}][version]`
         documentInpt.id = `documentInpt${lblNum}`
         documentInpt.type = 'file'
         documentInpt.accept = '.pdf'
         documentInpt.name = 'document[]'
         documentInpt.required = true
         docHiddInpt.type = 'hidden'
-        docHiddInpt.name = `documents[${lblNum}][name]`
+        docHiddInpt.name = `documents[${indx}][name]`
         cross.style.position = 'absolute'
         cross.style.top = 0
         cross.style.right = '10px'
@@ -708,109 +721,103 @@
     } // addDocuments
 
     /*
-     *  modify form for scientific paper insertion or data alteration 
-     *  @param Event e
-     *  @param Object | null sPpr
-     *  @param DOMString action
+     *   transform to form for insretion of scientific paper data and document upload  
+     *   @param Event e
      */
-    function alterSPFrm(e, sPpr = null, action) {
-        // store modal and form elements
-        let mdl = document.getElementById('sPMdl'),
-            frm = document.getElementById('sPFrm')
-            // lookup for a case  
-        switch (action) {
-            case 'insert':
-                mdl.querySelector('.modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
-                sPFrm.innerHTML = sPFrmClone.innerHTML
-                sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
-                    // add controls for scientific paper document upload
-                sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
-                    // exchange listener callbacks 
-                frm.removeEventListener('submit', updateScientificPapers)
-                frm.removeEventListener('submit', insertDocuments)
-                frm.addEventListener('submit', insertScientificPaper)
-                break;
-            case 'update':
-                mdl.querySelector('.modal-header .modal-title').textContent = 'Urejanje znanstvenega dela'
-                frm.innerHTML = sPFrmClone.innerHTML
-                frm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
-                frm.querySelector('input[name="topic"]').value = sPpr.topic
-                frm.querySelector('select[name="type"]').value = sPpr.type
-                frm.querySelector('input[name="written"]').value = sPpr.written
-                frm.querySelector('input[type=submit]').value = 'Uredi'
-                    // disable documents section form controls
-                frm.removeChild(frm.querySelector('#sPDocs'))
-                    // exchange listener callbacks 
-                frm.removeEventListener('submit', insertScientificPaper)
-                frm.removeEventListener('submit', insertDocuments)
-                frm.addEventListener('submit', updateScientificPapers)
-                break;
-            case 'upload':
-                mdl.querySelector('.modal-header .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
-                frm.innerHTML = sPFrmClone.innerHTML
-                frm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
-                frm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
-                frm.removeChild(frm.querySelector('.row'))
-                    // add controls for scientific paper document upload
-                sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
-                    // give hidden input type value of chosens document name
-                frm.querySelector('#documentInpt').addEventListener('change', e => {
-                        frm.querySelector('#docHiddInpt').value = e.target.files[0].name
-                    }) // addEventListener        
-                    // exchange listener callbacks 
-                frm.removeEventListener('submit', insertScientificPaper)
-                frm.removeEventListener('submit', updateScientificPapers)
-                frm.addEventListener('submit', insertDocuments)
-                break;
-        } // switch
-    } // alterSPFrm
+    function toSPInsertFrm(e) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
+        sPFrm.innerHTML = sPFrmClone.innerHTML
+        sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
+            // add controls for scientific paper document upload
+        sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
+            // exchange listener callbacks 
+        sPFrm.removeEventListener('submit', updateScientificPapers)
+        sPFrm.removeEventListener('submit', insertDocuments)
+        sPFrm.addEventListener('submit', insertScientificPaper)
+    } // toSPInsertFrm
 
     /*
-     *  modify form for student particulars insertion or update  
-     *  @param Event e
-     *  @param Object | null student
-     *  @param DOMString action
+     *   transform to form for update of scientific paper data  
+     *   @param Object sPpr
      */
-    function alterStudentFrm(e, student = null, action) {
-        // store form node   
-        frm = document.getElementById('studentFrm')
-            // lookup for a case  
-        switch (action) {
-            case 'insert':
-                frm.innerHTML = studentFrmClone.innerHTML
-                    // clear up all input field values 
-                frm.querySelectorAll('input').forEach(input => {
-                        input.value = ''
-                    }) // forEach
-                frm.querySelector('input[type=submit]').value = 'Vstavi'
-                    // exchange callbacks
-                frm.removeEventListener('submit', updateStudent)
-                frm.addEventListener('submit', insertStudent)
-                break;
-            case 'update':
-                let idefendedInpt = document.createElement('input')
-                idefendedInpt.type = 'hidden'
-                idefendedInpt.name = 'id_students'
-                idefendedInpt.value = e.target.getAttribute('data-id')
-                frm.innerHTML = studentFrmClone.innerHTML
-                frm.prepend(idefendedInpt)
-                    // fill out input fields with student particulars
-                frm.querySelector('input[name=name]').value = student.particulars.name
-                frm.querySelector('input[name=surname]').value = student.particulars.surname
-                frm.querySelector('input[name=email]').value = student.particulars.email
-                frm.querySelector('input[name=telephone]').value = student.particulars.telephone
-                determineStudentBirthplace(frm, student.particulars.id_postal_codes, student.particulars.id_countries)
-                frm.querySelector('#addTRBtn').addEventListener('click', addResidence)
-                determineStudentPermanentResidence(frm, student.permResidence)
-                determineStudentTemporalResidence(frm, student.tempResidence)
-                frm.removeChild(frm.querySelector('#attendances'))
-                frm.querySelector('input[type=submit]').value = 'Posodobi'
-                    // exchange callbacks
-                frm.removeEventListener('submit', insertStudent)
-                frm.addEventListener('submit', updateStudent)
-                break;
-        } // switch
-    } // alterStudentFrm
+    function toSPUpdateFrm(sPpr) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje znanstvenega dela'
+        sPFrm.innerHTML = sPFrmClone.innerHTML
+        sPFrm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
+        sPFrm.querySelector('input[name="topic"]').value = sPpr.topic
+        sPFrm.querySelector('select[name="type"]').value = sPpr.type
+        sPFrm.querySelector('input[name="written"]').value = sPpr.written
+        sPFrm.querySelector('input[type=submit]').value = 'Uredi'
+            // disable documents section form controls
+        sPFrm.removeChild(sPFrm.querySelector('#sPDocs'))
+            // exchange listener callbacks 
+        sPFrm.removeEventListener('submit', insertScientificPaper)
+        sPFrm.removeEventListener('submit', insertDocuments)
+        sPFrm.addEventListener('submit', updateScientificPapers)
+    } // toSPUpdateFrm
+
+    /*
+     *   transform to form for upload of scientific paper documents
+     *   @param Event e
+     */
+    function toSPUploadFrm(e) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+        sPFrm.innerHTML = sPFrmClone.innerHTML
+        sPFrm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
+        sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
+        sPFrm.removeChild(sPFrm.querySelector('.row'))
+            // add controls for scientific paper document upload
+        sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
+            // give hidden input type value of chosens document name
+        sPFrm.querySelector('#documentInpt').addEventListener('change', e => {
+                sPFrm.querySelector('#docHiddInpt').value = e.target.files[0].name
+            }) // addEventListener        
+            // exchange listener callbacks 
+        sPFrm.removeEventListener('submit', insertScientificPaper)
+        sPFrm.removeEventListener('submit', updateScientificPapers)
+        sPFrm.addEventListener('submit', insertDocuments)
+    } // toSPUploadFrm
+
+
+    //  transform to form for student insertion of student particulars and submitted scientific achievements
+    function toStudentInsertFrm() {
+        studentFrm.innerHTML = studentFrmClone.innerHTML
+            // clear up all input field values 
+        studentFrm.querySelectorAll('input').forEach(input => {
+                input.value = ''
+            }) // forEach
+        studentFrm.querySelector('input[type=submit]').value = 'Vstavi'
+            // exchange callbacks
+        studentFrm.removeEventListener('submit', updateStudent)
+        studentFrm.addEventListener('submit', insertStudent)
+    } // toStudentInsertFrm
+
+    /*
+     *   transform to form for student particulars update
+     *   @param Event e
+     *   @param Object student
+     */
+    function toStudentUpdateFrm(e, student) {
+        let idefendedInpt = document.createElement('input')
+        idefendedInpt.type = 'hidden'
+        idefendedInpt.name = 'id_students'
+        idefendedInpt.value = e.target.getAttribute('data-id')
+        studentFrm.innerHTML = studentFrmClone.innerHTML
+        studentFrm.prepend(idefendedInpt)
+            // fill out input fields with student particulars
+        studentFrm.querySelector('input[name=name]').value = student.particulars.name
+        studentFrm.querySelector('input[name=surname]').value = student.particulars.surname
+        studentFrm.querySelector('input[name=email]').value = student.particulars.email
+        studentFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
+        determineStudentBirthplace(studentFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
+        determineStudentPermanentResidence(studentFrm, student.permResidence)
+        determineStudentTemporalResidence(studentFrm, student.tempResidence)
+        studentFrm.removeChild(studentFrm.querySelector('#attendances'))
+        studentFrm.querySelector('input[type=submit]').value = 'Posodobi'
+            // exchange callbacks
+        studentFrm.removeEventListener('submit', insertStudent)
+        studentFrm.addEventListener('submit', updateStudent)
+    } // toStudentUpdateFrm
 
     // attach event listeners to a scientific paper cards when rendered
     function attachSPCardListeners() {
@@ -819,7 +826,7 @@
             document.querySelectorAll('.doc-ins-a').forEach(anchor => {
                 // form will render merely controls for document insertion
                 anchor.addEventListener('click', e => {
-                        alterSPFrm(e, null, 'upload')
+                        toSPUploadFrm(e)
                     }) // addEventListener
             }) // forEach
             // if anchors for scientific papers update are rendered
@@ -829,9 +836,9 @@
                 anchor.addEventListener('click', e => {
                         request(`/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id')}`, 'GET', 'json').then(response => {
                                 // retrieve JSON of ScientificPapers object 
-                                alterSPFrm(e, response, 'update')
+                                toSPUpdateFrm(response)
                             }).catch(error => {
-                                error()
+                                alert(error)
                             }) // catch
                     }) // addEventListener
                     // assign a value to the hidden input type of scientific paper insertion form 
@@ -869,7 +876,7 @@
             }).then(() => {
                 attachSPCardListeners()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // selectScientificPapers
 
@@ -882,10 +889,10 @@
         e.preventDefault()
         request('/eArchive/ScientificPapers/insert.php', 'POST', (new FormData(sPFrm))).then(response => {
                 // report on scientific papers selection
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // insertScientificPaper
 
@@ -898,10 +905,10 @@
         e.preventDefault()
         request('/eArchive/ScientificPapers/update.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
                 // report on scientific paper update
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // updateScientificPapers
 
@@ -912,10 +919,10 @@
     function deleteDocument(source) {
         request(`/eArchive/Documents/delete.php?source=${source}`, 'GET', 'text').then(response => {
                 // report on document deletion
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // deleteDocument
 
@@ -928,10 +935,10 @@
         e.preventDefault()
         request('/eArchive/Documents/insert.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
                 // report on document deletion
-                reportMdl.querySelector('.modal-body').textContent = xmlhttp.responseText
+                reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // insertDocuments
 
@@ -945,7 +952,7 @@
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // deleteScientificPaper
 
@@ -961,7 +968,7 @@
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // insertCertificate
 
@@ -981,7 +988,7 @@
                         deleteCertificate(e.target.getAttribute('data-att-id'), e.target.getAttribute('data-source'))
                     }) // addEventListner
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // selectCertificate
 
@@ -996,7 +1003,7 @@
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
             }).catch(error => {
-                error()
+                alert(error)
             }) // catch
     } // deleteCertificate
 })()
