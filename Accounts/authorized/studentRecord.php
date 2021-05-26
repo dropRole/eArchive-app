@@ -20,7 +20,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
 <section class="container p-3">
     <p class="h2">Evidenca študentov</p>
     <div class="d-flex justify-content-end mr-3">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="
+        <button id="insertStudentBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="
         #studentMdl">Vstavi študenta</button>
         <button id="reportMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#reportMdl"></button>
     </div>
