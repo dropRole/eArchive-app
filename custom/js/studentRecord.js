@@ -9,7 +9,8 @@
         accountFrm = document.getElementById('accountFrm'), // form for creating student account and its credentials   
         certificateFrm = document.getElementById('certificateFrm'), // certificate upload/insertion form
         reportMdl = document.getElementById('reportMdl'), // report modal 
-        reportMdlBtn = document.getElementById('reportMdlBtn') // button for report modal toggle
+        reportMdlBtn = document.getElementById('reportMdlBtn'), // button for report modal toggle
+        filterInpt = document.getElementById('filterByIndx') // input for filtering students by their index numbers
     studentFrm.addEventListener('submit', insertStudent)
     sPFrm.addEventListener('submit', insertScientificPaper)
     accountFrm.addEventListener('submit', e => {
@@ -21,6 +22,11 @@
     certificateFrm.addEventListener('submit', insertCertificate)
     certificateFrm.querySelector('input[type=file').addEventListener('change', () => {
             certificateFrm.querySelector('input[name=certificate]').value = certificateFrm.querySelector('input[type=file]').files[0].name
+        }) // addEventListener
+
+    // filter students by their index numbers 
+    filterInpt.addEventListener('input', () => {
+            selectStudentsByIndex(filterInpt.value)
         }) // addEventListener
 
     // attach event listeners to corresponding input element of the scientific paper form
@@ -470,6 +476,23 @@
     } // selectStudent
 
     /*
+     *   asynchronous script execution for filtered student selection by index      
+     *   @param Number index
+     */
+    function selectStudentsByIndex(index) {
+        request(`/eArchive/Students/filterByIndex.php?index=${index}`, 'GET', 'document').then(response => {
+                let tblCtr = document.querySelector('.table-responsive')
+                    // compose node tree structure
+                fragment = response
+                    // reflect fragments body  
+                tblCtr.innerHTML = fragment.body.innerHTML
+                attachTableListeners()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // selectStudentsByIndex
+
+    /*
      *   asynchronous script execution for insretion of student particulars and scientific achievements
      *   @param Event e
      */
@@ -813,6 +836,7 @@
         idefendedInpt.name = 'id_students'
         idefendedInpt.value = e.target.getAttribute('data-id')
         studentFrm.innerHTML = studentFrmClone.innerHTML
+        attachStudentFrmListeners()
         studentFrm.prepend(idefendedInpt)
             // fill out input fields with student particulars
         studentFrm.querySelector('input[name=name]').value = student.particulars.name
