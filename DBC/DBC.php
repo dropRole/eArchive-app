@@ -364,36 +364,39 @@ class DBC extends PDO
     *   @param int $index
     *   @param string $order
     */
-    public function selectStudentsByIndex(int $index, string $order = 'ASC')
+    public function selectStudentsByIndex(string $index, string $order = 'ASC')
     {
         // restult set
         $resultSet = [];
+        $stmt = '';
         switch ($order) {
             case 'ASC':
-                break;
                 $stmt = "   SELECT 
-                                id_students,
-                                (students.name || ' ' || surname) AS fullname, 
-                                faculties.name AS faculty, 
-                                programs.name AS program,
-                                index,
-                                degree
-                            FROM 
-                                students 
-                                INNER JOIN attendances
-                                USING(id_students)
-                                INNER JOIN faculties
-                                USING(id_faculties)
-                                INNER JOIN programs
-                                USING(id_programs)
+                            id_students,
+                            id_attendances,
+                            (students.name  || ' ' || students.surname) AS fullname, 
+                            faculties.name AS faculty, 
+                            programs.name AS program,
+                            index,
+                            degree
+                        FROM 
+                            students 
+                            INNER JOIN attendances
+                            USING(id_students)
+                            INNER JOIN faculties
+                            USING(id_faculties)
+                            INNER JOIN programs
+                            USING(id_programs)
                             WHERE 
-                                index = :index
+                                index LIKE :index
                             ORDER BY
                                 fullname    ";
+                break;
             case 'DESC':
                 $stmt = "   SELECT 
                                 id_students,
-                                (students.name || ' ' || surname) AS fullname, 
+                                id_attendances,
+                                (students.name  || ' ' || students.surname) AS fullname, 
                                 faculties.name AS faculty, 
                                 programs.name AS program,
                                 index,
@@ -407,7 +410,7 @@ class DBC extends PDO
                                 INNER JOIN programs
                                 USING(id_programs)
                             WHERE 
-                                index = :index
+                                index LIKE :index
                             ORDER BY
                                 fullname DESC   ";
                 break;
@@ -415,7 +418,7 @@ class DBC extends PDO
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':index' . $index, PDO::PARAM_INT);
+            $prpStmt->bindValue(':index', "{$index}%", PDO::PARAM_STR);
             $prpStmt->execute();
             $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
             // if not student was selected
@@ -423,8 +426,6 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        if ($prpStmt->rowCount() == 0)
-            echo 'Ni študenta z danim indeksom.';
         return $resultSet;
     } // selectStudentsByIndex 
 
