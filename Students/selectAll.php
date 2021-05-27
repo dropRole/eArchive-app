@@ -14,6 +14,7 @@ require_once '../Certificates/Certificates.php';
 session_start();
 // establish a new database connection
 $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
+$students = $DBC->selectStudents();
 ?>
 <table class="table">
     <thead>
@@ -30,7 +31,6 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     </thead>
     <tbody>
         <?php
-        $students = $DBC->selectStudents();
         // for each student in the record
         foreach ($students as $student) {
         ?>
