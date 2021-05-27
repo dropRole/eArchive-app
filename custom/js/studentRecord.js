@@ -9,13 +9,7 @@
         accountFrm = document.getElementById('accountFrm'), // form for creating student account and its credentials   
         certificateFrm = document.getElementById('certificateFrm'), // certificate upload/insertion form
         reportMdl = document.getElementById('reportMdl'), // report modal 
-        reportMdlBtn = document.getElementById('reportMdlBtn'), // button for report modal toggle
-        addTRBtn = document.getElementById('addTRBtn'), // button for residence addition 
-        addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for attendance addition
-        countryLst = document.querySelectorAll('.country-select'), // select elements for birth, permanent and temporal residence country 
-        facultySlct = document.getElementById('facultySlct'), // faculty select input
-        graduationCB = document.getElementById('graduationCB'), // graduation checkbox
-        documentInpt = document.getElementById('documentInpt') // document input
+        reportMdlBtn = document.getElementById('reportMdlBtn') // button for report modal toggle
     studentFrm.addEventListener('submit', insertStudent)
     sPFrm.addEventListener('submit', insertScientificPaper)
     accountFrm.addEventListener('submit', e => {
@@ -28,37 +22,50 @@
     certificateFrm.querySelector('input[type=file').addEventListener('change', () => {
             certificateFrm.querySelector('input[name=certificate]').value = certificateFrm.querySelector('input[type=file]').files[0].name
         }) // addEventListener
-    addTRBtn.addEventListener('click', addResidence)
-    addAttendanceBtn.addEventListener('click', addAttendance)
-    countryLst.forEach(select => {
-            // propagate target select element with postal codes of the chosen country
-            select.addEventListener('input', () => {
-                    propagateSelectElement(document.querySelector(`#${select.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${select.selectedOptions[0].value}`)
-                }) // addEventListener
-        }) // forEach
-        // propagate programs by faculty selection
-    facultySlct.addEventListener('change', e => {
-            propagateSelectElement(document.getElementById('programSlct'), `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
-        }) // addEventListener
-        // append graduation section if graduated
-    graduationCB.addEventListener('change', e => {
-            // if it's checked
-            if (graduationCB.checked)
-                addGraduation(e)
-            else {
-                // remove selected graduation section
-                graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
-                graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
-                graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
-            } // else
-        }) // addEventListener
 
-    // give hidden input type value of chosens document name
-    documentInpt.addEventListener('change', e => {
-            document.getElementById('docHInpt').value = e.target.files[0].name
-        }) // addEventListener        
+    // attach event listeners to corresponding input element of the scientific paper form
+    function attachSPFrmListeners() {
+        let documentInpt = document.getElementById('documentInpt') // document input
+            // give hidden input type value of chosens document name
+        documentInpt.addEventListener('change', e => {
+                document.getElementById('docHInpt').value = e.target.files[0].name
+            }) // addEventListener        
+    } // attachSPFrmListeners
 
-    // attach listeners to student evidence table elements  
+    // attach event listeners to corresponding input and selecet elements of the student form
+    function attachStudentFrmListeners() {
+        let addTRBtn = document.getElementById('addTRBtn'), // button for residence addition 
+            addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for attendance addition
+            countryLst = document.querySelectorAll('.country-select'), // select elements for birth, permanent and temporal residence country 
+            facultySlct = document.getElementById('facultySlct'), // faculty select input
+            graduationCB = document.getElementById('graduationCB') // graduation checkbox
+        addTRBtn.addEventListener('click', addTemporalResidenceFrmSect)
+        addAttendanceBtn.addEventListener('click', addProgramAttendanceSect)
+        countryLst.forEach(select => {
+                // propagate target select element with postal codes of the chosen country
+                select.addEventListener('input', () => {
+                        propagateSelectElement(document.querySelector(`#${select.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${select.selectedOptions[0].value}`)
+                    }) // addEventListener
+            }) // forEach
+            // propagate programs by faculty selection
+        facultySlct.addEventListener('change', e => {
+                propagateSelectElement(document.getElementById('programSlct'), `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
+            }) // addEventListener
+            // append graduation section if graduated
+        graduationCB.addEventListener('change', e => {
+                // if it's checked
+                if (graduationCB.checked)
+                    addProgramGraduationFrmSect(e)
+                else {
+                    // remove selected graduation section
+                    graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                    graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                    graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                } // else
+            }) // addEventListener
+    } // attachStudentFrmListeners
+
+    // attach listeners to student evidence table appropriate anchors and buttons   
     function attachTableListeners() {
         let insertStudentBtn = document.getElementById('insertStudentBtn'), // button for insertion of student particulars and scientific achievements
             sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
@@ -171,7 +178,6 @@
             while (select.options.length) {
                 select.remove(0)
             } // while
-
             // traverse through nodes 
             fragment.body.querySelectorAll('option').forEach(element => {
                     select.add(element)
@@ -182,7 +188,7 @@
     } // propagateSelectElement
 
     // create and append additional form residence section controls 
-    function addResidence() {
+    function addTemporalResidenceFrmSect() {
         return new Promise((resolve) => {
                 // create form controls 
                 let container = document.createElement('div'),
@@ -269,13 +275,13 @@
                         alert(error)
                     }) // catch
             }) // Promise
-    } // addResidence
+    } // addTemporalResidenceFrmSect
 
     /*
      *  subsequently create and append graduation section of the student insertion form 
      *  @param Event e
      */
-    function addGraduation(e) {
+    function addProgramGraduationFrmSect(e) {
         let lblNum = e.target.getAttribute('data-lbl-nm'), // get ordinal number for label numeration   
             indx = e.target.getAttribute('data-indx'), // get next index position for attendances array 
             // create form controls 
@@ -332,10 +338,10 @@
         e.target.closest('.row').appendChild(certificateFG)
         e.target.closest('.row').appendChild(defendedFG)
         e.target.closest('.row').appendChild(issuedFG)
-    } // addGraduation
+    } // addProgramGraduationFrmSect
 
     // subsequently create and append attendance section of the student insertion form 
-    function addAttendance() {
+    function addProgramAttendanceSect() {
         // create form controls
         let container = document.createElement('div'),
             headline = document.createElement('p'),
@@ -370,7 +376,7 @@
         graduationCB.addEventListener('change', e => {
                 // if it's checked
                 if (graduationCB.checked)
-                    addGraduation(e)
+                    addProgramGraduationFrmSect(e)
                 else {
                     // remove selected graduation section
                     graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
@@ -447,7 +453,7 @@
         container.appendChild(indexFG)
         container.appendChild(graduationFG)
         document.getElementById('attendances').appendChild(container)
-    } // addAttendance 
+    } // addProgramAttendanceSect 
 
     /*
      *   asynchronous script execution for selection of student particulars and scientific achievements    
@@ -473,6 +479,9 @@
         request('/eArchive/Students/insert.php', 'POST', 'text', (new FormData(studentFrm))).then(response => {
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                emptyFrmInptFields(studentFrm)
+                    // close the modal after insertion 
+                document.getElementById('insertStudentBtn').click()
                 refreshStudentsTable()
             }).catch(error => {
                 alert(error)
@@ -488,7 +497,7 @@
     function determineStudentBirthplace(frm, idPostalCodes, idCountries) {
         // propagate target select element with postal codes of the chosen country
         frm.querySelector('#bCountrySlct').addEventListener('input', () => {
-                propagateSelectElement(document.querySelector(`#${frm.querySelector('#bCountrySlct').getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${frm.querySelector('#bCountrySlct').selectedOptions[0].value}`).then(result => {
+                propagateSelectElement(document.querySelector(`#${frm.querySelector('#bCountrySlct').getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${frm.querySelector('#bCountrySlct').selectedOptions[0].value}`).then(() => {
                         // put postal code of a residence as selected option
                         Array.from(frm.querySelector('#bPCSlct').options).forEach(option => {
                                 // if postal codes match
@@ -550,7 +559,7 @@
         if (residences.length) {
             // add each temporal residence section
             residences.forEach(residence => {
-                    frm.querySelector('#addTRBtn').addEventListener('click', addResidence().then(() => {
+                    frm.querySelector('#addTRBtn').addEventListener('click', addTemporalResidenceFrmSect().then(() => {
                                 let idResidencesInpt = document.createElement('input'),
                                     lblNum = document.querySelectorAll('#residences .row').length - 1 // number of added temporal residences 
                                     // create hidden input type for id of a residence
@@ -609,6 +618,8 @@
                 // report on update
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                emptyFrmInptFields(studentFrm)
+                document.getElementById('insertStudentBtn').click()
                 refreshStudentsTable()
             }).catch(error => {
                 alert(error)
@@ -782,10 +793,9 @@
     //  transform to form for student insertion of student particulars and submitted scientific achievements
     function toStudentInsertFrm() {
         studentFrm.innerHTML = studentFrmClone.innerHTML
+        attachStudentFrmListeners()
             // clear up all input field values 
-        studentFrm.querySelectorAll('input').forEach(input => {
-                input.value = ''
-            }) // forEach
+        emptyFrmInptFields(studentFrm)
         studentFrm.querySelector('input[type=submit]').value = 'Vstavi'
             // exchange callbacks
         studentFrm.removeEventListener('submit', updateStudent)
@@ -1006,4 +1016,14 @@
                 alert(error)
             }) // catch
     } // deleteCertificate
+
+    /*
+     *  clear input field values of a form 
+     *  @param HTMLFormElement frm
+     */
+    function emptyFrmInptFields(frm) {
+        frm.querySelectorAll('input').forEach(input => {
+                input.value = ''
+            }) // forEach
+    } // emptyFrmInptFields
 })()
