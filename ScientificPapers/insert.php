@@ -27,8 +27,14 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
     echo $report['message'];
     // if an attempt was successful 
     if ($report['id_scientific_papers']) {
-        foreach ($documents as $document) {
+        // if there were partakers in writtin
+        if ($_POST['partakers'])
+            foreach ($_POST['partakers'] as $partaker)
+                if ($DBC->insertPartakingsOnScientificPaper($report['id_scientific_papers'], $DBC->selectStudentsByIndex($partaker['index'])[0]->id_attendances, $partaker['part']))
+                    echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} je uspešno vstavljen.";
+                else
+                    echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} ni uspešno vstavljen.";
+        foreach ($documents as $document)
             echo $DBC->insertDocument($report['id_scientific_papers'], $document['version'], $document['name']);
-        } // foreach
     } // if
-} // if 
+} // if  
