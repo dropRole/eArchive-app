@@ -31,11 +31,15 @@
 
     // attach event listeners to corresponding input element of the scientific paper form
     function attachSPFrmListeners() {
-        let documentInpt = document.getElementById('documentInpt') // document input
-            // give hidden input type value of chosens document name
-        documentInpt.addEventListener('change', e => {
-                document.getElementById('docHInpt').value = e.target.files[0].name
-            }) // addEventListener        
+        let addPartakerBtn = document.getElementById('addPartakerBtn') // button for adding section for partaking on a scientific paper
+            // assign to hidden input the filename of uploaded document
+        sPFrm.querySelector('input[name="document[]"]').addEventListener('change', e => {
+                sPFrm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
+            }) // addEventListener
+            // add controls for scientific paper document upload
+        sPFrm.querySelector('#addDocumentBtn').addEventListener('click', addDocuments)
+            // add another partaker section 
+        addPartakerBtn.addEventListener('click', addPartakerFrmSect)
     } // attachSPFrmListeners
 
     // attach event listeners to corresponding input and selecet elements of the student form
@@ -461,6 +465,59 @@
         document.getElementById('attendances').appendChild(container)
     } // addProgramAttendanceSect 
 
+    //  subsequently create and append partaker section of the scientific paper insretion form 
+    function addPartakerFrmSect() {
+        // create element nodes 
+        let ctr = document.createElement('div'),
+            headline = document.createElement('p'),
+            cross = document.createElement('span'),
+            partakerFG = document.createElement('div'),
+            partFG = document.createElement('div'),
+            partakerLbl = document.createElement('label'),
+            partLbl = document.createElement('label'),
+            partakerInpt = document.createElement('input'),
+            partInpt = document.createElement('input'),
+            lblNum = document.querySelectorAll('#sPPartakers .row').length + 1, // number of added partakers on scientific paper
+            indx = lblNum // the following index for an array of data on a partaker  
+        ctr.classList = 'row'
+        headline.classList = 'h6 col-12'
+        headline.textContent = `${lblNum}. soavtor`
+        cross.style.float = 'right'
+        cross.style.transform = 'scale(1.2)'
+        cross.style.cursor = 'pointer'
+        cross.innerHTML = '&#10007'
+            // remove selected attendance section
+        cross.addEventListener('click', () => {
+                document.getElementById('sPPartakers').removeChild(ctr)
+            }) // addEventListener
+        partakerFG.classList = 'form-group col-6'
+        partFG.classList = 'form-group col-6'
+        partakerLbl.htmlFor = 'partakerInpt'
+        partakerLbl.textContent = 'Sodelovalec'
+        partLbl.htmlFor = 'partInpt'
+        partLbl.textContent = 'Vloga'
+        partakerInpt.id = `partakerInpt${lblNum}`
+        partakerInpt.classList = 'form-control'
+        partakerInpt.name = `partakers[${indx}][index]`
+        partakerInpt.setAttribute('list', 'students')
+        partakerInpt.required = true
+        partInpt.id = `partInpt${lblNum}`
+        partInpt.classList = 'form-control'
+        partInpt.type = 'text'
+        partInpt.name = `partakers[${indx}][part]`
+        partInpt.required = true
+            // compose a node hierarchy by appending them to active tree structure 
+        headline.appendChild(cross)
+        partakerFG.appendChild(partakerLbl)
+        partakerFG.appendChild(partakerInpt)
+        partFG.appendChild(partLbl)
+        partFG.appendChild(partInpt)
+        ctr.appendChild(headline)
+        ctr.appendChild(partakerFG)
+        ctr.appendChild(partFG)
+        document.getElementById('sPPartakers').appendChild(ctr)
+    } // addPartakerFrmSect
+
     /*
      *   asynchronous script execution for selection of student particulars and scientific achievements    
      *   @param Event e
@@ -761,9 +818,8 @@
     function toSPInsertFrm(e) {
         document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
         sPFrm.innerHTML = sPFrmClone.innerHTML
+        attachSPFrmListeners()
         sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
-            // add controls for scientific paper document upload
-        sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
             // exchange listener callbacks 
         sPFrm.removeEventListener('submit', updateScientificPapers)
         sPFrm.removeEventListener('submit', insertDocuments)
@@ -777,6 +833,7 @@
     function toSPUpdateFrm(sPpr) {
         document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje znanstvenega dela'
         sPFrm.innerHTML = sPFrmClone.innerHTML
+        attachSPFrmListeners()
         sPFrm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
         sPFrm.querySelector('input[name="topic"]').value = sPpr.topic
         sPFrm.querySelector('select[name="type"]').value = sPpr.type
@@ -800,8 +857,6 @@
         sPFrm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
         sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
         sPFrm.removeChild(sPFrm.querySelector('.row'))
-            // add controls for scientific paper document upload
-        sPFrm.querySelector('#aDBtn').addEventListener('click', addDocuments)
             // give hidden input type value of chosens document name
         sPFrm.querySelector('#documentInpt').addEventListener('change', e => {
                 sPFrm.querySelector('#docHiddInpt').value = e.target.files[0].name
@@ -921,7 +976,7 @@
     function insertScientificPaper(e) {
         // prevent default action of submitting scientific paper data    
         e.preventDefault()
-        request('/eArchive/ScientificPapers/insert.php', 'POST', (new FormData(sPFrm))).then(response => {
+        request('/eArchive/ScientificPapers/insert.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
                 // report on scientific papers selection
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
