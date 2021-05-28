@@ -513,8 +513,8 @@ class DBC extends PDO
         } // catch
         // if single row is affected
         if ($prpStmt->rowCount() == 1)
-            return true;
-        return false;
+            return TRUE;
+        return FALSE;
     } // checkIfResides
 
     /*
@@ -1305,8 +1305,8 @@ class DBC extends PDO
         $prpStmt->execute();
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
-            return true;
-        return false;
+            return TRUE;
+        return FALSE;
     } // deleteCertificate
 
     /*
@@ -1402,6 +1402,7 @@ class DBC extends PDO
         // action report
         $report = '';
         $report .= $this->deleteDocuments($id_scientific_papers);
+        $report .= $this->deletePartakingsOnScientificPaper($id_scientific_papers);
         $stmt = '   DELETE FROM
                         scientific_papers 
                     WHERE 
@@ -1422,29 +1423,54 @@ class DBC extends PDO
     } // deleteScientificPaper
 
     /*
+    *   delete all partakings on a scientific paper
+    *   @param int $id_scientific_papers
+    */
+    public function deletePartakingsOnScientificPaper(int $id_scientific_papers)
+    {
+        $stmt = '   DELETE FROM 
+                        partakings
+                    WHERE 
+                        id_scientific_papers = :id_scientific_papers    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single or more rows are affected
+        if ($prpStmt->rowCount() >= 1)
+            return 'Podatki o soavtorstvih so uspešno izbrisani.' . PHP_EOL;
+        return 'Podatki o soavtorstvih niso uspešno izbrisani.' . PHP_EOL;
+    } // deletePartakings
+
+    /*
     *   insert partaking particulars 
     *   @param int $id_students
     *   @param int $id_scientific_papers
     *   @param string $part
     */
-    public function insertPartakings(int $id_students, int $id_scientific_papers, string $part)
+    public function insertPartakingsOnScientificPaper(int $id_scientific_papers, int $id_attendances, string $part)
     {
         $stmt = '   INSERT INTO 
                         partakings
                     (
-                        id_students, 
                         id_scientific_papers,
+                        id_attendances, 
                         part
                     )
                     VALUES(
-                        :id_students,
                         :id_scientific_papers,
+                        :id_attendances,
                         :part
                     )   ';
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_stundents', $id_students, PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->bindParam(':part', $part, PDO::PARAM_STR);
             $prpStmt->execute();
@@ -1454,10 +1480,9 @@ class DBC extends PDO
         } // catch
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
-            return 'Soavtor študija je uspešno dodan.';
-        else
-            return 'Napaka: soavtor študija ni uspešno dodan.';
-    } // insertPartakings
+            return TRUE;
+        return FALSE;
+    } // insertPartakingsOnScientificPaper
 
     /*
     *   update part in writing 
@@ -1488,32 +1513,6 @@ class DBC extends PDO
         else
             return 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
     } // updatePartakings
-
-    /*
-    *   delete partaking particulars
-    *   @param int $id_partakings
-    */
-    public function deletePartakings(int $id_partakings)
-    {
-        $stmt = '   DELETE FROM 
-                        partakings
-                    WHERE 
-                        id_partakings = :id_partakings  ';
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_partakings', $id_partakings, PDO::PARAM_INT);
-            $prpStmt->execute();
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return 'Podatki o soavtorstvu so uspešno izbrisani.';
-        else
-            return 'Podatki o soavtorstvu niso uspešno izbrisani.';
-    } // deletePartakings
 
     /*
     *   insert mentoring of scientific paper
@@ -1667,8 +1666,6 @@ class DBC extends PDO
     */
     public function insertDocument(int $id_scientific_papers, string $version, string $document)
     {
-        // action report
-        $report = '';
         // if not already running a transaction
         if (!$this->inTransaction()) {
             try {
@@ -1683,7 +1680,7 @@ class DBC extends PDO
                             $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
                             // if it's not a PDF document
                             if (strpos($mimetype, 'pdf') == FALSE)
-                                return $report = "Napaka: dokument '{$_FILES['document']['name'][$indx]}' ni uspešno dodan saj ni tipa .pdf .";
+                                return "Napaka: dokument '{$_FILES['document']['name'][$indx]}' ni uspešno dodan saj ni tipa .pdf .";
                             $upload = TRUE;
                             // if document meets the condition 
                             if ($upload) {
@@ -1713,27 +1710,27 @@ class DBC extends PDO
                                 $prpStmt->execute();
                                 // if documnet was inserted into db and moved to a new destination  
                                 if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
-                                    $report = "Dokument {$_FILES['document']['name'][$indx]} je uspešno vstavljen." . PHP_EOL;
                                     // commit current transaction
                                     $this->commit();
-                                    return $report;
+                                    return "Dokument {$_FILES['document']['name'][$indx]} je uspešno vstavljen." . PHP_EOL;
                                 } // if
                                 // rollback current transaction
                                 $this->rollBack();
-                                return $report = 'Napaka: podatki dokumenta niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.';
+                                return 'Napaka: podatki dokumenta niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.' . PHP_EOL;
                             } // if
+                            return "Napaka: dokument {$_FILES['document']['name'][$indx]} ni zadostil kriterij nalaganja." . PHP_EOL;
                         } // if
-                        return $report = "Napaka: dokument {$_FILES['document']['name'][$indx]} ni uspešno naložen.";
+                        return "Napaka: dokument {$_FILES['document']['name'][$indx]} ni uspešno naložen." . PHP_EOL;
                     } // if
                 } // foreach
             } // try
             catch (PDOException $e) {
                 // output error message 
-                return $report = "Napaka: {$e->getMessage()}.";
+                return "Napaka: {$e->getMessage()}." . PHP_EOL;
             } // catch 
         } // if
         else
-            return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.';
+            return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
     } // insertDocument
 
     /*
