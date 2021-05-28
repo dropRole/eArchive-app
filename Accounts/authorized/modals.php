@@ -181,6 +181,22 @@
                             <input id="writtenInpt" class="form-control" type="date" name="written" required>
                         </div>
                     </div>
+                    <div id="sPPartakers">
+                        <p class="h6">Soavtorji</p>
+                        <div class="d-flex justify-content-center col-12">
+                            <button id="addPartakerBtn" class="btn btn-secondary" type="button">&plus;</button>
+                        </div>
+                        <datalist id="students">
+                            <?php
+                            // denote student as potential partaker on a scientific paper
+                            foreach($DBC->selectStudents() as $student){
+                                ?>
+                                <option value="<?php echo $student->index; ?>"><?php echo $student->fullname; ?></option>
+                                <?php
+                            } // foreach
+                            ?>
+                        </datalist>
+                    </div>
                     <div id="sPDocs">
                         <p class="h6">Dokumentacija</p>
                         <div class="row">
@@ -195,7 +211,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-center col-12">
-                            <button id="aDBtn" class="btn btn-secondary" type="button">&plus;</button>
+                            <button id="addDocumentBtn" class="btn btn-secondary" type="button">&plus;</button>
                         </div>
                     </div>
                     <input class="btn btn-secondary float-right" type="submit" value="Dodaj">
