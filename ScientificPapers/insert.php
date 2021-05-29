@@ -27,13 +27,23 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
     echo $report['message'];
     // if an attempt was successful 
     if ($report['id_scientific_papers']) {
-        // if there were partakers in writtin
-        if ($_POST['partakers'])
+        // if there were partakers in writting
+        if (isset($_POST['partakers']))
             foreach ($_POST['partakers'] as $partaker)
+                // if partaker was succesfully inserted 
                 if ($DBC->insertPartakingsOnScientificPaper($report['id_scientific_papers'], $DBC->selectStudentsByIndex($partaker['index'])[0]->id_attendances, $partaker['part']))
-                    echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} je uspešno vstavljen.";
+                    echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} je uspešno vstavljen." . PHP_EOL;
                 else
-                    echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} ni uspešno vstavljen.";
+                    echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} ni uspešno vstavljen." . PHP_EOL;
+        // if scientific paper was mentored
+        if (isset($_POST['mentors'])) {
+            foreach ($_POST['mentors'] as $mentor)
+                // if mentor was succesfully inserted 
+                if ($DBC->insertMentorOfScientificPaper($report['id_scientific_papers'], $mentor['id_faculties'], $mentor['mentor'], $mentor['taught'], $mentor['email'], $mentor['telephone']))
+                    echo "Podatki o mentorju {$mentor['mentor']} so uspešno vstavljeni." . PHP_EOL;
+                else
+                    echo "Podatki o mentorju {$mentor['mentor']} niso uspešno vstavljeni." . PHP_EOL;
+        } // if
         foreach ($documents as $document)
             echo $DBC->insertDocument($report['id_scientific_papers'], $document['version'], $document['name']);
     } // if
