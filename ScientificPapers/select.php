@@ -8,6 +8,7 @@ use DBC\DBC;
 
 require_once '../DBC/DBC.php';
 require_once '../Documents/Documents.php';
+require_once '../Mentorings/Mentorings.php';
 require_once './ScientificPapers.php';
 
 // proceed with the session
@@ -27,17 +28,68 @@ if (isset($_GET['id_attendances'])) {
         <?php
     } // if
     // if papares exist in evidence
-    if (count($scientificPapers) >= 1) {
+    if (count($scientificPapers) > 0) {
         foreach ($scientificPapers as $scientificPaper) {
         ?>
             <div class="card m-3 col-6">
                 <div class="card-body">
-                    <h5 class="card-title"><?php echo $scientificPaper->getTopic(); ?></h5>
-                    <h6 class="card-subtitle mb-2 text-muted"><?php echo $scientificPaper->getType(); ?></h6>
+                    <p class="card-title">
+                        <span class="h5"><?php echo $scientificPaper->getTopic(); ?></span>
+                        <span class="float-right font-italic text-muted small">Napisano: <?php echo (new DateTime($scientificPaper->getWritten()))->format('d-m-y'); ?></span>
+                    </p>
+                    <p class="card-subtitle mb-2 text-muted h6"><?php echo $scientificPaper->getType(); ?></p>
                     <ul class="list-group">
                         <div class="row">
                             <div class="col-6">
-                                <span class="font-weight-bold">Dokumentacija</span>
+                                <p class="h6">Soavtorji</p>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="card-link float-right men-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Dodeli</a>
+                            </div>
+                        </div>
+                        <?php
+                        $partakers = $DBC->selectPartakersOfScientificPaper($scientificPaper->getIdScientificPapers());
+                        // if paper had partakers
+                        if (count($partakers))
+                            foreach ($partakers as $partaker) {
+                        ?>
+                            <li class="list-group-item"><span><?php echo $partaker->fullname; ?></span><span class="men-del-spn ml-3" data-id="<?php echo $partaker->index; ?>">&#10007;</span></li>
+                        <?php
+                            } // foreach
+                        else
+                            echo 'Delo nima soavtorjev.';
+                        ?>
+                    </ul>
+                    <ul class="list-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="h6">Mentorji</p>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="card-link float-right men-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Vstavi</a>
+                            </div>
+                        </div>
+                        <?php
+                        $mentors = $DBC->selectMentorsOfScientificPaper($scientificPaper->getIdScientificPapers());
+                        // if paper was mentored
+                        if (count($mentors))
+                            foreach ($mentors as $mentor) {
+                        ?>
+                            <li class="list-group-item">
+                                <span><?php echo $mentor->getMentor(); ?> (</span><span><?php echo $mentor->name; ?>)</span>
+                                <a class="men-edt-a" href="#sPMdl" data-toggle="modal">Uredi</a>
+                                <span class="men-del-spn ml-3" data-id="<?php echo $mentor->getIdMentorings(); ?>">&#10007;</span>
+                            </li>
+                        <?php
+                            } // foreach
+                        else
+                            echo 'Delo ni mentorirano.';
+                        ?>
+                    </ul>
+                    <ul class="list-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="h6">Dokumentacija</p>
                             </div>
                             <div class="col-6">
                                 <a href="#" class="card-link float-right doc-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Naloži</a>
