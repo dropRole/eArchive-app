@@ -36,8 +36,10 @@
         sPFrm.querySelector('input[name="document[]"]').addEventListener('change', e => {
                 sPFrm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
             }) // addEventListener
+            // add controls for mentor of a scientific papers
+        sPFrm.querySelector('#addMentorBtn').addEventListener('click', addMentoringsFrmSect)
             // add controls for scientific paper document upload
-        sPFrm.querySelector('#addDocumentBtn').addEventListener('click', addDocuments)
+        sPFrm.querySelector('#addDocumentBtn').addEventListener('click', addDocumentFrmSect)
             // add another partaker section 
         addPartakerBtn.addEventListener('click', addPartakerFrmSect)
     } // attachSPFrmListeners
@@ -518,6 +520,159 @@
         document.getElementById('sPPartakers').appendChild(ctr)
     } // addPartakerFrmSect
 
+    //  create and append additional form controls for scientific papers documentation upload
+    function addDocumentFrmSect() {
+        // create form controls 
+        let container = document.createElement('div'), // row
+            cross = document.createElement('span'), // removal sign
+            versionFG = document.createElement('div'), // form group
+            documentFG = document.createElement('div'), // form group
+            versionLbl = document.createElement('label'), // version label
+            documentLbl = document.createElement('label'), // document label
+            versionInpt = document.createElement('input'), // version input
+            documentInpt = document.createElement('input'), // document input 
+            docHiddInpt = document.createElement('input'), // document hidden input 
+            lblNum = document.querySelectorAll('#documents .row').length, // number of added documents  
+            indx = lblNum - 1 // the following index for an array of data on documents of scientific paper  
+            // give hidden input type value of chosens document name
+        documentInpt.addEventListener('change', e => {
+                docHiddInpt.value = e.target.files[0].name
+            }) // addEventListener
+            // remove appended controls
+        cross.addEventListener('click', () => {
+                document.getElementById('sPDocs').removeChild(container)
+            }) // addEventListener
+        container.classList = 'row mt-2'
+        container.style.position = 'relative'
+        versionFG.classList = 'form-group col-6'
+        documentFG.classList = 'form-group col-6'
+        versionLbl.setAttribute('for', `vInpt${lblNum}`)
+        versionLbl.textContent = 'Verzija'
+        documentLbl.setAttribute('for', `documentInpt${lblNum}`)
+        documentLbl.textContent = 'Dokument'
+        versionInpt.id = `vInpt${lblNum}`
+        versionInpt.classList = 'form-control'
+        versionInpt.type = 'text'
+        versionInpt.name = `documents[${indx}][version]`
+        documentInpt.id = `documentInpt${lblNum}`
+        documentInpt.type = 'file'
+        documentInpt.accept = '.pdf'
+        documentInpt.name = 'document[]'
+        documentInpt.required = true
+        docHiddInpt.type = 'hidden'
+        docHiddInpt.name = `documents[${indx}][name]`
+        cross.style.position = 'absolute'
+        cross.style.top = 0
+        cross.style.right = '10px'
+        cross.style.zIndex = 1
+        cross.style.cursor = 'pointer'
+        cross.innerHTML = '&#10007;'
+        versionFG.appendChild(versionLbl)
+        versionFG.appendChild(versionInpt)
+        documentFG.appendChild(docHiddInpt)
+        documentFG.appendChild(documentLbl)
+        documentFG.appendChild(documentInpt)
+        container.appendChild(cross)
+        container.appendChild(versionFG)
+        container.appendChild(documentFG)
+            // append controls to scientific paper insert form
+        document.getElementById('sPDocs').appendChild(container)
+    } // addDocumentFrmSect
+
+    //  create and append additional form controls for providing data on mentors 
+    function addMentoringsFrmSect() {
+        // create form controls 
+        let ctr = document.createElement('div'), // row
+            headline = document.createElement('p'),
+            cross = document.createElement('span'), // removal sign 
+            mentorFG = document.createElement('div'), // form group
+            facultyFG = document.createElement('div'), // form group
+            taughtFG = document.createElement('div'), // form group
+            emailFG = document.createElement('div'), // form group
+            telephoneFG = document.createElement('div'), // form group
+            mentorLbl = document.createElement('label'), // mentor label
+            facultyLbl = document.createElement('label'), // faculty label
+            taughtLbl = document.createElement('label'), // subject label
+            emailLbl = document.createElement('label'), // email label
+            telephoneLbl = document.createElement('label'), // telephone label
+            facultySlct = document.createElement('select'), // faculty input
+            mentorInpt = document.createElement('input'), // mentor input
+            taughtInpt = document.createElement('input'), // subject input
+            emailInpt = document.createElement('input'), // email input
+            telephoneInpt = document.createElement('input'), // telephone input
+            lblNum = document.querySelectorAll('#sPMentors .row').length + 1, // number of added documents  
+            indx = lblNum - 1 // the following index for an array of data on documents of scientific paper  
+        ctr.classList = 'row'
+        headline.classList = 'col-12 h6'
+        headline.textContent = `${lblNum}. mentor`
+        cross.style.float = 'right'
+        cross.style.transform = 'scale(1.2)'
+        cross.style.cursor = 'pointer'
+        cross.innerHTML = '&#10007'
+            // remove selected attendance section
+        cross.addEventListener('click', () => {
+                document.getElementById('sPMentors').removeChild(ctr)
+            }) // addEventListener
+        mentorFG.classList = 'form-group col-12'
+        facultyFG.classList = 'form-group col-6'
+        taughtFG.classList = 'form-group col-6'
+        emailFG.classList = 'form-group col-6'
+        telephoneFG.classList = 'form-group col-6'
+        facultyLbl.htmlFor = `facultySlct${lblNum}`
+        facultyLbl.textContent = 'Fakulteta'
+        mentorLbl.htmlFor = `mentorInpt${lblNum}`
+        mentorLbl.textContent = 'Mentor'
+        taughtLbl.htmlFor = `taughtInpt${lblNum}`
+        taughtLbl.textContent = 'Poučeval'
+        emailLbl.htmlFor = `emailInpt${lblNum}`
+        emailLbl.textContent = 'E-naslov'
+        telephoneLbl.htmlFor = `telephoneInpt${lblNum}`
+        telephoneLbl.textContent = 'Telefon'
+        facultySlct.id = `facultySlct${lblNum}`
+        facultySlct.classList = 'form-control'
+        facultySlct.name = `mentors[${indx}][id_faculties]`
+        propagateSelectElement(facultySlct, '/eArchive/Faculties/select.php')
+        facultySlct.required = true
+        mentorInpt.id = `mentorInpt${lblNum}`
+        mentorInpt.classList = 'form-control'
+        mentorInpt.type = 'text'
+        mentorInpt.name = `mentors[${indx}][mentor]`
+        mentorInpt.required = true
+        taughtInpt.id = `taughtInpt${lblNum}`
+        taughtInpt.classList = 'form-control'
+        taughtInpt.type = 'text'
+        taughtInpt.name = `mentors[${indx}][taught]`
+        taughtInpt.required = true
+        emailInpt.id = `emailInpt${lblNum}`
+        emailInpt.classList = 'form-control'
+        emailInpt.type = 'email'
+        emailInpt.name = `mentors[${indx}][email]`
+        emailInpt.required = true
+        telephoneInpt.id = `telephoneInpt${lblNum}`
+        telephoneInpt.classList = 'form-control'
+        telephoneInpt.type = 'telephone'
+        telephoneInpt.name = `mentors[${indx}][telephone]`
+        telephoneInpt.required = true
+        headline.appendChild(cross)
+        mentorFG.appendChild(mentorLbl)
+        mentorFG.appendChild(mentorInpt)
+        facultyFG.appendChild(facultyLbl)
+        facultyFG.appendChild(facultySlct)
+        taughtFG.appendChild(taughtLbl)
+        taughtFG.appendChild(taughtInpt)
+        emailFG.appendChild(emailLbl)
+        emailFG.appendChild(emailInpt)
+        telephoneFG.appendChild(telephoneLbl)
+        telephoneFG.appendChild(telephoneInpt)
+        ctr.appendChild(headline)
+        ctr.appendChild(mentorFG)
+        ctr.appendChild(facultyFG)
+        ctr.appendChild(taughtFG)
+        ctr.appendChild(emailFG)
+        ctr.appendChild(telephoneFG)
+        document.getElementById('sPMentors').appendChild(ctr)
+    } // addMentoringsFrmSect
+
     /*
      *   asynchronous script execution for selection of student particulars and scientific achievements    
      *   @param Event e
@@ -751,65 +906,6 @@
 
             }) // catch
     } // deleteStudentAccount
-
-    //  create and append additional form controls for scientific papers documentation upload
-    function addDocuments() {
-        // create form controls 
-        let container = document.createElement('div'), // row
-            versionFG = document.createElement('div'), // form group
-            documentFG = document.createElement('div'), // form group
-            versionLbl = document.createElement('label'), // version label
-            versionInpt = document.createElement('input'), // version input
-            documentLbl = document.createElement('label'), // document label
-            documentInpt = document.createElement('input'), // document input 
-            docHiddInpt = document.createElement('input'), // document hidden input 
-            cross = document.createElement('span'), // removal sign
-            lblNum = document.querySelectorAll('#documents .row').length, // number of added documents  
-            indx = lblNum - 1 // the following index for an array of data on documents of scientific paper  
-            // give hidden input type value of chosens document name
-        documentInpt.addEventListener('change', e => {
-                docHiddInpt.value = e.target.files[0].name
-            }) // addEventListener
-            // remove appended controls
-        cross.addEventListener('click', () => {
-                document.getElementById('sPDocs').removeChild(container)
-            }) // addEventListener
-        container.classList = 'row mt-2'
-        container.style.position = 'relative'
-        versionFG.classList = 'form-group col-6'
-        documentFG.classList = 'form-group col-6'
-        versionLbl.setAttribute('for', `vInpt${lblNum}`)
-        versionLbl.textContent = 'Verzija'
-        documentLbl.setAttribute('for', `documentInpt${lblNum}`)
-        documentLbl.textContent = 'Dokument'
-        versionInpt.id = `vInpt${lblNum}`
-        versionInpt.classList = 'form-control'
-        versionInpt.type = 'text'
-        versionInpt.name = `documents[${indx}][version]`
-        documentInpt.id = `documentInpt${lblNum}`
-        documentInpt.type = 'file'
-        documentInpt.accept = '.pdf'
-        documentInpt.name = 'document[]'
-        documentInpt.required = true
-        docHiddInpt.type = 'hidden'
-        docHiddInpt.name = `documents[${indx}][name]`
-        cross.style.position = 'absolute'
-        cross.style.top = 0
-        cross.style.right = '10px'
-        cross.style.zIndex = 1
-        cross.style.cursor = 'pointer'
-        cross.innerHTML = '&#10007;'
-        versionFG.appendChild(versionLbl)
-        versionFG.appendChild(versionInpt)
-        documentFG.appendChild(docHiddInpt)
-        documentFG.appendChild(documentLbl)
-        documentFG.appendChild(documentInpt)
-        container.appendChild(cross)
-        container.appendChild(versionFG)
-        container.appendChild(documentFG)
-            // append controls to scientific paper insert form
-        document.getElementById('sPDocs').appendChild(container)
-    } // addDocuments
 
     /*
      *   transform to form for insretion of scientific paper data and document upload  
