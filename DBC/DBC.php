@@ -1522,21 +1522,21 @@ class DBC extends PDO
     *   @param string $email
     *   @param string $telephone
     */
-    public function insertMentorings(int $id_scientific_papers, int $id_faculties, string $mentor, string $email, string $telephone)
+    public function insertMentorOfScientificPaper(int $id_scientific_papers, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
     {
         $stmt = '   INSERT INTO 
                         mentorings
                     (
-                        id_faculties,
                         id_scientific_papers,
+                        id_faculties,
                         mentor, 
                         taught, 
                         email, 
                         telephone
                     )
                     VALUES(
-                        :id_faculties,
                         :id_scientific_papers,
+                        :id_faculties,
                         :mentor,
                         :taught,
                         :email,
@@ -1545,12 +1545,12 @@ class DBC extends PDO
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->bindParam(':id_faculties', $id_faculties, PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_scientific_papers,', $id_scientific_papers, PDO::PARAM_INT);
-            $prpStmt->bindParam(':mentor,', $mentor, PDO::PARAM_STR);
-            $prpStmt->bindParam(':taught,', $taught, PDO::PARAM_STR);
-            $prpStmt->bindParam(':email,', $email, PDO::PARAM_STR);
-            $prpStmt->bindParam(':telephone,', $telephone, PDO::PARAM_STR);
+            $prpStmt->bindParam(':mentor', $mentor, PDO::PARAM_STR);
+            $prpStmt->bindParam(':taught', $taught, PDO::PARAM_STR);
+            $prpStmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
@@ -1558,10 +1558,9 @@ class DBC extends PDO
         } // catch
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
-            return 'Podatki o mentorju znanstvenega dela je uspešno vstavljeni.';
-        else
-            return 'Napaka: podatki o mentorju znanstvenega dela niso uspešno vstavljeni.';
-    } // insertMentorings
+            return TRUE;
+        return FALSE;
+    } // insertMentorOfScientificPaper
 
     /*
     *   update mentoring of scientific paper
