@@ -4,7 +4,7 @@ namespace DBC;
 
 // namespace import declaration
 
-use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
+use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Mentorings\Mentorings, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
 
 class DBC extends PDO
 {
@@ -1423,6 +1423,40 @@ class DBC extends PDO
     } // deleteScientificPaper
 
     /*
+    *   select partakers on a scientific paper
+    *   @param int $id_scientific_papers
+    */
+    public function selectPartakersOfScientificPaper($id_scientific_papers)
+    {
+        // array of generic object instances
+        $resultSet = [];
+        $stmt = "   SELECT 
+                        (name || ' ' || surname) as fullname,
+                        index
+                    FROM 
+                        partakings
+                        INNER JOIN attendances
+                        USING(id_attendances)
+                        INNER JOIN students
+                        USING(id_students) 
+                    WHERE 
+                        id_scientific_papers = :id_scientific_papers    ";
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single or more rows are affected
+        if ($prpStmt->rowCount() >= 1)
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
+        return $resultSet;
+    } // selectPartakersOfScientificPaper
+
+    /*
     *   delete all partakings on a scientific paper
     *   @param int $id_scientific_papers
     */
@@ -1513,6 +1547,39 @@ class DBC extends PDO
         else
             return 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
     } // updatePartakings
+
+    /*
+    *   select mentors of a scientific paper
+    *   @param int $id_scientific_papers
+    */
+    public function selectMentorsOfScientificPaper($id_scientific_papers)
+    {
+        // array of Mentors class object instances 
+        $resultSet = [];
+        $stmt = '   SELECT 
+                        id_mentorings,
+                        mentor,
+                        name
+                    FROM 
+                        mentorings
+                        INNER JOIN faculties
+                        USING(id_faculties)
+                    WHERE 
+                        id_scientific_papers = :id_scientific_papers    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single or more rows are affected
+        if ($prpStmt->rowCount() >= 1)
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone']);
+        return $resultSet;
+    } // selectMentorsOfScientificPaper
 
     /*
     *   insert mentoring of scientific paper
