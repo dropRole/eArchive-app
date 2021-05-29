@@ -150,7 +150,7 @@
 </div>
 <!-- Modal for scientific paper insertion and update -->
 <div class="modal fade" id="sPMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPMdl" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Vstavljanje znanstvenega dela</h5>
@@ -181,21 +181,29 @@
                             <input id="writtenInpt" class="form-control" type="date" name="written" required>
                         </div>
                     </div>
-                    <div id="sPPartakers">
-                        <p class="h6">Soavtorji</p>
-                        <div class="d-flex justify-content-center col-12">
-                            <button id="addPartakerBtn" class="btn btn-secondary" type="button">&plus;</button>
-                        </div>
-                        <datalist id="students">
-                            <?php
-                            // denote student as potential partaker on a scientific paper
-                            foreach($DBC->selectStudents() as $student){
-                                ?>
-                                <option value="<?php echo $student->index; ?>"><?php echo $student->fullname; ?></option>
+                    <div class="row">
+                        <div id="sPPartakers" class="col-6">
+                            <p class="h6">Soavtorji</p>
+                            <div class="d-flex justify-content-center col-12">
+                                <button id="addPartakerBtn" class="btn btn-secondary" type="button">&plus;</button>
+                            </div>
+                            <datalist id="students">
                                 <?php
-                            } // foreach
-                            ?>
-                        </datalist>
+                                // denote student as potential partaker on a scientific paper
+                                foreach ($DBC->selectStudents() as $student) {
+                                ?>
+                                    <option value="<?php echo $student->index; ?>"><?php echo $student->fullname; ?></option>
+                                <?php
+                                } // foreach
+                                ?>
+                            </datalist>
+                        </div>
+                        <div id="sPMentors" class="col-6">
+                            <p class="h6">Mentorji</p>
+                            <div class="d-flex justify-content-center col-12">
+                                <button id="addMentorBtn" class="btn btn-secondary" type="button">&plus;</button>
+                            </div>
+                        </div>
                     </div>
                     <div id="sPDocs">
                         <p class="h6">Dokumentacija</p>
