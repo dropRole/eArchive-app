@@ -1402,7 +1402,7 @@ class DBC extends PDO
         // action report
         $report = '';
         $report .= $this->deleteDocuments($id_scientific_papers);
-        $report .= $this->deletePartakingsOnScientificPaper($id_scientific_papers);
+        $report .= $this->deleteScientificPaperPartaker($id_scientific_papers);
         $stmt = '   DELETE FROM
                         scientific_papers 
                     WHERE 
@@ -1431,6 +1431,7 @@ class DBC extends PDO
         // array of generic object instances
         $resultSet = [];
         $stmt = "   SELECT 
+                        id_partakings,
                         (name || ' ' || surname) as fullname,
                         index
                     FROM 
@@ -1457,29 +1458,29 @@ class DBC extends PDO
     } // selectPartakersOfScientificPaper
 
     /*
-    *   delete all partakings on a scientific paper
-    *   @param int $id_scientific_papers
+    *   delete partaker of a scientific papersf
+    *   @param int $id_partakings
     */
-    public function deletePartakingsOnScientificPaper(int $id_scientific_papers)
+    public function deleteScientificPaperPartaker(int $id_partakings)
     {
         $stmt = '   DELETE FROM 
                         partakings
                     WHERE 
-                        id_scientific_papers = :id_scientific_papers    ';
+                        id_partakings = :id_partakings    ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_partakings', $id_partakings, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single or more rows are affected
-        if ($prpStmt->rowCount() >= 1)
-            return 'Podatki o soavtorstvih so uspešno izbrisani.' . PHP_EOL;
-        return 'Podatki o soavtorstvih niso uspešno izbrisani.' . PHP_EOL;
-    } // deletePartakings
+        // if single row is affected 
+        if ($prpStmt->rowCount() == 1)
+            return 'Podatki o soavtorju so uspešno izbrisani.';
+        return 'Podatki o soavtorju niso uspešno izbrisani.';
+    } // deleteScientificPaperPartaker
 
     /*
     *   insert partaking particulars 
