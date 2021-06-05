@@ -1487,7 +1487,7 @@ class DBC extends PDO
     *   @param int $id_scientific_papers
     *   @param string $part
     */
-    public function insertPartakingsOnScientificPaper(int $id_scientific_papers, int $id_attendances, string $part)
+    public function insertPartakerOnScientificPaper(int $id_scientific_papers, int $id_attendances, string $part)
     {
         $stmt = '   INSERT INTO 
                         partakings
@@ -1516,7 +1516,7 @@ class DBC extends PDO
         if ($prpStmt->rowCount() == 1)
             return TRUE;
         return FALSE;
-    } // insertPartakingsOnScientificPaper
+    } // insertPartakerOnScientificPaper
 
     /*
     *   update part in writing 
