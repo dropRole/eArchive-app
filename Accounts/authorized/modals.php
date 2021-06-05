@@ -187,7 +187,7 @@
                             <div class="d-flex justify-content-center col-12">
                                 <button id="addPartakerBtn" class="btn btn-secondary" type="button">&plus;</button>
                             </div>
-                            <datalist id="students">
+                            <datalist id="students">    
                                 <?php
                                 // denote student as potential partaker on a scientific paper
                                 foreach ($DBC->selectStudents() as $student) {
