@@ -1057,10 +1057,18 @@
     // attach event listeners to a scientific paper cards when rendered
     function attachSPCardListeners() {
         // if anchor nodes for partaker insertion exist
-        if (document.querySelectorAll('.men-ins-a'))
-            document.querySelectorAll('.men-ins-a').forEach(anchor => {
+        if (document.querySelectorAll('.men-par-a'))
+            document.querySelectorAll('.men-par-a').forEach(anchor => {
                 // form will contain only control for partaker insertion
                 anchor.addEventListener('click', toPartakerInsertFrm)
+            }) // forEach
+            // if spans for scientific paper partaker deletion exist
+        if (document.querySelectorAll('.par-del-spn'))
+            document.querySelectorAll('.par-del-spn').forEach(span => {
+                // attempt deletion of a partaker
+                span.addEventListener('click', () => {
+                        deleteScientificPaperPartaker(span.getAttribute('data-id'))
+                    }) // addEventListener
             }) // forEach
             // if anchors for document insertion are rendered
         if (document.querySelectorAll('.doc-ins-a'))
@@ -1263,11 +1271,7 @@
             }) // catch
     } // deleteCertificate
 
-    /*
-     *  asynchronous script execution for insertion of a scientific paper partaker    
-     *  @param Number idAttendance
-     *  @param Number idCertificates
-     */
+    // asynchronous script execution for insertion of a scientific paper partaker    
     function insertScientificPaperPartaker() {
         request('/eArchive/Partakings/insert.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
                 // report on the insertion
@@ -1277,4 +1281,18 @@
                 alert(error)
             }) // catch
     } // deleteCertificate
+
+    /*
+     *  asynchronous script execution for deletion of a scientific paper partaker    
+     *  @param Number idPartakings
+     */
+    function deleteScientificPaperPartaker(idPartakings) {
+        request(`/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`, 'GET', 'text').then(response => {
+                // report on the deletion
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // deleteScientificPaperPartaker
 })()
