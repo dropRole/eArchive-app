@@ -44,7 +44,7 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="h6">Soavtorji</p>
                             </div>
                             <div class="col-6">
-                                <a href="#" class="card-link float-right men-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Dodeli</a>
+                                <a href="#" class="card-link float-right par-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Dodeli</a>
                             </div>
                         </div>
                         <?php
@@ -53,7 +53,7 @@ if (isset($_GET['id_attendances'])) {
                         if (count($partakers))
                             foreach ($partakers as $partaker) {
                         ?>
-                            <li class="list-group-item"><span><?php echo $partaker->fullname; ?></span><span class="men-del-spn ml-3" data-id="<?php echo $partaker->index; ?>">&#10007;</span></li>
+                            <li class="list-group-item"><span><?php echo $partaker->fullname; ?></span><span class="par-del-spn ml-3" data-id="<?php echo $partaker->id_partakings; ?>">&#10007;</span></li>
                         <?php
                             } // foreach
                         else
