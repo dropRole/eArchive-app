@@ -31,17 +31,27 @@
 
     // attach event listeners to corresponding input element of the scientific paper form
     function attachSPFrmListeners() {
-        let addPartakerBtn = document.getElementById('addPartakerBtn') // button for adding section for partaking on a scientific paper
-            // assign to hidden input the filename of uploaded document
-        sPFrm.querySelector('input[name="document[]"]').addEventListener('change', e => {
-                sPFrm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
+        // get form for scientific paper insertion 
+        let form = document.getElementById('sPFrm')
+            // if button for subsequent partaker senction additon exist
+        if (document.getElementById('addPartakerBtn'))
+        // add partaker form section on button click  
+            addPartakerBtn.addEventListener('click', addPartakerFrmSect)
+            // if document file input is rendered 
+        if (form.querySelector('input[name="document[]"]'))
+        // assign to hidden input the filename of uploaded document
+            form.querySelector('input[name="document[]"]').addEventListener('change', e => {
+                form.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
             }) // addEventListener
-            // add controls for mentor of a scientific papers
-        sPFrm.querySelector('#addMentorBtn').addEventListener('click', addMentoringsFrmSect)
-            // add controls for scientific paper document upload
-        sPFrm.querySelector('#addDocumentBtn').addEventListener('click', addDocumentFrmSect)
+            // if button for subsequent mentor section additon exist 
+        if (form.querySelector('#addMentorBtn'))
+        // add controls for mentor of a scientific papers
+            form.querySelector('#addMentorBtn').addEventListener('click', addMentoringsFrmSect)
+            // if button for subsequent document section additon exist
+        if (form.querySelector('#addDocumentBtn'))
+        // add controls for scientific paper document upload
+            form.querySelector('#addDocumentBtn').addEventListener('click', addDocumentFrmSect)
             // add another partaker section 
-        addPartakerBtn.addEventListener('click', addPartakerFrmSect)
     } // attachSPFrmListeners
 
     // attach event listeners to corresponding input and selecet elements of the student form
@@ -970,7 +980,7 @@
      *   transform to form for upload of scientific paper documents
      *   @param Event e
      */
-    function toSPUploadFrm(e) {
+    function toSPDocumentUploadFrm(e) {
         document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
         sPFrm.innerHTML = sPFrmClone.innerHTML
         sPFrm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
@@ -984,7 +994,7 @@
         sPFrm.removeEventListener('submit', insertScientificPaper)
         sPFrm.removeEventListener('submit', updateScientificPaper)
         sPFrm.addEventListener('submit', insertDocuments)
-    } // toSPUploadFrm
+    } // toSPDocumentUploadFrm
 
     /*
      *  reform to insert a new partaker in a scientific paper
@@ -1067,6 +1077,38 @@
         sPFrm.addEventListener('submit', updateScientificPaperPartaker)
     } // toPartakerUpdateFrm
 
+    /*
+     *  reform to update mentor data of the scientific paper  
+     *  @param Event e
+     */
+    function toMentorInsertFrm(e) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+        let cloneFrm = sPFrmClone.cloneNode(true),
+            idSPHiddInpt = document.createElement('input')
+        idSPHiddInpt.type = 'hidden'
+        idSPHiddInpt.name = 'id_scientific_papers'
+        idSPHiddInpt.value = e.target.getAttribute('data-id')
+            // replace form node with its clone
+        sPFrm.replaceWith(cloneFrm)
+        cloneFrm.prepend(idSPHiddInpt)
+            // dispatch a synthetic click event 
+        cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
+            // remove DIV nodes except matching given selector expression 
+        cloneFrm.querySelectorAll('#particulars, #sPPartakers, #sPDocs').forEach(node => {
+                node.parentElement.removeChild(node)
+            }) // forEach
+        cloneFrm.querySelector('#sPMentors').classList = 'col-12'
+        attachSPFrmListeners()
+            // dispatch synthetic click event to button for subsequently add new mentor section
+        cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
+        cloneFrm.addEventListener('submit', e => {
+                // prevent from posting submitted data
+                e.preventDefault();
+                insertScientificPaperMentor(cloneFrm)
+            }) // addEventListener
+    } // toMentorInsertFrm
+
+
     //  transform to form for student insertion of student particulars and submitted scientific achievements
     function toStudentInsertFrm() {
         studentFrm.innerHTML = studentFrmClone.innerHTML
@@ -1129,13 +1171,17 @@
                 // attempt deletion of a partaker
                 anchor.addEventListener('click', toPartakerUpdateFrm) // addEventListener
             }) // forEach
-            // if anchors for document insertion are rendered
-        if (document.querySelectorAll('.doc-ins-a'))
-            document.querySelectorAll('.doc-ins-a').forEach(anchor => {
+            // if anchors for scientific paper partaker data update exist
+        if (document.querySelectorAll('.par-upd-a'))
+            document.querySelectorAll('.par-upd-a').forEach(anchor => {
+                // attempt deletion of a partaker
+                anchor.addEventListener('click', toPartakerUpdateFrm) // addEventListener
+            }) // forEach
+            // if anchors for mentor insertion are rendered
+        if (document.querySelectorAll('.men-ins-a'))
+            document.querySelectorAll('.men-ins-a').forEach(anchor => {
                 // restructure form for document upload
-                anchor.addEventListener('click', e => {
-                        toSPUploadFrm(e)
-                    }) // addEventListener
+                anchor.addEventListener('click', toMentorInsertFrm)
             }) // forEach
             // if anchors for scientific papers update are rendered
         if (document.querySelectorAll('.sp-upd-а'))
@@ -1158,6 +1204,12 @@
                 anchor.addEventListener('click', () => {
                         deleteScientficPaper(anchor.getAttribute('data-id'))
                     }) // addEventListener
+            }) // forEach
+            // if anchors for scientific paper document upload exist
+        if (document.querySelectorAll('.doc-upl-a'))
+            document.querySelectorAll('.doc-upl-a').forEach(span => {
+                // delete particular document
+                span.addEventListener('click', toSPDocumentUploadFrm)
             }) // forEach
             // if anchors for scientific paper documentation deletion are rendered
         if (document.querySelectorAll('.doc-del-spn'))
@@ -1361,6 +1413,20 @@
      */
     function updateScientificPaperPartaker() {
         request('/eArchive/Partakings/update.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
+                // report on update
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // updateScientificPaperPartaker
+
+    /*
+     *  asynchronous script execution of mentor data insertion for the given scientific paper    
+     *  @param Number idScientificPaper
+     */
+    function insertScientificPaperMentor(frm) {
+        request('/eArchive/Mentorings/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
                 // report on update
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
