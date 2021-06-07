@@ -494,9 +494,9 @@
             }) // addEventListener
         partakerFG.classList = 'form-group col-6'
         partFG.classList = 'form-group col-6'
-        partakerLbl.htmlFor = 'partakerInpt'
+        partakerLbl.htmlFor = `partakerInpt${lblNum}`
         partakerLbl.textContent = 'Sodelovalec'
-        partLbl.htmlFor = 'partInpt'
+        partLbl.htmlFor = `partInpt${lblNum}`
         partLbl.textContent = 'Vloga'
         partakerInpt.id = `partakerInpt${lblNum}`
         partakerInpt.classList = 'form-control'
@@ -940,7 +940,7 @@
         attachSPFrmListeners()
         sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
             // exchange listener callbacks 
-        sPFrm.removeEventListener('submit', updateScientificPapers)
+        sPFrm.removeEventListener('submit', updateScientificPaper)
         sPFrm.removeEventListener('submit', insertDocuments)
         sPFrm.addEventListener('submit', insertScientificPaper)
     } // toSPInsertFrm
@@ -963,7 +963,7 @@
             // exchange listener callbacks 
         sPFrm.removeEventListener('submit', insertScientificPaper)
         sPFrm.removeEventListener('submit', insertDocuments)
-        sPFrm.addEventListener('submit', updateScientificPapers)
+        sPFrm.addEventListener('submit', updateScientificPaper)
     } // toSPUpdateFrm
 
     /*
@@ -982,7 +982,7 @@
             }) // addEventListener        
             // exchange listener callbacks 
         sPFrm.removeEventListener('submit', insertScientificPaper)
-        sPFrm.removeEventListener('submit', updateScientificPapers)
+        sPFrm.removeEventListener('submit', updateScientificPaper)
         sPFrm.addEventListener('submit', insertDocuments)
     } // toSPUploadFrm
 
@@ -1009,10 +1009,63 @@
             // dispatch a synthetic click event 
         sPFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
             // exchange event listeners
-        sPFrm.removeEventListener('submit', insertStudent)
-        sPFrm.removeEventListener('submit', insertStudent)
+        sPFrm.removeEventListener('submit', insertScientificPaperPartaker)
+        sPFrm.removeEventListener('submit', updateScientificPaper)
         sPFrm.addEventListener('submit', insertScientificPaperPartaker)
     } // toPartakerInsertFrm
+
+    /*
+     *  reform to update part in a scientific paper 
+     *  @param Event e
+     */
+    function toPartakerUpdateFrm(e) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Sprememba vloge soavtorja'
+            // derive and modify the section for mentor insertion
+        let sect = sPFrmClone.querySelector('#sPPartakers').cloneNode(true),
+            idSPHiddInpt = document.createElement('input'),
+            addBtn = sPFrmClone.querySelector('#addPartakerBtn').cloneNode(true),
+            sbmBtn = sPFrmClone.querySelector('input[type=submit]').cloneNode(true)
+        sect.classList = 'col-12'
+        sect.removeChild(sect.querySelector('#addPartakerBtn').parentElement)
+        idSPHiddInpt.type = 'hidden'
+        idSPHiddInpt.name = 'id_partakings'
+        idSPHiddInpt.value = e.target.getAttribute('data-id')
+        sbmBtn.value = 'Spremeni'
+        sPFrm.innerHTML = ''
+        sect.prepend(idSPHiddInpt)
+        sPFrm.appendChild(sect)
+        sPFrm.appendChild(sbmBtn)
+            // add controls with supplied partaker data
+        addBtn.addEventListener('click', () => {
+                let observer = new MutationObserver(() => {
+                        // remove every section headline 
+                        Array.from(sPFrm.querySelectorAll('p')).forEach(headline => {
+                                headline.parentElement.removeChild(headline)
+                            }) // from
+                            // select the partaker whos part is updating 
+                        Array.from(sPFrm.querySelector('datalist').options).forEach(option => {
+                                // if index numbers match
+                                if (option.value == e.target.getAttribute('data-index')) {
+                                    sect.querySelector('input:nth-child(2)').value = option.value
+                                } // if
+                            }) // forEach
+                            // set part to be updated
+                        sect.querySelector('input[type=text]').value = e.target.getAttribute('data-part')
+                    }) // MutationObserver
+                observer.observe(document.getElementById('sPPartakers'), {
+                        attributes: false,
+                        childList: true,
+                        subtree: false
+                    }) // observe
+                addPartakerFrmSect()
+            }) // addEventListener
+            // dispatch a synthetic click event 
+        addBtn.dispatchEvent((new Event('click')))
+            // exchange event listeners
+        sPFrm.removeEventListener('submit', insertScientificPaperPartaker)
+        sPFrm.removeEventListener('submit', updateScientificPaper)
+        sPFrm.addEventListener('submit', updateScientificPaperPartaker)
+    } // toPartakerUpdateFrm
 
     //  transform to form for student insertion of student particulars and submitted scientific achievements
     function toStudentInsertFrm() {
@@ -1057,8 +1110,8 @@
     // attach event listeners to a scientific paper cards when rendered
     function attachSPCardListeners() {
         // if anchor nodes for partaker insertion exist
-        if (document.querySelectorAll('.men-par-a'))
-            document.querySelectorAll('.men-par-a').forEach(anchor => {
+        if (document.querySelectorAll('.par-ins-a'))
+            document.querySelectorAll('.par-ins-a').forEach(anchor => {
                 // form will contain only control for partaker insertion
                 anchor.addEventListener('click', toPartakerInsertFrm)
             }) // forEach
@@ -1069,6 +1122,12 @@
                 span.addEventListener('click', () => {
                         deleteScientificPaperPartaker(span.getAttribute('data-id'))
                     }) // addEventListener
+            }) // forEach
+            // if anchors for scientific paper partaker data update exist
+        if (document.querySelectorAll('.par-upd-a'))
+            document.querySelectorAll('.par-upd-a').forEach(anchor => {
+                // attempt deletion of a partaker
+                anchor.addEventListener('click', toPartakerUpdateFrm) // addEventListener
             }) // forEach
             // if anchors for document insertion are rendered
         if (document.querySelectorAll('.doc-ins-a'))
@@ -1149,7 +1208,7 @@
      *   asynchronous script execution for scientific paper data alteration 
      *   @param Event e
      */
-    function updateScientificPapers(e) {
+    function updateScientificPaper(e) {
         // prevent default action of submitting scientific paper data    
         e.preventDefault()
         request('/eArchive/ScientificPapers/update.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
@@ -1159,7 +1218,7 @@
             }).catch(error => {
                 alert(error)
             }) // catch
-    } // updateScientificPapers
+    } // updateScientificPaper
 
     /*
      *  asynchronous script execution for scientific paper documents deletion    
@@ -1295,4 +1354,18 @@
                 alert(error)
             }) // catch
     } // deleteScientificPaperPartaker
+
+    /*
+     *  asynchronous script execution for update of a scientific paper partakers data    
+     *  @param Number idPartakings
+     */
+    function updateScientificPaperPartaker() {
+        request('/eArchive/Partakings/update.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
+                // report on update
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // updateScientificPaperPartaker
 })()
