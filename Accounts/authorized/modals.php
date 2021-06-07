@@ -161,7 +161,7 @@
             <div class="modal-body">
                 <form id="sPFrm">
                     <input type="hidden" name="id_attendances" value="">
-                    <div class="row">
+                    <div id="particulars" class="row">
                         <div class="form-group col-12">
                             <label for="topicInpt">Predmet</label>
                             <input id="topicInpt" class="form-control" type="text" name="topic" required>
