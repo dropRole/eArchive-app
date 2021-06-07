@@ -70,7 +70,7 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="h6">Mentorji</p>
                             </div>
                             <div class="col-6">
-                                <a href="#" class="card-link float-right men-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Vstavi</a>
+                                <a href="#" class="card-link float-right men-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Določi</a>
                             </div>
                         </div>
                         <?php
@@ -96,7 +96,7 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="h6">Dokumentacija</p>
                             </div>
                             <div class="col-6">
-                                <a href="#" class="card-link float-right doc-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Naloži</a>
+                                <a href="#" class="card-link float-right doc-upl-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Naloži</a>
                             </div>
                         </div>
                         <?php
