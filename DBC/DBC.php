@@ -1433,6 +1433,7 @@ class DBC extends PDO
         $stmt = "   SELECT 
                         id_partakings,
                         (name || ' ' || surname) as fullname,
+                        part,
                         index
                     FROM 
                         partakings
@@ -1524,14 +1525,14 @@ class DBC extends PDO
     *   @param int $id_partakings
     *   @param string $part
     */
-    public function updatePartakings(int $id_partakings, string $part)
+    public function updatePartInScientificPaper(int $id_partakings, string $part)
     {
         $stmt = '   UPDATE 
                         partakings 
                     SET 
                         part = :part
                     WHERE 
-                        id_partakings = :id_partakigns  ';
+                        id_partakings = :id_partakings  ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
@@ -1545,9 +1546,8 @@ class DBC extends PDO
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
             return 'Vloga soavtorja študija je uspešno ažurirana.';
-        else
-            return 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
-    } // updatePartakings
+        return 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
+    } // updatePartInScientificPaper
 
     /*
     *   select mentors of a scientific paper
