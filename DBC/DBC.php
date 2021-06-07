@@ -1676,7 +1676,7 @@ class DBC extends PDO
     *   delete mentoring of scientific paper
     *   @param int $id_mentorings
     */
-    public function deleteMentorings(int $id_mentorings)
+    public function deleteMentorOfScientificPaper(int $id_mentorings)
     {
         $stmt = '   DELETE FROM 
                         mentorings 
@@ -1693,11 +1693,10 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
-        if ($prpStmt->rowCount())
+        if ($prpStmt->rowCount() == 1)
             return 'Podatki o mentorstvu so uspešno izbrisani.';
-        else
-            return 'Podatki o mentorstvu niso uspešno izbrisani.';
-    } // deleteMentorings
+        return 'Podatki o mentorstvu niso uspešno izbrisani.';
+    } // deleteMentorOfScientificPaper
 
     /*
     *   select scientific paper belonging document
