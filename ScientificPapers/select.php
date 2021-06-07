@@ -53,7 +53,11 @@ if (isset($_GET['id_attendances'])) {
                         if (count($partakers))
                             foreach ($partakers as $partaker) {
                         ?>
-                            <li class="list-group-item"><span><?php echo $partaker->fullname; ?></span><span class="par-del-spn ml-3" data-id="<?php echo $partaker->id_partakings; ?>">&#10007;</span></li>
+                            <li class="list-group-item">
+                                <span><?php echo "{$partaker->fullname}({$partaker->part})"; ?></span>
+                                <a class="par-upd-a" href="#" data-id="<?php echo $partaker->id_partakings; ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->part; ?>" data-toggle="modal" data-target="#sPMdl">Spremeni</a>
+                                <span class="par-del-spn ml-3" data-id="<?php echo $partaker->id_partakings; ?>">&#10007;</span>
+                            </li>
                         <?php
                             } // foreach
                         else
