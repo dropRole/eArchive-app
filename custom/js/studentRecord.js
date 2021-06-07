@@ -1183,6 +1183,14 @@
                 // restructure form for document upload
                 anchor.addEventListener('click', toMentorInsertFrm)
             }) // forEach
+            // if span elements for mentor deletion are rendered
+        if (document.querySelectorAll('.men-del-spn'))
+            document.querySelectorAll('.men-del-spn').forEach(anchor => {
+                // restructure form for document upload
+                anchor.addEventListener('click', () => {
+                        deleteScientificPaperMentor(anchor.getAttribute('data-id'))
+                    }) // addEventListener
+            }) // forEach
             // if anchors for scientific papers update are rendered
         if (document.querySelectorAll('.sp-upd-а'))
             document.querySelectorAll('.sp-upd-а').forEach(anchor => {
@@ -1434,4 +1442,18 @@
                 alert(error)
             }) // catch
     } // updateScientificPaperPartaker
+
+    /*
+     *  asynchronously run script for deletion of mentor data concerning scientific paper       
+     *  @param Number idMentorings
+     */
+    function deleteScientificPaperMentor(idMentorings) {
+        request(`/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`, 'GET', 'text').then(response => {
+                // report on deletion
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // deleteScientificPaperMentor
 })()
