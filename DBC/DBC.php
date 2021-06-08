@@ -1639,17 +1639,18 @@ class DBC extends PDO
     *   @param string $email
     *   @param string $telephone
     */
-    public function updateMentorings(int $id_mentorings, int $id_scientific_papers, int $id_faculties, string $mentor, string $email, string $telephone)
+    public function updateMentorOfScientificPaper(int $id_mentorings, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
     {
         $stmt = '   UPDATE 
                         mentorings 
                     SET 
                         id_faculties = :id_faculties,
                         mentor = :mentor,
+                        taught = :taught,
                         email = :email,
                         telephone = :telephone  
                     WHERE 
-                        id_mentorings = :id_mentorings AND id_scientific_papers = :id_scientific_papers ';
+                        id_mentorings = :id_mentorings  ';
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
@@ -1659,7 +1660,6 @@ class DBC extends PDO
             $prpStmt->bindParam(':email', $email, PDO::PARAM_STR);
             $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
@@ -1668,9 +1668,8 @@ class DBC extends PDO
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
             return 'Podatki o mentorju znanstvenega dela so uspešno ažurirani.';
-        else
-            return 'Napaka: podatki o mentorju znanstvenega dela niso uspešno ažurirani.';
-    } // updateMentorings
+        return 'Napaka: podatki o mentorju znanstvenega dela niso uspešno ažurirani.';
+    } // updateMentorOfScientificPaper
 
     /*
     *   delete mentoring of scientific paper
@@ -1697,6 +1696,40 @@ class DBC extends PDO
             return 'Podatki o mentorstvu so uspešno izbrisani.';
         return 'Podatki o mentorstvu niso uspešno izbrisani.';
     } // deleteMentorOfScientificPaper
+
+    /*
+    *   select data concerning the given mentor of scientific paper 
+    *   @param int $id_mentorings
+    */
+    public function selectMentorOfScientificPaper(int $id_mentorings)
+    {
+        $stmt = '   SELECT 
+                        mentor,
+                        id_faculties,
+                        taught,
+                        mentorings.email,
+                        mentorings.telephone
+                    FROM 
+                        mentorings
+                        INNER JOIN faculties
+                        USING(id_faculties) 
+                    WHERE 
+                        id_mentorings = :id_mentorings  ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            // output error message 
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1)
+            return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone'])[0]);
+        return [];
+    } // selectMentorOfScientificPaper
 
     /*
     *   select scientific paper belonging document
