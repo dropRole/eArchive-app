@@ -2,8 +2,10 @@
 
 namespace Mentorings;
 
+use JsonSerializable;
+
 // table mentorings class definition
-class Mentorings
+class Mentorings implements JsonSerializable
 {
 
     // encapsulation
@@ -25,7 +27,7 @@ class Mentorings
     *   @param string $email 
     *   @param string $telephone
     */
-    public function __construct($id_mentorings,  $id_faculties,  $id_scientific_papers,  $mentor,  $taught, $email,  $telephone)
+    public function __construct($id_mentorings, $id_scientific_papers, $id_faculties, $mentor,  $taught, $email,  $telephone)
     {
         $this->id_mentorings = $id_mentorings;
         $this->id_faculties = $id_faculties;
@@ -35,6 +37,13 @@ class Mentorings
         $this->email = $email;
         $this->telephone = $telephone;
     } // __construct
+
+    // implement jsonSerialize function
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    } // jsonSerialize
 
     /*
     *   set id of mentoring
