@@ -55,7 +55,7 @@ if (isset($_GET['id_attendances'])) {
                         ?>
                             <li class="list-group-item">
                                 <span><?php echo "{$partaker->fullname}({$partaker->part})"; ?></span>
-                                <a class="par-upd-a" href="#" data-id="<?php echo $partaker->id_partakings; ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->part; ?>" data-toggle="modal" data-target="#sPMdl">Spremeni</a>
+                                <a class="par-upd-a" href="#" data-id="<?php echo $partaker->id_partakings; ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->part; ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
                                 <span class="par-del-spn ml-3" data-id="<?php echo $partaker->id_partakings; ?>">&#10007;</span>
                             </li>
                         <?php
@@ -81,7 +81,7 @@ if (isset($_GET['id_attendances'])) {
                         ?>
                             <li class="list-group-item">
                                 <span><?php echo $mentor->getMentor(); ?> (</span><span><?php echo $mentor->name; ?>)</span>
-                                <a class="men-edt-a" href="#sPMdl" data-toggle="modal">Uredi</a>
+                                <a class="men-upd-a" href="#sPMdl" data-toggle="modal" data-id="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
                                 <span class="men-del-spn ml-3" data-id="<?php echo $mentor->getIdMentorings(); ?>">&#10007;</span>
                             </li>
                         <?php
