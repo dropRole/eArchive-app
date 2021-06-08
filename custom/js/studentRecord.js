@@ -1108,6 +1108,48 @@
             }) // addEventListener
     } // toMentorInsertFrm
 
+    /*
+     *  rearrange form when updating data with regard to mentor of the scientific paper  
+     *  @param Event e
+     */
+    function toMentorUpdateFrm(e) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+        let cloneFrm = sPFrmClone.cloneNode(true),
+            idSPHiddInpt = document.createElement('input')
+        idSPHiddInpt.type = 'hidden'
+        idSPHiddInpt.name = 'id_mentorings'
+        idSPHiddInpt.value = e.target.getAttribute('data-id')
+            // replace form node with its clone
+        sPFrm.replaceWith(cloneFrm)
+        cloneFrm.prepend(idSPHiddInpt)
+        cloneFrm.querySelector('input[type=submit]').value = 'Shrani'
+        attachSPFrmListeners()
+            // dispatch a synthetic click event to button for subsequent addition of form mentor section
+        cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
+            // remove DIV nodes except matching given selector expression 
+        cloneFrm.querySelectorAll('input[name=id_attendances], #particulars, #sPPartakers, #sPDocs, p, button').forEach(node => {
+                node.parentElement.removeChild(node)
+            }) // forEach
+            // widen from group across the whole grid
+        cloneFrm.querySelector('#sPMentors').classList = 'col-12'
+            // remove the headline
+        request(`/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id')}`, 'GET', 'json').then(response => {
+                // populate form fields with selected mentor data
+                cloneFrm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id')
+                cloneFrm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
+                cloneFrm.querySelector('select[name="mentors[0][id_faculties]"]').value = response.id_faculties
+                cloneFrm.querySelector('input[name="mentors[0][taught]"]').value = response.taught
+                cloneFrm.querySelector('input[name="mentors[0][email]"]').value = response.email
+                cloneFrm.querySelector('input[name="mentors[0][telephone]"]').value = response.telephone
+            }).catch(error => {
+                alert(error)
+            }) // catch
+        cloneFrm.addEventListener('submit', () => {
+                // prevent form from deafult submitt action
+                e.preventDefault();
+                updateMentorOfScientificPaper(cloneFrm)
+            }) // addEventListener
+    } // toMentorUpdateFrm
 
     //  transform to form for student insertion of student particulars and submitted scientific achievements
     function toStudentInsertFrm() {
@@ -1183,6 +1225,12 @@
                 // restructure form for document upload
                 anchor.addEventListener('click', toMentorInsertFrm)
             }) // forEach
+            // if anchor elements for mentor data update exist
+        if (document.querySelectorAll('.men-upd-a'))
+            document.querySelectorAll('.men-upd-a').forEach(anchor => {
+                // restructure form for document upload
+                anchor.addEventListener('click', toMentorUpdateFrm)
+            }) // forEachF
             // if span elements for mentor deletion are rendered
         if (document.querySelectorAll('.men-del-spn'))
             document.querySelectorAll('.men-del-spn').forEach(anchor => {
@@ -1430,8 +1478,22 @@
     } // updateScientificPaperPartaker
 
     /*
-     *  asynchronous script execution of mentor data insertion for the given scientific paper    
-     *  @param Number idScientificPaper
+     *  asynchronous script execution for selecting mentor data of the subject scientific paper    
+     *  @param Number idMentorings
+     */
+    function selectScientificPaperMentor(idMentorigns) {
+        request('/eArchive/Mentorings/insert.php', 'GET', 'text').then(response => {
+                // report on selection
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // selectScientificPaperMentor
+
+    /*
+     *  asynchronous script execution for inserting submitted mentor data     
+     *  @param HTMLFormElement | Node frm
      */
     function insertScientificPaperMentor(frm) {
         request('/eArchive/Mentorings/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
@@ -1442,6 +1504,18 @@
                 alert(error)
             }) // catch
     } // updateScientificPaperPartaker
+
+
+    // asynchronously run script for update of data with regard to mentor of the scientific paper       
+    function updateMentorOfScientificPaper(frm) {
+        request('/eArchive/Mentorings/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
+                // report on update
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // updateMentorOfScientificPaper
 
     /*
      *  asynchronously run script for deletion of mentor data concerning scientific paper       
