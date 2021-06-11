@@ -4,22 +4,19 @@
     var fragment = new DocumentFragment(), // minimal document object structure
         studentFrm = document.getElementById('studentFrm'), // form for student data insertion and update
         studentFrmClone = studentFrm.cloneNode(true), // studentFrm clone node
-        sPFrm = document.getElementById('sPFrm'), // scientific paper insert form
-        sPFrmClone = sPFrm.cloneNode(true), // sPFrm clone node
+        sPCloneFrm = document.getElementById('sPFrm'), // cloned form element node for scientific paper insretion
         accountFrm = document.getElementById('accountFrm'), // form for creating student account and its credentials   
         certificateFrm = document.getElementById('certificateFrm'), // certificate upload/insertion form
         reportMdl = document.getElementById('reportMdl'), // report modal 
         reportMdlBtn = document.getElementById('reportMdlBtn'), // button for report modal toggle
         filterInpt = document.getElementById('filterByIndx') // input for filtering students by their index numbers
-    studentFrm.addEventListener('submit', insertStudent)
-    sPFrm.addEventListener('submit', insertScientificPaper)
     accountFrm.addEventListener('submit', e => {
             // prevent form from submitting account details  
             e.preventDefault()
             insertStudentAccount(e, accountFrm)
             refreshStudentsTable()
         }) // addEventListener
-    certificateFrm.addEventListener('submit', insertCertificate)
+    certificateFrm.addEventListener('submit', insertGraduationCertificate)
     certificateFrm.querySelector('input[type=file').addEventListener('change', () => {
             certificateFrm.querySelector('input[name=certificate]').value = certificateFrm.querySelector('input[type=file]').files[0].name
         }) // addEventListener
@@ -88,7 +85,7 @@
     } // attachStudentFrmListeners
 
     // attach listeners to student evidence table appropriate anchors and buttons   
-    function attachTableListeners() {
+    function attachStudentTableListeners() {
         let insertStudentBtn = document.getElementById('insertStudentBtn'), // button for insertion of student particulars and scientific achievements
             sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
             sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
@@ -103,6 +100,7 @@
                 // preview scientific papers   
                 anchor.addEventListener('click', () => {
                         selectScientificPapers(anchor.getAttribute('data-id'))
+                        sPCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id')
                     }) //addEventListener
             }) // forEach
         sPIALst.forEach(anchor => {
@@ -120,7 +118,7 @@
         certVALst.forEach(anchor => {
                 // view certificate particulars in a form of a card in the modal
                 anchor.addEventListener('click', () => {
-                        selectCertificate(anchor.getAttribute('data-id'))
+                        selectGraduationCertificate(anchor.getAttribute('data-id'))
                     }) // addEventListener
             }) // forEach
         stuUALst.forEach(anchor => {
@@ -147,8 +145,8 @@
                 // pass an id of attendance through forms hidden input type 
                 accountFrm.querySelector('input[name=id_attendances]').value = btn.value
             }) // forEach
-    } // attachTableListeners
-    attachTableListeners()
+    } // attachStudentTableListeners
+    attachStudentTableListeners()
 
     /*
      *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
@@ -181,7 +179,7 @@
                 fragment = response
                     // reflect fragments body  
                 tblCtr.innerHTML = fragment.body.innerHTML
-                attachTableListeners()
+                attachStudentTableListeners()
             }).catch(error => {
                 alert(error)
             }) // catch
@@ -702,7 +700,7 @@
         let option = document.createElement('option')
         option.value = index
         option.textContent = fullname
-        sPFrm.querySelector('datalist').appendChild(option)
+        sPCloneFrm.querySelector('datalist').appendChild(option)
     } // interpolateStudentDatalist
 
     /*
@@ -730,7 +728,7 @@
                 fragment = response
                     // reflect fragments body  
                 tblCtr.innerHTML = fragment.body.innerHTML
-                attachTableListeners()
+                attachStudentTableListeners()
             }).catch(error => {
                 alert(error)
             }) // catch
@@ -941,39 +939,53 @@
     } // deleteStudentAccount
 
     /*
-     *   transform to form for insretion of scientific paper data and document upload  
+     *   rearrange form when inserting student data   
      *   @param Event e
      */
     function toSPInsertFrm(e) {
         document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
-        sPFrm.innerHTML = sPFrmClone.innerHTML
+            // clone from the existing cloned form node
+        let cloneFrm = sPCloneFrm.cloneNode(true),
+            idSPHiddInpt = document.createElement('input')
+        idSPHiddInpt.type = 'hidden'
+        idSPHiddInpt.name = 'id_scientific_papers'
+        idSPHiddInpt.value = e.target.getAttribute('data-id')
+            // replace form element node with its clone
+        document.getElementById('sPFrm').replaceWith(cloneFrm)
+        cloneFrm.prepend(idSPHiddInpt)
         attachSPFrmListeners()
-        sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
-            // exchange listener callbacks 
-        sPFrm.removeEventListener('submit', updateScientificPaper)
-        sPFrm.removeEventListener('submit', insertDocuments)
-        sPFrm.addEventListener('submit', insertScientificPaper)
+        cloneFrm.addEventListener('submit', insertStudent)
     } // toSPInsertFrm
 
     /*
-     *   transform to form for update of scientific paper data  
+     *   rearrange form and fill out form fields when updating student data
      *   @param Object sPpr
      */
     function toSPUpdateFrm(sPpr) {
-        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje znanstvenega dela'
-        sPFrm.innerHTML = sPFrmClone.innerHTML
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+            // clone from the existing cloned form node
+        let cloneFrm = sPCloneFrm.cloneNode(true),
+            idSPHiddInpt = document.createElement('input')
+        idSPHiddInpt.type = 'hidden'
+        idSPHiddInpt.name = 'id_scientific_papers'
+        idSPHiddInpt.value = sPpr.id_scientific_papers
+            // replace form element node with its clone
+        document.getElementById('sPFrm').replaceWith(cloneFrm)
+        cloneFrm.prepend(idSPHiddInpt)
         attachSPFrmListeners()
-        sPFrm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
-        sPFrm.querySelector('input[name="topic"]').value = sPpr.topic
-        sPFrm.querySelector('select[name="type"]').value = sPpr.type
-        sPFrm.querySelector('input[name="written"]').value = sPpr.written
-        sPFrm.querySelector('input[type=submit]').value = 'Uredi'
-            // disable documents section form controls
-        sPFrm.removeChild(sPFrm.querySelector('#sPDocs'))
-            // exchange listener callbacks 
-        sPFrm.removeEventListener('submit', insertScientificPaper)
-        sPFrm.removeEventListener('submit', insertDocuments)
-        sPFrm.addEventListener('submit', updateScientificPaper)
+        cloneFrm.querySelector('input[name="topic"]').value = sPpr.topic
+        cloneFrm.querySelector('select[name="type"]').value = sPpr.type
+        cloneFrm.querySelector('input[name="written"]').value = sPpr.written
+        cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+            // remove determined element nodes 
+        cloneFrm.querySelectorAll('div.row:nth-child(4), #sPDocs').forEach(node => {
+                node.parentElement.removeChild(node)
+            }) // forEach
+        cloneFrm.addEventListener('submit', e => {
+                // prevent default action of submitting scientific paper data    
+                e.preventDefault()
+                updateScientificPaper(cloneFrm)
+            }) // addEventListener
     } // toSPUpdateFrm
 
     /*
@@ -982,108 +994,8 @@
      */
     function toSPDocumentUploadFrm(e) {
         document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
-        sPFrm.innerHTML = sPFrmClone.innerHTML
-        sPFrm.querySelector('input[type=hidden]').name = 'id_scientific_papers'
-        sPFrm.querySelector('input[type=hidden]').value = e.target.getAttribute('data-id')
-        sPFrm.removeChild(sPFrm.querySelector('.row'))
-            // give hidden input type value of chosens document name
-        sPFrm.querySelector('#documentInpt').addEventListener('change', e => {
-                sPFrm.querySelector('#docHiddInpt').value = e.target.files[0].name
-            }) // addEventListener        
-            // exchange listener callbacks 
-        sPFrm.removeEventListener('submit', insertScientificPaper)
-        sPFrm.removeEventListener('submit', updateScientificPaper)
-        sPFrm.addEventListener('submit', insertDocuments)
-    } // toSPDocumentUploadFrm
-
-    /*
-     *  reform to insert a new partaker in a scientific paper
-     *  @param Event e
-     */
-    function toPartakerInsertFrm(e) {
-        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
-            // derive and modify the section for mentor insertion
-        let sect = sPFrmClone.querySelector('#sPPartakers').cloneNode(true),
-            idSPHiddInpt = document.createElement('input'),
-            btn = sPFrmClone.querySelector('input[type=submit]').cloneNode(true)
-        sect.classList = 'col-12'
-        idSPHiddInpt.type = 'hidden'
-        idSPHiddInpt.name = 'id_scientific_papers'
-        idSPHiddInpt.value = e.target.getAttribute('data-id')
-        sPFrm.innerHTML = ''
-        sPFrm.prepend(idSPHiddInpt)
-        sPFrm.appendChild(sect)
-        sPFrm.appendChild(btn)
-            // add controls for mentor of a scientific papers
-        sPFrm.querySelector('#addPartakerBtn').addEventListener('click', addPartakerFrmSect)
-            // dispatch a synthetic click event 
-        sPFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
-            // exchange event listeners
-        sPFrm.removeEventListener('submit', insertScientificPaperPartaker)
-        sPFrm.removeEventListener('submit', updateScientificPaper)
-        sPFrm.addEventListener('submit', insertScientificPaperPartaker)
-    } // toPartakerInsertFrm
-
-    /*
-     *  reform to update part in a scientific paper 
-     *  @param Event e
-     */
-    function toPartakerUpdateFrm(e) {
-        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Sprememba vloge soavtorja'
-            // derive and modify the section for mentor insertion
-        let sect = sPFrmClone.querySelector('#sPPartakers').cloneNode(true),
-            idSPHiddInpt = document.createElement('input'),
-            addBtn = sPFrmClone.querySelector('#addPartakerBtn').cloneNode(true),
-            sbmBtn = sPFrmClone.querySelector('input[type=submit]').cloneNode(true)
-        sect.classList = 'col-12'
-        sect.removeChild(sect.querySelector('#addPartakerBtn').parentElement)
-        idSPHiddInpt.type = 'hidden'
-        idSPHiddInpt.name = 'id_partakings'
-        idSPHiddInpt.value = e.target.getAttribute('data-id')
-        sbmBtn.value = 'Spremeni'
-        sPFrm.innerHTML = ''
-        sect.prepend(idSPHiddInpt)
-        sPFrm.appendChild(sect)
-        sPFrm.appendChild(sbmBtn)
-            // add controls with supplied partaker data
-        addBtn.addEventListener('click', () => {
-                let observer = new MutationObserver(() => {
-                        // remove every section headline 
-                        Array.from(sPFrm.querySelectorAll('p')).forEach(headline => {
-                                headline.parentElement.removeChild(headline)
-                            }) // from
-                            // select the partaker whos part is updating 
-                        Array.from(sPFrm.querySelector('datalist').options).forEach(option => {
-                                // if index numbers match
-                                if (option.value == e.target.getAttribute('data-index')) {
-                                    sect.querySelector('input:nth-child(2)').value = option.value
-                                } // if
-                            }) // forEach
-                            // set part to be updated
-                        sect.querySelector('input[type=text]').value = e.target.getAttribute('data-part')
-                    }) // MutationObserver
-                observer.observe(document.getElementById('sPPartakers'), {
-                        attributes: false,
-                        childList: true,
-                        subtree: false
-                    }) // observe
-                addPartakerFrmSect()
-            }) // addEventListener
-            // dispatch a synthetic click event 
-        addBtn.dispatchEvent((new Event('click')))
-            // exchange event listeners
-        sPFrm.removeEventListener('submit', insertScientificPaperPartaker)
-        sPFrm.removeEventListener('submit', updateScientificPaper)
-        sPFrm.addEventListener('submit', updateScientificPaperPartaker)
-    } // toPartakerUpdateFrm
-
-    /*
-     *  reform to update mentor data of the scientific paper  
-     *  @param Event e
-     */
-    function toMentorInsertFrm(e) {
-        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
-        let cloneFrm = sPFrmClone.cloneNode(true),
+            // clone from the existing cloned form node
+        let cloneFrm = sPCloneFrm.cloneNode(true),
             idSPHiddInpt = document.createElement('input')
         idSPHiddInpt.type = 'hidden'
         idSPHiddInpt.name = 'id_scientific_papers'
@@ -1091,20 +1003,114 @@
             // replace form node with its clone
         sPFrm.replaceWith(cloneFrm)
         cloneFrm.prepend(idSPHiddInpt)
-            // dispatch a synthetic click event 
-        cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
-            // remove DIV nodes except matching given selector expression 
-        cloneFrm.querySelectorAll('#particulars, #sPPartakers, #sPDocs').forEach(node => {
+            // widen form group across the whole grid
+        cloneFrm.querySelector('#sPDocs').classList = 'col-12'
+        attachSPFrmListeners()
+            // remove nodes except those matching given selector expression 
+        cloneFrm.querySelectorAll('div#particulars, div.row:nth-child(4)').forEach(node => {
                 node.parentElement.removeChild(node)
             }) // forEach
+        cloneFrm.addEventListener('submit', e => {
+                // prevent upload of scientific paper documents
+                e.preventDefault()
+                insertDocumentsOfScientificPaper(cloneFrm)
+            }) // addEventListener
+    } // toSPDocumentUploadFrm
+
+    /*
+     *  rearrange form when inserting data of the scientific paper partaker   
+     *  @param Event e
+     */
+    function toPartakerInsertFrm(e) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+            // clone from the existing cloned form node
+        let cloneFrm = sPCloneFrm.cloneNode(true),
+            idSPHiddInpt = document.createElement('input')
+        idSPHiddInpt.type = 'hidden'
+        idSPHiddInpt.name = 'id_scientific_papers'
+        idSPHiddInpt.value = e.target.getAttribute('data-id')
+            // replace form element node with its clone
+        document.getElementById('sPFrm').replaceWith(cloneFrm)
+        cloneFrm.prepend(idSPHiddInpt)
+            // widen form group across the whole grid
+        cloneFrm.querySelector('#sPPartakers').classList = 'col-12'
+        attachSPFrmListeners()
+            // dispatch a synthetic click event
+        cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
+            // remove nodes except those matching given selector expression 
+        cloneFrm.querySelectorAll('div#particulars, #sPMentors, #sPDocs, p, button').forEach(node => {
+                node.parentElement.removeChild(node)
+            }) // forEach
+        cloneFrm.addEventListener('submit', e => {
+                // cancel submitting partaker data by default
+                e.preventDefault()
+                insertPartakerOfScientificPaper(cloneFrm)
+            }) // addEventListener
+    } // toPartakerInsertFrm
+
+    /*
+     *  rearrange form when updating data with regard to partaker of the scientific paper 
+     *  @param Event e
+     */
+    function toPartakerUpdateFrm(e) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+            // clone from the existing cloned form node
+        let cloneFrm = sPCloneFrm.cloneNode(true),
+            idPartakingsHiddInpt = document.createElement('input')
+        idPartakingsHiddInpt.type = 'hidden'
+        idPartakingsHiddInpt.name = 'id_partakings'
+        idPartakingsHiddInpt.value = e.target.getAttribute('data-id')
+            // replace form node with its clone
+        document.getElementById('sPFrm').replaceWith(cloneFrm)
+        cloneFrm.prepend(idPartakingsHiddInpt)
+            // widen form group across the whole grid
+        cloneFrm.querySelector('#sPPartakers').classList = 'col-12'
+        attachSPFrmListeners()
+            // dispatch a synthetic click event
+        cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
+            // remove nodes except those matching given selector expression 
+        cloneFrm.querySelectorAll('div#particulars, #sPMentors, #sPDocs, p, .d-flex, button').forEach(node => {
+                node.parentElement.removeChild(node)
+            }) // forEach
+            // populate form fields concerning data of the partaker
+        cloneFrm.querySelector('input[name="partakers[1][index]"]').value = e.target.getAttribute('data-index')
+        cloneFrm.querySelector('input[name="partakers[1][part]"]').value = e.target.getAttribute('data-part')
+        cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+        cloneFrm.addEventListener('submit', e => {
+                // cancel submitting partaker data by default
+                e.preventDefault()
+                updatePartakerOfScientificPaper(cloneFrm)
+            }) // addEventListener
+    } // toPartakerUpdateFrm
+
+    /*
+     *  rearrange form when inserting data regarding mentor of the scientific paper 
+     *  @param Event e
+     */
+    function toMentorInsertFrm(e) {
+        document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+            // clone from the existing cloned form node
+        let cloneFrm = sPCloneFrm.cloneNode(true),
+            idSPHiddInpt = document.createElement('input')
+        idSPHiddInpt.type = 'hidden'
+        idSPHiddInpt.name = 'id_scientific_papers'
+        idSPHiddInpt.value = e.target.getAttribute('data-id')
+            // replace form element node with its clone
+        document.getElementById('sPFrm').replaceWith(cloneFrm)
+        cloneFrm.prepend(idSPHiddInpt)
+            // widen form group across the whole grid
         cloneFrm.querySelector('#sPMentors').classList = 'col-12'
         attachSPFrmListeners()
-            // dispatch synthetic click event to button for subsequently add new mentor section
+            // dispatch a synthetic click event
         cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
+            // remove nodes except those matching given selector expression 
+        cloneFrm.querySelectorAll('div#particulars, #sPPartkers, #sPDocs, p, button').forEach(node => {
+                node.parentElement.removeChild(node)
+            }) // forEach
         cloneFrm.addEventListener('submit', e => {
-                // prevent from posting submitted data
-                e.preventDefault();
-                insertScientificPaperMentor(cloneFrm)
+                // cancel submitting mentor data by default
+                e.preventDefault()
+                insertMentorOfScientificPaper(cloneFrm)
             }) // addEventListener
     } // toMentorInsertFrm
 
@@ -1114,13 +1120,13 @@
      */
     function toMentorUpdateFrm(e) {
         document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
-        let cloneFrm = sPFrmClone.cloneNode(true),
+        let cloneFrm = sPCloneFrm.cloneNode(true),
             idSPHiddInpt = document.createElement('input')
         idSPHiddInpt.type = 'hidden'
         idSPHiddInpt.name = 'id_mentorings'
         idSPHiddInpt.value = e.target.getAttribute('data-id')
-            // replace form node with its clone
-        sPFrm.replaceWith(cloneFrm)
+            // replace form element node with its clone
+        document.getElementById('sPFrm').replaceWith(cloneFrm)
         cloneFrm.prepend(idSPHiddInpt)
         cloneFrm.querySelector('input[type=submit]').value = 'Shrani'
         attachSPFrmListeners()
@@ -1130,7 +1136,7 @@
         cloneFrm.querySelectorAll('input[name=id_attendances], #particulars, #sPPartakers, #sPDocs, p, button').forEach(node => {
                 node.parentElement.removeChild(node)
             }) // forEach
-            // widen from group across the whole grid
+            // widen form group across the whole grid
         cloneFrm.querySelector('#sPMentors').classList = 'col-12'
             // remove the headline
         request(`/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id')}`, 'GET', 'json').then(response => {
@@ -1145,7 +1151,7 @@
                 alert(error)
             }) // catch
         cloneFrm.addEventListener('submit', () => {
-                // prevent form from deafult submitt action
+                // prevent from submitting mentors data 
                 e.preventDefault();
                 updateMentorOfScientificPaper(cloneFrm)
             }) // addEventListener
@@ -1204,7 +1210,7 @@
             document.querySelectorAll('.par-del-spn').forEach(span => {
                 // attempt deletion of a partaker
                 span.addEventListener('click', () => {
-                        deleteScientificPaperPartaker(span.getAttribute('data-id'))
+                        deletePartakerOfScientificPaper(span.getAttribute('data-id'))
                     }) // addEventListener
             }) // forEach
             // if anchors for scientific paper partaker data update exist
@@ -1236,10 +1242,10 @@
             document.querySelectorAll('.men-del-spn').forEach(anchor => {
                 // restructure form for document upload
                 anchor.addEventListener('click', () => {
-                        deleteScientificPaperMentor(anchor.getAttribute('data-id'))
+                        deleteMentorOfScientificPaper(anchor.getAttribute('data-id'))
                     }) // addEventListener
             }) // forEach
-            // if anchors for scientific papers update are rendered
+            // if anchors for scientific paper update are rendered
         if (document.querySelectorAll('.sp-upd-а'))
             document.querySelectorAll('.sp-upd-а').forEach(anchor => {
                 // fill form fields and modify the form
@@ -1251,8 +1257,6 @@
                                 alert(error)
                             }) // catch
                     }) // addEventListener
-                    // assign a value to the hidden input type of scientific paper insertion form 
-                document.getElementById('sPFrm').querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
             }) // forEach
             // if anchors for scientific paper deletion are rendered
         if (document.querySelectorAll('.sp-del-a'))
@@ -1272,10 +1276,148 @@
             document.querySelectorAll('.doc-del-spn').forEach(span => {
                 // delete particular document
                 span.addEventListener('click', () => {
-                        deleteDocument(span.getAttribute('data-source'))
+                        deleteDocumentOfScientificPaper(span.getAttribute('data-source'))
                     }) // addEventListener
             }) // forEach
-    } // attachSPMdlListeners
+    } // attachSPCardListeners
+
+    // asynchronous script execution for insertion of a scientific paper partaker    
+    function insertPartakerOfScientificPaper(frm) {
+        request('/eArchive/Partakings/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
+                // report on the insertion
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+                return
+            }).then(() => {
+                selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // insertPartakerOfScientificPaper
+
+    /*
+     *  asynchronous script execution for update of a scientific paper partakers data    
+     *  @param Number idPartakings
+     */
+    function updatePartakerOfScientificPaper(frm) {
+        request('/eArchive/Partakings/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
+                // report on update
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+                return
+            }).then(() => {
+                selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // updatePartakerOfScientificPaper
+
+    /*
+     *  asynchronous script execution for deletion of a scientific paper partaker    
+     *  @param Number idPartakings
+     */
+    function deletePartakerOfScientificPaper(idPartakings) {
+        request(`/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`, 'GET', 'text').then(response => {
+                // report on deletion
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).then(() => {
+                selectScientificPapers(document.getElementById('sPFrm').querySelector('input[name=id_attendances]').value)
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // deletePartakerOfScientificPaper
+
+    /*
+     *  asynchronous script execution for selecting mentor data of the subject scientific paper    
+     *  @param Number idMentorings
+     */
+    function selectMentorOfScientificPaper(idMentorings) {
+        request('/eArchive/Mentorings/insert.php', 'GET', 'text').then(response => {
+                // report on selection
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // selectMentorOfScientificPaper
+
+    /*
+     *  asynchronous script execution for inserting submitted mentor data     
+     *  @param HTMLFormElement | Node frm
+     */
+    function insertMentorOfScientificPaper(frm) {
+        request('/eArchive/Mentorings/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
+                // report on update
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+                return
+            }).then(() => {
+                selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // updatePartakerOfScientificPaper
+
+    // asynchronously run script for update of data with regard to mentor of the scientific paper       
+    function updateMentorOfScientificPaper(frm) {
+        request('/eArchive/Mentorings/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
+                // report on update
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // updateMentorOfScientificPaper
+
+    /*
+     *  asynchronously run script for deletion of mentor data concerning scientific paper       
+     *  @param Number idMentorings
+     */
+    function deleteMentorOfScientificPaper(idMentorings) {
+        request(`/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`, 'GET', 'text').then(response => {
+                // report on deletion
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).then(() => {
+                selectScientificPapers(document.getElementById('sPFrm').querySelector('input[name=id_attendances]').value)
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // deleteMentorOfScientificPaper
+
+    /*  
+     *   asynchronous script execution for scientific paper documents upload    
+     *   @param Event e
+     */
+    function insertDocumentsOfScientificPaper(frm) {
+        request('/eArchive/Documents/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
+                // report on document deletion
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+                return
+            }).then(() => {
+                selectScientificPapers(frm.querySelector('input[name=id_attendances').value)
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // insertDocumentsOfScientificPaper
+
+    /*
+     *  asynchronous script execution for scientific paper documents deletion    
+     *  @param DOMString source  
+     */
+    function deleteDocumentOfScientificPaper(source) {
+        request(`/eArchive/Documents/delete.php?source=${source}`, 'GET', 'text').then(response => {
+                // report on document deletion
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+            }).then(() => {
+                selectScientificPapers(document.getElementById('sPFrm').querySelector('input[name=id_attendances]').value)
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // deleteDocumentOfScientificPaper
 
     /*
      *   asynchronous script execution for selection of scientific papers per student program attendance 
@@ -1314,49 +1456,20 @@
 
     /*
      *   asynchronous script execution for scientific paper data alteration 
-     *   @param Event e
+     *   @param Node | HTMLFormElement  e
      */
-    function updateScientificPaper(e) {
-        // prevent default action of submitting scientific paper data    
-        e.preventDefault()
-        request('/eArchive/ScientificPapers/update.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
+    function updateScientificPaper(frm) {
+        request('/eArchive/ScientificPapers/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
                 // report on scientific paper update
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                return
+            }).then(() => {
+                selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
             }).catch(error => {
                 alert(error)
             }) // catch
     } // updateScientificPaper
-
-    /*
-     *  asynchronous script execution for scientific paper documents deletion    
-     *  @param DOMString source  
-     */
-    function deleteDocument(source) {
-        request(`/eArchive/Documents/delete.php?source=${source}`, 'GET', 'text').then(response => {
-                // report on document deletion
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // deleteDocument
-
-    /*  
-     *   asynchronous script execution for scientific paper documents upload    
-     *   @param Event e
-     */
-    function insertDocuments(e) {
-        // prevent default action by submitting upload form
-        e.preventDefault()
-        request('/eArchive/Documents/insert.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
-                // report on document deletion
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // insertDocuments
 
     /*
      *  asynchronous script execution for scientific paper deletion with its belonging documents     
@@ -1367,6 +1480,9 @@
                 // report on the deletion
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                return
+            }).then(() => {
+                selectScientificPapers(document.getElementById('sPFrm').querySelector('input[name=id_attendances]').value)
             }).catch(error => {
                 alert(error)
             }) // catch
@@ -1376,7 +1492,7 @@
      *   asynchronous script execution for graduation certificate upload/insertion     
      *   @param Event e
      */
-    function insertCertificate(e) {
+    function insertGraduationCertificate(e) {
         // prevent default action of submitting certificate insertion form
         e.preventDefault()
         request('/eArchive/Certificates/insert.php', 'POST', 'text', (new FormData(certificateFrm))).then(response => {
@@ -1386,13 +1502,13 @@
             }).catch(error => {
                 alert(error)
             }) // catch
-    } // insertCertificate
+    } // insertGraduationCertificate
 
     /*
      *  asynchronous script execution for graduation certificate selection    
      *  @param Number idAttendances
      */
-    function selectCertificate(idAttendances) {
+    function selectGraduationCertificate(idAttendances) {
         request(`/eArchive/Certificates/select.php?id_attendances=${idAttendances}`, 'GET', 'document').then(response => {
                 // compose node tree structure
                 fragment = response
@@ -1401,19 +1517,19 @@
                     // if anchor element for certificate deletion is contained
                 if (document.getElementById('certMdl').querySelector('.modal-content').querySelector('.cert-del-a'))
                     document.getElementById('certMdl').querySelector('.modal-content').querySelector('.cert-del-a').addEventListener('click', e => {
-                        deleteCertificate(e.target.getAttribute('data-att-id'), e.target.getAttribute('data-source'))
+                        deleteGraduationCertificate(e.target.getAttribute('data-att-id'), e.target.getAttribute('data-source'))
                     }) // addEventListner
             }).catch(error => {
                 alert(error)
             }) // catch
-    } // selectCertificate
+    } // selectGraduationCertificate
 
     /*
      *  asynchronous script execution for graduation certificate deletion    
      *  @param Number idAttendance
      *  @param Number idCertificates
      */
-    function deleteCertificate(idAttendances, source) {
+    function deleteGraduationCertificate(idAttendances, source) {
         request(`/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`, 'GET', 'text').then(response => {
                 // report on the deletion
                 reportMdl.querySelector('.modal-body').textContent = response
@@ -1421,113 +1537,5 @@
             }).catch(error => {
                 alert(error)
             }) // catch
-    } // deleteCertificate
-
-    /*
-     *  asynchronous script execution for graduation certificate deletion    
-     *  @param Number idAttendance
-     *  @param Number idCertificates
-     */
-    function deleteCertificate(idAttendances, source) {
-        request(`/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`, 'GET', 'text').then(response => {
-                // report on the deletion
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // deleteCertificate
-
-    // asynchronous script execution for insertion of a scientific paper partaker    
-    function insertScientificPaperPartaker() {
-        request('/eArchive/Partakings/insert.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
-                // report on the insertion
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // deleteCertificate
-
-    /*
-     *  asynchronous script execution for deletion of a scientific paper partaker    
-     *  @param Number idPartakings
-     */
-    function deleteScientificPaperPartaker(idPartakings) {
-        request(`/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`, 'GET', 'text').then(response => {
-                // report on the deletion
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // deleteScientificPaperPartaker
-
-    /*
-     *  asynchronous script execution for update of a scientific paper partakers data    
-     *  @param Number idPartakings
-     */
-    function updateScientificPaperPartaker() {
-        request('/eArchive/Partakings/update.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
-                // report on update
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // updateScientificPaperPartaker
-
-    /*
-     *  asynchronous script execution for selecting mentor data of the subject scientific paper    
-     *  @param Number idMentorings
-     */
-    function selectScientificPaperMentor(idMentorigns) {
-        request('/eArchive/Mentorings/insert.php', 'GET', 'text').then(response => {
-                // report on selection
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // selectScientificPaperMentor
-
-    /*
-     *  asynchronous script execution for inserting submitted mentor data     
-     *  @param HTMLFormElement | Node frm
-     */
-    function insertScientificPaperMentor(frm) {
-        request('/eArchive/Mentorings/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
-                // report on update
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // updateScientificPaperPartaker
-
-
-    // asynchronously run script for update of data with regard to mentor of the scientific paper       
-    function updateMentorOfScientificPaper(frm) {
-        request('/eArchive/Mentorings/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
-                // report on update
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // updateMentorOfScientificPaper
-
-    /*
-     *  asynchronously run script for deletion of mentor data concerning scientific paper       
-     *  @param Number idMentorings
-     */
-    function deleteScientificPaperMentor(idMentorings) {
-        request(`/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`, 'GET', 'text').then(response => {
-                // report on deletion
-                reportMdl.querySelector('.modal-body').textContent = response
-                reportMdlBtn.click()
-            }).catch(error => {
-                alert(error)
-            }) // catch
-    } // deleteScientificPaperMentor
+    } // deleteGraduationCertificate
 })()
