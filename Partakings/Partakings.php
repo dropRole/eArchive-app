@@ -1,9 +1,9 @@
 <?php
 
-namespace Partaking;
+namespace Partakings;
 
 // table partaking class definition
-class Partaking
+class Partakings
 {
 
     // encapsulation
