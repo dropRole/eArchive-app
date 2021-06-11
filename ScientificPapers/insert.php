@@ -31,7 +31,7 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
         if (isset($_POST['partakers']))
             foreach ($_POST['partakers'] as $partaker)
                 // if partaker was succesfully inserted 
-                if ($DBC->insertPartakingsOnScientificPaper($report['id_scientific_papers'], $DBC->selectStudentsByIndex($partaker['index'])[0]->id_attendances, $partaker['part']))
+                if ($DBC->insertPartakerOnScientificPaper($report['id_scientific_papers'], $DBC->selectStudentsByIndex($partaker['index'])[0]->id_attendances, $partaker['part']))
                     echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} je uspešno vstavljen." . PHP_EOL;
                 else
                     echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} ni uspešno vstavljen." . PHP_EOL;
