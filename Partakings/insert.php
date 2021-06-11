@@ -25,5 +25,3 @@ if (isset($id_scientific_papers, $partakers)) {
         else
             echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} ni uspešno dodeljen.";
 } // if
-else
-    echo 'Napaka: potrebni podatki niso posredovani.';
