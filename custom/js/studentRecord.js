@@ -16,7 +16,7 @@
             insertStudentAccount(e, accountFrm)
             refreshStudentsTable()
         }) // addEventListener
-    certificateFrm.addEventListener('submit', insertGraduationCertificate)
+    certificateFrm.addEventListener('submit', uploadGraduationCertificate)
     certificateFrm.querySelector('input[type=file').addEventListener('change', () => {
             certificateFrm.querySelector('input[name=certificate]').value = certificateFrm.querySelector('input[type=file]').files[0].name
         }) // addEventListener
@@ -1492,17 +1492,21 @@
      *   asynchronous script execution for graduation certificate upload/insertion     
      *   @param Event e
      */
-    function insertGraduationCertificate(e) {
+    function uploadGraduationCertificate(e) {
         // prevent default action of submitting certificate insertion form
         e.preventDefault()
         request('/eArchive/Certificates/insert.php', 'POST', 'text', (new FormData(certificateFrm))).then(response => {
                 // report on the deletion
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+            }).then(() => {
+                refreshStudentsTable()
+                    // close certificate upload modal after uploading the certificate
+                $('#certUploadMdl').modal('hide')
             }).catch(error => {
                 alert(error)
             }) // catch
-    } // insertGraduationCertificate
+    } // uploadGraduationCertificate
 
     /*
      *  asynchronous script execution for graduation certificate selection    
@@ -1510,13 +1514,15 @@
      */
     function selectGraduationCertificate(idAttendances) {
         request(`/eArchive/Certificates/select.php?id_attendances=${idAttendances}`, 'GET', 'document').then(response => {
-                // compose node tree structure
+                // get modal for certificate review
+                let mdl = document.getElementById('certViewMdl')
+                    // compose node tree structure
                 fragment = response
                     // reflect fragments body     
-                document.getElementById('certMdl').querySelector('.modal-content').innerHTML = fragment.body.innerHTML
+                mdl.querySelector('.modal-content').innerHTML = fragment.body.innerHTML
                     // if anchor element for certificate deletion is contained
-                if (document.getElementById('certMdl').querySelector('.modal-content').querySelector('.cert-del-a'))
-                    document.getElementById('certMdl').querySelector('.modal-content').querySelector('.cert-del-a').addEventListener('click', e => {
+                if (mdl.querySelector('.modal-content').querySelector('.cert-del-a'))
+                    mdl.querySelector('.modal-content').querySelector('.cert-del-a').addEventListener('click', e => {
                         deleteGraduationCertificate(e.target.getAttribute('data-att-id'), e.target.getAttribute('data-source'))
                     }) // addEventListner
             }).catch(error => {
@@ -1534,6 +1540,11 @@
                 // report on the deletion
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                return
+            }).then(() => {
+                refreshStudentsTable()
+                    // close certificate review modal after deletion
+                $('#certViewMdl').modal('hide')
             }).catch(error => {
                 alert(error)
             }) // catch
