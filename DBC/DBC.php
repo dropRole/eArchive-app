@@ -4,7 +4,7 @@ namespace DBC;
 
 // namespace import declaration
 
-use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Mentorings\Mentorings, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
+use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Partaking\Partaking, Mentorings\Mentorings, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
 
 class DBC extends PDO
 {
@@ -1402,7 +1402,12 @@ class DBC extends PDO
         // action report
         $report = '';
         $report .= $this->deleteDocuments($id_scientific_papers);
-        $report .= $this->deleteScientificPaperPartaker($id_scientific_papers);
+        // select and delete every single partaker on a scientific paper
+        foreach ($this->selectPartakersOfScientificPaper($id_scientific_papers) as $partaker)
+            $this->deletePartakerOfScientificPaper($partaker->getIdPartakings());
+        // select and delete every single mentor of the scientific paper
+        foreach($this->selectMentorsOfScientificPaper($id_scientific_papers) as $mentor)
+            $this->deleteMentorOfScientificPaper($mentor->getIdMentorings());
         $stmt = '   DELETE FROM
                         scientific_papers 
                     WHERE 
@@ -1431,6 +1436,7 @@ class DBC extends PDO
         // array of generic object instances
         $resultSet = [];
         $stmt = "   SELECT 
+                        id_attendances,
                         id_partakings,
                         (name || ' ' || surname) as fullname,
                         part,
@@ -1454,7 +1460,7 @@ class DBC extends PDO
         } // catch
         // if single or more rows are affected
         if ($prpStmt->rowCount() >= 1)
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Partakings::class, ['id_partakings', 'id_scientific_papers', 'id_attendances', 'part']);
         return $resultSet;
     } // selectPartakersOfScientificPaper
 
@@ -1462,7 +1468,7 @@ class DBC extends PDO
     *   delete partaker of a scientific papersf
     *   @param int $id_partakings
     */
-    public function deleteScientificPaperPartaker(int $id_partakings)
+    public function deletePartakerOfScientificPaper(int $id_partakings)
     {
         $stmt = '   DELETE FROM 
                         partakings
@@ -1481,7 +1487,7 @@ class DBC extends PDO
         if ($prpStmt->rowCount() == 1)
             return 'Podatki o soavtorju so uspešno izbrisani.';
         return 'Podatki o soavtorju niso uspešno izbrisani.';
-    } // deleteScientificPaperPartaker
+    } // deletePartakerOfScientificPaper
 
     /*
     *   insert partaking particulars 
@@ -1811,7 +1817,7 @@ class DBC extends PDO
                                 if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
                                     // commit current transaction
                                     $this->commit();
-                                    return "Dokument {$_FILES['document']['name'][$indx]} je uspešno vstavljen." . PHP_EOL;
+                                    return "Dokument {$_FILES['document']['name'][$indx]} je uspešno naložen." . PHP_EOL;
                                 } // if
                                 // rollback current transaction
                                 $this->rollBack();
