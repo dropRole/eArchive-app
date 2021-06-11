@@ -1072,7 +1072,7 @@ class DBC extends PDO
     *   @param int $id_attendances
     *   @param DateTime $defended
     */
-    public function insertGraduation(int $id_attendances, string $certificate, DateTime $issued, DateTime $defended)
+    public function insertGraduation(int $id_attendances, string $certificate, DateTime $defended, DateTime $issued)
     {
         // action report
         $report = '';
@@ -1136,7 +1136,7 @@ class DBC extends PDO
                                     $prpStmt->execute();
                                     // if single row is affected 
                                     if ($prpStmt->rowCount() == 1) {
-                                        $report .= 'Podatki o zaključku študiranja in certifikatu so uspešno vstavljeni.';
+                                        $report .= 'Podatki o zaključku študiranja ter certifikatu so uspešno vstavljeni.';
                                         // commit current transaction
                                         $this->commit();
                                         return $report;
@@ -1218,12 +1218,12 @@ class DBC extends PDO
                     if ($this->deleteCertificate($source) && unlink("../{$source}")) {
                         // committ the current transation
                         $this->commit();
-                        return 'Podatki o maturi ter certifikat ' . basename($source) . ' so uspešno izbrisani.';
+                        return 'Podatki o zaključku študija ter certifikat ' . basename($source) . ' so uspešno izbrisani.';
                     } // if
                     // roll back current transaction
                     $this->rollBack();
                 } // if 
-                return 'Podatki o maturi ter certifiakt niso uspešno izbrisani.';
+                return 'Podatki o zaključku študija ter certifikat niso uspešno izbrisani.';
             } // try
             catch (PDOException $e) {
                 return "Napaka: {$e->getMessage()}.";
