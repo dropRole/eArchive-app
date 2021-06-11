@@ -40,7 +40,7 @@
                     echo "{$i}. študijski program je uspešno vstavljen." . PHP_EOL;
                     // if student graduated
                     if (isset($attendance['certificate'])) {
-                        $gRprt = $DBC->insertGraduation($aRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['issued'])), (new DateTime($attendance['defended'])));
+                        $gRprt = $DBC->insertGraduation($aRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
                         echo $gRprt . PHP_EOL;
                     } // if
                 } // if 
