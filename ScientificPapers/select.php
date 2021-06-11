@@ -8,6 +8,7 @@ use DBC\DBC;
 
 require_once '../DBC/DBC.php';
 require_once '../Documents/Documents.php';
+require_once '../Partakings/Partakings.php';
 require_once '../Mentorings/Mentorings.php';
 require_once './ScientificPapers.php';
 
@@ -54,9 +55,9 @@ if (isset($_GET['id_attendances'])) {
                             foreach ($partakers as $partaker) {
                         ?>
                             <li class="list-group-item">
-                                <span><?php echo "{$partaker->fullname}({$partaker->part})"; ?></span>
-                                <a class="par-upd-a" href="#" data-id="<?php echo $partaker->id_partakings; ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->part; ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
-                                <span class="par-del-spn ml-3" data-id="<?php echo $partaker->id_partakings; ?>">&#10007;</span>
+                                <span><?php echo "{$partaker->fullname}({$partaker->getPart()})"; ?></span>
+                                <a class="par-upd-a" href="#" data-id="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
+                                <span class="par-del-spn ml-3" data-id="<?php echo $partaker->getIdPartakings(); ?>">&#10007;</span>
                             </li>
                         <?php
                             } // foreach
