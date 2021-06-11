@@ -21,7 +21,7 @@ if (isset($id_scientific_papers, $mentors)) {
     foreach ($mentors as $mentor)
         // if data was successfully inserted 
         if ($DBC->insertMentorOfScientificPaper($id_scientific_papers, $mentor['id_faculties'], $mentor['mentor'], $mentor['taught'], $mentor['email'], $mentor['telephone']))
-            echo "{$mentor['mentor']} je uspešno določen";
+            echo "Mentor {$mentor['mentor']} je uspešno določen.";
         else
-            echo "{$mentor['mentor']} ni uspešno določen";
+            echo "Mentor {$mentor['mentor']} ni uspešno določen.";
 } // if
