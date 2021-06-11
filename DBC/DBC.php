@@ -4,7 +4,7 @@ namespace DBC;
 
 // namespace import declaration
 
-use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Partaking\Partaking, Mentorings\Mentorings, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
+use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Partakings\Partakings, Mentorings\Mentorings, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
 
 class DBC extends PDO
 {
