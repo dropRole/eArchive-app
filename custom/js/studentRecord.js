@@ -954,7 +954,7 @@
         document.getElementById('sPFrm').replaceWith(cloneFrm)
         cloneFrm.prepend(idSPHiddInpt)
         attachSPFrmListeners()
-        cloneFrm.addEventListener('submit', insertStudent)
+        cloneFrm.addEventListener('submit', insertScientificPaper)
     } // toSPInsertFrm
 
     /*
