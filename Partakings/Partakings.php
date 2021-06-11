@@ -7,21 +7,21 @@ class Partakings
 {
 
     // encapsulation
-    private $id_partaking; // primary key
+    private $id_partakings; // primary key
     private $id_students; // foreign key
     private $id_scientific_papers; // foreign key
     private $part; // multi-value attribute
 
     /*
     *   constructs class instance 
-    *   @param int $id_partaking 
+    *   @param int $id_partakings 
     *   @param int $id_students
     *   @param int $id_scientific_papers
     *   @param string $part
     */
-    public function __construct($id_partaking,  $id_students, $id_scientific_papers,  $part)
+    public function __construct($id_partakings,  $id_students, $id_scientific_papers,  $part)
     {
-        $this->id_partaking = $id_partaking;
+        $this->id_partakings = $id_partakings;
         $this->id_students = $id_students;
         $this->id_scientific_papers = $id_scientific_papers;
         $this->part = $part;
@@ -29,17 +29,17 @@ class Partakings
 
     /*
     *   set id of partaking
-    *   @param int $id_partaking
+    *   @param int $id_partakings
     */
-    public function setIdPartaking(int $id_partaking)
+    public function setIdPartakings(int $id_partakings)
     {
-        $this->id_partaking = $id_partaking;
+        $this->id_partakings = $id_partakings;
     } // setIdPartaking
 
     // get id of partaking
-    public function getIdPartaking()
+    public function getIdPartakings()
     {
-        return $this->id_partaking;
+        return $this->id_partakings;
     } // setIdPartaking
 
     /*
