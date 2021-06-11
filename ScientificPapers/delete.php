@@ -8,6 +8,8 @@ use DBC\DBC;
 
 require_once '../DBC/DBC.php';
 require_once '../Documents/Documents.php';
+require_once '../Partakings/Partakings.php';
+require_once '../Mentorings/Mentorings.php';
 require_once './ScientificPapers.php';
 
 // proceed with the session
