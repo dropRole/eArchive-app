@@ -49,13 +49,13 @@ $students = $DBC->selectStudents();
                     // if student possesses a certificate
                     if ($DBC->selectCertificate($student->id_attendances) != NULL) {
                     ?>
-                        <a class="cert-vw-a" href="#certificateMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
+                        <a class="cert-vw-a" href="#certViewMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
                     <?php
                     } // if
                     // if student doesn't  possess a certificate
                     if ($DBC->selectCertificate($student->id_attendances) == NULL) {
                     ?>
-                        <a class="cert-ins-a" href="#certificateMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                        <a class="cert-ins-a" href="#certUploadMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                     <?php
                     } // if
                     ?>
