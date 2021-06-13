@@ -40,16 +40,16 @@ class Certificates implements JsonSerializable
     *   set id of a certificate
     *   @param int $id_certificates
     */
-    public function setIdCertificate(int $id_certificates)
+    public function setIdCertificates(int $id_certificates)
     {
         $this->id_certificates = $id_certificates;
-    } // setIdCertificate
+    } // setIdCertificates
 
     // get id of a certificate
-    public function getIdCertificate()
+    public function getIdCertificates()
     {
         return $this->id_certificates;
-    } // getIdCertificate
+    } // getIdCertificates
 
     /*
     *   set source of a certificate
