@@ -3,22 +3,23 @@
     // global scope variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
         studentFrm = document.getElementById('studentFrm'), // form for student data insertion and update
-        studentFrmClone = studentFrm.cloneNode(true), // studentFrm clone node
+        studentCloneFrm = studentFrm.cloneNode(true), // studentFrm clone node
         sPCloneFrm = document.getElementById('sPFrm'), // cloned form element node for scientific paper insretion
-        accountFrm = document.getElementById('accountFrm'), // form for creating student account and its credentials   
-        certificateFrm = document.getElementById('certificateFrm'), // certificate upload/insertion form
+        acctFrm = document.getElementById('acctFrm'), // form for creating student account and its credentials
+        certFrm = document.getElementById('certFrm'), // certificate upload/insertion form
+        certCloneFrm = certFrm.cloneNode(true), // cloned form element node for graduation certificate upload
         reportMdl = document.getElementById('reportMdl'), // report modal 
         reportMdlBtn = document.getElementById('reportMdlBtn'), // button for report modal toggle
         filterInpt = document.getElementById('filterByIndx') // input for filtering students by their index numbers
-    accountFrm.addEventListener('submit', e => {
+    acctFrm.addEventListener('submit', e => {
             // prevent form from submitting account details  
             e.preventDefault()
-            insertStudentAccount(e, accountFrm)
+            insertStudentAccount(e, acctFrm)
             refreshStudentsTable()
         }) // addEventListener
-    certificateFrm.addEventListener('submit', uploadGraduationCertificate)
-    certificateFrm.querySelector('input[type=file').addEventListener('change', () => {
-            certificateFrm.querySelector('input[name=certificate]').value = certificateFrm.querySelector('input[type=file]').files[0].name
+    certFrm.addEventListener('submit', uploadGraduationCertificate)
+    certFrm.querySelector('input[type=file').addEventListener('change', () => {
+            certFrm.querySelector('input[name=certificate]').value = certFrm.querySelector('input[type=file]').files[0].name
         }) // addEventListener
 
     // filter students by their index numbers 
@@ -112,13 +113,15 @@
         certIALst.forEach(anchor => {
                 // assign an attendance id value to an upload forms hidden input type 
                 anchor.addEventListener('click', e => {
-                        certificateFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
+                        certFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
                     }) //addEventListener
             }) // forEach
         certVALst.forEach(anchor => {
                 // view certificate particulars in a form of a card in the modal
                 anchor.addEventListener('click', () => {
-                        selectGraduationCertificate(anchor.getAttribute('data-id'))
+                        selectGraduationCertificate(anchor.getAttribute('data-id-attendances'))
+                            // set value of id to the hidden input of the form
+                        certCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                     }) // addEventListener
             }) // forEach
         stuUALst.forEach(anchor => {
@@ -143,7 +146,7 @@
             }) // forEach
         accIBtnLst.forEach(btn => {
                 // pass an id of attendance through forms hidden input type 
-                accountFrm.querySelector('input[name=id_attendances]').value = btn.value
+                acctFrm.querySelector('input[name=id_attendances]').value = btn.value
             }) // forEach
     } // attachStudentTableListeners
     attachStudentTableListeners()
@@ -916,7 +919,7 @@
     function insertStudentAccount(e, form) {
         // prevent default action by submitting data insert form
         e.preventDefault()
-        request('/eArchive/Accounts/authorized/insert.php', 'POST', 'text', (new FormData(accountFrm))).then(response => {
+        request('/eArchive/Accounts/authorized/insert.php', 'POST', 'text', (new FormData(acctFrm))).then(response => {
             // report on data insertion
             reportMdl.querySelector('.modal-body').textContent = response
             reportMdlBtn.click()
@@ -1157,9 +1160,39 @@
             }) // addEventListener
     } // toMentorUpdateFrm
 
-    //  transform to form for student insertion of student particulars and submitted scientific achievements
+    /*
+     *  rearrange form when updating data regarding students graduation certificate  
+     *  @param Event e
+     */
+    function toGradCertUpdateFrm(e) {
+        document.querySelector('#certUploadMdl .modal-header .modal-title').textContent = 'Urejanje podatkov certifikata'
+            // clone from the existing cloned form node
+        let cloneFrm = certCloneFrm.cloneNode(true),
+            idCertificatesHiddInpt = document.createElement('input')
+        idCertificatesHiddInpt.type = 'hidden'
+        idCertificatesHiddInpt.name = 'id_certificates'
+        idCertificatesHiddInpt.value = e.target.getAttribute('data-id-certificates')
+            // replace form element node with its clone
+        document.getElementById('certFrm').replaceWith(cloneFrm)
+        cloneFrm.prepend(idCertificatesHiddInpt)
+        attachCertificateCardListeners()
+            // remove certificate file input 
+        cloneFrm.querySelector('div.row').removeChild(cloneFrm.querySelector('div.row').querySelector('.form-group'))
+            // fill out form fileds with carried data
+        cloneFrm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
+        cloneFrm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
+            // change submit buttons value
+        cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+        cloneFrm.addEventListener('submit', e => {
+                // cancel submitting updated certificate data by default
+                e.preventDefault()
+                updateGraduationCertificate(cloneFrm)
+            }) // addEventListener
+    } // toGradCertUpdateFrm
+
+    // restitute form for insertion of the student data  
     function toStudentInsertFrm() {
-        studentFrm.innerHTML = studentFrmClone.innerHTML
+        studentFrm.innerHTML = studentCloneFrm.innerHTML
         attachStudentFrmListeners()
             // clear up all input field values 
         emptyFrmInptFields(studentFrm)
@@ -1179,7 +1212,7 @@
         idefendedInpt.type = 'hidden'
         idefendedInpt.name = 'id_students'
         idefendedInpt.value = e.target.getAttribute('data-id')
-        studentFrm.innerHTML = studentFrmClone.innerHTML
+        studentFrm.innerHTML = studentCloneFrm.innerHTML
         attachStudentFrmListeners()
         studentFrm.prepend(idefendedInpt)
             // fill out input fields with student particulars
@@ -1280,6 +1313,20 @@
                     }) // addEventListener
             }) // forEach
     } // attachSPCardListeners
+
+    // attach listeners to certificate card when selected
+    function attachCertificateCardListeners() {
+        // get modal for graduation certificate review
+        let mdl = document.getElementById('certViewMdl')
+            // if anchor element for update of certificate connected data exist
+        if (mdl.querySelector('.modal-content .cert-upd-a'))
+            mdl.querySelector('.modal-content .cert-upd-a').addEventListener('click', toGradCertUpdateFrm)
+            // if anchor element for certificate deletion is contained
+        if (mdl.querySelector('.modal-content .cert-del-a'))
+            mdl.querySelector('.modal-content .cert-del-a').addEventListener('click', e => {
+                deleteGraduationCertificate(e.target.getAttribute('data-id-attendances'), e.target.getAttribute('data-source'))
+            }) // addEventListner
+    } // attachCertificateCardListeners
 
     // asynchronous script execution for insertion of a scientific paper partaker    
     function insertPartakerOfScientificPaper(frm) {
@@ -1495,7 +1542,7 @@
     function uploadGraduationCertificate(e) {
         // prevent default action of submitting certificate insertion form
         e.preventDefault()
-        request('/eArchive/Certificates/insert.php', 'POST', 'text', (new FormData(certificateFrm))).then(response => {
+        request('/eArchive/Certificates/insert.php', 'POST', 'text', (new FormData(certFrm))).then(response => {
                 // report on the deletion
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
@@ -1520,15 +1567,32 @@
                 fragment = response
                     // reflect fragments body     
                 mdl.querySelector('.modal-content').innerHTML = fragment.body.innerHTML
-                    // if anchor element for certificate deletion is contained
-                if (mdl.querySelector('.modal-content').querySelector('.cert-del-a'))
-                    mdl.querySelector('.modal-content').querySelector('.cert-del-a').addEventListener('click', e => {
-                        deleteGraduationCertificate(e.target.getAttribute('data-att-id'), e.target.getAttribute('data-source'))
-                    }) // addEventListner
+                attachCertificateCardListeners()
             }).catch(error => {
                 alert(error)
             }) // catch
     } // selectGraduationCertificate
+
+    /*
+     *  asynchronously script run for graduation certificate data update     
+     *  @param Number idAttendance
+     *  @param Number idCertificates
+     */
+    function updateGraduationCertificate(frm) {
+        request('/eArchive/Certificates/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
+                // report on update
+                reportMdl.querySelector('.modal-body').textContent = response
+                reportMdlBtn.click()
+                return
+            }).then(() => {
+                // select update graduation certificate
+                selectGraduationCertificate(frm.querySelector('input[name=id_attendances]').value)
+                    // close certificate upload modal after update
+                $('#certUploadMdl').modal('hide')
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // updateGraduationCertificate
 
     /*
      *  asynchronous script execution for graduation certificate deletion    
