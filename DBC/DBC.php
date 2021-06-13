@@ -1114,7 +1114,7 @@ class DBC extends PDO
                                 $prpStmt->execute();
                                 // if certificate was inserted into db and moved to a new destination  
                                 if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
-                                    $report = "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno vstavljen." . PHP_EOL;
+                                    $report = "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno naložen." . PHP_EOL;
                                     $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
                                     $stmt = '   INSERT INTO
                                                     graduations
@@ -1136,18 +1136,15 @@ class DBC extends PDO
                                     $prpStmt->execute();
                                     // if single row is affected 
                                     if ($prpStmt->rowCount() == 1) {
-                                        $report .= 'Podatki o zaključku študiranja ter certifikatu so uspešno vstavljeni.';
+                                        $report .= 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
                                         // commit current transaction
                                         $this->commit();
                                         return $report;
                                     } // if
-                                    // rollback current transaction
-                                    $this->rollBack();
-                                    return $report = 'Napaka: podatki o zaključku študiranja in certifikatu niso uspešno vstavljeni.';
                                 } // if
                                 // rollback current transaction
                                 $this->rollBack();
-                                return $report = 'Napaka: podatki certifikata niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.';
+                                return $report = 'Napaka: postopek nalaganja certifikata in določanja datuma zagovora ter izdajanja je bil neuspešen.';
                             } // if
                         } // if
                         return $report = "Napaka: certifikat {$_FILES['certificate']['name'][$indx]} ni uspešno naložen.";
@@ -1156,30 +1153,31 @@ class DBC extends PDO
             } // try
             catch (PDOException $e) {
                 // output error message 
-                return $report = "Napaka: {$e->getMessage()}.";
+                return "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return $report = 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.';
+        else
+            return 'Nakapa: druga transakcija s podatkovno zbirko je v izvajanju.';
     } // insertGraduation
 
     /*
-    *   update graduation defense data 
+    *   update graduation defence data 
     *   @param int $id_attendances
     *   @param int $id_students
     */
-    public function updateGraduation(int $id_attendances, int $id_students)
+    public function updateGraduationDefenceDate(int $id_certificates, DateTime $defended)
     {
         $stmt = '   UPDATE 
                         graduations 
                     SET 
                         defended = :defended
                     WHERE 
-                        id_attendances = :id_attendances AND id_students = :id_students ';
+                        id_certificates = :id_certificates';
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->bindValue(':defended', $defended->format('d-m-Y'), PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
@@ -1187,10 +1185,9 @@ class DBC extends PDO
         } // catch
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
-            return 'Podatek o datumu zagovarjanja diplome je uspešno ažuriran.';
-        else
-            return 'Napaka: podatek o datumu zagovarjanja diplome ni uspešno ažuriran.';
-    } // updateGraduation
+            return 'Datum zagovora diplome je uspešno spremenjen.';
+        return 'Datum zagovora diplome ni uspešno spremenjen.';
+    } // updateGraduationDefenceDate
 
     /*
     *   delete graduation of a student 
@@ -1240,7 +1237,8 @@ class DBC extends PDO
     {
         $certificate = NULL;
         $stmt = '   SELECT 
-                        certificates.* 
+                        certificates.*,
+                        graduations.defended 
                     FROM 
                         certificates
                         INNER JOIN graduations
@@ -1265,18 +1263,18 @@ class DBC extends PDO
     *   @param int $id_certificates
     *   @param DateTime $issued
     */
-    public function updateCertificates(int $id_certificates, DateTime $issued)
+    public function updateGradCertIssuingDate(int $id_certificates, DateTime $issued)
     {
         $stmt = '   UPDATE
                         certificates 
                     SET
                         issued = :issued    
                     WHERE 
-                        id_certificates = id_certificates   ';
+                        id_certificates = :id_certificates   ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':issued', $issued, PDO::PARAM_STR);
+            $prpStmt->bindValue(':issued', $issued->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
@@ -1285,10 +1283,9 @@ class DBC extends PDO
         } // catch
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
-            return 'Certifiakt je uspešno ažuriran.';
-        else
-            return 'Certifiakt ni uspešno ažuriran.';
-    } // updateCertificates
+            return 'Datum izdajanja certifikata je uspešno spremenjen.';
+        return 'Datum izdajanja certifikata ni uspešno spremenjen.';
+    } // updateGradCertIssuingDate
 
     /*
     *   delete particular certificate 
@@ -1406,7 +1403,7 @@ class DBC extends PDO
         foreach ($this->selectPartakersOfScientificPaper($id_scientific_papers) as $partaker)
             $this->deletePartakerOfScientificPaper($partaker->getIdPartakings());
         // select and delete every single mentor of the scientific paper
-        foreach($this->selectMentorsOfScientificPaper($id_scientific_papers) as $mentor)
+        foreach ($this->selectMentorsOfScientificPaper($id_scientific_papers) as $mentor)
             $this->deleteMentorOfScientificPaper($mentor->getIdMentorings());
         $stmt = '   DELETE FROM
                         scientific_papers 
