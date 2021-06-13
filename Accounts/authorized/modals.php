@@ -245,7 +245,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="certificateFrm">
+                <form id="certFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div class="row">
                         <div class="form-group col-12">
@@ -269,7 +269,7 @@
     </div>
 </div>
 <!-- Modal for account insertion -->
-<div class="modal fade" id="accountMdl" tabindex="-1" role="dialog" aria-labelledby="exampleAccountMdl" aria-hidden="true">
+<div class="modal fade" id="acctMdl" tabindex="-1" role="dialog" aria-labelledby="exampleAccountMdl" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -279,7 +279,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="accountFrm">
+                <form id="acctFrm">
                     <input type="hidden" name="id_attendances">
                     <div class="form-group">
                         <label for="passInpt">Geslo</label>
