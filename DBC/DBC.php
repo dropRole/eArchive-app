@@ -568,6 +568,46 @@ class DBC extends PDO
     } // selectCountries
 
     /*
+    *   insert permanent and temporal residences of a student
+    *   @param int $id_students
+    *   @param Array $residenes
+    */
+    private function insertResidencesOfStudent(int $id_students, array $residences)
+    {
+        // insert report
+        $report = '';
+        $stmt = '   INSERT INTO 
+                        residences 
+                    (
+                        id_postal_codes,
+                        id_students,
+                        address, 
+                        status
+                    )
+                    VALUES(
+                        :id_postal_codes,
+                        :id_students,
+                        :address,
+                        :status
+                    )   ';
+        foreach ($residences as $residence) {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->bindParam(':address', $residence['address'], PDO::PARAM_STR);
+            $prpStmt->bindParam(':status', $residence['status'], PDO::PARAM_STR);
+            $prpStmt->execute();
+            // if single row is affected
+            if ($prpStmt->rowCount() == 1)
+                $report .= "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}." . PHP_EOL;
+            else
+                $report .= "Bivališče na naslovu '{$residence['address']}' ni evidentirano.";
+        } // foreach
+        return $report;
+    } // insertResidencesOfStudent
+
+    /*
     *   delete the given student temporal residence 
     *   @param int $id_students
     *   @param int $id_residences
@@ -654,6 +694,7 @@ class DBC extends PDO
     */
     public function insertStudent(int $id_postal_codes, string $name, string $surname, string $email = NULL, string $telephone = NULL, $residences = [])
     {
+
         // result
         $report = [
             'id_students' => 0,
@@ -687,62 +728,17 @@ class DBC extends PDO
         } // try
         catch (PDOException $e) {
             $report['message'] = "Napaka: {$e->getMessage()}.";
-            return $report;
         } // catch
         // if single row is affected
         if ($prpStmt->rowCount() == 1) {
             $id_students = $this->lastInsertId('students_id_students_seq');
             // form a report
             $report['id_students'] = $id_students;
-            $report['message'] .= 'Osnovni podatki študenta uspešno vstavljeni.' . PHP_EOL;
-            // flag for permament residence
-            $permanent = TRUE;
-            // temporal residences counter
-            $i = 1;
-            foreach ($residences as $residence) {
-                $stmt = '   INSERT INTO 
-                                residences
-                            (
-                                id_postal_codes,
-                                id_students,
-                                address,
-                                status
-                            ) 
-                            VALUES(
-                                :id_postal_codes,
-                                :id_students,
-                                :address,
-                                :status
-                            )   ';
-                try {
-                    // prepare, bind params to and execute stmt
-                    $prpStmt = $this->prepare($stmt);
-                    $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
-                    $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-                    $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
-                    $prpStmt->bindValue(':status', $permanent ? 'STALNO' : 'ZAČASNO', PDO::PARAM_STR);
-                    $prpStmt->execute();
-                    // if single row is affected
-                    if ($prpStmt->rowCount() == 1) {
-                        // if residence is temporal
-                        if (!$permanent) {
-                            $report['message'] .= "Podatki o {$i}. začasnem bivališču so uspešno dodani." . PHP_EOL;
-                            $i++;
-                        } // if
-                        // if residence is permament
-                        if ($permanent) {
-                            $report['message'] .= 'Podatki o stalnem prebivališču so uspešno dodani.' . PHP_EOL;
-                            $permanent = FALSE;
-                        } // if
-                    } //if
-                } // try
-                catch (PDOException $e) {
-                    $report['message'] .= "Napaka: {$e->getMessage()}." . PHP_EOL;
-                } // catch
-            } // foreach
-            return $report;
+            $report['message'] = 'Osnovni podatki študenta so uspešno evidentirani.' . PHP_EOL;
+            $report['message'] .= $this->insertResidencesOfStudent($id_students, $residences);
         } // if
-        $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
+        else
+            $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
         return $report;
     } // insertStudent
 
@@ -800,50 +796,37 @@ class DBC extends PDO
     */
     public function deleteStudent(int $id_students, int $id_attendances)
     {
-        // deletion report 
-        $report = '';
-        // if transaction with the server isn't already running
-        if (!$this->inTransaction()) {
-            try {
-                // begin a new transaction
-                $this->beginTransaction();
-                $this->deleteStudentResidences($id_students);
-                // if graduated, select certificate and delete it
-                $certificate = $this->selectCertificate($id_attendances);
-                if ($certificate)
-                    $this->deleteGraduation($id_attendances, $certificate['source']);
-                // if any scientific paper was written, delete it 
-                $scientificPapers = $this->selectScientificPapers($id_attendances);
-                if (count($scientificPapers) >= 1)
-                    foreach ($scientificPapers as $scientificPaper) {
-                        $this->deleteScientificPaper($scientificPaper->getIdScientificPapers());
-                    } // foreach
-                // if account was granted to, delete if
-                if ($this->checkStudentAccount($id_attendances))
-                    $this->deleteStudentAccount($id_attendances);
-                $this->deleteStudentProgramAttendance($id_attendances);
-                $stmt = '   DELETE FROM
+        $this->deleteStudentResidences($id_students);
+        // if graduated, select certificate and delete it
+        $certificate = $this->selectCertificate($id_attendances);
+        if (count($certificate) == 1)
+            $this->deleteGraduation($id_attendances, $certificate[0]->getSource());
+        // if any scientific paper was written, delete it 
+        $scientificPapers = $this->selectScientificPapers($id_attendances);
+        if (count($scientificPapers) >= 1)
+            foreach ($scientificPapers as $scientificPaper) {
+                $this->deleteScientificPaper($scientificPaper->getIdScientificPapers());
+            } // foreach
+        // if account was granted to, delete if
+        if ($this->checkStudentAccount($id_attendances))
+            $this->deleteStudentAccount($id_attendances);
+        $this->deleteStudentProgramAttendance($id_attendances);
+        try {
+            $stmt = '   DELETE FROM
                                 students
                             WHERE 
                                 id_students = :id_students  ';
-                $prpStmt = $this->prepare($stmt);
-                $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-                $prpStmt->execute();
-            } // try
-            catch (PDOException $e) {
-                return "Napaka: {$e->getMessage()}.";
-            } // catch
-            // if single row is affected
-            if ($prpStmt->rowCount() == 1)
-                // if transaction was committed with success
-                if ($this->commit())
-                    return 'Podatki o študentu ter znanstvenih dosežkih so uspešno izbrisani.';
-                else
-                    $this->rollBack();
-            return 'Podatki o študentu ter znanstvenih dosežkih niso uspešno izbrisani.';
-        } // if
-        else
-            return 'Opomba: transakcija s podatkovno zbirko je že v izvajanju.';
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            return "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1)
+            return 'Podatki o študentu ter znanstvenih dosežkih so uspešno izbrisani.';
+        return 'Podatki o študentu ter znanstvenih dosežkih niso uspešno izbrisani.';
     } // deleteStudent
 
     /*
