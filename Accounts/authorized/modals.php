@@ -55,6 +55,7 @@
                 <div id="residences" class="px-3">
                     <div class="row">
                         <p class="col-12 h6">Stalno prebivališče</p>
+                        <input type="hidden" name="residences[0][status]" value="STALNO">
                         <div class="form-group col-4">
                             <label for="PRCountrySlct">Država</label>
                             <select id="PRCountrySlct" class="form-control country-select" data-target="PRPCSlct">
