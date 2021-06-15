@@ -27,24 +27,21 @@
         echo $sRprt['message'] . PHP_EOL;
         // if insertion is successful
         if ($sRprt['id_students']) {
-            // attendance counter
-            $i = 1;
             // insert every student attendance
             foreach ($attendances as $attendance) {
                 $aRprt = $DBC->insertAttendances($sRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
                 // if insretion isn't successful
                 if (!$aRprt['id_attendances'])
-                    echo "Napaka: {$i}. študijski program ni uspešno vstavljen." . PHP_EOL;
+                    echo 'Napaka: študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->faculty . '\' ni uspešno evidentiran.' . PHP_EOL;
                 // if insertion is successful
                 if ($aRprt['id_attendances']) {
-                    echo "{$i}. študijski program je uspešno vstavljen." . PHP_EOL;
+                    echo 'Študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->faculty . '\' je uspešno evidentiran.' . PHP_EOL;
                     // if student graduated
                     if (isset($attendance['certificate'])) {
                         $gRprt = $DBC->insertGraduation($aRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
                         echo $gRprt . PHP_EOL;
                     } // if
                 } // if 
-                $i++;
             } // foreach
         } // if
     } // if 
