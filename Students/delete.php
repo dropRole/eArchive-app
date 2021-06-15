@@ -11,6 +11,8 @@ require_once '../Residences/Residences.php';
 require_once '../Graduations/Graduations.php';
 require_once '../Certificates/Certificates.php';
 require_once '../Documents/Documents.php';
+require_once '../Partakings/Partakings.php';
+require_once '../Mentorings/Mentorings.php';
 require_once '../ScientificPapers/ScientificPapers.php';
 require_once '../Attendances/Attendances.php';
 require_once './Students.php';
