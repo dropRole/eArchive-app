@@ -223,11 +223,12 @@
                     countryLbl = document.createElement('label'),
                     postalCodeLbl = document.createElement('label'),
                     addressLbl = document.createElement('label'),
-                    postalCodeSlct = document.createElement('select'),
+                    statusHiddInpt = document.createElement('input'),
                     countrySlct = document.createElement('select'),
+                    postalCodeSlct = document.createElement('select'),
                     addressInpt = document.createElement('input'),
                     lblNum = document.querySelectorAll('#residences .row').length, // number of added temporal residences 
-                    indx = lblNum - 1 // the following index for an array of data on student residences 
+                    indx = lblNum // the following index for an array of data on student residences 
                 container.className = 'row'
                 container.style.position = 'relative'
                 headline.classList = 'col-12 h6'
@@ -249,6 +250,9 @@
                 postalCodeLbl.textContent = 'Kraj'
                 addressLbl.setAttribute('for', `TRAddressInpt${lblNum}`)
                 addressLbl.textContent = 'Naslov'
+                statusHiddInpt.type = 'hidden'
+                statusHiddInpt.name = `residences[${indx}][status]`
+                statusHiddInpt.value = 'ZAČASNO'
                 countrySlct.id = `TRCountrySlct${lblNum}`
                 countrySlct.classList = 'form-control country-select'
                     // propagate postal codes by country selection
@@ -290,6 +294,7 @@
                         addressFG.appendChild(addressLbl)
                         addressFG.appendChild(addressInpt)
                         container.appendChild(headline)
+                        container.appendChild(statusHiddInpt)
                         container.appendChild(countryFG)
                         container.appendChild(postalCodeFG)
                         container.appendChild(addressFG)
@@ -336,7 +341,7 @@
         certificateInpt.required = true
             // determine hidden input type value if graduated
         certificateInpt.addEventListener('change', e => {
-                certificateInpt.value = e.target.files[0].name
+                certificateHiddInpt.value = e.target.files[0].name
             }) // addEventListener
         certificateHiddInpt.type = 'hidden'
         certificateHiddInpt.name = `attendances[${indx}][certificate]`
@@ -689,7 +694,7 @@
      *  @param HTMLFormElement frm
      */
     function emptyFrmInptFields(frm) {
-        frm.querySelectorAll('input').forEach(input => {
+        frm.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
                 input.value = ''
             }) // forEach
     } // emptyFrmInptFields
@@ -750,9 +755,14 @@
                 emptyFrmInptFields(studentFrm)
                     // close the modal after insertion 
                 document.getElementById('insertStudentBtn').click()
-            }).then(refreshStudentsTable())
-            .then(interpolateStudentDatalist())
-            .catch(error => {
+                return
+            }).then(() => {
+                refreshStudentsTable()
+                return
+            })
+            .then(() => {
+                interpolateStudentDatalist()
+            }).catch(error => {
                 alert(error)
             }) // catch
     } // insertStudent
