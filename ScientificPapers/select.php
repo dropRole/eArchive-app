@@ -45,7 +45,7 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="h6">Soavtorji</p>
                             </div>
                             <div class="col-6">
-                                <a href="#" class="card-link float-right par-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Dodeli</a>
+                                <a href="#" class="card-link float-right par-ins-a" data-id-scintific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Dodeli</a>
                             </div>
                         </div>
                         <?php
@@ -57,7 +57,7 @@ if (isset($_GET['id_attendances'])) {
                             <li class="list-group-item">
                                 <span><?php echo "{$partaker->fullname}({$partaker->getPart()})"; ?></span>
                                 <a class="par-upd-a" href="#" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
-                                <span class="par-del-spn ml-3" data-id="<?php echo $partaker->getIdPartakings(); ?>">&#10007;</span>
+                                <span class="par-del-spn ml-3" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>">&#10007;</span>
                             </li>
                         <?php
                             } // foreach
@@ -83,7 +83,7 @@ if (isset($_GET['id_attendances'])) {
                             <li class="list-group-item">
                                 <span><?php echo $mentor->getMentor(); ?> (</span><span><?php echo $mentor->name; ?>)</span>
                                 <a class="men-upd-a" href="#sPMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
-                                <span class="men-del-spn ml-3" data-id="<?php echo $mentor->getIdMentorings(); ?>">&#10007;</span>
+                                <span class="men-del-spn ml-3" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">&#10007;</span>
                             </li>
                         <?php
                             } // foreach
@@ -97,7 +97,7 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="h6">Dokumentacija</p>
                             </div>
                             <div class="col-6">
-                                <a href="#" class="card-link float-right doc-upl-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Naloži</a>
+                                <a href="#" class="card-link float-right doc-upl-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Naloži</a>
                             </div>
                         </div>
                         <?php
@@ -122,8 +122,8 @@ if (isset($_GET['id_attendances'])) {
                             echo 'Ni predane dokumentacije.';
                         ?>
                     </ul>
-                    <a href="#" class="card-link sp-upd-а" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
-                    <a href="#" class="card-link sp-del-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Izbriši</a>
+                    <a href="#" class="card-link sp-upd-а" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
+                    <a href="#" class="card-link sp-del-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Izbriši</a>
                 </div>
             </div>
 <?php
