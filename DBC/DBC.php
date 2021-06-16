@@ -1908,14 +1908,14 @@ class DBC extends PDO
     *   check for student account 
     *   @param int $id_attendances
     */
-    public function checkStudentAccount($id_attendances)
+    public function checkStudentAccount(int $id_attendances)
     {
         $stmt = '   SELECT 
                         * 
                     FROM 
                         accounts 
                     WHERE 
-                    id_attendances = :id_attendances  ';
+                        id_attendances = :id_attendances  ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
@@ -1926,9 +1926,8 @@ class DBC extends PDO
             return "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
-        if ($prpStmt->rowCount() == 1) {
+        if ($prpStmt->rowCount() == 1) 
             return TRUE;
-        } // if
         return FALSE;
     } // checkStudentAccount
 
