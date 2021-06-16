@@ -56,7 +56,7 @@ if (isset($_GET['id_attendances'])) {
                         ?>
                             <li class="list-group-item">
                                 <span><?php echo "{$partaker->fullname}({$partaker->getPart()})"; ?></span>
-                                <a class="par-upd-a" href="#" data-id="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
+                                <a class="par-upd-a" href="#" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>" data-toggle="modal" data-target="#sPMdl">Uredi</a>
                                 <span class="par-del-spn ml-3" data-id="<?php echo $partaker->getIdPartakings(); ?>">&#10007;</span>
                             </li>
                         <?php
@@ -71,7 +71,7 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="h6">Mentorji</p>
                             </div>
                             <div class="col-6">
-                                <a href="#" class="card-link float-right men-ins-a" data-id="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Določi</a>
+                                <a href="#" class="card-link float-right men-ins-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Določi</a>
                             </div>
                         </div>
                         <?php
@@ -82,7 +82,7 @@ if (isset($_GET['id_attendances'])) {
                         ?>
                             <li class="list-group-item">
                                 <span><?php echo $mentor->getMentor(); ?> (</span><span><?php echo $mentor->name; ?>)</span>
-                                <a class="men-upd-a" href="#sPMdl" data-toggle="modal" data-id="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
+                                <a class="men-upd-a" href="#sPMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
                                 <span class="men-del-spn ml-3" data-id="<?php echo $mentor->getIdMentorings(); ?>">&#10007;</span>
                             </li>
                         <?php
@@ -106,7 +106,15 @@ if (isset($_GET['id_attendances'])) {
                         if (count($documents))
                             foreach ($documents as $document) {
                         ?>
-                            <li class="list-group-item"><a href="<?php echo "../../{$document->getSource()}"; ?>" target="_blank"><?php echo basename($document->getSource()); ?></a><span class="doc-del-spn ml-3" data-source="<?php echo $document->getSource(); ?>">&#10007;</span></li>
+                            <li class="list-group-item">
+                                Dokument
+                                <a href="<?php echo "../../{$document->getSource()}"; ?>" target="_blank">
+                                    <?php echo $document->getVersion(); ?>
+                                </a>
+                                <span class="doc-del-spn ml-3" data-source="<?php echo $document->getSource(); ?>">
+                                    &#10007;
+                                </span>
+                            </li>
                         <?php
                             } // foreach
                         // if there's no evidence of the documentation
