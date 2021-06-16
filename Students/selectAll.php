@@ -71,7 +71,7 @@ $students = $DBC->selectStudents();
                     } // if
                     else {
                     ?>
-                        <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#accountMdl">Ustvari</button>
+                        <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#acctMdl">Ustvari</button>
                     <?php
                     } // else
                     ?>
