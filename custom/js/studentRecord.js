@@ -100,15 +100,13 @@
         sPVALst.forEach(anchor => {
                 // preview scientific papers   
                 anchor.addEventListener('click', () => {
-                        selectScientificPapers(anchor.getAttribute('data-id'))
-                        sPCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id')
+                        selectScientificPapers(anchor.getAttribute('data-id-attendances'))
+                        sPCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                     }) //addEventListener
             }) // forEach
         sPIALst.forEach(anchor => {
                 // modify form for scientific paper insertion
-                anchor.addEventListener('click', e => {
-                        toSPInsertFrm(e)
-                    }) //addEventListener
+                anchor.addEventListener('click', toSPInsertFrm)
             }) // forEach
         certIALst.forEach(anchor => {
                 // assign an attendance id value to an upload forms hidden input type 
@@ -958,14 +956,11 @@
     function toSPInsertFrm(e) {
         document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
             // clone from the existing cloned form node
-        let cloneFrm = sPCloneFrm.cloneNode(true),
-            idSPHiddInpt = document.createElement('input')
-        idSPHiddInpt.type = 'hidden'
-        idSPHiddInpt.name = 'id_scientific_papers'
-        idSPHiddInpt.value = e.target.getAttribute('data-id')
+        let cloneFrm = sPCloneFrm.cloneNode(true)
+        cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
             // replace form element node with its clone
         document.getElementById('sPFrm').replaceWith(cloneFrm)
-        cloneFrm.prepend(idSPHiddInpt)
+        cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
         attachSPFrmListeners()
         cloneFrm.addEventListener('submit', insertScientificPaper)
     } // toSPInsertFrm
@@ -1018,6 +1013,7 @@
         cloneFrm.prepend(idSPHiddInpt)
             // widen form group across the whole grid
         cloneFrm.querySelector('#sPDocs').classList = 'col-12'
+        cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
         attachSPFrmListeners()
             // remove nodes except those matching given selector expression 
         cloneFrm.querySelectorAll('div#particulars, div.row:nth-child(4)').forEach(node => {
@@ -1047,6 +1043,7 @@
         cloneFrm.prepend(idSPHiddInpt)
             // widen form group across the whole grid
         cloneFrm.querySelector('#sPPartakers').classList = 'col-12'
+        cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
         attachSPFrmListeners()
             // dispatch a synthetic click event
         cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
@@ -1072,7 +1069,7 @@
             idPartakingsHiddInpt = document.createElement('input')
         idPartakingsHiddInpt.type = 'hidden'
         idPartakingsHiddInpt.name = 'id_partakings'
-        idPartakingsHiddInpt.value = e.target.getAttribute('data-id')
+        idPartakingsHiddInpt.value = e.target.getAttribute('data-id-partakings')
             // replace form node with its clone
         document.getElementById('sPFrm').replaceWith(cloneFrm)
         cloneFrm.prepend(idPartakingsHiddInpt)
@@ -1107,12 +1104,13 @@
             idSPHiddInpt = document.createElement('input')
         idSPHiddInpt.type = 'hidden'
         idSPHiddInpt.name = 'id_scientific_papers'
-        idSPHiddInpt.value = e.target.getAttribute('data-id')
+        idSPHiddInpt.value = e.target.getAttribute('data-id-scientific-papers')
             // replace form element node with its clone
         document.getElementById('sPFrm').replaceWith(cloneFrm)
         cloneFrm.prepend(idSPHiddInpt)
             // widen form group across the whole grid
         cloneFrm.querySelector('#sPMentors').classList = 'col-12'
+        cloneFrm.querySelector('input[type=submit]').value = 'Določi'
         attachSPFrmListeners()
             // dispatch a synthetic click event
         cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
@@ -1134,27 +1132,27 @@
     function toMentorUpdateFrm(e) {
         document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
         let cloneFrm = sPCloneFrm.cloneNode(true),
-            idSPHiddInpt = document.createElement('input')
-        idSPHiddInpt.type = 'hidden'
-        idSPHiddInpt.name = 'id_mentorings'
-        idSPHiddInpt.value = e.target.getAttribute('data-id')
+            idMentoringsHiddInpt = document.createElement('input')
+        idMentoringsHiddInpt.type = 'hidden'
+        idMentoringsHiddInpt.name = 'id_mentorings'
+        idMentoringsHiddInpt.value = e.target.getAttribute('data-id-mentorings')
             // replace form element node with its clone
         document.getElementById('sPFrm').replaceWith(cloneFrm)
-        cloneFrm.prepend(idSPHiddInpt)
-        cloneFrm.querySelector('input[type=submit]').value = 'Shrani'
+        cloneFrm.prepend(idMentoringsHiddInpt)
+        cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
         attachSPFrmListeners()
             // dispatch a synthetic click event to button for subsequent addition of form mentor section
         cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
             // remove DIV nodes except matching given selector expression 
-        cloneFrm.querySelectorAll('input[name=id_attendances], #particulars, #sPPartakers, #sPDocs, p, button').forEach(node => {
+        cloneFrm.querySelectorAll('#particulars, #sPPartakers, #sPDocs, p, button').forEach(node => {
                 node.parentElement.removeChild(node)
             }) // forEach
             // widen form group across the whole grid
         cloneFrm.querySelector('#sPMentors').classList = 'col-12'
             // remove the headline
-        request(`/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id')}`, 'GET', 'json').then(response => {
+        request(`/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`, 'GET', 'json').then(response => {
                 // populate form fields with selected mentor data
-                cloneFrm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id')
+                cloneFrm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id-mentorings')
                 cloneFrm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
                 cloneFrm.querySelector('select[name="mentors[0][id_faculties]"]').value = response.id_faculties
                 cloneFrm.querySelector('input[name="mentors[0][taught]"]').value = response.taught
@@ -1163,8 +1161,8 @@
             }).catch(error => {
                 alert(error)
             }) // catch
-        cloneFrm.addEventListener('submit', () => {
-                // prevent from submitting mentors data 
+        cloneFrm.addEventListener('submit', e => {
+                // prevent form from submitting updated mentor data 
                 e.preventDefault();
                 updateMentorOfScientificPaper(cloneFrm)
             }) // addEventListener
@@ -1344,8 +1342,11 @@
                 // report on the insertion
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                    // close the modal after submission
+                $('#sPMdl').modal('hide')
                 return
             }).then(() => {
+                // repaint cards containing data concerning scientific papers
                 selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
             }).catch(error => {
                 alert(error)
@@ -1408,13 +1409,16 @@
                 // report on update
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                    // close the modal after submission
+                $('#sPMdl').modal('hide')
                 return
             }).then(() => {
+                // repaint cards containing data concerning scientific papers
                 selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
             }).catch(error => {
                 alert(error)
             }) // catch
-    } // updatePartakerOfScientificPaper
+    } // insertMentorOfScientificPaper
 
     // asynchronously run script for update of data with regard to mentor of the scientific paper       
     function updateMentorOfScientificPaper(frm) {
@@ -1422,6 +1426,9 @@
                 // report on update
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                return
+            }).then(() => {
+                selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
             }).catch(error => {
                 alert(error)
             }) // catch
@@ -1452,8 +1459,11 @@
                 // report on document deletion
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                    // close the modal after upload
+                $('#sPMdl').modal('hide')
                 return
             }).then(() => {
+                // repaint cards containing data concerning scientific papers
                 selectScientificPapers(frm.querySelector('input[name=id_attendances').value)
             }).catch(error => {
                 alert(error)
@@ -1503,9 +1513,11 @@
         // prevent default action of submitting scientific paper data    
         e.preventDefault()
         request('/eArchive/ScientificPapers/insert.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
-                // report on scientific papers selection
+                // report on scientific papers insertion
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                    // close the modal after insertion 
+                $('#studentMdl').modal('hide')
             }).catch(error => {
                 alert(error)
             }) // catch
@@ -1520,8 +1532,11 @@
                 // report on scientific paper update
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                    // close the modal after update
+                $('#sPMdl').modal('hide')
                 return
             }).then(() => {
+                // repaint cards containing data concerning scientific papers 
                 selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
             }).catch(error => {
                 alert(error)
