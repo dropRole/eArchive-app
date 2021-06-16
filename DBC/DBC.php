@@ -1327,7 +1327,7 @@ class DBC extends PDO
             // if single row is affected
             if ($prpStmt->rowCount() == 1) {
                 $report['id_scientific_papers'] = $this->lastInsertId('scientific_papers_id_scientific_papers_seq');
-                $report['message'] = "Delo '{$topic}' je uspešno ustavljeno v zbirko." . PHP_EOL;
+                $report['message'] = "Delo '{$topic}' je uspešno evidentirano." . PHP_EOL;
             } // if
         } // try
         catch (PDOException $e) {
@@ -1465,8 +1465,8 @@ class DBC extends PDO
         } // catch
         // if single row is affected 
         if ($prpStmt->rowCount() == 1)
-            return 'Podatki o soavtorju so uspešno izbrisani.';
-        return 'Podatki o soavtorju niso uspešno izbrisani.';
+            return 'Soavtor je uspešno odstranjen.';
+        return 'Soavtor ni uspešno odstranjen.';
     } // deletePartakerOfScientificPaper
 
     /*
