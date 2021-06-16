@@ -14,8 +14,7 @@
     acctFrm.addEventListener('submit', e => {
             // prevent form from submitting account details  
             e.preventDefault()
-            insertStudentAccount(e, acctFrm)
-            refreshStudentsTable()
+            assignStudentAccount(e)
         }) // addEventListener
     certFrm.addEventListener('submit', uploadGraduationCertificate)
     certFrm.querySelector('input[type=file').addEventListener('change', () => {
@@ -143,8 +142,10 @@
                     }) //addEventListener
             }) // forEach
         accIBtnLst.forEach(btn => {
-                // pass an id of attendance through forms hidden input type 
-                acctFrm.querySelector('input[name=id_attendances]').value = btn.value
+                // pass an id of an attendance through forms hidden input type 
+                btn.addEventListener('click', () => {
+                        acctFrm.querySelector('input[name=id_attendances]').value = btn.value
+                    }) // addEventListener
             }) // forEach
     } // attachStudentTableListeners
     attachStudentTableListeners()
@@ -922,17 +923,29 @@
     /*
      *   generate and assign an account to a student
      *   @param Event e
-     *   @param HTMLFormElement form
      */
-    function insertStudentAccount(e, form) {
+    function assignStudentAccount(e) {
         // prevent default action by submitting data insert form
         e.preventDefault()
-        request('/eArchive/Accounts/authorized/insert.php', 'POST', 'text', (new FormData(acctFrm))).then(response => {
-            // report on data insertion
-            reportMdl.querySelector('.modal-body').textContent = response
-            reportMdlBtn.click()
-        })
-    } // insertStudentAccount
+        request(
+                '/eArchive/Accounts/authorized/insert.php',
+                'POST',
+                'text',
+                (new FormData(acctFrm))
+            ).then(response => {
+                // report on account assignment 
+                reportMdl.querySelector('.modal-body').textContent = response
+                $('#reportMdl').modal('show')
+                    // close the modal after account assignment
+                $('#acctMdl').modal('hide')
+                return
+            }).then(() => {
+                // repaint student evidence table
+                refreshStudentsTable()
+            }).catch(error => {
+                alert(error)
+            }) // catch
+    } // assignStudentAccount
 
     /*
      *   asynchronous script execution for deletion of the given account 
