@@ -111,7 +111,7 @@
         certIALst.forEach(anchor => {
                 // assign an attendance id value to an upload forms hidden input type 
                 anchor.addEventListener('click', e => {
-                        certFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id')
+                        certFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
                     }) //addEventListener
             }) // forEach
         certVALst.forEach(anchor => {
@@ -1608,12 +1608,12 @@
                 // report on update
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
+                    // close certificate upload modal after update
+                $('#certUploadMdl').modal('hide')
                 return
             }).then(() => {
                 // select update graduation certificate
                 selectGraduationCertificate(frm.querySelector('input[name=id_attendances]').value)
-                    // close certificate upload modal after update
-                $('#certUploadMdl').modal('hide')
             }).catch(error => {
                 alert(error)
             }) // catch
