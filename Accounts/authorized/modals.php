@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <div id="residences" class="px-3">
-                    <div class="row">
+                    <div id="permanentResidence" class="row">
                         <p class="col-12 h6">Stalno prebivališče</p>
                         <input type="hidden" name="residences[0][status]" value="STALNO">
                         <div class="form-group col-4">
