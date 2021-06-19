@@ -608,20 +608,18 @@ class DBC extends PDO
     } // insertResidencesOfStudent
 
     /*
-    *   delete the given student temporal residence 
-    *   @param int $id_students
+    *   delete the given temporal residence of a student 
     *   @param int $id_residences
     */
-    public function deleteStudentTemporalResidence($id_students, $id_residences)
+    public function deleteTempResOfStudent(int $id_residences)
     {
         $stmt = '   DELETE FROM
                         residences
                     WHERE 
-                        id_students = :id_students AND id_residences = :id_residences   ';
+                        id_residences = :id_residences   ';
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
             $prpStmt->bindParam(':id_residences', $id_residences, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
@@ -632,7 +630,7 @@ class DBC extends PDO
         if ($prpStmt->rowCount() == 1)
             return 'Bivališče je uspešno izbrisano.';
         return 'Bivališče ni uspešno izbrisano.';
-    } // deleteStudentTemporalResidence
+    } // deleteTempResOfStudent
 
     public function selectFaculties()
     {
