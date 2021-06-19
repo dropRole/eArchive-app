@@ -58,7 +58,9 @@
             countryLst = document.querySelectorAll('.country-select'), // select elements for birth, permanent and temporal residence country 
             facultySlct = document.getElementById('facultySlct'), // faculty select input
             graduationCB = document.getElementById('graduationCB') // graduation checkbox
-        addTRBtn.addEventListener('click', addTemporalResidenceFrmSect)
+        addTRBtn.addEventListener('click', () => {
+                addTempResFrmSect()
+            }) // addEventListener
         addAttendanceBtn.addEventListener('click', addProgramAttendanceSect)
         countryLst.forEach(select => {
                 // propagate target select element with postal codes of the chosen country
@@ -67,7 +69,7 @@
                     }) // addEventListener
             }) // forEach
             // propagate programs by faculty selection
-        facultySlct.addEventListener('change', e => {
+        facultySlct.addEventListener('input', () => {
                 propagateSelectElement(document.getElementById('programSlct'), `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
             }) // addEventListener
             // append graduation section if graduated
@@ -190,30 +192,49 @@
     /*
      *   propagate passed select element with options from the requested resource 
      *   @param HTMLSelectElement select
-     *   @param DOMString script
+     *   @param String script
+     *   @param Number id
      */
-    async function propagateSelectElement(select, script) {
+    async function propagateSelectElement(select, script, id = 0) {
         try {
             const response = await request(script, 'GET', 'document')
             fragment = response
-                // remove options while on disposal
-            while (select.options.length) {
+                // remove previously disposable options
+            while (select.options.length)
                 select.remove(0)
-            } // while
-            // traverse through nodes 
-            fragment.body.querySelectorAll('option').forEach(element => {
-                    select.add(element)
+                // traverse through nodes 
+            fragment.body.querySelectorAll('option').forEach(option => {
+                    select.add(option)
+                        // if id matches options value
+                    if (option.value == id)
+                    // set option as selected
+                        option.selected = true
                 }) // forEach
         } catch (error) {
             alert(error)
         }
     } // propagateSelectElement
 
-    // create and append additional form residence section controls 
-    function addTemporalResidenceFrmSect() {
+    /*
+     *  !recursive 
+     *  create and subsequently append form controls for new temporal residence section 
+     *  @param Array residences
+     */
+    function addTempResFrmSect(residences = null) {
         return new Promise((resolve) => {
-                // create form controls 
-                let container = document.createElement('div'),
+                // instantiate a MutationObserver object
+                let observer = new MutationObserver(() => {
+                        // if updating recorded temporal residence data 
+                        if (residences) {
+                            residences.shift()
+                                // if there's more records
+                            if (residences.length)
+                                resolve(addTempResFrmSect(residences))
+                            resolve()
+                        } // if
+                    }), // MutationObserver
+                    // create form controls 
+                    container = document.createElement('div'),
                     headline = document.createElement('p'),
                     cross = document.createElement('span'),
                     countryFG = document.createElement('div'),
@@ -228,18 +249,27 @@
                     addressInpt = document.createElement('input'),
                     lblNum = document.querySelectorAll('#residences .row').length, // number of added temporal residences 
                     indx = lblNum // the following index for an array of data on student residences 
-                container.className = 'row'
+                    // set the target and options of observation
+                observer.observe(document.getElementById('residences'), {
+                        attributes: false,
+                        childList: true,
+                        subtree: false
+                    }) // observe
+                container.className = 'row temporal-residence'
                 container.style.position = 'relative'
                 headline.classList = 'col-12 h6'
                 headline.textContent = `${lblNum}. začasno bivališče`
                 cross.style.float = 'right'
                 cross.style.transform = 'scale(1.2)'
                 cross.style.cursor = 'pointer'
-                    // remove selected residence section
+                cross.innerHTML = '&#10007;'
+                cross.setAttribute('data-id-residences', !residences ? '' : residences[0].id_residences)
                 cross.addEventListener('click', () => {
+                        // if data attributes value isn't empty 
+                        if (cross.getAttribute('data-id-residences') !== '')
+                            deleteTempResOfStudent(cross.getAttribute('data-id-residences'))
                         document.getElementById('residences').removeChild(container)
                     }) // addEventListener
-                cross.innerHTML = '&#10007;'
                 countryFG.className = 'form-group col-4'
                 postalCodeFG.className = 'form-group col-4'
                 addressFG.className = 'form-group col-4'
@@ -254,9 +284,11 @@
                 statusHiddInpt.value = 'ZAČASNO'
                 countrySlct.id = `TRCountrySlct${lblNum}`
                 countrySlct.classList = 'form-control country-select'
-                    // propagate postal codes by country selection
-                countrySlct.addEventListener('input', e => {
-                        propagateSelectElement(postalCodeSlct, `/eArchive/PostalCodes/select.php?id_countries=${e.target.selectedOptions[0].value}`)
+                countrySlct.addEventListener('input', () => {
+                        propagateSelectElement(
+                            postalCodeSlct,
+                            `/eArchive/postalCodes/select.php?id_countries=${countrySlct.selectedOptions[0].value}`
+                        )
                     }) // addEventListener
                 postalCodeSlct.id = `TRPCSlct${lblNum}`
                 addressInpt.id = `TRAddressInpt${lblNum}`
@@ -267,42 +299,36 @@
                 addressInpt.type = 'text'
                 addressInpt.name = `residences[${indx}][address]`
                 addressInpt.required = true
-                    // propagate elements for country selection by adding new residence section
-                request('/eArchive/Countries/select.php', 'GET', 'document').then((response) => {
-                        // instantiate a MutationObserver object
-                        let observer = new MutationObserver(() => {
-                                resolve()
-                            }) // MutationObserver
-                            // set the target and options of observation
-                        observer.observe(document.getElementById('residences'), {
-                                attributes: false,
-                                childList: true,
-                                subtree: false
-                            }) // observe
-                        fragment = response
-                            // traverse through nodes
-                        fragment.body.querySelectorAll('option').forEach(element => {
-                                countrySlct.add(element)
-                            }) // forEach
-                            // append controls to a form residence section
-                        headline.appendChild(cross)
-                        countryFG.appendChild(countryLbl)
-                        countryFG.appendChild(countrySlct)
-                        postalCodeFG.appendChild(postalCodeLbl)
-                        postalCodeFG.appendChild(postalCodeSlct)
-                        addressFG.appendChild(addressLbl)
-                        addressFG.appendChild(addressInpt)
-                        container.appendChild(headline)
-                        container.appendChild(statusHiddInpt)
-                        container.appendChild(countryFG)
-                        container.appendChild(postalCodeFG)
-                        container.appendChild(addressFG)
-                        document.querySelector('#residences').appendChild(container)
-                    }).catch(error => {
+                headline.appendChild(cross)
+                countryFG.appendChild(countryLbl)
+                countryFG.appendChild(countrySlct)
+                postalCodeFG.appendChild(postalCodeLbl)
+                postalCodeFG.appendChild(postalCodeSlct)
+                addressFG.appendChild(addressLbl)
+                addressFG.appendChild(addressInpt)
+                container.appendChild(headline)
+                container.appendChild(statusHiddInpt)
+                container.appendChild(countryFG)
+                container.appendChild(postalCodeFG)
+                container.appendChild(addressFG)
+                propagateSelectElement(
+                        countrySlct,
+                        '/eArchive/Countries/select.php', !residences ? null : residences[0].id_countries
+                    ).then(() => {
+                        propagateSelectElement(
+                            postalCodeSlct,
+                            `/eArchive/PostalCodes/select.php?id_countries=${countrySlct.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
+                        )
+                        return
+                    }).then(() => {
+                        addressInpt.value = !residences ? '' : residences[0].address
+                    }).then(() => {
+                        document.getElementById('residences').appendChild(container)
+                    }).catch((error) => {
                         alert(error)
                     }) // catch
             }) // Promise
-    } // addTemporalResidenceFrmSect
+    } // addTempResFrmSect
 
     /*
      *  subsequently create and append graduation section of the student insertion form 
@@ -829,54 +855,19 @@
 
     /*
      *  fill out form fields with student temporal residence particulars
-     *  @param Node frm
      *  @param Array residences
      */
-    function determineStudentTemporalResidence(frm, residences) {
-        // if student has any temporal residence
-        if (residences.length) {
-            // add each temporal residence section
-            residences.forEach(residence => {
-                    frm.querySelector('#addTRBtn').addEventListener('click', addTemporalResidenceFrmSect().then(() => {
-                                let idResidencesInpt = document.createElement('input'),
-                                    lblNum = document.querySelectorAll('#residences .row').length - 1 // number of added temporal residences 
-                                    // create hidden input type for id of a residence
-                                idResidencesInpt.type = 'hidden'
-                                idResidencesInpt.name = `residences[${lblNum}][id_residences]`
-                                idResidencesInpt.value = residence.id_residences
-                                frm.querySelector(`#TRCountrySlct${lblNum}`).parentElement.prepend(idResidencesInpt)
-                                frm.querySelector(`#TRCountrySlct${lblNum}`).parentElement.parentElement.querySelector('span').addEventListener('click', () => {
-                                        deleteStudentTemporalResidence(frm.querySelector('input[type=hidden]').value, residence.id_residences)
-                                    }) // addEventListener
-                                    // put country of a residence as selected option
-                                Array.from(frm.querySelector(`#TRCountrySlct${lblNum}`).options).forEach(option => {
-                                        // if postal codes match
-                                        if (option.value == residence.id_countries)
-                                            option.selected = true
-                                    }) // forEach
-                                    // dispatch synthetically generated event
-                                frm.querySelector(`#TRCountrySlct${lblNum}`).dispatchEvent((new Event('input')))
-                                    // put postal code of a residence as selected option 
-                                Array.from(frm.querySelector(`#TRPCSlct${lblNum}`).options).forEach(option => {
-                                        // if countries match
-                                        if (option.value == residence.id_postal_codes)
-                                            option.selected = true
-                                    }) // forEach
-                                frm.querySelector(`#TRAddressInpt${lblNum}`).value = residence.address
-                            }) // then
-                        ) // addEventListener
-                    frm.querySelector('#addTRBtn').click()
-                }) // forEach
-        } // if
-    } // determineStudentTemporalResidence
+    function determineTempResOfStudent(residences) {
+        addTempResFrmSect(residences)
+    } // determineTempResOfStudent
 
     /*
      *   delete student temporal residence by clicking cross sign of a section 
      *   @param idStudents
      *   @param idResidences
      */
-    function deleteStudentTemporalResidence(idStudents, idResidences) {
-        request(`/eArchive/Residences/delete.php?id_students=${idStudents}&id_residences=${idResidences}`, 'GET', '').then(response => {
+    function deleteTempResOfStudent(idResidences) {
+        request(`/eArchive/Residences/delete.php?id_residences=${idResidences}`, 'GET', 'text').then(response => {
                 // report the result
                 reportMdl.querySelector('.modal-body').textContent = response
                 reportMdlBtn.click()
@@ -1243,7 +1234,7 @@
         studentFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
         determineStudentBirthplace(studentFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
         determineStudentPermanentResidence(studentFrm, student.permResidence)
-        determineStudentTemporalResidence(studentFrm, student.tempResidence)
+        determineTempResOfStudent(student.tempResidence)
         studentFrm.removeChild(studentFrm.querySelector('#attendances'))
         studentFrm.querySelector('input[type=submit]').value = 'Posodobi'
             // exchange callbacks
