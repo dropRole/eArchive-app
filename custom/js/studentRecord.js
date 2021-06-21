@@ -144,7 +144,7 @@
             stuUALst.forEach(anchor => {
                     // propagate update form with student particulars
                     anchor.addEventListener('click', e => {
-                            selectStudent(e, anchor.getAttribute('data-id'))
+                            selectStudent(e, anchor.getAttribute('data-id-students'))
                         }) // addEventListener
                 }) // forEach
             stuDALst.forEach(anchor => {
@@ -158,7 +158,7 @@
             accDBtnLst.forEach(btn => {
                     // delete particular account 
                     btn.addEventListener('click', () => {
-                            deleteStudentAccount(btn.getAttribute('data-id'))
+                            deleteStudentAccount(btn.getAttribute('data-id-attendances'))
                         }) //addEventListener
                 }) // forEach
             accIBtnLst.forEach(btn => {
@@ -1024,7 +1024,7 @@
                 idSPHiddInpt = document.createElement('input')
             idSPHiddInpt.type = 'hidden'
             idSPHiddInpt.name = 'id_scientific_papers'
-            idSPHiddInpt.value = e.target.getAttribute('data-id')
+            idSPHiddInpt.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form node with its clone
             sPFrm.replaceWith(cloneFrm)
             cloneFrm.prepend(idSPHiddInpt)
@@ -1054,7 +1054,7 @@
                 idSPHiddInpt = document.createElement('input')
             idSPHiddInpt.type = 'hidden'
             idSPHiddInpt.name = 'id_scientific_papers'
-            idSPHiddInpt.value = e.target.getAttribute('data-id')
+            idSPHiddInpt.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
             document.getElementById('sPFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idSPHiddInpt)
@@ -1221,13 +1221,13 @@
      *   @param Object student
      */
     let toStudentUpdateFrm = (e, student) => {
-            let idefendedInpt = document.createElement('input')
-            idefendedInpt.type = 'hidden'
-            idefendedInpt.name = 'id_students'
-            idefendedInpt.value = e.target.getAttribute('data-id')
+            let idStudents = document.createElement('input')
+            idStudents.type = 'hidden'
+            idStudents.name = 'id_students'
+            idStudents.value = e.target.getAttribute('data-id-students')
             studentFrm.innerHTML = studentCloneFrm.innerHTML
             attachStudentFrmListeners()
-            studentFrm.prepend(idefendedInpt)
+            studentFrm.prepend(idStudents)
                 // fill out input fields with student particulars
             studentFrm.querySelector('input[name=name]').value = student.particulars.name
             studentFrm.querySelector('input[name=surname]').value = student.particulars.surname
@@ -1256,7 +1256,7 @@
                 document.querySelectorAll('.par-del-spn').forEach(span => {
                     // attempt deletion of a partaker
                     span.addEventListener('click', () => {
-                            deletePartakerOfScientificPaper(span.getAttribute('data-id'))
+                            deletePartakerOfScientificPaper(span.getAttribute('data-id-partakings'))
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper partaker data update exist
@@ -1288,7 +1288,7 @@
                 document.querySelectorAll('.men-del-spn').forEach(anchor => {
                     // restructure form for document upload
                     anchor.addEventListener('click', () => {
-                            deleteMentorOfScientificPaper(anchor.getAttribute('data-id'))
+                            deleteMentorOfScientificPaper(anchor.getAttribute('data-id-mentorings'))
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper update are rendered
@@ -1296,7 +1296,7 @@
                 document.querySelectorAll('.sp-upd-а').forEach(anchor => {
                     // fill form fields and modify the form
                     anchor.addEventListener('click', e => {
-                            request(`/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id')}`, 'GET', 'json').then(response => {
+                            request(`/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id-scientific-papers')}`, 'GET', 'json').then(response => {
                                     // retrieve JSON of ScientificPapers object 
                                     toSPUpdateFrm(response)
                                 }).catch(error => {
@@ -1308,7 +1308,7 @@
             if (document.querySelectorAll('.sp-del-a'))
                 document.querySelectorAll('.sp-del-a').forEach(anchor => {
                     anchor.addEventListener('click', () => {
-                            deleteScientficPaper(anchor.getAttribute('data-id'))
+                            deleteScientficPaper(anchor.getAttribute('data-id-scientific-papers'))
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper document upload exist

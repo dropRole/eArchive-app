@@ -41,8 +41,8 @@ $students = $DBC->selectStudents();
                 <td><?php echo $student->degree; ?></td>
                 <td><?php echo $student->faculty; ?></td>
                 <td>
-                    <a class="sp-vw-a" href="#sPVMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Pregled</a>
-                    <a class="sp-ins-a" href="#sPMdl" data-toggle="modal" data-id="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                    <a class="sp-vw-a" href="#sPVMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
+                    <a class="sp-ins-a" href="#sPMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                 </td>
                 <td>
                     <?php
@@ -66,7 +66,7 @@ $students = $DBC->selectStudents();
                     if ($DBC->checkStudentAccount($student->id_attendances)) {
                     ?>
                         Dodeljen: <span class="text-warning"><?php echo $DBC->getAccountParticulars($student->id_attendances); ?></span>
-                        <span class="acc-del-btn" data-id="<?php echo $student->id_attendances; ?>">&#10007;</span>
+                        <span class="acc-del-btn" data-id-attendances="<?php echo $student->id_attendances; ?>">&#10007;</span>
                     <?php
                     } // if
                     else {
@@ -77,7 +77,7 @@ $students = $DBC->selectStudents();
                     ?>
                 </td>
                 <td>
-                    <a class="stu-upd-a" href="#studentMdl" data-toggle="modal" data-id="<?php echo $student->id_students; ?>">Uredi</a>
+                    <a class="stu-upd-a" href="#studentMdl" data-toggle="modal" data-id-students="<?php echo $student->id_students; ?>">Uredi</a>
                 </td>
                 <td>
                     <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>">Izbriši</a>

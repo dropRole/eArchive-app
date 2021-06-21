@@ -45,7 +45,7 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="h6">Soavtorji</p>
                             </div>
                             <div class="col-6">
-                                <a href="#" class="card-link float-right par-ins-a" data-id-scintific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Dodeli</a>
+                                <a href="#" class="card-link float-right par-ins-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" data-target="#sPMdl">Dodeli</a>
                             </div>
                         </div>
                         <?php
