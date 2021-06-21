@@ -32,10 +32,10 @@
                 $aRprt = $DBC->insertAttendances($sRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
                 // if insretion isn't successful
                 if (!$aRprt['id_attendances'])
-                    echo 'Napaka: študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->faculty . '\' ni uspešno evidentiran.' . PHP_EOL;
+                    echo 'Napaka: študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->program . '\' ni uspešno evidentiran.' . PHP_EOL;
                 // if insertion is successful
                 if ($aRprt['id_attendances']) {
-                    echo 'Študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->faculty . '\' je uspešno evidentiran.' . PHP_EOL;
+                    echo 'Študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->program. '\' je uspešno evidentiran.' . PHP_EOL;
                     // if student graduated
                     if (isset($attendance['certificate'])) {
                         $gRprt = $DBC->insertGraduation($aRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
