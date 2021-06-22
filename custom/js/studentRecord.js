@@ -102,34 +102,34 @@
 
     // attach listeners to student evidence table appropriate anchors and buttons   
     let attachStudentTableListeners = () => {
-            let insertStudentBtn = document.getElementById('insertStudentBtn'), // button for insertion of student particulars and scientific achievements
-                sPVALst = document.querySelectorAll('.sp-vw-a'), // anchor list for scientific papers selection
-                sPIALst = document.querySelectorAll('.sp-ins-a'), // anchor list for scientific papers insertion
-                certIALst = document.querySelectorAll('.cert-ins-a'), // anchor list for certificate insertion
-                certVALst = document.querySelectorAll('.cert-vw-a'), // anchor list for certificate view
-                accIBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for account insertion
-                accDBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for account deletion
-                stuUALst = document.querySelectorAll('.stu-upd-a'), // anchor list for student data update
-                stuDALst = document.querySelectorAll('.stu-del-a') // anchor list for student data deletion
-            insertStudentBtn.addEventListener('click', toStudentInsertFrm)
-            sPVALst.forEach(anchor => {
+            let studentInsBtn = document.getElementById('studentInsBtn'), // button for exposing form for student scientific achievements insertion
+                sciPapViewAnchorLst = document.querySelectorAll('.sp-vw-a'), // anchor list for exposing scientific papers of the student
+                sciPapInsAnchorLst = document.querySelectorAll('.sp-ins-a'), // anchor list for exposing form for insertion of the scientific papers and belonging documents
+                certInsAnchorLst = document.querySelectorAll('.cert-ins-a'), // anchor list for exposing form for uploading students graduation certificate
+                certViewAnchorLst = document.querySelectorAll('.cert-vw-a'), // anchor list for exposing graduation certificate of the student
+                acctInsBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for exposing form for assigning an account to student
+                acctDelBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for deletion of a particular student account 
+                studentUpdAnchorLst = document.querySelectorAll('.stu-upd-a'), // anchor list for exposing form for updating fundamental data of the student
+                studentDelAnchorLst = document.querySelectorAll('.stu-del-a') // anchor list for exposing form for deletion of fundamental data of the student
+            studentInsBtn.addEventListener('click', toStudentInsertFrm)
+            sciPapViewAnchorLst.forEach(anchor => {
                     // preview scientific papers   
                     anchor.addEventListener('click', () => {
                             selectScientificPapers(anchor.getAttribute('data-id-attendances'))
                             sciPapFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                         }) //addEventListener
                 }) // forEach
-            sPIALst.forEach(anchor => {
+            sciPapInsAnchorLst.forEach(anchor => {
                     // modify form for scientific paper insertion
                     anchor.addEventListener('click', toSciPapInsertFrm)
                 }) // forEach
-            certIALst.forEach(anchor => {
+            certInsAnchorLst.forEach(anchor => {
                     // assign an attendance id value to an upload forms hidden input type 
                     anchor.addEventListener('click', e => {
                             certFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
                         }) //addEventListener
                 }) // forEach
-            certVALst.forEach(anchor => {
+            certViewAnchorLst.forEach(anchor => {
                     // view certificate particulars in a form of a card in the modal
                     anchor.addEventListener('click', () => {
                             selectGraduationCertificate(anchor.getAttribute('data-id-attendances'))
@@ -137,13 +137,13 @@
                             certCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                         }) // addEventListener
                 }) // forEach
-            stuUALst.forEach(anchor => {
+            studentUpdAnchorLst.forEach(anchor => {
                     // propagate update form with student particulars
                     anchor.addEventListener('click', e => {
                             selectStudent(e, anchor.getAttribute('data-id-students'))
                         }) // addEventListener
                 }) // forEach
-            stuDALst.forEach(anchor => {
+            studentDelAnchorLst.forEach(anchor => {
                     // delete student from the student evidence table
                     anchor.addEventListener('click', () => {
                             // if record deletion was confirmed
@@ -151,13 +151,13 @@
                                 deleteStudent(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
                         }) // addEventListener
                 }) // forEach
-            accDBtnLst.forEach(btn => {
+            acctDelBtnLst.forEach(btn => {
                     // delete particular account 
                     btn.addEventListener('click', () => {
                             deleteStudentAccount(btn.getAttribute('data-id-attendances'))
                         }) //addEventListener
                 }) // forEach
-            accIBtnLst.forEach(btn => {
+            acctInsBtnLst.forEach(btn => {
                     // pass an id of an attendance through forms hidden input type 
                     btn.addEventListener('click', () => {
                             acctFrm.querySelector('input[name=id_attendances]').value = btn.value
@@ -171,12 +171,14 @@
      *   @param String script
      *   @param String method
      *   @param String responseType 
+     *   @param FormData frmData 
      */
     let request = (script, method, resType = '', frmData = null) => {
             return new Promise((resolve, reject) => {
+                // instanitate an XHR object
                 let xmlhttp = new XMLHttpRequest()
-                    // resolve the promise if transaction was successful
                 xmlhttp.addEventListener('load', () => {
+                        // resolve the promise if transaction was successful
                         resolve(xmlhttp.response)
                     }) // addEventListener
                 xmlhttp.addEventListener('error', () => {
@@ -189,9 +191,10 @@
             })
         } // request
 
-    // refresh students evidence table upon latterly data amendmantion 
+    // refresh student evidence table upon latterly data amendment 
     let refreshStudentsTable = () => {
-            request('/eArchive/Students/selectAll.php', 'GET', 'document').then(response => {
+            request('/eArchive/Students/selectAll.php', 'GET', 'document')
+                .then(response => {
                     let tblCtr = document.querySelector('.table-responsive')
                         // compose node tree structure
                     fragment = response
@@ -798,7 +801,7 @@
                     reportMdlBtn.click()
                     emptyFrmInptFields(studentFrm)
                         // close the modal after insertion 
-                    document.getElementById('insertStudentBtn').click()
+                    document.getElementById('studentInsBtn').click()
                     return
                 }).then(() => {
                     refreshStudentsTable()
@@ -907,7 +910,7 @@
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     emptyFrmInptFields(studentFrm)
-                    document.getElementById('insertStudentBtn').click()
+                    document.getElementById('studentInsBtn').click()
                     refreshStudentsTable()
                 }).catch(error => {
                     alert(error)
