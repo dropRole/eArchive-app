@@ -2,70 +2,66 @@
 (() => {
     // global scope variable declaration
     var fragment = new DocumentFragment(), // minimal document object structure
-        studentFrm = document.getElementById('studentFrm'), // form for student data insertion and update
-        studentCloneFrm = studentFrm.cloneNode(true), // studentFrm clone node
-        sPCloneFrm = document.getElementById('sPFrm'), // cloned form element node for scientific paper insretion
+        studentFrm = document.getElementById('studentFrm'), // form for inserting and updating data regarding the student
+        sciPapFrm = document.getElementById('sciPapFrm'), // form for inserting, updating and deleting data regarding the scientific paper 
         acctFrm = document.getElementById('acctFrm'), // form for creating student account and its credentials
-        certFrm = document.getElementById('certFrm'), // certificate upload/insertion form
-        certCloneFrm = certFrm.cloneNode(true), // cloned form element node for graduation certificate upload
-        reportMdl = document.getElementById('reportMdl'), // report modal 
-        reportMdlBtn = document.getElementById('reportMdlBtn'), // button for report modal toggle
+        certFrm = document.getElementById('certFrm'), // form for uploading graduation certificates
+        reportMdl = document.getElementById('reportMdl'), // modal for reporting about performed operations 
+        reportMdlBtn = document.getElementById('reportMdlBtn'), // report modal toggler
         filterInpt = document.getElementById('filterByIndx') // input for filtering students by their index numbers
 
-    certFrm.querySelector('input[type=file').addEventListener('change', () => {
+    certFrm.querySelector('input[type=file]').addEventListener('change', () => {
+            // assign the name of the uploaded certificate to hidden input type
             certFrm.querySelector('input[name=certificate]').value = certFrm.querySelector('input[type=file]').files[0].name
         }) // addEventListener
 
-    // attach event listeners to corresponding input element of the scientific paper form
-    let attachSPFrmListeners = () => {
-            // get form for scientific paper insertion 
-            let form = document.getElementById('sPFrm')
-                // if button for subsequent partaker senction additon exist
-            if (document.getElementById('addPartakerBtn'))
-            // add partaker form section on button click  
+    // attach event listeners to corresponding input element 
+    let attachSciPapFrmListeners = () => {
+            // get the form 
+            let frm = document.getElementById('sciPapFrm')
+                // if button for subsequent partaker section additon exists
+            if (frm.querySelector('#addPartakerBtn'))
                 addPartakerBtn.addEventListener('click', addPartakerFrmSect)
-                // if document file input is rendered 
-            if (form.querySelector('input[name="document[]"]'))
-            // assign to hidden input the filename of uploaded document
-                form.querySelector('input[name="document[]"]').addEventListener('change', e => {
-                    form.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
+                // if file input is rendered 
+            if (frm.querySelector('input[name="document[]"]'))
+                frm.querySelector('input[name="document[]"]').addEventListener('change', e => {
+                    // assign the filename of the uploaded document to the hidden input type
+                    frm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
                 }) // addEventListener
-                // if button for subsequent mentor section additon exist 
-            if (form.querySelector('#addMentorBtn'))
-            // add controls for mentor of a scientific papers
-                form.querySelector('#addMentorBtn').addEventListener('click', addMentoringsFrmSect)
-                // if button for subsequent document section additon exist
-            if (form.querySelector('#addDocumentBtn'))
-            // add controls for scientific paper document upload
-                form.querySelector('#addDocumentBtn').addEventListener('click', addDocumentFrmSect)
-                // add another partaker section 
-        } // attachSPFrmListeners
+                // if button for subsequent mentor section additon exists 
+            if (frm.querySelector('#addMentorBtn'))
+                frm.querySelector('#addMentorBtn').addEventListener('click', addMentoringsFrmSect)
+                // if button for subsequent document section additon exists
+            if (frm.querySelector('#addDocumentBtn'))
+            // append controls for additional scientific paper document upload
+                frm.querySelector('#addDocumentBtn').addEventListener('click', addDocumentFrmSect)
+        } // attachSciPapFrmListeners
 
-    // attach event listeners to corresponding input and selecet elements of the student form
+    // attach event listeners to corresponding input and selecet elements
     let attachStudentFrmListeners = () => {
-            let addTRBtn = document.getElementById('addTRBtn'), // button for residence addition 
-                addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for attendance addition
-                countryLst = document.querySelectorAll('.country-select'), // select elements for birth, permanent and temporal residence country 
-                facultySlct = document.getElementById('facultySlct'), // faculty select input
-                graduationCB = document.getElementById('graduationCB') // graduation checkbox
-            addTRBtn.addEventListener('click', () => {
+            let addTempResBtn = document.getElementById('addTempResBtn'), // button for appending addiational temporal residence section 
+                addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for apppending additional program attendance section
+                ctrySelElemLst = document.querySelectorAll('.country-select'), // elements for selecting birth, temporal and permanent residence country
+                facSelElement = document.getElementById('facultySlct'), // faculty select element
+                graduationCB = document.getElementById('graduationCB') // checkbox for denoting graduation
+            addTempResBtn.addEventListener('click', () => {
                     addTempResFrmSect()
                 }) // addEventListener
             addAttendanceBtn.addEventListener('click', addProgramAttendanceSect)
-            countryLst.forEach(select => {
+            ctrySelElemLst.forEach(element => {
                     // propagate target select element with postal codes of the chosen country
-                    select.addEventListener('input', () => {
-                            propagateSelectElement(document.querySelector(`#${select.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${select.selectedOptions[0].value}`)
+                    element.addEventListener('input', () => {
+                            propagateSelectElement(document.querySelector(`#${element.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${element.selectedOptions[0].value}`)
                         }) // addEventListener
                 }) // forEach
-                // propagate programs by faculty selection
-            facultySlct.addEventListener('input', () => {
-                    propagateSelectElement(document.getElementById('programSlct'), `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
+            facSelElement.addEventListener('input', () => {
+                    // propagate programs by faculty selection
+                    propagateSelectElement(document.getElementById('progSelElement'), `/eArchive/Programs/select.php?id_faculties=${facSelElement.selectedOptions[0].value}`)
                 }) // addEventListener
-                // append graduation section if graduated
             graduationCB.addEventListener('change', e => {
                     // if it's checked
                     if (graduationCB.checked)
+                    // append graduation section if graduated
                         addProgramGraduationFrmSect(e)
                     else {
                         // remove selected graduation section
@@ -76,33 +72,33 @@
                 }) // addEventListener
         } // attachStudentFrmListeners
 
-    // restitute form for insertion of the student data  
+    // rearrange form when inserting a student record  
     let toStudentInsertFrm = () => {
-            studentFrm.innerHTML = studentCloneFrm.innerHTML
+            // clone from the existing form node
+            let cloneFrm = studentFrm.cloneNode(true)
+                // replace form element node with its clone
+            document.getElemenyById('studentFrm').replaceWith(cloneFrm)
             attachStudentFrmListeners()
-                // clear up all input field values 
-            emptyFrmInptFields(studentFrm)
-            studentFrm.querySelector('input[type=submit]').value = 'Vstavi'
+            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // exchange callbacks
-            studentFrm.removeEventListener('submit', updateStudent)
             studentFrm.addEventListener('submit', insertStudent)
         } // toStudentInsertFrm
 
     /*
-     *   rearrange form when inserting student data   
+     *   rearrange form when interpolating data regarding scientific paper and uploading its documents    
      *   @param Event e
      */
-    let toSPInsertFrm = e => {
-            document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
-                // clone from the existing cloned form node
-            let cloneFrm = sPCloneFrm.cloneNode(true)
+    let toSciPapInsertFrm = e => {
+            document.querySelector('#sciPapMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
+                // clone from the existing form node
+            let cloneFrm = sciPapFrm.cloneNode(true)
             cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
                 // replace form element node with its clone
             document.getElementById('sPFrm').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-            attachSPFrmListeners()
+            attachSciPapFrmListeners()
             cloneFrm.addEventListener('submit', insertScientificPaper)
-        } // toSPInsertFrm
+        } // toSciPapInsertFrm
 
     // attach listeners to student evidence table appropriate anchors and buttons   
     let attachStudentTableListeners = () => {
@@ -120,12 +116,12 @@
                     // preview scientific papers   
                     anchor.addEventListener('click', () => {
                             selectScientificPapers(anchor.getAttribute('data-id-attendances'))
-                            sPCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                            sciPapFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                         }) //addEventListener
                 }) // forEach
             sPIALst.forEach(anchor => {
                     // modify form for scientific paper insertion
-                    anchor.addEventListener('click', toSPInsertFrm)
+                    anchor.addEventListener('click', toSciPapInsertFrm)
                 }) // forEach
             certIALst.forEach(anchor => {
                     // assign an attendance id value to an upload forms hidden input type 
@@ -751,7 +747,7 @@
             let option = document.createElement('option')
             option.value = index
             option.textContent = fullname
-            sPCloneFrm.querySelector('datalist').appendChild(option)
+            sciPapFrm.querySelector('datalist').appendChild(option)
         } // interpolateStudentDatalist
 
     /*
@@ -988,8 +984,8 @@
      */
     let toSPUpdateFrm = sPpr => {
             document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
-                // clone from the existing cloned form node
-            let cloneFrm = sPCloneFrm.cloneNode(true),
+                // clone from the existing form node
+            let cloneFrm = sciPapFrm.cloneNode(true),
                 idSPHiddInpt = document.createElement('input')
             idSPHiddInpt.type = 'hidden'
             idSPHiddInpt.name = 'id_scientific_papers'
@@ -997,7 +993,7 @@
                 // replace form element node with its clone
             document.getElementById('sPFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idSPHiddInpt)
-            attachSPFrmListeners()
+            attachSciPapFrmListeners()
             cloneFrm.querySelector('input[name="topic"]').value = sPpr.topic
             cloneFrm.querySelector('select[name="type"]').value = sPpr.type
             cloneFrm.querySelector('input[name="written"]').value = sPpr.written
@@ -1019,8 +1015,8 @@
      */
     let toSPDocumentUploadFrm = e => {
             document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
-                // clone from the existing cloned form node
-            let cloneFrm = sPCloneFrm.cloneNode(true),
+                // clone from the existing form node
+            let cloneFrm = sciPapFrm.cloneNode(true),
                 idSPHiddInpt = document.createElement('input')
             idSPHiddInpt.type = 'hidden'
             idSPHiddInpt.name = 'id_scientific_papers'
@@ -1031,7 +1027,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sPDocs').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
-            attachSPFrmListeners()
+            attachSciPapFrmListeners()
                 // remove nodes except those matching given selector expression 
             cloneFrm.querySelectorAll('div#particulars, div.row:nth-child(4)').forEach(node => {
                     node.parentElement.removeChild(node)
@@ -1049,8 +1045,8 @@
      */
     let toPartakerInsertFrm = e => {
             document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
-                // clone from the existing cloned form node
-            let cloneFrm = sPCloneFrm.cloneNode(true),
+                // clone from the existing form node
+            let cloneFrm = sciPapFrm.cloneNode(true),
                 idSPHiddInpt = document.createElement('input')
             idSPHiddInpt.type = 'hidden'
             idSPHiddInpt.name = 'id_scientific_papers'
@@ -1061,7 +1057,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sPPartakers').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
-            attachSPFrmListeners()
+            attachSciPapFrmListeners()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1081,8 +1077,8 @@
      */
     let toPartakerUpdateFrm = e => {
             document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
-                // clone from the existing cloned form node
-            let cloneFrm = sPCloneFrm.cloneNode(true),
+                // clone from the existing form node
+            let cloneFrm = sciPapFrm.cloneNode(true),
                 idPartakingsHiddInpt = document.createElement('input')
             idPartakingsHiddInpt.type = 'hidden'
             idPartakingsHiddInpt.name = 'id_partakings'
@@ -1092,7 +1088,7 @@
             cloneFrm.prepend(idPartakingsHiddInpt)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sPPartakers').classList = 'col-12'
-            attachSPFrmListeners()
+            attachSciPapFrmListeners()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1116,8 +1112,8 @@
      */
     let toMentorInsertFrm = e => {
             document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
-                // clone from the existing cloned form node
-            let cloneFrm = sPCloneFrm.cloneNode(true),
+                // clone from the existing form node
+            let cloneFrm = sciPapFrm.cloneNode(true),
                 idSPHiddInpt = document.createElement('input')
             idSPHiddInpt.type = 'hidden'
             idSPHiddInpt.name = 'id_scientific_papers'
@@ -1128,7 +1124,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sPMentors').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Določi'
-            attachSPFrmListeners()
+            attachSciPapFrmListeners()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1148,7 +1144,7 @@
      */
     let toMentorUpdateFrm = e => {
             document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
-            let cloneFrm = sPCloneFrm.cloneNode(true),
+            let cloneFrm = sciPapFrm.cloneNode(true),
                 idMentoringsHiddInpt = document.createElement('input')
             idMentoringsHiddInpt.type = 'hidden'
             idMentoringsHiddInpt.name = 'id_mentorings'
@@ -1157,7 +1153,7 @@
             document.getElementById('sPFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idMentoringsHiddInpt)
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-            attachSPFrmListeners()
+            attachSciPapFrmListeners()
                 // dispatch a synthetic click event to button for subsequent addition of form mentor section
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove DIV nodes except matching given selector expression 
@@ -1191,7 +1187,7 @@
      */
     let toGradCertUpdateFrm = e => {
             document.querySelector('#certUploadMdl .modal-header .modal-title').textContent = 'Urejanje podatkov certifikata'
-                // clone from the existing cloned form node
+                // clone from the existing form node
             let cloneFrm = certCloneFrm.cloneNode(true),
                 idCertificatesHiddInpt = document.createElement('input')
             idCertificatesHiddInpt.type = 'hidden'
