@@ -88,7 +88,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center col-12">
-                        <button id="addTRBtn" class="btn btn-secondary" type="button">&plus;</button>
+                        <button id="addTempResBtn" class="btn btn-secondary" type="button">&plus;</button>
                     </div>
                 </div>
                 <div id="attendances" class="px-3 pb-3">
@@ -109,8 +109,8 @@
                             </select>
                         </div>
                         <div class="form-group col-6">
-                            <label for="programSlct">Program(polje, stopnja, trajanje)</label>
-                            <select id="programSlct" class="form-control" name="attendances[0][id_programs]" required>
+                            <label for="progSelElement">Program(polje, stopnja, trajanje)</label>
+                            <select id="progSelElement" class="form-control" name="attendances[0][id_programs]" required>
                                 <?php
                                 $programs = $DBC->selectPrograms($DBC->selectFaculties()[0]->getIdFaculties());
                                 foreach ($programs as $program) {
@@ -150,7 +150,7 @@
     </div>
 </div>
 <!-- Modal for scientific paper insertion and update -->
-<div class="modal fade" id="sPMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPMdl" aria-hidden="true">
+<div class="modal fade" id="sciPapMdl" tabindex="-1" role="dialog" aria-labelledby="exampleSPMdl" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -160,7 +160,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="sPFrm">
+                <form id="sciPapFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div id="particulars" class="row">
                         <div class="form-group col-12">
