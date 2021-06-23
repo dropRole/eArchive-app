@@ -23,7 +23,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
         <input id="filterByIndx" class="form-control" type="text" placeholder="Indeks">
     </div>
     <div class="d-flex justify-content-end">
-        <button id="insertStudentBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="
+        <button id="studentInsBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="
         #studentMdl">Vstavi študenta</button>
         <button id="reportMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#reportMdl"></button>
     </div>
