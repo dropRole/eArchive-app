@@ -95,7 +95,7 @@
                 <div id="attendances" class="px-3 pb-3">
                     <p class="h4 pt-2">Podatki o študiranju</p>
                     <div class="row">
-                        <p class="col-12 h6">1. študijski program</p>
+                        <p class="col-12 h6">Študijski programi</p>
                         <div class="form-group col-6">
                             <label for="facultySlct">Fakulteta</label>
                             <select id="facultySlct" class="form-control" name="attendances[0][id_faculties]" required>
