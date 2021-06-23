@@ -87,6 +87,7 @@
                             <input id="PRAddressInpt" class="form-control" type="text" name="residences[0][address]" required>
                         </div>
                     </div>
+                    <p class="h6">Začasna bivališča</p>
                     <div class="d-flex justify-content-center col-12">
                         <button id="addTempResBtn" class="btn btn-secondary" type="button">&plus;</button>
                     </div>
