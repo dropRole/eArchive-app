@@ -43,11 +43,11 @@
                 addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for apppending additional program attendance section
                 ctrySelElemLst = document.querySelectorAll('.country-select'), // elements for selecting birth, temporal and permanent residence country
                 facSelElement = document.getElementById('facultySlct'), // faculty select element
-                graduationCB = document.getElementById('graduationCB') // checkbox for denoting graduation
+                gradCheckBox = document.getElementById('graduationCB') // checkbox for denoting graduation
             addTempResBtn.addEventListener('click', () => {
                     addTempResFrmSect()
                 }) // addEventListener
-            addAttendanceBtn.addEventListener('click', addProgramAttendanceSect)
+            addAttendanceBtn.addEventListener('click', addProgAttendanceSection)
             ctrySelElemLst.forEach(element => {
                     // propagate target select element with postal codes of the chosen country
                     element.addEventListener('input', () => {
@@ -58,16 +58,16 @@
                     // propagate programs by faculty selection
                     propagateSelectElement(document.getElementById('progSelElement'), `/eArchive/Programs/select.php?id_faculties=${facSelElement.selectedOptions[0].value}`)
                 }) // addEventListener
-            graduationCB.addEventListener('change', e => {
+            gradCheckBox.addEventListener('change', e => {
                     // if it's checked
-                    if (graduationCB.checked)
+                    if (gradCheckBox.checked)
                     // append graduation section if graduated
                         addProgramGraduationFrmSect(e)
                     else {
                         // remove selected graduation section
-                        graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
-                        graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
-                        graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                        gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                        gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                        gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
                     } // else
                 }) // addEventListener
         } // attachStudentFrmListeners
@@ -252,7 +252,7 @@
                                 resolve()
                         }), // MutationObserver
                         // form controls
-                        ctr = document.createElement('div'),
+                        container = document.createElement('div'),
                         headline = document.createElement('p'),
                         cross = document.createElement('span'),
                         ctryFrmGrp = document.createElement('div'),
@@ -272,8 +272,8 @@
                             childList: true,
                             subtree: false
                         }) // observe
-                    ctr.className = 'row temporal-residence'
-                    ctr.style.position = 'relative'
+                    container.className = 'row temporal-residence'
+                    container.style.position = 'relative'
                     headline.classList = 'col-12 h6'
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
@@ -284,7 +284,7 @@
                             // if data attributes value isn't empty 
                             if (cross.getAttribute('data-id-residences') !== '')
                                 deleteTempResOfStudent(cross.getAttribute('data-id-residences'))
-                            document.getElementById('residences').removeChild(ctr)
+                            document.getElementById('residences').removeChild(container)
                         }) // addEventListener
                     ctryFrmGrp.className = 'form-group col-4'
                     postalCodeFrmGrp.className = 'form-group col-4'
@@ -318,11 +318,11 @@
                     postalCodeFrmGrp.appendChild(postalCodeLbl)
                     addressLbl.appendChild(addressInputElement)
                     addressFrmGrp.appendChild(addressLbl)
-                    ctr.appendChild(headline)
-                    ctr.appendChild(statInputElement)
-                    ctr.appendChild(ctryFrmGrp)
-                    ctr.appendChild(postalCodeFrmGrp)
-                    ctr.appendChild(addressFrmGrp)
+                    container.appendChild(headline)
+                    container.appendChild(statInputElement)
+                    container.appendChild(ctryFrmGrp)
+                    container.appendChild(postalCodeFrmGrp)
+                    container.appendChild(addressFrmGrp)
                     propagateSelectElement(
                             ctrySelElement,
                             '/eArchive/Countries/select.php', !residences ? null : residences[0].id_countries
@@ -335,7 +335,7 @@
                         }).then(() => {
                             addressInputElement.value = !residences ? '' : residences[0].address
                         }).then(() => {
-                            document.getElementById('residences').appendChild(ctr)
+                            document.getElementById('residences').appendChild(container)
                         }).catch((error) => {
                             alert(error)
                         }) // catch
@@ -343,7 +343,7 @@
         } // addTempResFrmSect
 
     /*
-     *  subsequently create and append graduation section of the student insertion form 
+     *  create and subsequently append graduation section for a student attending particular program 
      *  @param Event e
      */
     let addProgramGraduationFrmSect = e => {
@@ -406,51 +406,40 @@
         } // addProgramGraduationFrmSect
 
     // subsequently create and append attendance section of the student insertion form 
-    let addProgramAttendanceSect = () => {
+    let addProgAttendanceSection = () => {
             // create form controls
             let container = document.createElement('div'),
                 headline = document.createElement('p'),
                 cross = document.createElement('span'),
-                facultyFG = document.createElement('div'),
-                programFG = document.createElement('div'),
-                enrolledFG = document.createElement('div'),
-                indexFG = document.createElement('div'),
-                graduationFG = document.createElement('div'),
-                facultyLbl = document.createElement('label'),
-                programLbl = document.createElement('label'),
-                enrolledLbl = document.createElement('label'),
-                graduationLbl = document.createElement('label'),
+                facFrmGrp = document.createElement('div'),
+                progFrmGrp = document.createElement('div'),
+                enrlFrmGrp = document.createElement('div'),
+                indexFrmGrp = document.createElement('div'),
+                gradFrmGrp = document.createElement('div'),
+                facLbl = document.createElement('label'),
+                progLbl = document.createElement('label'),
+                enrlLbl = document.createElement('label'),
+                gradLbl = document.createElement('label'),
                 indexLbl = document.createElement('label'),
-                facultySlct = document.createElement('select'),
-                programSlct = document.createElement('select'),
-                enrolledInpt = document.createElement('input'),
-                indexInpt = document.createElement('input'),
-                graduationCB = document.createElement('input'),
-                lblNum = document.querySelectorAll('#attendances .row').length, // number of added program attendances  
-                indx = lblNum - 1 // the following index for an array od data on program attendance 
-                // initial propagation
-            propagateSelectElement(facultySlct, '/eArchive/Faculties/select.php')
-            setTimeout(() => {
-                    propagateSelectElement(programSlct, `/eArchive/Programs/select.php?id_faculties=${facultySlct.selectedOptions[0].value}`)
-                }, 500) // setTimeout
-                // propagate programs by faculty selection
-            facultySlct.addEventListener('change', e => {
-                    propagateSelectElement(programSlct, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
-                }) // addEventListener
-                // append graduation section if graduated        
-            graduationCB.addEventListener('change', e => {
+                facSelElement = document.createElement('select'),
+                progSelElement = document.createElement('select'),
+                enrlInputElement = document.createElement('input'),
+                indexInputElement = document.createElement('input'),
+                gradCheckBox = document.createElement('input'),
+                gradTxt = document.createTextNode('Diplomiral')
+            index = document.querySelectorAll('div#attendances > div.row').length - 1 // the following index for an array od data on program attendance       
+            gradCheckBox.addEventListener('change', e => {
+                    // append or remove graduation section depending on the condition
                     // if it's checked
-                    if (graduationCB.checked)
+                    if (gradCheckBox.checked)
                         addProgramGraduationFrmSect(e)
                     else {
-                        // remove selected graduation section
-                        graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
-                        graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
-                        graduationCB.closest('.row').removeChild(graduationCB.closest('.row').lastElementChild)
+                        container.removeChild(container.lastChild)
+                        container.removeChild(container.lastChild)
+                        container.removeChild(container.lastChild)
                     } // else
                 }) // addEventListener
             headline.className = 'col-12 h6'
-            headline.textContent = `${lblNum + 1}. študijski program`
             cross.style.float = 'right'
             cross.style.transform = 'scale(1.2)'
             cross.style.cursor = 'pointer'
@@ -460,65 +449,65 @@
                     document.getElementById('attendances').removeChild(container)
                 }) // addEventListener
             container.className = 'row'
-            facultyFG.className = 'form-group col-6'
-            programFG.className = 'form-group col-6'
-            enrolledFG.className = 'form-group col-4'
-            indexFG.className = 'form-group col-4'
-            graduationFG.className = 'd-flex align-items-center justify-content-center form-group col-4'
-            facultyLbl.setAttribute('for', `facultySlct${lblNum}`)
-            facultyLbl.textContent = 'Fakulteta'
-            programLbl.textContent = 'Program'
-            programLbl.setAttribute('for', `pSlct${lblNum}`)
-            enrolledLbl.textContent = 'Vpisan'
-            enrolledLbl.setAttribute('for', `enInpt${lblNum}`)
+            facFrmGrp.className = 'form-group col-6'
+            progFrmGrp.className = 'form-group col-6'
+            enrlFrmGrp.className = 'form-group col-4'
+            indexFrmGrp.className = 'form-group col-4'
+            gradFrmGrp.className = 'd-flex align-items-center justify-content-center form-group col-4'
+            facLbl.textContent = 'Fakulteta'
+            progLbl.textContent = 'Program'
+            enrlLbl.textContent = 'Vpisan'
             indexLbl.textContent = 'Indeks'
-            indexLbl.setAttribute('for', `iInpt${lblNum}`)
-            graduationLbl.textContent = 'Diplomiral'
-            graduationLbl.setAttribute('for', `graduationCB${lblNum}`)
-            graduationLbl.className = 'mt-2'
-            facultySlct.className = 'form-control'
-            facultySlct.id = `facultySlct${lblNum}`
-            facultySlct.name = `attendances[${indx}][id_faculties]`
-            facultySlct.required = true
-            programSlct.className = 'form-control'
-            programSlct.id = `pSlct${lblNum}`
-            programSlct.name = `attendances[${indx}][id_programs]`
-            programSlct.required = true
-            enrolledInpt.className = 'form-control'
-            enrolledInpt.id = `enInpt${lblNum}`
-            enrolledInpt.type = 'date'
-            enrolledInpt.name = `attendances[${indx}][enrolled]`
-            enrolledInpt.required = true
-            indexInpt.className = 'form-control'
-            indexInpt.id = `iInpt${lblNum}`
-            indexInpt.type = 'text'
-            indexInpt.name = `attendances[${indx}][index]`
-            indexInpt.required = true
-            graduationCB.id = `graduationCB${lblNum}`
-            graduationCB.type = 'checkbox'
-            graduationCB.classList = 'mr-2'
-            graduationCB.setAttribute('data-index', indx)
-            graduationCB.setAttribute('data-lbl-num', lblNum)
+            gradLbl.className = 'mt-2'
+            facSelElement.className = 'form-control'
+            facSelElement.name = `attendances[${index}][id_faculties]`
+            facSelElement.required = true
+            facSelElement.addEventListener('change', e => {
+                    // propagate programs by faculty selection
+                    propagateSelectElement(progSelElement, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
+                }) // addEventListener
+            progSelElement.className = 'form-control'
+            progSelElement.name = `attendances[${index}][id_programs]`
+            progSelElement.required = true
+            enrlInputElement.className = 'form-control'
+            enrlInputElement.type = 'date'
+            enrlInputElement.name = `attendances[${index}][enrolled]`
+            enrlInputElement.required = true
+            indexInputElement.className = 'form-control'
+            indexInputElement.type = 'text'
+            indexInputElement.name = `attendances[${index}][index]`
+            indexInputElement.required = true
+            gradCheckBox.type = 'checkbox'
+            gradCheckBox.classList = 'mr-2'
+            gradCheckBox.setAttribute('data-index', index)
                 // append controls to a form attendances section
-            facultyFG.appendChild(facultyLbl)
-            facultyFG.appendChild(facultySlct)
-            programFG.appendChild(programLbl)
-            programFG.appendChild(programSlct)
-            enrolledFG.appendChild(enrolledLbl)
-            enrolledFG.appendChild(enrolledInpt)
-            indexFG.appendChild(indexLbl)
-            indexFG.appendChild(indexInpt)
-            graduationFG.appendChild(graduationCB)
-            graduationFG.appendChild(graduationLbl)
+            facLbl.appendChild(facSelElement)
+            facFrmGrp.appendChild(facLbl)
+            progLbl.appendChild(progSelElement)
+            progFrmGrp.appendChild(progLbl)
+            enrlLbl.appendChild(enrlInputElement)
+            enrlFrmGrp.appendChild(enrlLbl)
+            indexLbl.appendChild(indexInputElement)
+            indexFrmGrp.appendChild(indexLbl)
+            gradLbl.appendChild(gradCheckBox)
+            gradLbl.appendChild(gradTxt)
+            gradFrmGrp.appendChild(gradLbl)
             headline.appendChild(cross)
             container.appendChild(headline)
-            container.appendChild(facultyFG)
-            container.appendChild(programFG)
-            container.appendChild(enrolledFG)
-            container.appendChild(indexFG)
-            container.appendChild(graduationFG)
-            document.getElementById('attendances').appendChild(container)
-        } // addProgramAttendanceSect 
+            container.appendChild(facFrmGrp)
+            container.appendChild(progFrmGrp)
+            container.appendChild(enrlFrmGrp)
+            container.appendChild(indexFrmGrp)
+            container.appendChild(gradFrmGrp)
+                // initial propagation
+            propagateSelectElement(facSelElement, '/eArchive/Faculties/select.php')
+                .then(() => propagateSelectElement(progSelElement, `/eArchive/Programs/select.php?id_faculties=${facSelElement.selectedOptions[0].value}`))
+                .then(() => {
+                    document.getElementById('attendances').appendChild(container)
+                }).catch(error => {
+                    alert(error)
+                }) // catch
+        } // addProgAttendanceSection 
 
     //  subsequently create and append partaker section of the scientific paper insretion form 
     let addPartakerFrmSect = () => {
