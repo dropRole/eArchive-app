@@ -21,7 +21,7 @@
             let frm = document.getElementById('sciPapFrm')
                 // if button for subsequent partaker section additon exists
             if (frm.querySelector('#addPartakerBtn'))
-                addPartakerBtn.addEventListener('click', addPartakerFrmSect)
+                addPartakerBtn.addEventListener('click', addPartakerSection)
                 // if file input is rendered 
             if (frm.querySelector('input[name="document[]"]'))
                 frm.querySelector('input[name="document[]"]').addEventListener('change', e => {
@@ -94,7 +94,7 @@
             let cloneFrm = sciPapFrm.cloneNode(true)
             cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
                 // replace form element node with its clone
-            document.getElementById('sPFrm').replaceWith(cloneFrm)
+            document.getElementById('sciPapFrm').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
             attachSciPapFrmListeners()
             cloneFrm.addEventListener('submit', insertScientificPaper)
@@ -509,58 +509,51 @@
                 }) // catch
         } // addProgAttendanceSection 
 
-    //  subsequently create and append partaker section of the scientific paper insretion form 
-    let addPartakerFrmSect = () => {
-            // create element nodes 
-            let ctr = document.createElement('div'),
+    // create and subsequently append partaker section of the scientific paper insertion form 
+    let addPartakerSection = () => {
+            // create form controls 
+            let container = document.createElement('div'),
                 headline = document.createElement('p'),
                 cross = document.createElement('span'),
-                partakerFG = document.createElement('div'),
-                partFG = document.createElement('div'),
+                partakerFrmGrp = document.createElement('div'),
+                partFrmGrp = document.createElement('div'),
                 partakerLbl = document.createElement('label'),
                 partLbl = document.createElement('label'),
-                partakerInpt = document.createElement('input'),
-                partInpt = document.createElement('input'),
-                lblNum = document.querySelectorAll('#sPPartakers .row').length + 1, // number of added partakers on scientific paper
-                indx = lblNum // the following index for an array of data on a partaker  
-            ctr.classList = 'row'
+                partakerInputElement = document.createElement('input'),
+                partInputElement = document.createElement('input'),
+                index = document.querySelectorAll('div#sPPartakers > div.row').length // the following index for an array of data on a partaker  
+            container.classList = 'row'
             headline.classList = 'h6 col-12'
-            headline.textContent = `${lblNum}. soavtor`
             cross.style.float = 'right'
             cross.style.transform = 'scale(1.2)'
             cross.style.cursor = 'pointer'
             cross.innerHTML = '&#10007'
                 // remove selected attendance section
             cross.addEventListener('click', () => {
-                    document.getElementById('sPPartakers').removeChild(ctr)
+                    document.getElementById('sPPartakers').removeChild(container)
                 }) // addEventListener
-            partakerFG.classList = 'form-group col-6'
-            partFG.classList = 'form-group col-6'
-            partakerLbl.htmlFor = `partakerInpt${lblNum}`
+            partakerFrmGrp.classList = 'form-group col-6'
+            partFrmGrp.classList = 'form-group col-6'
             partakerLbl.textContent = 'Sodelovalec'
-            partLbl.htmlFor = `partInpt${lblNum}`
             partLbl.textContent = 'Vloga'
-            partakerInpt.id = `partakerInpt${lblNum}`
-            partakerInpt.classList = 'form-control'
-            partakerInpt.name = `partakers[${indx}][index]`
-            partakerInpt.setAttribute('list', 'students')
-            partakerInpt.required = true
-            partInpt.id = `partInpt${lblNum}`
-            partInpt.classList = 'form-control'
-            partInpt.type = 'text'
-            partInpt.name = `partakers[${indx}][part]`
-            partInpt.required = true
+            partakerInputElement.classList = 'form-control'
+            partakerInputElement.setAttribute('list', 'students')
+            partakerInputElement.required = true
+            partInputElement.classList = 'form-control'
+            partInputElement.type = 'text'
+            partInputElement.name = `partakers[${index}][part]`
+            partInputElement.required = true
                 // compose a node hierarchy by appending them to active tree structure 
             headline.appendChild(cross)
-            partakerFG.appendChild(partakerLbl)
-            partakerFG.appendChild(partakerInpt)
-            partFG.appendChild(partLbl)
-            partFG.appendChild(partInpt)
-            ctr.appendChild(headline)
-            ctr.appendChild(partakerFG)
-            ctr.appendChild(partFG)
-            document.getElementById('sPPartakers').appendChild(ctr)
-        } // addPartakerFrmSect
+            partakerLbl.appendChild(partakerInputElement)
+            partakerFrmGrp.appendChild(partakerLbl)
+            partLbl.appendChild(partInputElement)
+            partFrmGrp.appendChild(partLbl)
+            container.appendChild(headline)
+            container.appendChild(partakerFrmGrp)
+            container.appendChild(partFrmGrp)
+            document.getElementById('sPPartakers').appendChild(container)
+        } // addPartakerSection
 
     //  create and append additional form controls for scientific papers documentation upload
     let addDocumentFrmSect = () => {
