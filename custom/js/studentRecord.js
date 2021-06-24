@@ -30,7 +30,7 @@
                 }) // addEventListener
                 // if button for subsequent mentor section additon exists 
             if (frm.querySelector('#addMentorBtn'))
-                frm.querySelector('#addMentorBtn').addEventListener('click', addMentoringsFrmSect)
+                frm.querySelector('#addMentorBtn').addEventListener('click', addMentoringsSection)
                 // if button for subsequent document section additon exists
             if (frm.querySelector('#addDocumentBtn'))
             // append controls for additional scientific paper document upload
@@ -567,7 +567,7 @@
                 versionInputElement = document.createElement('input'), // version input
                 docInputElement = document.createElement('input'), // document input 
                 docNameInputElement = document.createElement('input'), // document hidden input 
-                index = document.querySelectorAll('#documents .row').length // the following index for an array of data on documents of scientific paper  
+                index = document.querySelectorAll('div#documents > .row').length // the following index for an array of data on documents of scientific paper  
             docInputElement.addEventListener('change', e => {
                     // assign chosen document name as a value to the docNameInputElement
                     docNameInputElement.value = e.target.files[0].name
@@ -612,98 +612,99 @@
         } // addDocUploadSection
 
     //  create and append additional form controls for providing data on mentors 
-    let addMentoringsFrmSect = () => {
+    let addMentoringsSection = () => {
             // create form controls 
-            let ctr = document.createElement('div'), // row
+            let container = document.createElement('div'), // row
                 headline = document.createElement('p'),
                 cross = document.createElement('span'), // removal sign 
-                mentorFG = document.createElement('div'), // form group
-                facultyFG = document.createElement('div'), // form group
-                taughtFG = document.createElement('div'), // form group
-                emailFG = document.createElement('div'), // form group
-                telephoneFG = document.createElement('div'), // form group
+                mentorFrmGrp = document.createElement('div'), // form group
+                facFrmGrp = document.createElement('div'), // form group
+                taughtFrmGrp = document.createElement('div'), // form group
+                emailFrmGrp = document.createElement('div'), // form group
+                telFrmGrp = document.createElement('div'), // form group
                 mentorLbl = document.createElement('label'), // mentor label
-                facultyLbl = document.createElement('label'), // faculty label
+                facLbl = document.createElement('label'), // faculty label
                 taughtLbl = document.createElement('label'), // subject label
                 emailLbl = document.createElement('label'), // email label
-                telephoneLbl = document.createElement('label'), // telephone label
-                facultySlct = document.createElement('select'), // faculty input
-                mentorInpt = document.createElement('input'), // mentor input
-                taughtInpt = document.createElement('input'), // subject input
-                emailInpt = document.createElement('input'), // email input
-                telephoneInpt = document.createElement('input'), // telephone input
-                lblNum = document.querySelectorAll('#sPMentors .row').length + 1, // number of added documents  
-                indx = lblNum - 1 // the following index for an array of data on documents of scientific paper  
-            ctr.classList = 'row'
+                telLbl = document.createElement('label'), // telephone label
+                facSelElement = document.createElement('select'), // faculty input
+                mentorInputElement = document.createElement('input'), // mentor input
+                taughtInputElement = document.createElement('input'), // subject input
+                emailInputElement = document.createElement('input'), // email input
+                telInputElement = document.createElement('input'), // telephone input
+                index = document.querySelectorAll('div#sciPapMentors > div.row').length // the following index for an array of data on documents of scientific paper  
+            container.classList = 'row'
             headline.classList = 'col-12 h6'
-            headline.textContent = `${lblNum}. mentor`
             cross.style.float = 'right'
             cross.style.transform = 'scale(1.2)'
             cross.style.cursor = 'pointer'
             cross.innerHTML = '&#10007'
                 // remove selected attendance section
             cross.addEventListener('click', () => {
-                    document.getElementById('sPMentors').removeChild(ctr)
+                    document.getElementById('sciPapMentors').removeChild(container)
                 }) // addEventListener
-            mentorFG.classList = 'form-group col-12'
-            facultyFG.classList = 'form-group col-6'
-            taughtFG.classList = 'form-group col-6'
-            emailFG.classList = 'form-group col-6'
-            telephoneFG.classList = 'form-group col-6'
-            facultyLbl.htmlFor = `facultySlct${lblNum}`
-            facultyLbl.textContent = 'Fakulteta'
-            mentorLbl.htmlFor = `mentorInpt${lblNum}`
+            mentorFrmGrp.classList = 'form-group col-12'
+            facFrmGrp.classList = 'form-group col-6'
+            taughtFrmGrp.classList = 'form-group col-6'
+            emailFrmGrp.classList = 'form-group col-6'
+            telFrmGrp.classList = 'form-group col-6'
+            facLbl.textContent = 'Fakulteta'
+            facLbl.style.width = '100%'
             mentorLbl.textContent = 'Mentor'
-            taughtLbl.htmlFor = `taughtInpt${lblNum}`
+            mentorLbl.style.width = '100%'
             taughtLbl.textContent = 'Poučeval'
-            emailLbl.htmlFor = `emailInpt${lblNum}`
+            taughtLbl.style.width = '100%'
             emailLbl.textContent = 'E-naslov'
-            telephoneLbl.htmlFor = `telephoneInpt${lblNum}`
-            telephoneLbl.textContent = 'Telefon'
-            facultySlct.id = `facultySlct${lblNum}`
-            facultySlct.classList = 'form-control'
-            facultySlct.name = `mentors[${indx}][id_faculties]`
-            propagateSelectElement(facultySlct, '/eArchive/Faculties/select.php')
-            facultySlct.required = true
-            mentorInpt.id = `mentorInpt${lblNum}`
-            mentorInpt.classList = 'form-control'
-            mentorInpt.type = 'text'
-            mentorInpt.name = `mentors[${indx}][mentor]`
-            mentorInpt.required = true
-            taughtInpt.id = `taughtInpt${lblNum}`
-            taughtInpt.classList = 'form-control'
-            taughtInpt.type = 'text'
-            taughtInpt.name = `mentors[${indx}][taught]`
-            taughtInpt.required = true
-            emailInpt.id = `emailInpt${lblNum}`
-            emailInpt.classList = 'form-control'
-            emailInpt.type = 'email'
-            emailInpt.name = `mentors[${indx}][email]`
-            emailInpt.required = true
-            telephoneInpt.id = `telephoneInpt${lblNum}`
-            telephoneInpt.classList = 'form-control'
-            telephoneInpt.type = 'telephone'
-            telephoneInpt.name = `mentors[${indx}][telephone]`
-            telephoneInpt.required = true
+            emailLbl.style.width = '100%'
+            telLbl.textContent = 'Telefon'
+            telLbl.style.width = '100%'
+            facSelElement.classList = 'form-control'
+            facSelElement.name = `mentors[${index}][id_faculties]`
+            facSelElement.required = true
+            mentorInputElement.classList = 'form-control'
+            mentorInputElement.type = 'text'
+            mentorInputElement.name = `mentors[${index}][mentor]`
+            mentorInputElement.required = true
+            taughtInputElement.classList = 'form-control'
+            taughtInputElement.type = 'text'
+            taughtInputElement.name = `mentors[${index}][taught]`
+            taughtInputElement.required = true
+            emailInputElement.classList = 'form-control'
+            emailInputElement.type = 'email'
+            emailInputElement.name = `mentors[${index}][email]`
+            emailInputElement.required = true
+            telInputElement.classList = 'form-control'
+            telInputElement.type = 'telephone'
+            telInputElement.name = `mentors[${index}][telephone]`
+            telInputElement.required = true
             headline.appendChild(cross)
-            mentorFG.appendChild(mentorLbl)
-            mentorFG.appendChild(mentorInpt)
-            facultyFG.appendChild(facultyLbl)
-            facultyFG.appendChild(facultySlct)
-            taughtFG.appendChild(taughtLbl)
-            taughtFG.appendChild(taughtInpt)
-            emailFG.appendChild(emailLbl)
-            emailFG.appendChild(emailInpt)
-            telephoneFG.appendChild(telephoneLbl)
-            telephoneFG.appendChild(telephoneInpt)
-            ctr.appendChild(headline)
-            ctr.appendChild(mentorFG)
-            ctr.appendChild(facultyFG)
-            ctr.appendChild(taughtFG)
-            ctr.appendChild(emailFG)
-            ctr.appendChild(telephoneFG)
-            document.getElementById('sPMentors').appendChild(ctr)
-        } // addMentoringsFrmSect
+            mentorLbl.appendChild(mentorInputElement)
+            mentorFrmGrp.appendChild(mentorLbl)
+            facLbl.appendChild(facSelElement)
+            facFrmGrp.appendChild(facLbl)
+            taughtLbl.appendChild(taughtInputElement)
+            taughtFrmGrp.appendChild(taughtLbl)
+            emailLbl.appendChild(emailInputElement)
+            emailFrmGrp.appendChild(emailLbl)
+            telLbl.appendChild(telInputElement)
+            telFrmGrp.appendChild(telLbl)
+            container.appendChild(headline)
+            container.appendChild(mentorFrmGrp)
+            container.appendChild(facFrmGrp)
+            container.appendChild(taughtFrmGrp)
+            container.appendChild(emailFrmGrp)
+            container.appendChild(telFrmGrp)
+                // populate HTMLSelectElement with the data regarding faculties 
+            propagateSelectElement
+                (
+                    facSelElement,
+                    '/eArchive/Faculties/select.php'
+                ).then(() => {
+                    document.getElementById('sciPapMentors').appendChild(container)
+                }).catch(error => {
+                    alert(error)
+                })
+        } // addMentoringsSection
 
     /*
      *  clear input field values of a form 
