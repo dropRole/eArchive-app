@@ -19,8 +19,6 @@ $index = $_GET['index'];
 if (isset($index)) {
     // create a new PDO interface object instance 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
-    // select students by index filter
-    $students = $DBC->selectStudentsByIndex($index);
 ?>
     <table class="table">
         <thead>
@@ -37,8 +35,8 @@ if (isset($index)) {
         </thead>
         <tbody>
             <?php
-            // for each student in the record
-            foreach ($students as $student) {
+            // select students by index filter
+            foreach ($DBC->selectStudentsByIndex($index) as $student) {
             ?>
                 <tr>
                     <td><?php echo $student->fullname; ?></td>
@@ -47,28 +45,28 @@ if (isset($index)) {
                     <td><?php echo $student->degree; ?></td>
                     <td><?php echo $student->faculty; ?></td>
                     <td>
-                        <a class="sp-vw-a" href="#sPVMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
-                        <a class="sp-ins-a" href="#sPMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                        <a class="sp-vw-a" href="#sciPapViewingMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
+                        <a class="sp-ins-a" href="#sciPapInsertionMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                     </td>
                     <td>
                         <?php
                         // if student possesses a certificate
                         if ($DBC->selectCertificate($student->id_attendances) != NULL) {
                         ?>
-                            <a class="cert-vw-a" href="#certViewMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
+                            <a class="cert-vw-a" href="#gradCertViewingMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
                         <?php
                         } // if
                         // if student doesn't  possess a certificate
                         if ($DBC->selectCertificate($student->id_attendances) == NULL) {
                         ?>
-                            <a class="cert-ins-a" href="#certUploadMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                            <a class="cert-ins-a" href="#gradCertUploadingMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                         <?php
                         } // if
                         ?>
                     </td>
                     <td>
                         <?php
-                        // if assigned an account 
+                        // if student is assigned an account to  
                         if ($DBC->checkStudentAccount($student->id_attendances)) {
                         ?>
                             Dodeljen: <span class="text-warning"><?php echo $DBC->getAccountParticulars($student->id_attendances); ?></span>
@@ -77,13 +75,13 @@ if (isset($index)) {
                         } // if
                         else {
                         ?>
-                            <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#accountMdl">Ustvari</button>
+                            <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#acctAssigningMdl">Ustvari</button>
                         <?php
                         } // else
                         ?>
                     </td>
                     <td>
-                        <a class="stu-upd-a" href="#studentMdl" data-toggle="modal" data-id-students="<?php echo $student->id_students; ?>">Uredi</a>
+                        <a class="stu-upd-a" href="#studentInsertionMdl" data-toggle="modal" data-id-students="<?php echo $student->id_students; ?>">Uredi</a>
                     </td>
                     <td>
                         <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>">Izbriši</a>
