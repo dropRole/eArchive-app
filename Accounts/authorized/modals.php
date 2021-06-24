@@ -207,7 +207,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="sPDocs">
+                    <div id="sciPapDocs">
                         <p class="h6">Dokumentacija</p>
                         <div class="row">
                             <div class="form-group col-6">
