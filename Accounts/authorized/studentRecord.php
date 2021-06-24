@@ -43,9 +43,8 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
             </thead>
             <tbody>
                 <?php
-                $students = $DBC->selectStudents();
                 // for each student in the record
-                foreach ($students as $student) {
+                foreach ($DBC->selectStudents() as $student) {
                 ?>
                     <tr>
                         <td><?php echo $student->fullname; ?></td>
