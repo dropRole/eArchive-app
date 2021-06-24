@@ -708,24 +708,24 @@
 
     /*
      *  clear input field values of a form 
-     *  @param HTMLFormElement frm
+     *  @param HTMLFormElement form
      */
-    let emptyFrmInptFields = frm => {
-            frm.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
+    let emptyFrmInputFields = form => {
+            form.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
                     input.value = ''
                 }) // forEach
-        } // emptyFrmInptFields
+        } // emptyFrmInputFields
 
     /*  
      *   interpolate datalist with name, surname and index number of the inserted student
-     *   @param DOMString fullname
+     *   @param String fullname
      *   @param Number index
      */
     let interpolateStudentDatalist = (fullname, index) => {
             let option = document.createElement('option')
             option.value = index
             option.textContent = fullname
-            sciPapFrm.querySelector('datalist').appendChild(option)
+            document.getElementById('sciPapFrm').querySelector('datalist').appendChild(option)
         } // interpolateStudentDatalist
 
     /*
@@ -749,7 +749,7 @@
     let selectStudentsByIndex = index => {
             request(`/eArchive/Students/filterByIndex.php?index=${index}`, 'GET', 'document').then(response => {
                     let tblCtr = document.querySelector('.table-responsive')
-                        // compose node tree structure
+                        // compose node passive tree structure
                     fragment = response
                         // reflect fragments body  
                     tblCtr.innerHTML = fragment.body.innerHTML
@@ -759,8 +759,8 @@
                 }) // catch
         } // selectStudentsByIndex
 
-    // filter students by their index numbers 
     filterInpt.addEventListener('input', () => {
+            // filter students by their index numbers 
             selectStudentsByIndex(filterInpt.value)
         }) // addEventListener
 
@@ -774,7 +774,7 @@
             request('/eArchive/Students/insert.php', 'POST', 'text', (new FormData(studentFrm))).then(response => {
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    emptyFrmInptFields(studentFrm)
+                    emptyFrmInputFields(studentFrm)
                         // close the modal after insertion 
                     document.getElementById('studentInsBtn').click()
                     return
@@ -884,7 +884,7 @@
                     // report on update
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    emptyFrmInptFields(studentFrm)
+                    emptyFrmInputFields(studentFrm)
                     document.getElementById('studentInsBtn').click()
                     refreshStudentsTable()
                 }).catch(error => {
