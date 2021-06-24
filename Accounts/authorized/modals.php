@@ -200,7 +200,7 @@
                                 ?>
                             </datalist>
                         </div>
-                        <div id="sPMentors" class="col-6">
+                        <div id="sciPapMentors" class="col-6">
                             <p class="h6">Mentorji</p>
                             <div class="d-flex justify-content-center col-12">
                                 <button id="addMentorBtn" class="btn btn-secondary" type="button">&plus;</button>
