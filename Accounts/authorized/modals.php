@@ -246,13 +246,13 @@
     </div>
 </div>
 <!-- Modal for viewing graduation certificate obtained attending the program  -->
-<div id="certViewingMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="gradCertViewingMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content"></div>
     </div>
 </div>
 <!-- Modal for uploading graduation certificate and inserting data regarding its issuance and defence dates  -->
-<div class="modal fade" id="certUploadMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModlaLabel" aria-hidden="true">
+<div class="modal fade" id="gradCertUploadingMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModlaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -289,7 +289,7 @@
     </div>
 </div>
 <!-- Modal for assigning account credentials to a student -->
-<div class="modal fade" id="acctAssingingMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="acctAssigningMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
