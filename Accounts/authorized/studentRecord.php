@@ -24,8 +24,8 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     </div>
     <div class="d-flex justify-content-end">
         <button id="studentInsBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="
-        #studentMdl">Vstavi študenta</button>
-        <button id="reportMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#reportMdl"></button>
+        #studentInsertionMdl">Vstavi študenta</button>
+        <button id="reportMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#reportingMdl"></button>
     </div>
     <div class="table-responsive mt-3">
         <table class="table">
@@ -54,21 +54,21 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         <td><?php echo $student->degree; ?></td>
                         <td><?php echo $student->faculty; ?></td>
                         <td>
-                            <a class="sp-vw-a" href="#sciPapVMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
-                            <a class="sp-ins-a" href="#sciPapMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                            <a class="sp-vw-a" href="#sciPapViewingMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
+                            <a class="sp-ins-a" href="#sciPapInsertionMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                         </td>
                         <td>
                             <?php
                             // if student possesses a certificate
                             if ($DBC->selectCertificate($student->id_attendances) != NULL) {
                             ?>
-                                <a class="cert-vw-a" href="#certViewMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
+                                <a class="cert-vw-a" href="#gradCertViewingMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Pregled</a>
                             <?php
                             } // if
                             // if student doesn't  possess a certificate
                             if ($DBC->selectCertificate($student->id_attendances) == NULL) {
                             ?>
-                                <a class="cert-ins-a" href="#certUploadMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                                <a class="cert-ins-a" href="#gradCertUploadingMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                             <?php
                             } // if
                             ?>
@@ -84,13 +84,13 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             } // if
                             else {
                             ?>
-                                <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#acctMdl">Ustvari</button>
+                                <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#acctAssigningMdl">Ustvari</button>
                             <?php
                             } // else
                             ?>
                         </td>
                         <td>
-                            <a class="stu-upd-a" href="#studentMdl" data-toggle="modal" data-id="<?php echo $student->id_students; ?>">Uredi</a>
+                            <a class="stu-upd-a" href="#studentInsertionMdl" data-toggle="modal" data-id="<?php echo $student->id_students; ?>">Uredi</a>
                         </td>
                         <td>
                             <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>">Izbriši</a>
