@@ -81,7 +81,7 @@
             attachStudentFrmListeners()
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // exchange callbacks
-            studentFrm.addEventListener('submit', insertStudent)
+            studentFrm.addEventListener('submit', e => insertStudent(e, cloneFrm))
         } // toStudentInsertFrm
 
     /*
@@ -765,13 +765,19 @@
         }) // addEventListener
 
     /*
-     *   asynchronous script execution for insretion of student particulars and scientific achievements
-     *   @param Event e
+     *  asynchronous script execution for insretion of student particulars and scientific achievements
+     *  @param Event e
+     *  @param HTMLFormElement form
      */
-    let insertStudent = e => {
+    let insertStudent = (e, form) => {
             // prevent default action of submitting student data through a form
             e.preventDefault()
-            request('/eArchive/Students/insert.php', 'POST', 'text', (new FormData(studentFrm))).then(response => {
+            request(
+                    '/eArchive/Students/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(form))
+                ).then(response => {
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     emptyFrmInputFields(studentFrm)
