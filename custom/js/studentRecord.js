@@ -1196,31 +1196,34 @@
         } // toGradCertUpdateFrm
 
     /*
-     *   transform to form for student particulars update
+     *   rearrange form when updating data related to the student
      *   @param Event e
      *   @param Object student
      */
     let toStudentUpdateFrm = (e, student) => {
-            let idStudents = document.createElement('input')
-            idStudents.type = 'hidden'
-            idStudents.name = 'id_students'
-            idStudents.value = e.target.getAttribute('data-id-students')
-            studentFrm.innerHTML = studentCloneFrm.innerHTML
+            let // clone from the existing form node
+                cloneFrm = studentFrm.cloneNode(true),
+                idStudentsInputElement = document.createElement('input')
+            idStudentsInputElement.type = 'hidden'
+            idStudentsInputElement.name = 'id_students'
+            idStudentsInputElement.value = e.target.getAttribute('data-id-students')
+                // replace node with its clone
+            document.getElementById('studentInsertionFrm').replaceWith(cloneFrm)
             attachStudentFrmListeners()
-            studentFrm.prepend(idStudents)
+            cloneFrm.prepend(idStudentsInputElement)
                 // fill out input fields with student particulars
-            studentFrm.querySelector('input[name=name]').value = student.particulars.name
-            studentFrm.querySelector('input[name=surname]').value = student.particulars.surname
-            studentFrm.querySelector('input[name=email]').value = student.particulars.email
-            studentFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
-            determineStudentBirthplace(studentFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
-            determinePermResOfStudent(studentFrm, student.permResidence)
+            cloneFrm.querySelector('input[name=name]').value = student.particulars.name
+            cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
+            cloneFrm.querySelector('input[name=email]').value = student.particulars.email
+            cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
+            determineStudentBirthplace(cloneFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
+            determinePermResOfStudent(cloneFrm, student.permResidence)
             determineTempResOfStudent(student.tempResidence)
-            studentFrm.removeChild(studentFrm.querySelector('#attendances'))
-            studentFrm.querySelector('input[type=submit]').value = 'Posodobi'
+            cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
+            cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
                 // exchange callbacks
-            studentFrm.removeEventListener('submit', insertStudent)
-            studentFrm.addEventListener('submit', updateStudent)
+            cloneFrm.removeEventListener('submit', insertStudent)
+            cloneFrm.addEventListener('submit', updateStudent)
         } // toStudentUpdateFrm
 
     // attach event listeners to a scientific paper cards when rendered
