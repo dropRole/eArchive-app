@@ -1124,15 +1124,15 @@
      *  @param Event e
      */
     let toMentorUpdateFrm = e => {
-            document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+            document.querySelector('#sciPapInsertionPMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneFrm = sciPapFrm.cloneNode(true),
-                idMentoringsHiddInpt = document.createElement('input')
-            idMentoringsHiddInpt.type = 'hidden'
-            idMentoringsHiddInpt.name = 'id_mentorings'
-            idMentoringsHiddInpt.value = e.target.getAttribute('data-id-mentorings')
+                idMentoringsInputElement = document.createElement('input')
+            idMentoringsInputElement.type = 'hidden'
+            idMentoringsInputElement.name = 'id_mentorings'
+            idMentoringsInputElement.value = e.target.getAttribute('data-id-mentorings')
                 // replace form element node with its clone
-            document.getElementById('sPFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idMentoringsHiddInpt)
+            document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
+            cloneFrm.prepend(idMentoringsInputElement)
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
             attachListenersToSciPapInsFrm()
                 // dispatch a synthetic click event to button for subsequent addition of form mentor section
@@ -1143,8 +1143,11 @@
                 }) // forEach
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sPMentors').classList = 'col-12'
-                // remove the headline
-            request(`/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`, 'GET', 'json').then(response => {
+            request(
+                    `/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`,
+                    'GET',
+                    'json'
+                ).then(response => {
                     // populate form fields with selected mentor data
                     cloneFrm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id-mentorings')
                     cloneFrm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
@@ -1167,16 +1170,16 @@
      *  @param Event e
      */
     let toGradCertUpdateFrm = e => {
-            document.querySelector('#certUploadMdl .modal-header .modal-title').textContent = 'Urejanje podatkov certifikata'
+            document.querySelector('#certUploadMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov certifikata'
                 // clone from the existing form node
             let cloneFrm = certCloneFrm.cloneNode(true),
-                idCertificatesHiddInpt = document.createElement('input')
-            idCertificatesHiddInpt.type = 'hidden'
-            idCertificatesHiddInpt.name = 'id_certificates'
-            idCertificatesHiddInpt.value = e.target.getAttribute('data-id-certificates')
+                idCertificatesInputElement = document.createElement('input')
+            idCertificatesInputElement.type = 'hidden'
+            idCertificatesInputElement.name = 'id_certificates'
+            idCertificatesInputElement.value = e.target.getAttribute('data-id-certificates')
                 // replace form element node with its clone
             document.getElementById('certUploadFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idCertificatesHiddInpt)
+            cloneFrm.prepend(idCertificatesInputElement)
             attachListenersToGradCertCard()
                 // remove certificate file input 
             cloneFrm.querySelector('div.row').removeChild(cloneFrm.querySelector('div.row').querySelector('.form-group'))
