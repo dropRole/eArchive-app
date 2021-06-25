@@ -192,7 +192,7 @@
         } // request
 
     // refresh student evidence table upon latterly data amendment 
-    let refreshStudentsTable = () => {
+    let refreshStudentEvidenceTbl = () => {
             request('/eArchive/Students/selectAll.php', 'GET', 'document')
                 .then(response => {
                     let tblCtr = document.querySelector('.table-responsive')
@@ -204,7 +204,7 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // refreshStudentsTable
+        } // refreshStudentEvidenceTbl
 
     /*
      *   propagate passed select element with options from the requested resource 
@@ -785,7 +785,7 @@
                     document.getElementById('studentInsBtn').click()
                     return
                 }).then(() => {
-                    refreshStudentsTable()
+                    refreshStudentEvidenceTbl()
                     return
                 })
                 .then(() => {
@@ -842,39 +842,46 @@
      *  fill out form fields with student temporal residence particulars
      *  @param Array residences
      */
-    let determineTempResOfStudent = residences => {
-            addTempResFrmSect(residences)
-        } // determineTempResOfStudent
+    let determineTempResOfStudent = residences =>
+        addTempResFrmSect(residences)
 
     /*
-     *   delete student temporal residence by clicking cross sign of a section 
-     *   @param idStudents
+     *   asynchronous script run for deletion of temporal residence record
      *   @param idResidences
      */
     let deleteTempResOfStudent = idResidences => {
-            request(`/eArchive/Residences/delete.php?id_residences=${idResidences}`, 'GET', 'text').then(response => {
+            request(
+                    `/eArchive/Residences/delete.php?id_residences=${idResidences}`,
+                    'GET',
+                    'text'
+                ).then(response => {
                     // report the result
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // deleteStudentTemoralResidence
+        } // deleteTempResOfStudent
 
     /*
-     *  update student particulars and data on scientific achievements
+     *  asynchronous script execution for updating of student particulars
      *  Event e
      */
-    let updateStudent = e => {
+    let updateStudent = (e, form) => {
             // prevent default action of submitting updated student data through a form
             e.preventDefault()
-            request('/eArchive/Students/update.php', 'POST', 'text', (new FormData(studentFrm))).then(response => {
+            request(
+                    '/eArchive/Students/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(form))
+                ).then(response => {
                     // report on update
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
+                }).then(() => {
                     emptyFrmInputFields(studentFrm)
-                    document.getElementById('studentInsBtn').click()
-                    refreshStudentsTable()
+                    refreshStudentEvidenceTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -890,7 +897,7 @@
                     // report on deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    refreshStudentsTable()
+                    refreshStudentEvidenceTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -917,7 +924,7 @@
                     return
                 }).then(() => {
                     // repaint student evidence table
-                    refreshStudentsTable()
+                    refreshStudentEvidenceTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -938,7 +945,7 @@
                     // report on account deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    refreshStudentsTable()
+                    refreshStudentEvidenceTbl()
                 }).catch(error => {
 
                 }) // catch
@@ -1539,7 +1546,7 @@
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    refreshStudentsTable()
+                    refreshStudentEvidenceTbl()
                         // close certificate upload modal after uploading the certificate
                     $('#certUploadMdl').modal('hide')
                 }).catch(error => {
@@ -1600,7 +1607,7 @@
                     reportMdlBtn.click()
                     return
                 }).then(() => {
-                    refreshStudentsTable()
+                    refreshStudentEvidenceTbl()
                         // close certificate review modal after deletion
                     $('#certViewMdl').modal('hide')
                 }).catch(error => {
