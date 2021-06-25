@@ -815,37 +815,28 @@
 
     /*
      *  fill out form fields with student permanent residence particulars
-     *  @param Node frm
      *  @param Array residence
      */
-    let determineStudentPermanentResidence = (frm, residence) => {
-            // create hidden input type for id of a residence
-            let idResidencesInpt = document.createElement('input')
-            idResidencesInpt.type = 'hidden'
-            idResidencesInpt.name = 'residences[0][id_residences]'
-            idResidencesInpt.value = residence.id_residences
-            frm.querySelector('#PRCountrySlct').parentElement.prepend(idResidencesInpt)
-                // put country of a residence as selected option
+    let determinePermResOfStudent = (residence) => {
+            // create hidden input type that stores record if of the residence  
+            let idResidencesInputElement = document.createElement('input')
+            idResidencesInputElement.type = 'hidden'
+            idResidencesInputElement.name = 'residences[0][id_residences]'
+            idResidencesInputElement.value = residence.id_residences
+            document.querySelector('#studentInsertionFrm #perResCtrySelElement').parentElement.prepend(idResidencesInputElement)
                 // propagate target select element with postal codes of the chosen country
-            frm.querySelector('#PRCountrySlct').addEventListener('input', () => {
-                    propagateSelectElement(document.querySelector(`#${frm.querySelector('#PRCountrySlct').getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${frm.querySelector('#PRCountrySlct').selectedOptions[0].value}`).then(() => {
-                            // put postal code of a residence as selected option
-                            Array.from(frm.querySelector('#PRPCSlct').options).forEach(option => {
-                                    // if postal codes match
-                                    if (option.value == residence.id_postal_codes)
-                                        option.selected = true
-                                }) // forEach
-                        }) // then
-                }) // addEventListener
-            Array.from(frm.querySelector('#PRCountrySlct').options).forEach(option => {
-                    // if countries match
-                    if (option.value == residence.id_countries)
-                        option.selected = true
-                }) // forEach
-                // dispatch synthetically generated event
-            frm.querySelector('#PRCountrySlct').dispatchEvent((new Event('input')))
-            frm.querySelector('input[name="residences[0][address]"').value = residence.address
-        } // determineStudentPermanentResidence
+            propagateSelectElement(
+                document.querySelector('#permResCtrySelElement'),
+                '/eArchive/Countries/select.php',
+                residence.id_countries
+            ).then(() => propagateSelectElement(
+                document.querySelector('#permResPostalCodeSelElement'),
+                `/eArchive/PostalCodes/select.php?id_countries=${residence.id_countries}`,
+                residence.id_postal_codes
+            )).then(() => {
+                document.querySelector('#permResAddressInputElement').value = residence.address
+            })
+        } // determinePermResOfStudent
 
     /*
      *  fill out form fields with student temporal residence particulars
@@ -1205,7 +1196,7 @@
             studentFrm.querySelector('input[name=email]').value = student.particulars.email
             studentFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
             determineStudentBirthplace(studentFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
-            determineStudentPermanentResidence(studentFrm, student.permResidence)
+            determinePermResOfStudent(studentFrm, student.permResidence)
             determineTempResOfStudent(student.tempResidence)
             studentFrm.removeChild(studentFrm.querySelector('#attendances'))
             studentFrm.querySelector('input[type=submit]').value = 'Posodobi'
