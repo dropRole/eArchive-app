@@ -154,7 +154,7 @@
             acctDelBtnLst.forEach(btn => {
                     // delete particular account 
                     btn.addEventListener('click', () => {
-                            deleteStudentAccount(btn.getAttribute('data-id-attendances'))
+                            deleteAcctOfStudent(btn.getAttribute('data-id-attendances'))
                         }) //addEventListener
                 }) // forEach
             acctInsBtnLst.forEach(btn => {
@@ -888,12 +888,16 @@
         } // updateStudent
 
     /*
-     *   delete all student related data
+     *   asynchronous script execution for deletion of all records regarding the student   
      *   @param Number idStudents
      *   @param Number idAttendances
      */
     let deleteStudent = (idStudents, idAttendances) => {
-            request(`/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`, 'GET', 'text').then(response => {
+            request(
+                    `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`,
+                    'GET',
+                    'text'
+                ).then(response => {
                     // report on deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
@@ -904,11 +908,11 @@
         } // deleteStudent
 
     /*
-     *   generate and assign an account to a student
+     *   asynchronous script run for assigning an account credentials to the student 
      *   @param Event e
      */
-    let assignStudentAccount = e => {
-            // prevent default action by submitting data insert form
+    let assignAcctCredentialsToStudent = e => {
+            // prevent default action of submutting the form containing account credentials
             e.preventDefault()
             request(
                     '/eArchive/Accounts/authorized/insert.php',
@@ -928,28 +932,32 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // assignStudentAccount
+        } // assignAcctCredentialsToStudent
 
     acctFrm.addEventListener('submit', e => {
             // prevent form from submitting account details  
             e.preventDefault()
-            assignStudentAccount(e)
+            assignAcctCredentialsToStudent(e)
         }) // addEventListener
 
     /*
      *   asynchronous script execution for deletion of the given account 
      *   @param idAttendances
      */
-    let deleteStudentAccount = idAttendances => {
-            request(`/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`, 'GET', 'text').then(response => {
+    let deleteAcctOfStudent = idAttendances => {
+            request(
+                    `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`,
+                    'GET',
+                    'text'
+                ).then(response => {
                     // report on account deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     refreshStudentEvidenceTbl()
                 }).catch(error => {
-
+                    alert(error)
                 }) // catch
-        } // deleteStudentAccount
+        } // deleteAcctOfStudent
 
     /*
      *   rearrange form and fill out form fields when updating student data
