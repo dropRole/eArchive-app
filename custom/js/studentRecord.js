@@ -16,7 +16,7 @@
         }) // addEventListener
 
     // attach event listeners to corresponding input element 
-    let attachSciPapFrmListeners = () => {
+    let attachListenersToSciPapInsFrm = () => {
             // get the form 
             let frm = document.getElementById('sciPapInsertionMdl')
                 // if button for subsequent partaker section additon exists
@@ -96,12 +96,12 @@
                 // replace form element node with its clone
             document.getElementById('sciPapInsertionMdl').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-            attachSciPapFrmListeners()
+            attachListenersToSciPapInsFrm()
             cloneFrm.addEventListener('submit', insertScientificPaper)
         } // toSciPapInsertFrm
 
     // attach listeners to student evidence table appropriate anchors and buttons   
-    let attachStudentTableListeners = () => {
+    let attachListenersToStudentEvidenceTbl = () => {
             let studentInsBtn = document.getElementById('studentInsBtn'), // button for exposing form for student scientific achievements insertion
                 sciPapViewAnchorLst = document.querySelectorAll('.sp-vw-a'), // anchor list for exposing scientific papers of the student
                 sciPapInsAnchorLst = document.querySelectorAll('.sp-ins-a'), // anchor list for exposing form for insertion of the scientific papers and belonging documents
@@ -164,7 +164,7 @@
                         }) // addEventListener
                 }) // forEach
         } // attachStudentTableListeners
-    attachStudentTableListeners()
+    attachListenersToStudentEvidenceTbl()
 
     /*
      *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
@@ -200,7 +200,7 @@
                     fragment = response
                         // reflect fragments body  
                     tblCtr.innerHTML = fragment.body.innerHTML
-                    attachStudentTableListeners()
+                    attachListenersToStudentEvidenceTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -753,7 +753,7 @@
                     fragment = response
                         // reflect fragments body  
                     tblCtr.innerHTML = fragment.body.innerHTML
-                    attachStudentTableListeners()
+                    attachListenersToStudentEvidenceTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -797,29 +797,20 @@
 
     /*
      *  fill out form fields with student birthplace particulars
-     *  @param HTMLFormElement frm
      *  @param Number idpostalCode
      *  @param Number idCountries
      */
-    let determineStudentBirthplace = (frm, idPostalCodes, idCountries) => {
+    let determineStudentBirthplace = (idPostalCodes, idCountries) => {
             // propagate target select element with postal codes of the chosen country
-            frm.querySelector('#bCountrySlct').addEventListener('input', () => {
-                    propagateSelectElement(document.querySelector(`#${frm.querySelector('#bCountrySlct').getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${frm.querySelector('#bCountrySlct').selectedOptions[0].value}`).then(() => {
-                            // put postal code of a residence as selected option
-                            Array.from(frm.querySelector('#bPCSlct').options).forEach(option => {
-                                    // if postal codes match
-                                    if (option.value == idPostalCodes)
-                                        option.selected = true
-                                }) // forEach
-                        }) // then
-                }) // addEventListener
-            Array.from(frm.querySelector('#bCountrySlct').options).forEach(option => {
-                    // if countries match
-                    if (option.value == idCountries)
-                        option.selected = true
-                }) // forEach
-                // dispatch synthetically generated event
-            frm.querySelector('#bCountrySlct').dispatchEvent((new Event('input')))
+            propagateSelectElement(
+                document.querySelector('#birthCtrySelElement'),
+                '/eArchive/Countries/select.php',
+                idCountries
+            ).then(() => propagateSelectElement(
+                document.querySelector('#birthPostalCodeSelElement'),
+                `eArchive/PostalCodes/select.php?id_countries=${idCountries}`,
+                idPostalCodes
+            ))
         } // determineStudenBirthplace
 
     /*
@@ -977,7 +968,7 @@
                 // replace form element node with its clone
             document.getElementById('sPFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idSPHiddInpt)
-            attachSciPapFrmListeners()
+            attachListenersToSciPapInsFrm()
             cloneFrm.querySelector('input[name="topic"]').value = sPpr.topic
             cloneFrm.querySelector('select[name="type"]').value = sPpr.type
             cloneFrm.querySelector('input[name="written"]').value = sPpr.written
@@ -1011,7 +1002,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sPDocs').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
-            attachSciPapFrmListeners()
+            attachListenersToSciPapInsFrm()
                 // remove nodes except those matching given selector expression 
             cloneFrm.querySelectorAll('div#particulars, div.row:nth-child(4)').forEach(node => {
                     node.parentElement.removeChild(node)
@@ -1041,7 +1032,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
-            attachSciPapFrmListeners()
+            attachListenersToSciPapInsFrm()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1072,7 +1063,7 @@
             cloneFrm.prepend(idPartakingsHiddInpt)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
-            attachSciPapFrmListeners()
+            attachListenersToSciPapInsFrm()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1108,7 +1099,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sPMentors').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Določi'
-            attachSciPapFrmListeners()
+            attachListenersToSciPapInsFrm()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1137,7 +1128,7 @@
             document.getElementById('sPFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idMentoringsHiddInpt)
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-            attachSciPapFrmListeners()
+            attachListenersToSciPapInsFrm()
                 // dispatch a synthetic click event to button for subsequent addition of form mentor section
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove DIV nodes except matching given selector expression 
@@ -1180,7 +1171,7 @@
                 // replace form element node with its clone
             document.getElementById('certUploadFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idCertificatesHiddInpt)
-            attachCertificateCardListeners()
+            attachListenersToGradCertCard()
                 // remove certificate file input 
             cloneFrm.querySelector('div.row').removeChild(cloneFrm.querySelector('div.row').querySelector('.form-group'))
                 // fill out form fileds with carried data
@@ -1224,7 +1215,7 @@
         } // toStudentUpdateFrm
 
     // attach event listeners to a scientific paper cards when rendered
-    let attachSPCardListeners = () => {
+    let attachListenersToSciPapCards = () => {
             // if anchor nodes for partaker insertion exist
             if (document.querySelectorAll('.par-ins-a'))
                 document.querySelectorAll('.par-ins-a').forEach(anchor => {
@@ -1308,7 +1299,7 @@
         } // attachSPCardListeners
 
     // attach listeners to certificate card when selected
-    let attachCertificateCardListeners = () => {
+    let attachListenersToGradCertCard = () => {
             // get modal for graduation certificate review
             let mdl = document.getElementById('certViewingMdl')
                 // if anchor element for update of certificate connected data exist
@@ -1484,7 +1475,7 @@
                     document.querySelector('#sciPapViewingMdl .modal-content').innerHTML = fragment.body.innerHTML
                     return
                 }).then(() => {
-                    attachSPCardListeners()
+                    attachListenersToSciPapCards()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1579,7 +1570,7 @@
                     fragment = response
                         // reflect fragments body     
                     mdl.querySelector('.modal-content').innerHTML = fragment.body.innerHTML
-                    attachCertificateCardListeners()
+                    attachListenersToGradCertCard()
                 }).catch(error => {
                     alert(error)
                 }) // catch
