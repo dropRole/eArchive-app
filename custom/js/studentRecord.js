@@ -995,7 +995,7 @@
      *   @param Event e
      */
     let toSciPapDocUploadFrm = e => {
-            document.querySelector('#sPMdl .modal-header > .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+            document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapFrm.cloneNode(true),
                 idScientificPaperInputElement = document.createElement('input')
@@ -1025,16 +1025,16 @@
      *  @param Event e
      */
     let toPartakerInsertFrm = e => {
-            document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+            document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapFrm.cloneNode(true),
-                idSPHiddInpt = document.createElement('input')
-            idSPHiddInpt.type = 'hidden'
-            idSPHiddInpt.name = 'id_scientific_papers'
-            idSPHiddInpt.value = e.target.getAttribute('data-id-scientific-papers')
+                idScientificPapersInputElement = document.createElement('input')
+            idScientificPapersInputElement.type = 'hidden'
+            idScientificPapersInputElement.name = 'id_scientific_papers'
+            idScientificPapersInputElement.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
-            document.getElementById('sPFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idSPHiddInpt)
+            document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
+            cloneFrm.prepend(idScientificPapersInputElement)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
@@ -1057,7 +1057,7 @@
      *  @param Event e
      */
     let toPartakerUpdateFrm = e => {
-            document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+            document.querySelector('#sciPapInsertionMdl .modal-header .modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapFrm.cloneNode(true),
                 idPartakingsHiddInpt = document.createElement('input')
@@ -1065,7 +1065,7 @@
             idPartakingsHiddInpt.name = 'id_partakings'
             idPartakingsHiddInpt.value = e.target.getAttribute('data-id-partakings')
                 // replace form node with its clone
-            document.getElementById('sPFrm').replaceWith(cloneFrm)
+            document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idPartakingsHiddInpt)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
@@ -1092,18 +1092,18 @@
      *  @param Event e
      */
     let toMentorInsertFrm = e => {
-            document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+            document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapFrm.cloneNode(true),
-                idSPHiddInpt = document.createElement('input')
-            idSPHiddInpt.type = 'hidden'
-            idSPHiddInpt.name = 'id_scientific_papers'
-            idSPHiddInpt.value = e.target.getAttribute('data-id-scientific-papers')
+                idScientificPapersInputElement = document.createElement('input')
+            idScientificPapersInputElement.type = 'hidden'
+            idScientificPapersInputElement.name = 'id_scientific_papers'
+            idScientificPapersInputElement.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
-            document.getElementById('sPFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idSPHiddInpt)
+            document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
+            cloneFrm.prepend(idScientificPapersInputElement)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sPMentors').classList = 'col-12'
+            cloneFrm.querySelector('#sciPapMentorSect').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Določi'
             attachListenersToSciPapInsFrm()
                 // dispatch a synthetic click event
