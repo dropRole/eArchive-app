@@ -991,22 +991,22 @@
         } // toSciPapUpdateFrm
 
     /*
-     *   transform to form for upload of scientific paper documents
+     *   rearrange form for uploading document of the subject scientific paper
      *   @param Event e
      */
-    let toSPDocumentUploadFrm = e => {
-            document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+    let toSciPapDocUploadFrm = e => {
+            document.querySelector('#sPMdl .modal-header > .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapFrm.cloneNode(true),
-                idSPHiddInpt = document.createElement('input')
-            idSPHiddInpt.type = 'hidden'
-            idSPHiddInpt.name = 'id_scientific_papers'
-            idSPHiddInpt.value = e.target.getAttribute('data-id-scientific-papers')
+                idScientificPaperInputElement = document.createElement('input')
+            idScientificPaperInputElement.type = 'hidden'
+            idScientificPaperInputElement.name = 'id_scientific_papers'
+            idScientificPaperInputElement.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form node with its clone
             sPFrm.replaceWith(cloneFrm)
-            cloneFrm.prepend(idSPHiddInpt)
+            cloneFrm.prepend(idScientificPaperInputElement)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sPDocs').classList = 'col-12'
+            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
             attachListenersToSciPapInsFrm()
                 // remove nodes except those matching given selector expression 
@@ -1018,7 +1018,7 @@
                     e.preventDefault()
                     insertDocumentsOfScientificPaper(cloneFrm)
                 }) // addEventListener
-        } // toSPDocumentUploadFrm
+        } // toSciPapDocUploadFrm
 
     /*
      *  rearrange form when inserting data of the scientific paper partaker   
@@ -1292,7 +1292,7 @@
             if (document.querySelectorAll('.doc-upl-a'))
                 document.querySelectorAll('.doc-upl-a').forEach(span => {
                     // delete particular document
-                    span.addEventListener('click', toSPDocumentUploadFrm)
+                    span.addEventListener('click', toSciPapDocUploadFrm)
                 }) // forEach
                 // if anchors for scientific paper documentation deletion are rendered
             if (document.querySelectorAll('.doc-del-spn'))
