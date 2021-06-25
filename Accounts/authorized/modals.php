@@ -28,7 +28,7 @@
                     <p class="h6 col-12">Rojen</p>
                     <div class="form-group col-6">
                         <label>Država
-                            <select id="birthCtrySelElement" class="form-control country-select" data-target="birthPostalCodeSelElement">
+                            <select id="birthCtrySelElement" class="form-control country-select">
                                 <?php
                                 foreach ($DBC->selectCountries() as $country) {
                                 ?>
