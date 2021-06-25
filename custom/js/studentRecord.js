@@ -961,23 +961,23 @@
 
     /*
      *   rearrange form and fill out form fields when updating student data
-     *   @param Object sPpr
+     *   @param Object sciPap
      */
-    let toSPUpdateFrm = sPpr => {
-            document.querySelector('#sPMdl .modal-header .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+    let toSciPapUpdateFrm = sciPap => {
+            document.querySelector('#sciPapInsertionPMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapFrm.cloneNode(true),
-                idSPHiddInpt = document.createElement('input')
-            idSPHiddInpt.type = 'hidden'
-            idSPHiddInpt.name = 'id_scientific_papers'
-            idSPHiddInpt.value = sPpr.id_scientific_papers
+                idScienitificPapersInputElement = document.createElement('input')
+            idScienitificPapersInputElement.type = 'hidden'
+            idScienitificPapersInputElement.name = 'id_scientific_papers'
+            idScienitificPapersInputElement.value = sciPap.id_scientific_papers
                 // replace form element node with its clone
             document.getElementById('sPFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idSPHiddInpt)
+            cloneFrm.prepend(idScienitificPapersInputElement)
             attachListenersToSciPapInsFrm()
-            cloneFrm.querySelector('input[name="topic"]').value = sPpr.topic
-            cloneFrm.querySelector('select[name="type"]').value = sPpr.type
-            cloneFrm.querySelector('input[name="written"]').value = sPpr.written
+            cloneFrm.querySelector('input[name="topic"]').value = sciPap.topic
+            cloneFrm.querySelector('select[name="type"]').value = sciPap.type
+            cloneFrm.querySelector('input[name="written"]').value = sciPap.written
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
                 // remove determined element nodes 
             cloneFrm.querySelectorAll('div.row:nth-child(4), #sPDocs').forEach(node => {
@@ -988,7 +988,7 @@
                     e.preventDefault()
                     updateScientificPaper(cloneFrm)
                 }) // addEventListener
-        } // toSPUpdateFrm
+        } // toSciPapUpdateFrm
 
     /*
      *   transform to form for upload of scientific paper documents
@@ -1275,7 +1275,7 @@
                     anchor.addEventListener('click', e => {
                             request(`/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id-scientific-papers')}`, 'GET', 'json').then(response => {
                                     // retrieve JSON of ScientificPapers object 
-                                    toSPUpdateFrm(response)
+                                    toSciPapUpdateFrm(response)
                                 }).catch(error => {
                                     alert(error)
                                 }) // catch
