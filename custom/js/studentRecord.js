@@ -1016,7 +1016,7 @@
             cloneFrm.addEventListener('submit', e => {
                     // prevent upload of scientific paper documents
                     e.preventDefault()
-                    insertDocumentsOfScientificPaper(cloneFrm)
+                    uploadDocsOfSciPap(cloneFrm)
                 }) // addEventListener
         } // toSciPapDocUploadFrm
 
@@ -1305,7 +1305,7 @@
                 document.querySelectorAll('.doc-del-spn').forEach(span => {
                     // delete particular document
                     span.addEventListener('click', () => {
-                            deleteDocumentOfScientificPaper(span.getAttribute('data-source'))
+                            deleteDocsOfSciPap(span.getAttribute('data-source'))
                         }) // addEventListener
                 }) // forEach
         } // attachSPCardListeners
@@ -1454,39 +1454,47 @@
 
     /*  
      *   asynchronous script execution for scientific paper documents upload    
-     *   @param Event e
+     *   @param HTMLFormElement frm
      */
-    let insertDocumentsOfScientificPaper = frm => {
-            request('/eArchive/Documents/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
-                    // report on document deletion
+    let uploadDocsOfSciPap = frm => {
+            request(
+                    '/eArchive/Documents/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                ).then(response => {
+                    // report on document upload
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after upload
-                    $('#sPMdl').modal('hide')
-                    return
+                    $('#sicPapMdl').modal('hide')
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers
                     selectScientificPapers(frm.querySelector('input[name=id_attendances').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // insertDocumentsOfScientificPaper
+        } // uploadDocsOfSciPap
 
     /*
      *  asynchronous script execution for scientific paper documents deletion    
-     *  @param DOMString source  
+     *  @param String source  
      */
-    let deleteDocumentOfScientificPaper = source => {
-            request(`/eArchive/Documents/delete.php?source=${source}`, 'GET', 'text').then(response => {
+    let deleteDocsOfSciPap = source => {
+            request(
+                    `/eArchive/Documents/delete.php?source=${source}`,
+                    'GET',
+                    'text'
+                ).then(response => {
                     // report on document deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    selectScientificPapers(document.getElementById('sPFrm').querySelector('input[name=id_attendances]').value)
+                    selectScientificPapers(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // deleteDocumentOfScientificPaper
+        } // deleteDocsOfSciPap
 
     /*
      *   asynchronous script execution for selection of scientific papers per student program attendance 
