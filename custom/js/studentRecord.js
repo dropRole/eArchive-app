@@ -101,35 +101,35 @@
         } // toSciPapInsrFrm
 
     // attach listeners to student evidence table appropriate anchors and buttons   
-    let attachListenersToStudentEvidenceTbl = () => {
-            let studentInsBtn = document.getElementById('studentInsBtn'), // button for exposing form for student scientific achievements insertion
-                sciPapViewAnchorLst = document.querySelectorAll('.sp-vw-a'), // anchor list for exposing scientific papers of the student
-                sciPapInsAnchorLst = document.querySelectorAll('.sp-ins-a'), // anchor list for exposing form for insertion of the scientific papers and belonging documents
-                certInsAnchorLst = document.querySelectorAll('.cert-ins-a'), // anchor list for exposing form for uploading students graduation certificate
-                certViewAnchorLst = document.querySelectorAll('.cert-vw-a'), // anchor list for exposing graduation certificate of the student
-                acctInsBtnLst = document.querySelectorAll('.acc-ins-btn'), // button list for exposing form for assigning an account to student
-                acctDelBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for deletion of a particular student account 
-                studentUpdAnchorLst = document.querySelectorAll('.stu-upd-a'), // anchor list for exposing form for updating fundamental data of the student
-                studentDelAnchorLst = document.querySelectorAll('.stu-del-a') // anchor list for exposing form for deletion of fundamental data of the student
-            studentInsBtn.addEventListener('click', toStudtInsrFrm)
-            sciPapViewAnchorLst.forEach(anchor => {
+    let listenStudtEvidTbl = () => {
+            let studtInsrBtn = document.getElementById('studtInsrBtn'), // button for exposing form for student scientific achievements insertion
+                sciPapViewLst = document.querySelectorAll('.sp-vw-a'), // array of anchors for exposing scientific papers of the student
+                sciPapInsrLst = document.querySelectorAll('.sp-ins-a'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
+                gradCertInsrLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
+                gradCertViewLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
+                acctInsrLst = document.querySelectorAll('.acc-ins-btn'), // array of buttons for exposing form for assigning an account to student
+                acctDelLst = document.querySelectorAll('.acc-del-btn'), // array of buttons for deletion of a particular student account 
+                studtUpdLst = document.querySelectorAll('.stu-upd-a'), // array of anchors for exposing form for updating fundamental data of the student
+                studtDelLst = document.querySelectorAll('.stu-del-a') // array of anchors for exposing form for deletion of fundamental data of the student
+            studtInsrBtn.addEventListener('click', toStudtInsrFrm)
+            sciPapViewLst.forEach(anchor => {
                     // preview scientific papers   
                     anchor.addEventListener('click', () => {
                             selectScientificPapers(anchor.getAttribute('data-id-attendances'))
                             sciPapInsrFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                         }) //addEventListener
                 }) // forEach
-            sciPapInsAnchorLst.forEach(anchor => {
+            sciPapInsrLst.forEach(anchor => {
                     // modify form for scientific paper insertion
                     anchor.addEventListener('click', toSciPapInsrFrm)
                 }) // forEach
-            certInsAnchorLst.forEach(anchor => {
+            gradCertInsrLst.forEach(anchor => {
                     // assign an attendance id value to an upload forms hidden input type 
                     anchor.addEventListener('click', e => {
                             gradCertUplFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
                         }) //addEventListener
                 }) // forEach
-            certViewAnchorLst.forEach(anchor => {
+            gradCertViewLst.forEach(anchor => {
                     // view certificate particulars in a form of a card in the modal
                     anchor.addEventListener('click', () => {
                             selectGradCert(anchor.getAttribute('data-id-attendances'))
@@ -137,13 +137,13 @@
                             certCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                         }) // addEventListener
                 }) // forEach
-            studentUpdAnchorLst.forEach(anchor => {
+            studtUpdLst.forEach(anchor => {
                     // propagate update form with student particulars
                     anchor.addEventListener('click', e => {
                             selectStudent(e, anchor.getAttribute('data-id-students'))
                         }) // addEventListener
                 }) // forEach
-            studentDelAnchorLst.forEach(anchor => {
+            studtDelLst.forEach(anchor => {
                     // delete student from the student evidence table
                     anchor.addEventListener('click', () => {
                             // if record deletion was confirmed
@@ -151,20 +151,20 @@
                                 deleteStudent(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
                         }) // addEventListener
                 }) // forEach
-            acctDelBtnLst.forEach(btn => {
+            acctDelLst.forEach(btn => {
                     // delete particular account 
                     btn.addEventListener('click', () => {
                             deleteAcctOfStudent(btn.getAttribute('data-id-attendances'))
                         }) //addEventListener
                 }) // forEach
-            acctInsBtnLst.forEach(btn => {
+            acctInsrLst.forEach(btn => {
                     // pass an id of an attendance through forms hidden input type 
                     btn.addEventListener('click', () => {
                             acctAssignFrm.querySelector('input[name=id_attendances]').value = btn.value
                         }) // addEventListener
                 }) // forEach
         } // attachStudentTableListeners
-    attachListenersToStudentEvidenceTbl()
+    listenStudtEvidTbl()
 
     /*
      *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
@@ -200,7 +200,7 @@
                     frag = response
                         // reflect fragments body  
                     tblCtr.innerHTML = frag.body.innerHTML
-                    attachListenersToStudentEvidenceTbl()
+                    listenStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -753,7 +753,7 @@
                     frag = response
                         // reflect fragments body  
                     tblCtr.innerHTML = frag.body.innerHTML
-                    attachListenersToStudentEvidenceTbl()
+                    listenStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
