@@ -16,7 +16,7 @@
         }) // addEventListener
 
     // attach event listeners to corresponding input element 
-    let attachListenersToSciPapInsFrm = () => {
+    let listenSciPapInsrFrm = () => {
             // get the form 
             let frm = document.getElementById('sciPapInsertionMdl')
                 // if button for subsequent partaker section additon exists
@@ -38,11 +38,11 @@
         } // attachSciPapFrmListeners
 
     // attach event listeners to corresponding input and selecet elements
-    let attachStudentFrmListeners = () => {
+    let listenStudtInsrFrm = () => {
             let addTempResBtn = document.getElementById('addTempResBtn'), // button for appending addiational temporal residence section 
                 addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for apppending additional program attendance section
                 ctrySelElLst = document.querySelectorAll('.country-select'), // elements for selecting birth, temporal and permanent residence country
-                facSelElement = document.getElementById('facSelElement'), // faculty select element
+                facSelEl = document.getElementById('facSelElement'), // faculty select element
                 gradCheckBox = document.getElementById('gradCheckBox') // checkbox for denoting graduation
             addTempResBtn.addEventListener('click', () => {
                     addTempResFrmSect()
@@ -54,9 +54,9 @@
                             propagateSelectElement(document.querySelector(`#${element.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${element.selectedOptions[0].value}`)
                         }) // addEventListener
                 }) // forEach
-            facSelElement.addEventListener('input', () => {
+            facSelEl.addEventListener('input', () => {
                     // propagate programs by faculty selection
-                    propagateSelectElement(document.getElementById('progSelElement'), `/eArchive/Programs/select.php?id_faculties=${facSelElement.selectedOptions[0].value}`)
+                    propagateSelectElement(document.getElementById('progSelElement'), `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`)
                 }) // addEventListener
             gradCheckBox.addEventListener('change', e => {
                     // if it's checked
@@ -70,7 +70,7 @@
                         gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
                     } // else
                 }) // addEventListener
-        } // attachStudentFrmListeners
+        } // listenStudtInsrFrm
 
     // rearrange form when inserting a student record  
     let toStudentInsertFrm = () => {
@@ -78,7 +78,7 @@
             let cloneFrm = studtInsrFrm.cloneNode(true)
                 // replace form element node with its clone
             document.getElementById('studentInsertionFrm').replaceWith(cloneFrm)
-            attachStudentFrmListeners()
+            listenStudtInsrFrm()
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // exchange callbacks
             studtInsrFrm.addEventListener('submit', e => insertStudent(e, cloneFrm))
@@ -96,7 +96,7 @@
                 // replace form element node with its clone
             document.getElementById('sciPapInsertionMdl').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-            attachListenersToSciPapInsFrm()
+            listenSciPapInsrFrm()
             cloneFrm.addEventListener('submit', insertSciPap)
         } // toSciPapInsertFrm
 
@@ -974,7 +974,7 @@
                 // replace form element node with its clone
             document.getElementById('sPFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScienitificPapersInputElement)
-            attachListenersToSciPapInsFrm()
+            listenSciPapInsrFrm()
             cloneFrm.querySelector('input[name="topic"]').value = sciPap.topic
             cloneFrm.querySelector('select[name="type"]').value = sciPap.type
             cloneFrm.querySelector('input[name="written"]').value = sciPap.written
@@ -1008,7 +1008,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
-            attachListenersToSciPapInsFrm()
+            listenSciPapInsrFrm()
                 // remove nodes except those matching given selector expression 
             cloneFrm.querySelectorAll('div#particulars, div.row:nth-child(4)').forEach(node => {
                     node.parentElement.removeChild(node)
@@ -1038,7 +1038,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
-            attachListenersToSciPapInsFrm()
+            listenSciPapInsrFrm()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1069,7 +1069,7 @@
             cloneFrm.prepend(idPartakingsHiddInpt)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
-            attachListenersToSciPapInsFrm()
+            listenSciPapInsrFrm()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1105,7 +1105,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapMentorSect').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Določi'
-            attachListenersToSciPapInsFrm()
+            listenSciPapInsrFrm()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
@@ -1134,7 +1134,7 @@
             document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idMentoringsInputElement)
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-            attachListenersToSciPapInsFrm()
+            listenSciPapInsrFrm()
                 // dispatch a synthetic click event to button for subsequent addition of form mentor section
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove DIV nodes except matching given selector expression 
@@ -1209,7 +1209,7 @@
             idStudentsInputElement.value = e.target.getAttribute('data-id-students')
                 // replace node with its clone
             document.getElementById('studentInsertionFrm').replaceWith(cloneFrm)
-            attachStudentFrmListeners()
+            listenStudtInsrFrm()
             cloneFrm.prepend(idStudentsInputElement)
                 // fill out input fields with student particulars
             cloneFrm.querySelector('input[name=name]').value = student.particulars.name
