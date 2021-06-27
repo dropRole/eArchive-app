@@ -1320,7 +1320,7 @@
                 // if anchor element for certificate deletion is contained
             if (mdl.querySelector('.modal-content .cert-del-a'))
                 mdl.querySelector('.modal-content .cert-del-a').addEventListener('click', e => {
-                    deleteGraduationCertificate(e.target.getAttribute('data-id-attendances'), e.target.getAttribute('data-source'))
+                    deleteGradCert(e.target.getAttribute('data-id-attendances'), e.target.getAttribute('data-source'))
                 }) // addEventListner
         } // attachCertificateCardListeners
 
@@ -1663,20 +1663,23 @@
     /*
      *  asynchronous script execution for graduation certificate deletion    
      *  @param Number idAttendance
-     *  @param Number idCertificates
+     *  @param String source
      */
-    let deleteGraduationCertificate = (idAttendances, source) => {
-            request(`/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`, 'GET', 'text').then(response => {
-                    // report on the deletion
+    let deleteGradCert = (idAttendances, source) => {
+            request(
+                    `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`,
+                    'GET',
+                    'text'
+                ).then(response => {
+                    // report on deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    return
                 }).then(() => {
                     refreshStudentEvidenceTbl()
                         // close certificate review modal after deletion
-                    $('#certViewMdl').modal('hide')
+                    $('#gradCertViewingMdl').modal('hide')
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // deleteGraduationCertificate
+        } // deleteGradCert
 })()
