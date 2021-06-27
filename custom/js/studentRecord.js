@@ -21,7 +21,7 @@
             let frm = document.getElementById('sciPapInsertionMdl')
                 // if button for subsequent partaker section additon exists
             if (frm.querySelector('#addPartakerBtn'))
-                addPartakerBtn.addEventListener('click', addPartakerSection)
+                addPartakerBtn.addEventListener('click', addPartakerSect)
                 // if file input is rendered 
             if (frm.querySelector('input[name="document[]"]'))
                 frm.querySelector('input[name="document[]"]').addEventListener('change', e => {
@@ -512,19 +512,19 @@
         } // addProgAttendanceSect 
 
     // create and subsequently append partaker section of the scientific paper insertion form 
-    let addPartakerSection = () => {
+    let addPartakerSect = () => {
             // create form controls 
-            let container = document.createElement('div'),
+            let ctr = document.createElement('div'),
                 headline = document.createElement('p'),
                 cross = document.createElement('span'),
                 partakerFrmGrp = document.createElement('div'),
                 partFrmGrp = document.createElement('div'),
                 partakerLbl = document.createElement('label'),
                 partLbl = document.createElement('label'),
-                partakerInputElement = document.createElement('input'),
-                partInputElement = document.createElement('input'),
+                partakerInptEl = document.createElement('input'),
+                partInptEl = document.createElement('input'),
                 index = document.querySelectorAll('div#sciPapPartakerSect > div.row').length // the following index for an array of data on a partaker  
-            container.classList = 'row'
+            ctr.classList = 'row'
             headline.classList = 'h6 col-12'
             cross.style.float = 'right'
             cross.style.transform = 'scale(1.2)'
@@ -532,29 +532,29 @@
             cross.innerHTML = '&#10007'
                 // remove selected attendance section
             cross.addEventListener('click', () => {
-                    document.getElementById('sciPapPartakerSect').removeChild(container)
+                    document.getElementById('sciPapPartakerSect').removeChild(ctr)
                 }) // addEventListener
             partakerFrmGrp.classList = 'form-group col-6'
             partFrmGrp.classList = 'form-group col-6'
             partakerLbl.textContent = 'Sodelovalec'
             partLbl.textContent = 'Vloga'
-            partakerInputElement.classList = 'form-control'
-            partakerInputElement.setAttribute('list', 'students')
-            partakerInputElement.required = true
-            partInputElement.classList = 'form-control'
-            partInputElement.type = 'text'
-            partInputElement.name = `partakers[${index}][part]`
-            partInputElement.required = true
+            partakerInptEl.classList = 'form-control'
+            partakerInptEl.setAttribute('list', 'students')
+            partakerInptEl.required = true
+            partInptEl.classList = 'form-control'
+            partInptEl.type = 'text'
+            partInptEl.name = `partakers[${index}][part]`
+            partInptEl.required = true
                 // compose a node hierarchy by appending them to active tree structure 
             headline.appendChild(cross)
-            partakerLbl.appendChild(partakerInputElement)
+            partakerLbl.appendChild(partakerInptEl)
             partakerFrmGrp.appendChild(partakerLbl)
-            partLbl.appendChild(partInputElement)
+            partLbl.appendChild(partInptEl)
             partFrmGrp.appendChild(partLbl)
-            container.appendChild(headline)
-            container.appendChild(partakerFrmGrp)
-            container.appendChild(partFrmGrp)
-            document.getElementById('sciPapPartakerSect').appendChild(container)
+            ctr.appendChild(headline)
+            ctr.appendChild(partakerFrmGrp)
+            ctr.appendChild(partFrmGrp)
+            document.getElementById('sciPapPartakerSect').appendChild(ctr)
         } // addPartakerSection
 
     //  create and append additional form controls for uploading document of the scientific paper
