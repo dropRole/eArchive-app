@@ -1191,7 +1191,7 @@
             cloneFrm.addEventListener('submit', e => {
                     // cancel submitting updated certificate data by default
                     e.preventDefault()
-                    updateGraduationCertificate(cloneFrm)
+                    updateGradCert(cloneFrm)
                 }) // addEventListener
         } // toGradCertUpdateFrm
 
@@ -1637,16 +1637,20 @@
 
     /*
      *  asynchronously script run for graduation certificate data update     
-     *  @param Number idAttendance
-     *  @param Number idCertificates
+     *  @param HTMLFormElement frm
      */
-    let updateGraduationCertificate = frm => {
-            request('/eArchive/Certificates/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
+    let updateGradCert = frm => {
+            request(
+                    '/eArchive/Certificates/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                ).then(response => {
                     // report on update
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close certificate upload modal after update
-                    $('#certUploadMdl').modal('hide')
+                    $('#gradCertUploadMdl').modal('hide')
                     return
                 }).then(() => {
                     // select update graduation certificate
@@ -1654,7 +1658,7 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // updateGraduationCertificate
+        } // updateGradCert
 
     /*
      *  asynchronous script execution for graduation certificate deletion    
