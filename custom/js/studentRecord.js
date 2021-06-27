@@ -1083,7 +1083,7 @@
             cloneFrm.addEventListener('submit', e => {
                     // cancel submitting partaker data by default
                     e.preventDefault()
-                    updatePartakerOfScientificPaper(cloneFrm)
+                    updatePartakerOfSciPap(cloneFrm)
                 }) // addEventListener
         } // toPartakerUpdateFrm
 
@@ -1239,7 +1239,7 @@
                 document.querySelectorAll('.par-del-spn').forEach(span => {
                     // attempt deletion of a partaker
                     span.addEventListener('click', () => {
-                            deletePartakerOfScientificPaper(span.getAttribute('data-id-partakings'))
+                            deletePartakerOfSciPap(span.getAttribute('data-id-partakings'))
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper partaker data update exist
@@ -1347,11 +1347,16 @@
         } // insertPartakerOfSciPap
 
     /*
-     *  asynchronous script execution for update of a scientific paper partakers data    
-     *  @param Number idPartakings
+     *  asynchronous script execution for updating data of the scientific paper partaker    
+     *  @param HTMLFormElement frm
      */
-    let updatePartakerOfScientificPaper = frm => {
-            request('/eArchive/Partakings/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
+    let updatePartakerOfSciPap = frm => {
+            request(
+                    '/eArchive/Partakings/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                ).then(response => {
                     // report on update
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
@@ -1361,37 +1366,27 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // updatePartakerOfScientificPaper
+        } // updatePartakerOfSciPap
 
     /*
-     *  asynchronous script execution for deletion of a scientific paper partaker    
+     *  asynchronous script execution for deletion of the scientific paper partaker    
      *  @param Number idPartakings
      */
-    let deletePartakerOfScientificPaper = idPartakings => {
-            request(`/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`, 'GET', 'text').then(response => {
+    let deletePartakerOfSciPap = idPartakings => {
+            request(
+                    `/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`,
+                    'GET',
+                    'text'
+                ).then(response => {
                     // report on deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    selectScientificPapers(document.getElementById('sPFrm').querySelector('input[name=id_attendances]').value)
+                    selectScientificPapers(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // deletePartakerOfScientificPaper
-
-    /*
-     *  asynchronous script execution for selecting mentor data of the subject scientific paper    
-     *  @param Number idMentorings
-     */
-    let selectMentorOfScientificPaper = idMentorings => {
-            request('/eArchive/Mentorings/insert.php', 'GET', 'text').then(response => {
-                    // report on selection
-                    reportMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                }).catch(error => {
-                    alert(error)
-                }) // catch
-        } // selectMentorOfScientificPaper
+        } // deletePartakerOfSciPap
 
     /*
      *  asynchronous script execution for inserting submitted mentor data     
