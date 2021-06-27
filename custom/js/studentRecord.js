@@ -1048,7 +1048,7 @@
             cloneFrm.addEventListener('submit', e => {
                     // cancel submitting partaker data by default
                     e.preventDefault()
-                    insertPartakerOfScientificPaper(cloneFrm)
+                    insertPartakerOfSciPap(cloneFrm)
                 }) // addEventListener
         } // toPartakerInsertFrm
 
@@ -1325,13 +1325,18 @@
         } // attachCertificateCardListeners
 
     // asynchronous script execution for insertion of a scientific paper partaker    
-    let insertPartakerOfScientificPaper = frm => {
-            request('/eArchive/Partakings/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
+    let insertPartakerOfSciPap = frm => {
+            request(
+                    '/eArchive/Partakings/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                ).then(response => {
                     // report on the insertion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after submission
-                    $('#sPMdl').modal('hide')
+                    $('#sciPapMdl').modal('hide')
                     return
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers
@@ -1339,7 +1344,7 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // insertPartakerOfScientificPaper
+        } // insertPartakerOfSciPap
 
     /*
      *  asynchronous script execution for update of a scientific paper partakers data    
