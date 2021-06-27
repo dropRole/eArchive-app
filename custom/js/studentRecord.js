@@ -97,7 +97,7 @@
             document.getElementById('sciPapInsertionMdl').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
             attachListenersToSciPapInsFrm()
-            cloneFrm.addEventListener('submit', insertScientificPaper)
+            cloneFrm.addEventListener('submit', insertSciPap)
         } // toSciPapInsertFrm
 
     // attach listeners to student evidence table appropriate anchors and buttons   
@@ -1502,12 +1502,15 @@
      */
     let selectScientificPapers = idAttendances => {
             // fetch resources
-            request(`/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`, 'GET', 'document').then(response => {
+            request(
+                    `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`,
+                    'GET',
+                    'document'
+                ).then(response => {
                     // compose node tree structure
                     fragment = response
                         // reflect fragments body     
                     document.querySelector('#sciPapViewingMdl .modal-content').innerHTML = fragment.body.innerHTML
-                    return
                 }).then(() => {
                     attachListenersToSciPapCards()
                 }).catch(error => {
@@ -1516,26 +1519,32 @@
         } // selectScientificPapers
 
     /*
-     *   asynchronous script execution for scientific papers and documentation insertion 
+     *   asynchronous script execution for insertion data regarding scientific paper and its documents upload 
      *   @param Event e
+     *   @param HTMLFormElement frm
      */
-    let insertScientificPaper = e => {
+    let insertSciPap = (e, frm) => {
             // prevent default action of submitting scientific paper data    
             e.preventDefault()
-            request('/eArchive/ScientificPapers/insert.php', 'POST', 'text', (new FormData(sPFrm))).then(response => {
+            request(
+                    '/eArchive/ScientificPapers/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                ).then(response => {
                     // report on scientific papers insertion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after insertion 
-                    $('#studentInsertionMdl').modal('hide')
+                    $('#sciPapInsertionMdl').modal('hide')
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // insertScientificPaper
+        } // insertSciPap
 
     /*
      *   asynchronous script execution for scientific paper data alteration 
-     *   @param Node | HTMLFormElement  e
+     *   @param HTMLFormElement frm
      */
     let updateScientificPaper = frm => {
             request('/eArchive/ScientificPapers/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
