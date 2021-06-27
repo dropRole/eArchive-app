@@ -51,12 +51,12 @@
             ctrySelElLst.forEach(element => {
                     // propagate target select element with postal codes of the chosen country
                     element.addEventListener('input', () => {
-                            propagateSelectElement(document.querySelector(`#${element.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${element.selectedOptions[0].value}`)
+                            propagateSelEl(document.querySelector(`#${element.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${element.selectedOptions[0].value}`)
                         }) // addEventListener
                 }) // forEach
             facSelEl.addEventListener('input', () => {
                     // propagate programs by faculty selection
-                    propagateSelectElement(document.getElementById('progSelElement'), `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`)
+                    propagateSelEl(document.getElementById('progSelElement'), `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`)
                 }) // addEventListener
             gradCheckBox.addEventListener('change', e => {
                     // if it's checked
@@ -214,7 +214,7 @@
      *   @param String script
      *   @param Number id
      */
-    let propagateSelectElement = async(select, script, id = 0) => {
+    let propagateSelEl = async(select, script, id = 0) => {
             try {
                 const response = await request(script, 'GET', 'document')
                 frag = response
@@ -232,7 +232,7 @@
             } catch (error) {
                 alert(error)
             }
-        } // propagateSelectElement
+        } // propagateSelEl
 
     /*
      *  !recursive 
@@ -254,19 +254,19 @@
                                 resolve()
                         }), // MutationObserver
                         // form controls
-                        container = document.createElement('div'),
+                        ctr = document.createElement('div'),
                         headline = document.createElement('p'),
                         cross = document.createElement('span'),
                         ctryFrmGrp = document.createElement('div'),
-                        postalCodeFrmGrp = document.createElement('div'),
+                        postCodeFrmGrp = document.createElement('div'),
                         addressFrmGrp = document.createElement('div'),
                         ctryLbl = document.createElement('label'),
-                        postalCodeLbl = document.createElement('label'),
+                        postCodeLbl = document.createElement('label'),
                         addressLbl = document.createElement('label'),
-                        statInputElement = document.createElement('input'),
-                        ctrySelElement = document.createElement('select'),
-                        postalCodeSelElement = document.createElement('select'),
-                        addressInputElement = document.createElement('input'),
+                        statusInptEl = document.createElement('input'),
+                        ctrySelEl = document.createElement('select'),
+                        postCodeSelEl = document.createElement('select'),
+                        addressInptEl = document.createElement('input'),
                         index = document.querySelectorAll('div#residences > div.row').length // the following index for an array of data on student temporal residences 
                         // set the target and options of observation
                     observer.observe(document.getElementById('residences'), {
@@ -274,8 +274,8 @@
                             childList: true,
                             subtree: false
                         }) // observe
-                    container.className = 'row temporal-residence'
-                    container.style.position = 'relative'
+                    ctr.className = 'row temporal-residence'
+                    ctr.style.position = 'relative'
                     headline.classList = 'col-12 h6'
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
@@ -286,58 +286,58 @@
                             // if data attributes value isn't empty 
                             if (cross.getAttribute('data-id-residences') !== '')
                                 deleteTempResOfStudent(cross.getAttribute('data-id-residences'))
-                            document.getElementById('residences').removeChild(container)
+                            document.getElementById('residences').removeChild(ctr)
                         }) // addEventListener
                     ctryFrmGrp.className = 'form-group col-4'
-                    postalCodeFrmGrp.className = 'form-group col-4'
+                    postCodeFrmGrp.className = 'form-group col-4'
                     addressFrmGrp.className = 'form-group col-4'
                     ctryLbl.textContent = 'Država'
-                    postalCodeLbl.textContent = 'Kraj'
-                    postalCodeLbl.style.width = '100%'
+                    postCodeLbl.textContent = 'Kraj'
+                    postCodeLbl.style.width = '100%'
                     addressLbl.textContent = 'Naslov'
                     addressLbl.style.width = '100%'
-                    statInputElement.type = 'hidden'
-                    statInputElement.name = `residences[${index}][status]`
-                    statInputElement.value = 'ZAČASNO'
-                    ctrySelElement.classList = 'form-control country-select'
-                    ctrySelElement.addEventListener('input', () => {
-                            propagateSelectElement(
-                                postalCodeSelElement,
-                                `/eArchive/postalCodes/select.php?id_countries=${ctrySelElement.selectedOptions[0].value}`
+                    statusInptEl.type = 'hidden'
+                    statusInptEl.name = `residences[${index}][status]`
+                    statusInptEl.value = 'ZAČASNO'
+                    ctrySelEl.classList = 'form-control country-select'
+                    ctrySelEl.addEventListener('input', () => {
+                            propagateSelEl(
+                                postCodeSelEl,
+                                `/eArchive/postalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`
                             )
                         }) // addEventListener
-                    postalCodeSelElement.classList = 'form-control'
-                    postalCodeSelElement.name = `residences[${index}][id_postal_codes]`
-                    postalCodeSelElement.required = true
-                    addressInputElement.classList = 'form-control'
-                    addressInputElement.type = 'text'
-                    addressInputElement.name = `residences[${index}][address]`
-                    addressInputElement.required = true
+                    postCodeSelEl.classList = 'form-control'
+                    postCodeSelEl.name = `residences[${index}][id_postal_codes]`
+                    postCodeSelEl.required = true
+                    addressInptEl.classList = 'form-control'
+                    addressInptEl.type = 'text'
+                    addressInptEl.name = `residences[${index}][address]`
+                    addressInptEl.required = true
                     headline.appendChild(cross)
-                    ctryLbl.appendChild(ctrySelElement)
+                    ctryLbl.appendChild(ctrySelEl)
                     ctryFrmGrp.appendChild(ctryLbl)
-                    postalCodeLbl.appendChild(postalCodeSelElement)
-                    postalCodeFrmGrp.appendChild(postalCodeLbl)
-                    addressLbl.appendChild(addressInputElement)
+                    postCodeLbl.appendChild(postCodeSelEl)
+                    postCodeFrmGrp.appendChild(postCodeLbl)
+                    addressLbl.appendChild(addressInptEl)
                     addressFrmGrp.appendChild(addressLbl)
-                    container.appendChild(headline)
-                    container.appendChild(statInputElement)
-                    container.appendChild(ctryFrmGrp)
-                    container.appendChild(postalCodeFrmGrp)
-                    container.appendChild(addressFrmGrp)
-                    propagateSelectElement(
-                            ctrySelElement,
+                    ctr.appendChild(headline)
+                    ctr.appendChild(statusInptEl)
+                    ctr.appendChild(ctryFrmGrp)
+                    ctr.appendChild(postCodeFrmGrp)
+                    ctr.appendChild(addressFrmGrp)
+                    propagateSelEl(
+                            ctrySelEl,
                             '/eArchive/Countries/select.php', !residences ? null : residences[0].id_countries
                         ).then(() => {
-                            propagateSelectElement(
-                                postalCodeSelElement,
-                                `/eArchive/PostalCodes/select.php?id_countries=${ctrySelElement.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
+                            propagateSelEl(
+                                postCodeSelEl,
+                                `/eArchive/PostalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
                             )
                             return
                         }).then(() => {
-                            addressInputElement.value = !residences ? '' : residences[0].address
+                            addressInptEl.value = !residences ? '' : residences[0].address
                         }).then(() => {
-                            document.getElementById('residences').appendChild(container)
+                            document.getElementById('residences').appendChild(ctr)
                         }).catch((error) => {
                             alert(error)
                         }) // catch
@@ -466,7 +466,7 @@
             facSelElement.required = true
             facSelElement.addEventListener('change', e => {
                     // propagate programs by faculty selection
-                    propagateSelectElement(progSelElement, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
+                    propagateSelEl(progSelElement, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
                 }) // addEventListener
             progSelElement.className = 'form-control'
             progSelElement.name = `attendances[${index}][id_programs]`
@@ -502,8 +502,8 @@
             container.appendChild(indexFrmGrp)
             container.appendChild(gradFrmGrp)
                 // initial propagation
-            propagateSelectElement(facSelElement, '/eArchive/Faculties/select.php')
-                .then(() => propagateSelectElement(progSelElement, `/eArchive/Programs/select.php?id_faculties=${facSelElement.selectedOptions[0].value}`))
+            propagateSelEl(facSelElement, '/eArchive/Faculties/select.php')
+                .then(() => propagateSelEl(progSelElement, `/eArchive/Programs/select.php?id_faculties=${facSelElement.selectedOptions[0].value}`))
                 .then(() => {
                     document.getElementById('attendances').appendChild(container)
                 }).catch(error => {
@@ -697,7 +697,7 @@
             container.appendChild(emailFrmGrp)
             container.appendChild(telFrmGrp)
                 // populate HTMLSelectElement with the data regarding faculties 
-            propagateSelectElement
+            propagateSelEl
                 (
                     facSelElement,
                     '/eArchive/Faculties/select.php'
@@ -804,11 +804,11 @@
      */
     let determineStudentBirthplace = (idPostalCodes, idCountries) => {
             // propagate target select element with postal codes of the chosen country
-            propagateSelectElement(
+            propagateSelEl(
                 document.querySelector('#birthCtrySelElement'),
                 '/eArchive/Countries/select.php',
                 idCountries
-            ).then(() => propagateSelectElement(
+            ).then(() => propagateSelEl(
                 document.querySelector('#birthPostalCodeSelElement'),
                 `eArchive/PostalCodes/select.php?id_countries=${idCountries}`,
                 idPostalCodes
@@ -827,11 +827,11 @@
             idResidencesInputElement.value = residence.id_residences
             document.querySelector('#studentInsertionFrm #perResCtrySelElement').parentElement.prepend(idResidencesInputElement)
                 // propagate target select element with postal codes of the chosen country
-            propagateSelectElement(
+            propagateSelEl(
                 document.querySelector('#permResCtrySelElement'),
                 '/eArchive/Countries/select.php',
                 residence.id_countries
-            ).then(() => propagateSelectElement(
+            ).then(() => propagateSelEl(
                 document.querySelector('#permResPostalCodeSelElement'),
                 `/eArchive/PostalCodes/select.php?id_countries=${residence.id_countries}`,
                 residence.id_postal_codes
