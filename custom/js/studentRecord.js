@@ -62,7 +62,7 @@
                     // if it's checked
                     if (gradCheckBox.checked)
                     // append graduation section if graduated
-                        addProgramGraduationFrmSect(e)
+                        addProgGradFrmSect(e)
                     else {
                         // remove selected graduation section
                         gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
@@ -348,64 +348,64 @@
      *  create and subsequently append graduation section for a student attending particular program 
      *  @param Event e
      */
-    let addProgramGraduationFrmSect = e => {
+    let addProgGradFrmSect = e => {
             let lblNum = e.target.getAttribute('data-lbl-nm'), // get ordinal number for label numeration   
                 indx = e.target.getAttribute('data-indx'), // get next index position for attendances array 
                 // create form controls 
-                certificateFG = document.createElement('div'),
-                defendedFG = document.createElement('div'),
-                issuedFG = document.createElement('div'),
-                certificateLbl = document.createElement('label'),
+                gradCertFrmGrp = document.createElement('div'),
+                defendedFrmGrp = document.createElement('div'),
+                issuedFrmGrp = document.createElement('div'),
+                gradCertLbl = document.createElement('label'),
                 defendedLbl = document.createElement('label'),
                 issuedLbl = document.createElement('label'),
-                certificateHiddInpt = document.createElement('input'),
-                certificateInpt = document.createElement('input'),
-                defendedInpt = document.createElement('input'),
-                issuedInpt = document.createElement('input')
-            certificateFG.className = 'form-group col-4'
-            defendedFG.className = 'form-group col-4'
-            issuedFG.className = 'form-group col-4'
-            certificateLbl.textContent = 'Certifikat'
-            certificateLbl.setAttribute('for', `certificateInpt${lblNum}`)
+                certNameInptEl = document.createElement('input'),
+                certInptEl = document.createElement('input'),
+                defendedInptEl = document.createElement('input'),
+                issuedInptEl = document.createElement('input')
+            gradCertFrmGrp.className = 'form-group col-4'
+            defendedFrmGrp.className = 'form-group col-4'
+            issuedFrmGrp.className = 'form-group col-4'
+            gradCertLbl.textContent = 'Certifikat'
+            gradCertLbl.setAttribute('for', `certificateInpt${lblNum}`)
             defendedLbl.textContent = 'Zagovorjen'
             defendedLbl.setAttribute('for', `defendedInpt${lblNum}`)
             issuedLbl.textContent = 'Izdan'
             issuedLbl.setAttribute('for', `issuedInpt${lblNum}`)
-            issuedInpt.textContent = 'Izdan'
-            issuedInpt.setAttribute('for', `iInpt${lblNum}`)
-            certificateInpt.id = `certificateInpt${lblNum}`
-            certificateInpt.type = 'file'
-            certificateInpt.setAttribute('name', 'certificate[]')
-            certificateInpt.accept = '.pdf'
-            certificateInpt.required = true
+            issuedInptEl.textContent = 'Izdan'
+            issuedInptEl.setAttribute('for', `iInpt${lblNum}`)
+            certInptEl.id = `certificateInpt${lblNum}`
+            certInptEl.type = 'file'
+            certInptEl.setAttribute('name', 'certificate[]')
+            certInptEl.accept = '.pdf'
+            certInptEl.required = true
                 // determine hidden input type value if graduated
-            certificateInpt.addEventListener('change', e => {
-                    certificateHiddInpt.value = e.target.files[0].name
+            certInptEl.addEventListener('change', e => {
+                    certNameInptEl.value = e.target.files[0].name
                 }) // addEventListener
-            certificateHiddInpt.type = 'hidden'
-            certificateHiddInpt.name = `attendances[${indx}][certificate]`
-            defendedInpt.id = `defendedInpt${lblNum}`
-            defendedInpt.className = 'form-control'
-            defendedInpt.type = 'date'
-            defendedInpt.required = true
-            defendedInpt.name = `attendances[${indx}][defended]`
-            issuedInpt.id = `issuedInpt${lblNum}`
-            issuedInpt.className = 'form-control'
-            issuedInpt.type = 'date'
-            issuedInpt.name = `attendances[${indx}][issued]`
-            issuedInpt.required = true
+            certNameInptEl.type = 'hidden'
+            certNameInptEl.name = `attendances[${indx}][certificate]`
+            defendedInptEl.id = `defendedInpt${lblNum}`
+            defendedInptEl.className = 'form-control'
+            defendedInptEl.type = 'date'
+            defendedInptEl.required = true
+            defendedInptEl.name = `attendances[${indx}][defended]`
+            issuedInptEl.id = `issuedInpt${lblNum}`
+            issuedInptEl.className = 'form-control'
+            issuedInptEl.type = 'date'
+            issuedInptEl.name = `attendances[${indx}][issued]`
+            issuedInptEl.required = true
                 // append graduation form controls to a particular attendance section
-            certificateFG.appendChild(certificateLbl)
-            certificateFG.appendChild(certificateInpt)
-            defendedFG.appendChild(defendedLbl)
-            defendedFG.appendChild(defendedInpt)
-            issuedFG.appendChild(issuedLbl)
-            issuedFG.appendChild(issuedInpt)
-            e.target.closest('.row').appendChild(certificateHiddInpt)
-            e.target.closest('.row').appendChild(certificateFG)
-            e.target.closest('.row').appendChild(defendedFG)
-            e.target.closest('.row').appendChild(issuedFG)
-        } // addProgramGraduationFrmSect
+            gradCertFrmGrp.appendChild(gradCertLbl)
+            gradCertFrmGrp.appendChild(certInptEl)
+            defendedFrmGrp.appendChild(defendedLbl)
+            defendedFrmGrp.appendChild(defendedInptEl)
+            issuedFrmGrp.appendChild(issuedLbl)
+            issuedFrmGrp.appendChild(issuedInptEl)
+            e.target.closest('.row').appendChild(certNameInptEl)
+            e.target.closest('.row').appendChild(gradCertFrmGrp)
+            e.target.closest('.row').appendChild(defendedFrmGrp)
+            e.target.closest('.row').appendChild(issuedFrmGrp)
+        } // addProgGradFrmSect
 
     // subsequently create and append attendance section of the student insertion form 
     let addProgAttendanceSection = () => {
@@ -434,7 +434,7 @@
                     // append or remove graduation section depending on the condition
                     // if it's checked
                     if (gradCheckBox.checked)
-                        addProgramGraduationFrmSect(e)
+                        addProgGradFrmSect(e)
                     else {
                         container.removeChild(container.lastChild)
                         container.removeChild(container.lastChild)
