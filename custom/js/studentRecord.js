@@ -191,20 +191,22 @@
             })
         } // request
 
-    // refresh student evidence table upon latterly data amendment 
-    let refreshStudentEvidenceTbl = () => {
-            request('/eArchive/Students/selectAll.php', 'GET', 'document')
-                .then(response => {
-                    let tblCtr = document.querySelector('.table-responsive')
-                        // compose node tree structure
+    // laod student evidence table upon latterly data amendment 
+    let loadStudtEvidTbl = () => {
+            request(
+                    '/eArchive/Students/selectAll.php',
+                    'GET',
+                    'document'
+                ).then(response => {
+                    // compose node tree structure
                     frag = response
                         // reflect fragments body  
-                    tblCtr.innerHTML = frag.body.innerHTML
+                    document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
                     listenStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // refreshStudentEvidenceTbl
+        } // loadStudtEvidTbl
 
     /*
      *   propagate passed select element with options from the requested resource 
@@ -785,7 +787,7 @@
                     document.getElementById('studentInsBtn').click()
                     return
                 }).then(() => {
-                    refreshStudentEvidenceTbl()
+                    loadStudtEvidTbl()
                     return
                 })
                 .then(() => {
@@ -881,7 +883,7 @@
                     reportMdlBtn.click()
                 }).then(() => {
                     emptyFrmInputFields(studtInsrFrm)
-                    refreshStudentEvidenceTbl()
+                    loadStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -901,7 +903,7 @@
                     // report on deletion
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    refreshStudentEvidenceTbl()
+                    loadStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -928,7 +930,7 @@
                     return
                 }).then(() => {
                     // repaint student evidence table
-                    refreshStudentEvidenceTbl()
+                    loadStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -953,7 +955,7 @@
                     // report on account deletion
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    refreshStudentEvidenceTbl()
+                    loadStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1605,7 +1607,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    refreshStudentEvidenceTbl()
+                    loadStudtEvidTbl()
                         // close certificate upload modal after uploading the certificate
                     $('#certUploadMdl').modal('hide')
                 }).catch(error => {
@@ -1675,7 +1677,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    refreshStudentEvidenceTbl()
+                    loadStudtEvidTbl()
                         // close certificate review modal after deletion
                     $('#gradCertViewingMdl').modal('hide')
                 }).catch(error => {
