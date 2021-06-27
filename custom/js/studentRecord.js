@@ -1291,7 +1291,7 @@
             if (document.querySelectorAll('.sp-del-a'))
                 document.querySelectorAll('.sp-del-a').forEach(anchor => {
                     anchor.addEventListener('click', () => {
-                            deleteScientficPaper(anchor.getAttribute('data-id-scientific-papers'))
+                            deleteSciPap(anchor.getAttribute('data-id-scientific-papers'))
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper document upload exist
@@ -1571,14 +1571,18 @@
      *  asynchronous script execution for scientific paper deletion with its belonging documents     
      *  @param Number idScientificPapers
      */
-    let deleteScientficPaper = idScientificPapers => {
-            request(`/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`, 'GET', 'text').then(response => {
+    let deleteSciPap = idScientificPapers => {
+            request(
+                    `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`,
+                    'GET',
+                    'text'
+                ).then(response => {
                     // report on the deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     return
                 }).then(() => {
-                    selectScientificPapers(document.getElementById('sPFrm').querySelector('input[name=id_attendances]').value)
+                    selectScientificPapers(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
