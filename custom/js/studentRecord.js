@@ -47,7 +47,7 @@
             addTempResBtn.addEventListener('click', () => {
                     addTempResFrmSect()
                 }) // addEventListener
-            addAttendanceBtn.addEventListener('click', addProgAttendanceSection)
+            addAttendanceBtn.addEventListener('click', addProgAttendanceSect)
             ctrySelElLst.forEach(element => {
                     // propagate target select element with postal codes of the chosen country
                     element.addEventListener('input', () => {
@@ -408,9 +408,9 @@
         } // addProgGradFrmSect
 
     // subsequently create and append attendance section of the student insertion form 
-    let addProgAttendanceSection = () => {
+    let addProgAttendanceSect = () => {
             // create form controls
-            let container = document.createElement('div'),
+            let ctr = document.createElement('div'),
                 headline = document.createElement('p'),
                 cross = document.createElement('span'),
                 facFrmGrp = document.createElement('div'),
@@ -423,10 +423,10 @@
                 enrlLbl = document.createElement('label'),
                 gradLbl = document.createElement('label'),
                 indexLbl = document.createElement('label'),
-                facSelElement = document.createElement('select'),
-                progSelElement = document.createElement('select'),
-                enrlInputElement = document.createElement('input'),
-                indexInputElement = document.createElement('input'),
+                facSelEl = document.createElement('select'),
+                progSelEl = document.createElement('select'),
+                enrlInputEl = document.createElement('input'),
+                indexInputEl = document.createElement('input'),
                 gradCheckBox = document.createElement('input'),
                 gradTxt = document.createTextNode('Diplomiral')
             index = document.querySelectorAll('div#attendances > div.row').length - 1 // the following index for an array od data on program attendance       
@@ -436,9 +436,9 @@
                     if (gradCheckBox.checked)
                         addProgGradFrmSect(e)
                     else {
-                        container.removeChild(container.lastChild)
-                        container.removeChild(container.lastChild)
-                        container.removeChild(container.lastChild)
+                        ctr.removeChild(ctr.lastChild)
+                        ctr.removeChild(ctr.lastChild)
+                        ctr.removeChild(ctr.lastChild)
                     } // else
                 }) // addEventListener
             headline.className = 'col-12 h6'
@@ -448,9 +448,9 @@
             cross.innerHTML = '&#10007'
                 // remove selected attendance section
             cross.addEventListener('click', () => {
-                    document.getElementById('attendances').removeChild(container)
+                    document.getElementById('attendances').removeChild(ctr)
                 }) // addEventListener
-            container.className = 'row'
+            ctr.className = 'row'
             facFrmGrp.className = 'form-group col-6'
             progFrmGrp.className = 'form-group col-6'
             enrlFrmGrp.className = 'form-group col-4'
@@ -461,55 +461,55 @@
             enrlLbl.textContent = 'Vpisan'
             indexLbl.textContent = 'Indeks'
             gradLbl.className = 'mt-2'
-            facSelElement.className = 'form-control'
-            facSelElement.name = `attendances[${index}][id_faculties]`
-            facSelElement.required = true
-            facSelElement.addEventListener('change', e => {
+            facSelEl.className = 'form-control'
+            facSelEl.name = `attendances[${index}][id_faculties]`
+            facSelEl.required = true
+            facSelEl.addEventListener('change', e => {
                     // propagate programs by faculty selection
-                    propagateSelEl(progSelElement, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
+                    propagateSelEl(progSelEl, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
                 }) // addEventListener
-            progSelElement.className = 'form-control'
-            progSelElement.name = `attendances[${index}][id_programs]`
-            progSelElement.required = true
-            enrlInputElement.className = 'form-control'
-            enrlInputElement.type = 'date'
-            enrlInputElement.name = `attendances[${index}][enrolled]`
-            enrlInputElement.required = true
-            indexInputElement.className = 'form-control'
-            indexInputElement.type = 'text'
-            indexInputElement.name = `attendances[${index}][index]`
-            indexInputElement.required = true
+            progSelEl.className = 'form-control'
+            progSelEl.name = `attendances[${index}][id_programs]`
+            progSelEl.required = true
+            enrlInputEl.className = 'form-control'
+            enrlInputEl.type = 'date'
+            enrlInputEl.name = `attendances[${index}][enrolled]`
+            enrlInputEl.required = true
+            indexInputEl.className = 'form-control'
+            indexInputEl.type = 'text'
+            indexInputEl.name = `attendances[${index}][index]`
+            indexInputEl.required = true
             gradCheckBox.type = 'checkbox'
             gradCheckBox.classList = 'mr-2'
             gradCheckBox.setAttribute('data-index', index)
                 // append controls to a form attendances section
-            facLbl.appendChild(facSelElement)
+            facLbl.appendChild(facSelEl)
             facFrmGrp.appendChild(facLbl)
-            progLbl.appendChild(progSelElement)
+            progLbl.appendChild(progSelEl)
             progFrmGrp.appendChild(progLbl)
-            enrlLbl.appendChild(enrlInputElement)
+            enrlLbl.appendChild(enrlInputEl)
             enrlFrmGrp.appendChild(enrlLbl)
-            indexLbl.appendChild(indexInputElement)
+            indexLbl.appendChild(indexInputEl)
             indexFrmGrp.appendChild(indexLbl)
             gradLbl.appendChild(gradCheckBox)
             gradLbl.appendChild(gradTxt)
             gradFrmGrp.appendChild(gradLbl)
             headline.appendChild(cross)
-            container.appendChild(headline)
-            container.appendChild(facFrmGrp)
-            container.appendChild(progFrmGrp)
-            container.appendChild(enrlFrmGrp)
-            container.appendChild(indexFrmGrp)
-            container.appendChild(gradFrmGrp)
+            ctr.appendChild(headline)
+            ctr.appendChild(facFrmGrp)
+            ctr.appendChild(progFrmGrp)
+            ctr.appendChild(enrlFrmGrp)
+            ctr.appendChild(indexFrmGrp)
+            ctr.appendChild(gradFrmGrp)
                 // initial propagation
-            propagateSelEl(facSelElement, '/eArchive/Faculties/select.php')
-                .then(() => propagateSelEl(progSelElement, `/eArchive/Programs/select.php?id_faculties=${facSelElement.selectedOptions[0].value}`))
+            propagateSelEl(facSelEl, '/eArchive/Faculties/select.php')
+                .then(() => propagateSelEl(progSelEl, `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`))
                 .then(() => {
-                    document.getElementById('attendances').appendChild(container)
+                    document.getElementById('attendances').appendChild(ctr)
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // addProgAttendanceSection 
+        } // addProgAttendanceSect 
 
     // create and subsequently append partaker section of the scientific paper insertion form 
     let addPartakerSection = () => {
