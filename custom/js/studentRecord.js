@@ -132,7 +132,7 @@
             certViewAnchorLst.forEach(anchor => {
                     // view certificate particulars in a form of a card in the modal
                     anchor.addEventListener('click', () => {
-                            selectGraduationCertificate(anchor.getAttribute('data-id-attendances'))
+                            selectGradCert(anchor.getAttribute('data-id-attendances'))
                                 // set value of id to the hidden input of the form
                             certCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                         }) // addEventListener
@@ -1589,14 +1589,19 @@
         } // deleteScientificPaper
 
     /*
-     *   asynchronous script execution for graduation certificate upload/insertion     
+     *   asynchronous script execution for graduation certificate upload     
      *   @param Event e
      */
-    let uploadGraduationCertificate = e => {
-            // prevent default action of submitting certificate insertion form
+    let uploadGradCert = e => {
+            // prevent default action of submitting certificate upload form
             e.preventDefault()
-            request('/eArchive/Certificates/insert.php', 'POST', 'text', (new FormData(certFrm))).then(response => {
-                    // report on the deletion
+            request(
+                    '/eArchive/Certificates/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(certFrm))
+                ).then(response => {
+                    // report on upload
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
@@ -1606,27 +1611,29 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // uploadGraduationCertificate
+        } // uploadGradCert
 
-    certFrm.addEventListener('submit', uploadGraduationCertificate)
+    certFrm.addEventListener('submit', uploadGradCert)
 
     /*
      *  asynchronous script execution for graduation certificate selection    
      *  @param Number idAttendances
      */
-    let selectGraduationCertificate = idAttendances => {
-            request(`/eArchive/Certificates/select.php?id_attendances=${idAttendances}`, 'GET', 'document').then(response => {
-                    // get modal for certificate review
-                    let mdl = document.getElementById('certViewingMdl')
-                        // compose node tree structure
+    let selectGradCert = idAttendances => {
+            request(
+                    `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`,
+                    'GET',
+                    'document'
+                ).then(response => {
+                    // compose node tree structure
                     fragment = response
                         // reflect fragments body     
-                    mdl.querySelector('.modal-content').innerHTML = fragment.body.innerHTML
+                    document.querySelector('div#gradCertViewingMdl > div.modal-dialog > .modal-content').innerHTML = fragment.body.innerHTML
                     attachListenersToGradCertCard()
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // selectGraduationCertificate
+        } // selectGradCert
 
     /*
      *  asynchronously script run for graduation certificate data update     
@@ -1643,7 +1650,7 @@
                     return
                 }).then(() => {
                     // select update graduation certificate
-                    selectGraduationCertificate(frm.querySelector('input[name=id_attendances]').value)
+                    selectGradCert(frm.querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
