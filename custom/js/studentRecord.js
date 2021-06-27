@@ -45,7 +45,7 @@
                 facSelEl = document.getElementById('facSelElement'), // faculty select element
                 gradCheckBox = document.getElementById('gradCheckBox') // checkbox for denoting graduation
             addTempResBtn.addEventListener('click', () => {
-                    addTempResFrmSect()
+                    addTempResSect()
                 }) // addEventListener
             addAttendanceBtn.addEventListener('click', addProgAttendanceSect)
             ctrySelElLst.forEach(element => {
@@ -62,7 +62,7 @@
                     // if it's checked
                     if (gradCheckBox.checked)
                     // append graduation section if graduated
-                        addProgGradFrmSect(e)
+                        addProgGradSect(e)
                     else {
                         // remove selected graduation section
                         gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
@@ -239,7 +239,7 @@
      *  create and subsequently append form controls for new temporal residence section 
      *  @param Array residences
      */
-    let addTempResFrmSect = (residences = null) => {
+    let addTempResSect = (residences = null) => {
             return new Promise((resolve) => {
                     // instantiate a MutationObserver object
                     let observer = new MutationObserver(() => {
@@ -248,7 +248,7 @@
                                 residences.shift()
                                     // if there's more records
                                 if (residences.length)
-                                    resolve(addTempResFrmSect(residences))
+                                    resolve(addTempResSect(residences))
                             } // if
                             else
                                 resolve()
@@ -342,13 +342,13 @@
                             alert(error)
                         }) // catch
                 }) // Promise
-        } // addTempResFrmSect
+        } // addTempResSect
 
     /*
      *  create and subsequently append graduation section for a student attending particular program 
      *  @param Event e
      */
-    let addProgGradFrmSect = e => {
+    let addProgGradSect = e => {
             let lblNum = e.target.getAttribute('data-lbl-nm'), // get ordinal number for label numeration   
                 indx = e.target.getAttribute('data-indx'), // get next index position for attendances array 
                 // create form controls 
@@ -405,7 +405,7 @@
             e.target.closest('.row').appendChild(gradCertFrmGrp)
             e.target.closest('.row').appendChild(defendedFrmGrp)
             e.target.closest('.row').appendChild(issuedFrmGrp)
-        } // addProgGradFrmSect
+        } // addProgGradSect
 
     // subsequently create and append attendance section of the student insertion form 
     let addProgAttendanceSect = () => {
@@ -434,7 +434,7 @@
                     // append or remove graduation section depending on the condition
                     // if it's checked
                     if (gradCheckBox.checked)
-                        addProgGradFrmSect(e)
+                        addProgGradSect(e)
                     else {
                         ctr.removeChild(ctr.lastChild)
                         ctr.removeChild(ctr.lastChild)
@@ -845,7 +845,7 @@
      *  @param Array residences
      */
     let determineTempResOfStudent = residences =>
-        addTempResFrmSect(residences)
+        addTempResSect(residences)
 
     /*
      *   asynchronous script run for deletion of temporal residence record
