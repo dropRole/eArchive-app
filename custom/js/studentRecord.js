@@ -73,7 +73,7 @@
         } // listenStudtInsrFrm
 
     // rearrange form when inserting a student record  
-    let toStudentInsertFrm = () => {
+    let toStudtInsrFrm = () => {
             // clone from the existing form node
             let cloneFrm = studtInsrFrm.cloneNode(true)
                 // replace form element node with its clone
@@ -82,13 +82,13 @@
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // exchange callbacks
             studtInsrFrm.addEventListener('submit', e => insertStudent(e, cloneFrm))
-        } // toStudentInsertFrm
+        } // toStudtInsrFrm
 
     /*
      *   rearrange form when interpolating data regarding scientific paper and uploading its documents    
      *   @param Event e
      */
-    let toSciPapInsertFrm = e => {
+    let toSciPapInsrFrm = e => {
             document.querySelector('#sciPapInsertionMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true)
@@ -98,7 +98,7 @@
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
             listenSciPapInsrFrm()
             cloneFrm.addEventListener('submit', insertSciPap)
-        } // toSciPapInsertFrm
+        } // toSciPapInsrFrm
 
     // attach listeners to student evidence table appropriate anchors and buttons   
     let attachListenersToStudentEvidenceTbl = () => {
@@ -111,7 +111,7 @@
                 acctDelBtnLst = document.querySelectorAll('.acc-del-btn'), // button list for deletion of a particular student account 
                 studentUpdAnchorLst = document.querySelectorAll('.stu-upd-a'), // anchor list for exposing form for updating fundamental data of the student
                 studentDelAnchorLst = document.querySelectorAll('.stu-del-a') // anchor list for exposing form for deletion of fundamental data of the student
-            studentInsBtn.addEventListener('click', toStudentInsertFrm)
+            studentInsBtn.addEventListener('click', toStudtInsrFrm)
             sciPapViewAnchorLst.forEach(anchor => {
                     // preview scientific papers   
                     anchor.addEventListener('click', () => {
@@ -121,7 +121,7 @@
                 }) // forEach
             sciPapInsAnchorLst.forEach(anchor => {
                     // modify form for scientific paper insertion
-                    anchor.addEventListener('click', toSciPapInsertFrm)
+                    anchor.addEventListener('click', toSciPapInsrFrm)
                 }) // forEach
             certInsAnchorLst.forEach(anchor => {
                     // assign an attendance id value to an upload forms hidden input type 
