@@ -20,12 +20,12 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
 <section class="container p-3">
     <p class="h2">Evidenca študentov</p>
     <div class="d-flex justify-content-starts w-25">
-        <input id="filterByIndx" class="form-control" type="text" placeholder="Indeks">
+        <input id="fltrInputEl" class="form-control" type="text" placeholder="Indeks">
     </div>
     <div class="d-flex justify-content-end">
         <button id="studentInsBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="
         #studentInsertionMdl">Vstavi študenta</button>
-        <button id="reportMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#reportingMdl"></button>
+        <button id="rprtMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#rprtMdl"></button>
     </div>
     <div class="table-responsive mt-3">
         <table class="table">
