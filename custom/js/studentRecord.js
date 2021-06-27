@@ -1,18 +1,18 @@
 // IIFE
 (() => {
     // global scope variable declaration
-    var fragment = new DocumentFragment(), // minimal document object structure
-        studentFrm = document.getElementById('studentInsertionFrm'), // form for inserting and updating data regarding the student
-        sciPapFrm = document.getElementById('sciPapInsertionMdl'), // form for inserting, updating and deleting data regarding the scientific paper 
-        acctFrm = document.getElementById('acctInsertionFrm'), // form for creating student account and its credentials
-        certFrm = document.getElementById('certUploadFrm'), // form for uploading graduation certificates
-        reportMdl = document.getElementById('reportingMdl'), // modal for reporting about performed operations 
+    var frag = new DocumentFragment(), // minimal document object structure
+        studtInsrFrm = document.getElementById('studtInsrFrm'), // form for inserting and updating data regarding the student
+        sciPapInsrFrm = document.getElementById('sciPapInsrFrm'), // form for inserting, updating and deleting data regarding the scientific paper 
+        acctAssignFrm = document.getElementById('acctAssignFrm'), // form for assigning student account and its credentials
+        gradCertUplFrm = document.getElementById('gradCertUplFrm'), // form for uploading graduation certificates
+        rprtMdl = document.getElementById('rprtMdl'), // modal for reporting about performed operations 
         reportMdlBtn = document.getElementById('reportMdlBtn'), // report modal toggler
-        filterInpt = document.getElementById('filterByIndx') // input for filtering students by their index numbers
+        fltrInputEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
 
-    certFrm.querySelector('input[type=file]').addEventListener('change', () => {
+    gradCertUplFrm.querySelector('input[type=file]').addEventListener('change', () => {
             // assign the name of the uploaded certificate to hidden input type
-            certFrm.querySelector('input[name=certificate]').value = certFrm.querySelector('input[type=file]').files[0].name
+            gradCertUplFrm.querySelector('input[name=certificate]').value = gradCertUplFrm.querySelector('input[type=file]').files[0].name
         }) // addEventListener
 
     // attach event listeners to corresponding input element 
@@ -75,13 +75,13 @@
     // rearrange form when inserting a student record  
     let toStudentInsertFrm = () => {
             // clone from the existing form node
-            let cloneFrm = studentFrm.cloneNode(true)
+            let cloneFrm = studtInsrFrm.cloneNode(true)
                 // replace form element node with its clone
             document.getElementById('studentInsertionFrm').replaceWith(cloneFrm)
             attachStudentFrmListeners()
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // exchange callbacks
-            studentFrm.addEventListener('submit', e => insertStudent(e, cloneFrm))
+            studtInsrFrm.addEventListener('submit', e => insertStudent(e, cloneFrm))
         } // toStudentInsertFrm
 
     /*
@@ -91,7 +91,7 @@
     let toSciPapInsertFrm = e => {
             document.querySelector('#sciPapInsertionMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapFrm.cloneNode(true)
+            let cloneFrm = sciPapInsrFrm.cloneNode(true)
             cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
                 // replace form element node with its clone
             document.getElementById('sciPapInsertionMdl').replaceWith(cloneFrm)
@@ -116,7 +116,7 @@
                     // preview scientific papers   
                     anchor.addEventListener('click', () => {
                             selectScientificPapers(anchor.getAttribute('data-id-attendances'))
-                            sciPapFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                            sciPapInsrFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                         }) //addEventListener
                 }) // forEach
             sciPapInsAnchorLst.forEach(anchor => {
@@ -126,7 +126,7 @@
             certInsAnchorLst.forEach(anchor => {
                     // assign an attendance id value to an upload forms hidden input type 
                     anchor.addEventListener('click', e => {
-                            certFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
+                            gradCertUplFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
                         }) //addEventListener
                 }) // forEach
             certViewAnchorLst.forEach(anchor => {
@@ -160,7 +160,7 @@
             acctInsBtnLst.forEach(btn => {
                     // pass an id of an attendance through forms hidden input type 
                     btn.addEventListener('click', () => {
-                            acctFrm.querySelector('input[name=id_attendances]').value = btn.value
+                            acctAssignFrm.querySelector('input[name=id_attendances]').value = btn.value
                         }) // addEventListener
                 }) // forEach
         } // attachStudentTableListeners
@@ -197,9 +197,9 @@
                 .then(response => {
                     let tblCtr = document.querySelector('.table-responsive')
                         // compose node tree structure
-                    fragment = response
+                    frag = response
                         // reflect fragments body  
-                    tblCtr.innerHTML = fragment.body.innerHTML
+                    tblCtr.innerHTML = frag.body.innerHTML
                     attachListenersToStudentEvidenceTbl()
                 }).catch(error => {
                     alert(error)
@@ -215,12 +215,12 @@
     let propagateSelectElement = async(select, script, id = 0) => {
             try {
                 const response = await request(script, 'GET', 'document')
-                fragment = response
+                frag = response
                     // remove previously disposable options
                 while (select.options.length)
                     select.remove(0)
                     // traverse through nodes 
-                fragment.body.querySelectorAll('option').forEach(option => {
+                frag.body.querySelectorAll('option').forEach(option => {
                         select.add(option)
                             // if id matches options value
                         if (option.value == id)
@@ -750,18 +750,18 @@
             request(`/eArchive/Students/filterByIndex.php?index=${index}`, 'GET', 'document').then(response => {
                     let tblCtr = document.querySelector('.table-responsive')
                         // compose node passive tree structure
-                    fragment = response
+                    frag = response
                         // reflect fragments body  
-                    tblCtr.innerHTML = fragment.body.innerHTML
+                    tblCtr.innerHTML = frag.body.innerHTML
                     attachListenersToStudentEvidenceTbl()
                 }).catch(error => {
                     alert(error)
                 }) // catch
         } // selectStudentsByIndex
 
-    filterInpt.addEventListener('input', () => {
+    fltrInputEl.addEventListener('input', () => {
             // filter students by their index numbers 
-            selectStudentsByIndex(filterInpt.value)
+            selectStudentsByIndex(fltrInputEl.value)
         }) // addEventListener
 
     /*
@@ -778,9 +778,9 @@
                     'text',
                     (new FormData(form))
                 ).then(response => {
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    emptyFrmInputFields(studentFrm)
+                    emptyFrmInputFields(studtInsrFrm)
                         // close the modal after insertion 
                     document.getElementById('studentInsBtn').click()
                     return
@@ -856,7 +856,7 @@
                     'text'
                 ).then(response => {
                     // report the result
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).catch(error => {
                     alert(error)
@@ -877,10 +877,10 @@
                     (new FormData(form))
                 ).then(response => {
                     // report on update
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    emptyFrmInputFields(studentFrm)
+                    emptyFrmInputFields(studtInsrFrm)
                     refreshStudentEvidenceTbl()
                 }).catch(error => {
                     alert(error)
@@ -899,7 +899,7 @@
                     'text'
                 ).then(response => {
                     // report on deletion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     refreshStudentEvidenceTbl()
                 }).catch(error => {
@@ -918,10 +918,10 @@
                     '/eArchive/Accounts/authorized/insert.php',
                     'POST',
                     'text',
-                    (new FormData(acctFrm))
+                    (new FormData(acctAssignFrm))
                 ).then(response => {
                     // report on account assignment 
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     $('#reportMdl').modal('show')
                         // close the modal after account assignment
                     $('#acctAssigningMdl').modal('hide')
@@ -934,7 +934,7 @@
                 }) // catch
         } // assignAcctCredentialsToStudent
 
-    acctFrm.addEventListener('submit', e => {
+    acctAssignFrm.addEventListener('submit', e => {
             // prevent form from submitting account details  
             e.preventDefault()
             assignAcctCredentialsToStudent(e)
@@ -951,7 +951,7 @@
                     'text'
                 ).then(response => {
                     // report on account deletion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     refreshStudentEvidenceTbl()
                 }).catch(error => {
@@ -966,7 +966,7 @@
     let toSciPapUpdateFrm = sciPap => {
             document.querySelector('#sciPapInsertionPMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapFrm.cloneNode(true),
+            let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScienitificPapersInputElement = document.createElement('input')
             idScienitificPapersInputElement.type = 'hidden'
             idScienitificPapersInputElement.name = 'id_scientific_papers'
@@ -997,7 +997,7 @@
     let toSciPapDocUploadFrm = e => {
             document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapFrm.cloneNode(true),
+            let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPaperInputElement = document.createElement('input')
             idScientificPaperInputElement.type = 'hidden'
             idScientificPaperInputElement.name = 'id_scientific_papers'
@@ -1027,7 +1027,7 @@
     let toPartakerInsertFrm = e => {
             document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapFrm.cloneNode(true),
+            let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInputElement = document.createElement('input')
             idScientificPapersInputElement.type = 'hidden'
             idScientificPapersInputElement.name = 'id_scientific_papers'
@@ -1059,7 +1059,7 @@
     let toPartakerUpdateFrm = e => {
             document.querySelector('#sciPapInsertionMdl .modal-header .modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapFrm.cloneNode(true),
+            let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idPartakingsHiddInpt = document.createElement('input')
             idPartakingsHiddInpt.type = 'hidden'
             idPartakingsHiddInpt.name = 'id_partakings'
@@ -1094,7 +1094,7 @@
     let toMentorInsertFrm = e => {
             document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapFrm.cloneNode(true),
+            let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInputElement = document.createElement('input')
             idScientificPapersInputElement.type = 'hidden'
             idScientificPapersInputElement.name = 'id_scientific_papers'
@@ -1125,7 +1125,7 @@
      */
     let toMentorUpdateFrm = e => {
             document.querySelector('#sciPapInsertionPMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
-            let cloneFrm = sciPapFrm.cloneNode(true),
+            let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idMentoringsInputElement = document.createElement('input')
             idMentoringsInputElement.type = 'hidden'
             idMentoringsInputElement.name = 'id_mentorings'
@@ -1202,7 +1202,7 @@
      */
     let toStudentUpdateFrm = (e, student) => {
             let // clone from the existing form node
-                cloneFrm = studentFrm.cloneNode(true),
+                cloneFrm = studtInsrFrm.cloneNode(true),
                 idStudentsInputElement = document.createElement('input')
             idStudentsInputElement.type = 'hidden'
             idStudentsInputElement.name = 'id_students'
@@ -1333,7 +1333,7 @@
                     (new FormData(frm))
                 ).then(response => {
                     // report on the insertion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after submission
                     $('#sciPapMdl').modal('hide')
@@ -1358,7 +1358,7 @@
                     (new FormData(frm))
                 ).then(response => {
                     // report on update
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     return
                 }).then(() => {
@@ -1379,7 +1379,7 @@
                     'text'
                 ).then(response => {
                     // report on deletion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
                     selectScientificPapers(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
@@ -1400,7 +1400,7 @@
                     (new FormData(frm))
                 ).then(response => {
                     // report on update
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after submission
                     $('#sciPapInsertionMdl').modal('hide')
@@ -1422,7 +1422,7 @@
                     (new FormData(frm))
                 ).then(response => {
                     // report on update
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     return
                 }).then(() => {
@@ -1443,7 +1443,7 @@
                     'text'
                 ).then(response => {
                     // report on deletion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
                     selectScientificPapers(document.getElementById('sciPapFrm').querySelector('input[name=id_attendances]').value)
@@ -1464,7 +1464,7 @@
                     (new FormData(frm))
                 ).then(response => {
                     // report on document upload
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after upload
                     $('#sicPapMdl').modal('hide')
@@ -1487,7 +1487,7 @@
                     'text'
                 ).then(response => {
                     // report on document deletion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
                     selectScientificPapers(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
@@ -1508,9 +1508,9 @@
                     'document'
                 ).then(response => {
                     // compose node tree structure
-                    fragment = response
+                    frag = response
                         // reflect fragments body     
-                    document.querySelector('#sciPapViewingMdl .modal-content').innerHTML = fragment.body.innerHTML
+                    document.querySelector('#sciPapViewingMdl .modal-content').innerHTML = frag.body.innerHTML
                 }).then(() => {
                     attachListenersToSciPapCards()
                 }).catch(error => {
@@ -1533,7 +1533,7 @@
                     (new FormData(frm))
                 ).then(response => {
                     // report on scientific papers insertion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after insertion 
                     $('#sciPapInsertionMdl').modal('hide')
@@ -1554,7 +1554,7 @@
                     (new FormData(frm))
                 ).then(response => {
                     // report on scientific paper update
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after update
                     $('#sciPapInsertionMdl').modal('hide')
@@ -1578,7 +1578,7 @@
                     'text'
                 ).then(response => {
                     // report on the deletion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                     return
                 }).then(() => {
@@ -1599,10 +1599,10 @@
                     '/eArchive/Certificates/insert.php',
                     'POST',
                     'text',
-                    (new FormData(certFrm))
+                    (new FormData(gradCertUplFrm))
                 ).then(response => {
                     // report on upload
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
                     refreshStudentEvidenceTbl()
@@ -1613,7 +1613,7 @@
                 }) // catch
         } // uploadGradCert
 
-    certFrm.addEventListener('submit', uploadGradCert)
+    gradCertUplFrm.addEventListener('submit', uploadGradCert)
 
     /*
      *  asynchronous script execution for graduation certificate selection    
@@ -1626,9 +1626,9 @@
                     'document'
                 ).then(response => {
                     // compose node tree structure
-                    fragment = response
+                    frag = response
                         // reflect fragments body     
-                    document.querySelector('div#gradCertViewingMdl > div.modal-dialog > .modal-content').innerHTML = fragment.body.innerHTML
+                    document.querySelector('div#gradCertViewingMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
                     attachListenersToGradCertCard()
                 }).catch(error => {
                     alert(error)
@@ -1647,7 +1647,7 @@
                     (new FormData(frm))
                 ).then(response => {
                     // report on update
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close certificate upload modal after update
                     $('#gradCertUploadMdl').modal('hide')
@@ -1672,7 +1672,7 @@
                     'text'
                 ).then(response => {
                     // report on deletion
-                    reportMdl.querySelector('.modal-body').textContent = response
+                    rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
                     refreshStudentEvidenceTbl()
