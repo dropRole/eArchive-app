@@ -1115,7 +1115,7 @@
             cloneFrm.addEventListener('submit', e => {
                     // cancel submitting mentor data by default
                     e.preventDefault()
-                    insertMentorOfScientificPaper(cloneFrm)
+                    insertMentorOfSciPap(cloneFrm)
                 }) // addEventListener
         } // toMentorInsertFrm
 
@@ -1161,7 +1161,7 @@
             cloneFrm.addEventListener('submit', e => {
                     // prevent form from submitting updated mentor data 
                     e.preventDefault();
-                    updateMentorOfScientificPaper(cloneFrm)
+                    updateMentorOfSciPap(cloneFrm)
                 }) // addEventListener
         } // toMentorUpdateFrm
 
@@ -1271,7 +1271,7 @@
                 document.querySelectorAll('.men-del-spn').forEach(anchor => {
                     // restructure form for document upload
                     anchor.addEventListener('click', () => {
-                            deleteMentorOfScientificPaper(anchor.getAttribute('data-id-mentorings'))
+                            deleteMentorOfSciPap(anchor.getAttribute('data-id-mentorings'))
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper update are rendered
@@ -1390,15 +1390,20 @@
 
     /*
      *  asynchronous script execution for inserting submitted mentor data     
-     *  @param HTMLFormElement | Node frm
+     *  @param HTMLFormElement frm
      */
-    let insertMentorOfScientificPaper = frm => {
-            request('/eArchive/Mentorings/insert.php', 'POST', 'text', (new FormData(frm))).then(response => {
+    let insertMentorOfSciPap = frm => {
+            request(
+                    '/eArchive/Mentorings/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                ).then(response => {
                     // report on update
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after submission
-                    $('#sPMdl').modal('hide')
+                    $('#sciPapInsertionMdl').modal('hide')
                     return
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers
@@ -1406,11 +1411,16 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // insertMentorOfScientificPaper
+        } // insertMentorOfSciPap
 
-    // asynchronously run script for update of data with regard to mentor of the scientific paper       
-    let updateMentorOfScientificPaper = frm => {
-            request('/eArchive/Mentorings/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
+    // asynchronously script run for updating data regarding mentor of the scientific paper       
+    let updateMentorOfSciPap = frm => {
+            request(
+                    '/eArchive/Mentorings/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                ).then(response => {
                     // report on update
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
@@ -1420,23 +1430,27 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // updateMentorOfScientificPaper
+        } // updateMentorOfSciPap
 
     /*
-     *  asynchronously run script for deletion of mentor data concerning scientific paper       
+     *  asynchronously script run for deletion of data concerning scientific paper mentor       
      *  @param Number idMentorings
      */
-    let deleteMentorOfScientificPaper = idMentorings => {
-            request(`/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`, 'GET', 'text').then(response => {
+    let deleteMentorOfSciPap = idMentorings => {
+            request(
+                    `/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`,
+                    'GET',
+                    'text'
+                ).then(response => {
                     // report on deletion
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    selectScientificPapers(document.getElementById('sPFrm').querySelector('input[name=id_attendances]').value)
+                    selectScientificPapers(document.getElementById('sciPapFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // deleteMentorOfScientificPaper
+        } // deleteMentorOfSciPap
 
     /*  
      *   asynchronous script execution for scientific paper documents upload    
