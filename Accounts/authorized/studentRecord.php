@@ -23,7 +23,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
         <input id="fltrInputEl" class="form-control" type="text" placeholder="Indeks">
     </div>
     <div class="d-flex justify-content-end">
-        <button id="studentInsBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="
+        <button id="studtInsrBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="
         #studentInsertionMdl">Vstavi študenta</button>
         <button id="rprtMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#rprtMdl"></button>
     </div>
