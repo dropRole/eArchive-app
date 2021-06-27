@@ -1,8 +1,8 @@
 <!-- Modal for inserting data about the student and its attendance of faculty programs  -->
-<div id="studentInsertionMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="studtInsrMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="studentInsertionFrm">
+            <form id="studtInsrFrm">
                 <p class="h4 pt-2 px-3">Osnovni podatki</p>
                 <div class="row px-3">
                     <div class="form-group col-6">
@@ -155,13 +155,13 @@
     </div>
 </div>
 <!-- Modal for viewing data regarding scientific papers of the student  -->
-<div id="sciPapViewingMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="sciPapViewMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content"></div>
     </div>
 </div>
 <!-- Modal for inserting data concerning scientific paper and uploading its documents -->
-<div class="modal fade" id="sciPapInsertionMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="sciPapInsrMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -171,7 +171,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="sciPapInsertionMdl">
+                <form id="sciPapInsrFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div class="row">
                         <div class="form-group col-12">
@@ -246,13 +246,13 @@
     </div>
 </div>
 <!-- Modal for viewing graduation certificate obtained attending the program  -->
-<div id="gradCertViewingMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="gradCertViewMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content"></div>
     </div>
 </div>
 <!-- Modal for uploading graduation certificate and inserting data regarding its issuance and defence dates  -->
-<div class="modal fade" id="gradCertUploadingMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModlaLabel" aria-hidden="true">
+<div class="modal fade" id="gradCertUplMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModlaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -262,7 +262,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="certUploadFrm">
+                <form id="gradCertUplFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div class="row">
                         <div class="form-group col-12">
@@ -289,7 +289,7 @@
     </div>
 </div>
 <!-- Modal for assigning account credentials to a student -->
-<div class="modal fade" id="acctAssigningMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="acctAssignMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -299,7 +299,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="acctInsertionFrm">
+                <form id="acctAssignFrm">
                     <input type="hidden" name="id_attendances">
                     <div class="form-group">
                         <label>Geslo
@@ -313,7 +313,7 @@
     </div>
 </div>
 <!-- Modal for reporting on performed operations -->
-<div class="modal fade" id="reportingMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
+<div class="modal fade" id="rprtMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
