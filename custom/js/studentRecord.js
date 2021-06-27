@@ -986,7 +986,7 @@
             cloneFrm.addEventListener('submit', e => {
                     // prevent default action of submitting scientific paper data    
                     e.preventDefault()
-                    updateScientificPaper(cloneFrm)
+                    updateSciPap(cloneFrm)
                 }) // addEventListener
         } // toSciPapUpdateFrm
 
@@ -1546,13 +1546,18 @@
      *   asynchronous script execution for scientific paper data alteration 
      *   @param HTMLFormElement frm
      */
-    let updateScientificPaper = frm => {
-            request('/eArchive/ScientificPapers/update.php', 'POST', 'text', (new FormData(frm))).then(response => {
+    let updateSciPap = frm => {
+            request(
+                    '/eArchive/ScientificPapers/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                ).then(response => {
                     // report on scientific paper update
                     reportMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after update
-                    $('#sPMdl').modal('hide')
+                    $('#sciPapInsertionMdl').modal('hide')
                     return
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers 
@@ -1560,7 +1565,7 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // updateScientificPaper
+        } // updateSciPap
 
     /*
      *  asynchronous script execution for scientific paper deletion with its belonging documents     
