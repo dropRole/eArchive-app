@@ -42,7 +42,7 @@
             let addTempResBtn = document.getElementById('addTempResBtn'), // button for appending addiational temporal residence section 
                 addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for apppending additional program attendance section
                 ctrySelElLst = document.querySelectorAll('.country-select'), // elements for selecting birth, temporal and permanent residence country
-                facSelEl = document.getElementById('facSelElement'), // faculty select element
+                facSelEl = document.getElementById('facSelEl'), // faculty select element
                 gradCheckBox = document.getElementById('gradCheckBox') // checkbox for denoting graduation
             addTempResBtn.addEventListener('click', () => {
                     addTempResSect()
@@ -292,10 +292,11 @@
                     postCodeFrmGrp.className = 'form-group col-4'
                     addressFrmGrp.className = 'form-group col-4'
                     ctryLbl.textContent = 'Država'
+                    ctryLbl.classList = 'w-100'
                     postCodeLbl.textContent = 'Kraj'
-                    postCodeLbl.style.width = '100%'
+                    postCodeLbl.classList = 'w-100'
                     addressLbl.textContent = 'Naslov'
-                    addressLbl.style.width = '100%'
+                    addressLbl.classList = 'w-100'
                     statusInptEl.type = 'hidden'
                     statusInptEl.name = `residences[${index}][status]`
                     statusInptEl.value = 'ZAČASNO'
@@ -583,9 +584,9 @@
             versionFrmGrp.classList = 'form-group col-6'
             docFrmGrp.classList = 'form-group col-6'
             versionLbl.textContent = 'Verzija'
-            versionLbl.style.width = '100%'
+            versionLbl.classList = 'w-100'
             docLbl.textContent = 'Dokument'
-            docLbl.style.width = '100%'
+            docLbl.classList = 'w-100'
             versionInptEl.classList = 'form-control'
             versionInptEl.type = 'text'
             versionInptEl.name = `documents[${index}][version]`
@@ -651,15 +652,15 @@
             emailFrmGrp.classList = 'form-group col-6'
             telFrmGrp.classList = 'form-group col-6'
             facLbl.textContent = 'Fakulteta'
-            facLbl.style.width = '100%'
+            facLbl.classList = 'w-100'
             mentorLbl.textContent = 'Mentor'
-            mentorLbl.style.width = '100%'
+            mentorLbl.classList = 'w-100'
             taughtLbl.textContent = 'Poučeval'
-            taughtLbl.style.width = '100%'
+            taughtLbl.classList = 'w-100'
             emailLbl.textContent = 'E-naslov'
-            emailLbl.style.width = '100%'
+            emailLbl.classList = 'w-100'
             telLbl.textContent = 'Telefon'
-            telLbl.style.width = '100%'
+            telLbl.classList = 'w-100'
             facSelEl.classList = 'form-control'
             facSelEl.name = `mentors[${index}][id_faculties]`
             facSelEl.required = true
