@@ -115,7 +115,7 @@
             sciPapViewLst.forEach(anchor => {
                     // preview scientific papers   
                     anchor.addEventListener('click', () => {
-                            selectScientificPapers(anchor.getAttribute('data-id-attendances'))
+                            selectSciPaps(anchor.getAttribute('data-id-attendances'))
                             sciPapInsrFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                         }) //addEventListener
                 }) // forEach
@@ -154,7 +154,7 @@
             acctDelLst.forEach(btn => {
                     // delete particular account 
                     btn.addEventListener('click', () => {
-                            deleteAcctOfStudent(btn.getAttribute('data-id-attendances'))
+                            deleteAcctOfStudt(btn.getAttribute('data-id-attendances'))
                         }) //addEventListener
                 }) // forEach
             acctInsrLst.forEach(btn => {
@@ -953,7 +953,7 @@
      *   asynchronous script execution for deletion of the given account 
      *   @param idAttendances
      */
-    let deleteAcctOfStudent = idAttendances => {
+    let deleteAcctOfStudt = idAttendances => {
             request(
                     `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`,
                     'GET',
@@ -966,7 +966,7 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // deleteAcctOfStudent
+        } // deleteAcctOfStudt
 
     /*
      *   rearrange form and fill out form fields when updating student data
@@ -1189,7 +1189,7 @@
                 // replace form element node with its clone
             document.getElementById('certUploadFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idCertificatesInputElement)
-            attachListenersToGradCertCard()
+            listenToGradCertCard()
                 // remove certificate file input 
             cloneFrm.querySelector('div.row').removeChild(cloneFrm.querySelector('div.row').querySelector('.form-group'))
                 // fill out form fileds with carried data
@@ -1236,7 +1236,7 @@
         } // toStudentUpdateFrm
 
     // attach event listeners to a scientific paper cards when rendered
-    let attachListenersToSciPapCards = () => {
+    let listenToSciPapCards = () => {
             // if anchor nodes for partaker insertion exist
             if (document.querySelectorAll('.par-ins-a'))
                 document.querySelectorAll('.par-ins-a').forEach(anchor => {
@@ -1320,7 +1320,7 @@
         } // attachSPCardListeners
 
     // attach listeners to certificate card when selected
-    let attachListenersToGradCertCard = () => {
+    let listenToGradCertCard = () => {
             // get modal for graduation certificate review
             let mdl = document.getElementById('certViewingMdl')
                 // if anchor element for update of certificate connected data exist
@@ -1349,7 +1349,7 @@
                     return
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers
-                    selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1371,7 +1371,7 @@
                     reportMdlBtn.click()
                     return
                 }).then(() => {
-                    selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1391,7 +1391,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    selectScientificPapers(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1416,7 +1416,7 @@
                     return
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers
-                    selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1435,7 +1435,7 @@
                     reportMdlBtn.click()
                     return
                 }).then(() => {
-                    selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1455,7 +1455,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    selectScientificPapers(document.getElementById('sciPapFrm').querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(document.getElementById('sciPapFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1479,7 +1479,7 @@
                     $('#sicPapMdl').modal('hide')
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers
-                    selectScientificPapers(frm.querySelector('input[name=id_attendances').value)
+                    selectSciPaps(frm.querySelector('input[name=id_attendances').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1499,7 +1499,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    selectScientificPapers(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1509,7 +1509,7 @@
      *   asynchronous script execution for selection of scientific papers per student program attendance 
      *   @param Number idAttendances
      */
-    let selectScientificPapers = idAttendances => {
+    let selectSciPaps = idAttendances => {
             // fetch resources
             request(
                     `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`,
@@ -1521,11 +1521,11 @@
                         // reflect fragments body     
                     document.querySelector('#sciPapViewingMdl .modal-content').innerHTML = frag.body.innerHTML
                 }).then(() => {
-                    attachListenersToSciPapCards()
+                    listenToSciPapCards()
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // selectScientificPapers
+        } // selectSciPaps
 
     /*
      *   asynchronous script execution for insertion data regarding scientific paper and its documents upload 
@@ -1570,7 +1570,7 @@
                     return
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers 
-                    selectScientificPapers(frm.querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1591,7 +1591,7 @@
                     reportMdlBtn.click()
                     return
                 }).then(() => {
-                    selectScientificPapers(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1638,7 +1638,7 @@
                     frag = response
                         // reflect fragments body     
                     document.querySelector('div#gradCertViewingMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
-                    attachListenersToGradCertCard()
+                    listenToGradCertCard()
                 }).catch(error => {
                     alert(error)
                 }) // catch
