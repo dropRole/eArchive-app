@@ -778,14 +778,14 @@
      *  @param Event e
      *  @param HTMLFormElement form
      */
-    let insertStudent = (e, form) => {
+    let insertStudent = (e, frm) => {
             // prevent default action of submitting student data through a form
             e.preventDefault()
             request(
                     '/eArchive/Students/insert.php',
                     'POST',
                     'text',
-                    (new FormData(form))
+                    (new FormData(frm))
                 ).then(response => {
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
@@ -876,14 +876,14 @@
      *  asynchronous script execution for updating of student particulars
      *  Event e
      */
-    let updateStudent = (e, form) => {
+    let updateStudent = (e, frm) => {
             // prevent default action of submitting updated student data through a form
             e.preventDefault()
             request(
                     '/eArchive/Students/update.php',
                     'POST',
                     'text',
-                    (new FormData(form))
+                    (new FormData(frm))
                 ).then(response => {
                     // report on update
                     rprtMdl.querySelector('.modal-body').textContent = response
