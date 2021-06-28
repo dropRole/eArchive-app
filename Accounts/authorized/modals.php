@@ -28,7 +28,7 @@
                     <p class="h6 col-12">Rojen</p>
                     <div class="form-group col-6">
                         <label class="w-100">Država
-                            <select id="birthCtrySelEl" class="form-control country-select">
+                            <select id="birthCtrySelEl" class="form-control">
                                 <?php
                                 foreach ($DBC->selectCountries() as $country) {
                                 ?>
@@ -62,7 +62,7 @@
                         <input type="hidden" name="residences[0][status]" value="STALNO">
                         <div class="form-group col-4">
                             <label class="w-100">Država
-                                <select id="permResCtrySelEl" class="form-control country-select" data-target="permResPostCodeSelEl">
+                                <select id="permResCtrySelEl" class="form-control" data-target="permResPostCodeSelEl">
                                     <?php
                                     foreach ($DBC->selectCountries() as $id_countries) {
                                     ?>
