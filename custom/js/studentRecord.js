@@ -285,7 +285,7 @@
                     cross.addEventListener('click', () => {
                             // if data attributes value isn't empty 
                             if (cross.getAttribute('data-id-residences') !== '')
-                                deleteTempResOfStudent(cross.getAttribute('data-id-residences'))
+                                deleteTempResOfStudt(cross.getAttribute('data-id-residences'))
                             document.getElementById('residences').removeChild(ctr)
                         }) // addEventListener
                     ctryFrmGrp.className = 'form-group col-4'
@@ -809,7 +809,7 @@
      *  @param Number idpostalCode
      *  @param Number idCountries
      */
-    let determineStudentBirthplace = (idPostalCodes, idCountries) => {
+    let determineBirthplaceOfStudt = (idPostalCodes, idCountries) => {
             // propagate target select element with postal codes of the chosen country
             propagateSelEl(
                 document.querySelector('#birthCtrySelElement'),
@@ -826,7 +826,7 @@
      *  fill out form fields with student permanent residence particulars
      *  @param Array residence
      */
-    let determinePermResOfStudent = (residence) => {
+    let determinePermResOfStudt = (residence) => {
             // create hidden input type that stores record if of the residence  
             let idResidencesInputElement = document.createElement('input')
             idResidencesInputElement.type = 'hidden'
@@ -845,20 +845,20 @@
             )).then(() => {
                 document.querySelector('#permResAddressInputElement').value = residence.address
             })
-        } // determinePermResOfStudent
+        } // determinePermResOfStudt
 
     /*
      *  fill out form fields with student temporal residence particulars
      *  @param Array residences
      */
-    let determineTempResOfStudent = residences =>
+    let determineTempResOfStudt = residences =>
         addTempResSect(residences)
 
     /*
      *   asynchronous script run for deletion of temporal residence record
      *   @param idResidences
      */
-    let deleteTempResOfStudent = idResidences => {
+    let deleteTempResOfStudt = idResidences => {
             request(
                     `/eArchive/Residences/delete.php?id_residences=${idResidences}`,
                     'GET',
@@ -870,7 +870,7 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // deleteTempResOfStudent
+        } // deleteTempResOfStudt
 
     /*
      *  asynchronous script execution for updating of student particulars
@@ -920,7 +920,7 @@
      *   asynchronous script run for assigning an account credentials to the student 
      *   @param Event e
      */
-    let assignAcctCredentialsToStudent = e => {
+    let assignAcctCred = e => {
             // prevent default action of submutting the form containing account credentials
             e.preventDefault()
             request(
@@ -941,12 +941,12 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // assignAcctCredentialsToStudent
+        } // assignAcctCred
 
     acctAssignFrm.addEventListener('submit', e => {
             // prevent form from submitting account details  
             e.preventDefault()
-            assignAcctCredentialsToStudent(e)
+            assignAcctCred(e)
         }) // addEventListener
 
     /*
@@ -1225,9 +1225,9 @@
             cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
             cloneFrm.querySelector('input[name=email]').value = student.particulars.email
             cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
-            determineStudentBirthplace(cloneFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
-            determinePermResOfStudent(cloneFrm, student.permResidence)
-            determineTempResOfStudent(student.tempResidence)
+            determineBirthplaceOfStudt(cloneFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
+            determinePermResOfStudt(cloneFrm, student.permResidence)
+            determineTempResOfStudt(student.tempResidence)
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
             cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
                 // exchange callbacks
