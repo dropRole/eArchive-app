@@ -1287,7 +1287,7 @@
                 // replace form element node with its clone
             document.getElementById('certUploadFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idCertificatesInputElement)
-            listenToGradCertCard()
+            listenGradCertCard()
                 // remove certificate file input 
             cloneFrm.querySelector('div.row').removeChild(cloneFrm.querySelector('div.row').querySelector('.form-group'))
                 // fill out form fileds with carried data
@@ -1337,7 +1337,7 @@
         } // toStudentUpdateFrm
 
     // attach event listeners to a scientific paper cards when rendered
-    let listenToSciPapCards = () => {
+    let listenSciPapCards = () => {
             // if anchor nodes for partaker insertion exist
             if (document.querySelectorAll('.par-ins-a'))
                 document.querySelectorAll('.par-ins-a').forEach(anchor => {
@@ -1434,7 +1434,7 @@
         } // attachSPCardListeners
 
     // attach listeners to certificate card when selected
-    let listenToGradCertCard = () => {
+    let listenGradCertCard = () => {
             // get modal for graduation certificate review
             let mdl = document.getElementById('certViewingMdl')
                 // if anchor element for update of certificate connected data exist
@@ -1589,7 +1589,7 @@
                         // reflect fragments body     
                     document.querySelector('#sciPapViewingMdl .modal-content').innerHTML = frag.body.innerHTML
                 })
-                .then(() => listenToSciPapCards())
+                .then(() => listenSciPapCards())
                 .catch(error => alert(error)) // catch
         } // selectSciPaps
 
@@ -1681,7 +1681,7 @@
                         // reflect fragments body     
                     document.querySelector('div#gradCertViewingMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
                 })
-                .then(() => listenToGradCertCard())
+                .then(() => listenGradCertCard())
                 .catch(error => alert(error)) // catch
         } // selectGradCert
 
