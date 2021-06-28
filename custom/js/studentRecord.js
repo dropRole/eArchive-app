@@ -41,23 +41,30 @@
     let listenStudtInsrFrm = () => {
             let addTempResBtn = document.getElementById('addTempResBtn'), // button for appending addiational temporal residence section 
                 addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for apppending additional program attendance section
-                ctrySelElLst = document.querySelectorAll('.country-select'), // elements for selecting birth, temporal and permanent residence country
+                birthCtrySelEl = document.getElementById('birthCtrySelEl'),
+                permResCtrySelEl = document.getElementById('permResCtrySelEl'),
                 facSelEl = document.getElementById('facSelEl'), // faculty select element
                 gradCheckBox = document.getElementById('gradCheckBox') // checkbox for denoting graduation
             addTempResBtn.addEventListener('click', () => {
                     addTempResSect()
                 }) // addEventListener
             addAttendanceBtn.addEventListener('click', addProgAttendanceSect)
-            ctrySelElLst.forEach(element => {
-                    // propagate target select element with postal codes of the chosen country
-                    element.addEventListener('input', () => {
-                            propagateSelEl
-                                (
-                                    document.getElementById('birthPostCodeSelEl'),
-                                    `/eArchive/PostalCodes/select.php?id_countries=${element.selectedOptions[0].value}`
-                                )
-                        }) // addEventListener
-                }) // forEach
+            birthCtrySelEl.addEventListener(
+                // propagate postal codes by selected country 
+                'click',
+                propagateSelEl(
+                    '#birthPostCodeSelEl',
+                    `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySelEl.selectedOptions[0].value}`
+                )
+            )
+            permResCtrySelEl.addEventListener(
+                // propagate postal codes by selected country 
+                'click',
+                propagateSelEl(
+                    '#permResPostCodeSelEl',
+                    `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySelEl.selectedOptions[0].value}`
+                )
+            )
             facSelEl.addEventListener('input', () => {
                     // propagate programs by faculty selection
                     propagateSelEl
