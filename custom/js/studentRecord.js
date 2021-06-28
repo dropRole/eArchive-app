@@ -10,10 +10,13 @@
         reportMdlBtn = document.getElementById('rprtMdlBtn'), // report modal toggler
         fltrInputEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
 
-    gradCertUplFrm.querySelector('input[type=file]').addEventListener('change', () => {
-            // assign the name of the uploaded certificate to hidden input type
-            gradCertUplFrm.querySelector('input[name=certificate]').value = gradCertUplFrm.querySelector('input[type=file]').files[0].name
-        }) // addEventListener
+    gradCertUplFrm.querySelector('input[type=file]').addEventListener(
+            'change',
+            () => {
+                // assign the name of the uploaded certificate to hidden input type
+                gradCertUplFrm.querySelector('input[name=certificate]').value = gradCertUplFrm.querySelector('input[type=file]').files[0].name
+            }
+        ) // addEventListener
 
     // attach event listeners to corresponding input element 
     let listenSciPapInsrFrm = () => {
@@ -21,20 +24,32 @@
             let frm = document.getElementById('sciPapInsrMdl')
                 // if button for subsequent partaker section additon exists
             if (frm.querySelector('#addPartakerBtn'))
-                addPartakerBtn.addEventListener('click', addPartakerSect)
+                addPartakerBtn.addEventListener(
+                    'click',
+                    addPartakerSect
+                )
                 // if file input is rendered 
             if (frm.querySelector('input[name="document[]"]'))
-                frm.querySelector('input[name="document[]"]').addEventListener('change', e => {
-                    // assign the filename of the uploaded document to the hidden input type
-                    frm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
-                }) // addEventListener
+                frm.querySelector('input[name="document[]"]').addEventListener(
+                    'change',
+                    e => {
+                        // assign the filename of the uploaded document to the hidden input type
+                        frm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
+                    }
+                ) // addEventListener
                 // if button for subsequent mentor section additon exists 
             if (frm.querySelector('#addMentorBtn'))
-                frm.querySelector('#addMentorBtn').addEventListener('click', addMentoringsSect)
+                frm.querySelector('#addMentorBtn').addEventListener(
+                    'click',
+                    addMentoringsSect
+                )
                 // if button for subsequent document section additon exists
             if (frm.querySelector('#addDocumentBtn'))
             // append controls for additional scientific paper document upload
-                frm.querySelector('#addDocumentBtn').addEventListener('click', addDocUploadSect)
+                frm.querySelector('#addDocumentBtn').addEventListener(
+                'click',
+                addDocUploadSect
+            )
         } // attachSciPapFrmListeners
 
     // attach event listeners to corresponding input and selecet elements
@@ -45,46 +60,56 @@
                 permResCtrySelEl = document.getElementById('permResCtrySelEl'),
                 facSelEl = document.getElementById('facSelEl'), // faculty select element
                 gradCheckBox = document.getElementById('gradCheckBox') // checkbox for denoting graduation
-            addTempResBtn.addEventListener('click', () => {
-                    addTempResSect()
-                }) // addEventListener
-            addAttendanceBtn.addEventListener('click', addProgAttendanceSect)
+            addTempResBtn.addEventListener(
+                    'click',
+                    () => {
+                        addTempResSect()
+                    }
+                ) // addEventListener
+            addAttendanceBtn.addEventListener(
+                'click',
+                addProgAttendanceSect
+            )
             birthCtrySelEl.addEventListener(
-                // propagate postal codes by selected country 
-                'change',
-                () => propagateSelEl(
-                    document.getElementById('birthPostCodeSelEl'),
-                    `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySelEl.selectedOptions[0].value}`
-                )
-            )
+                    // propagate postal codes by selected country 
+                    'change',
+                    () => propagateSelEl(
+                        document.getElementById('birthPostCodeSelEl'),
+                        `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySelEl.selectedOptions[0].value}`
+                    )
+                ) // addEventListener
             permResCtrySelEl.addEventListener(
-                // propagate postal codes by selected country 
-                'change',
-                () => propagateSelEl(
-                    document.getElementById('permResPostCodeSelEl'),
-                    `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySelEl.selectedOptions[0].value}`
-                )
-            )
-            facSelEl.addEventListener('input', () => {
-                    // propagate programs by faculty selection
-                    propagateSelEl
-                        (
+                    // propagate postal codes by selected country 
+                    'change',
+                    () => propagateSelEl(
+                        document.getElementById('permResPostCodeSelEl'),
+                        `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySelEl.selectedOptions[0].value}`
+                    )
+                ) // addEventListener
+            facSelEl.addEventListener(
+                    'input',
+                    () => {
+                        // propagate programs by faculty selection
+                        propagateSelEl(
                             document.getElementById('progSelElement'),
                             `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`
                         )
-                }) // addEventListener
-            gradCheckBox.addEventListener('change', e => {
-                    // if it's checked
-                    if (gradCheckBox.checked)
-                    // append graduation section if graduated
-                        addProgGradSect(e)
-                    else {
-                        // remove selected graduation section
-                        gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
-                        gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
-                        gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
-                    } // else
-                }) // addEventListener
+                    }) // addEventListener
+            gradCheckBox.addEventListener(
+                    'change',
+                    e => {
+                        // if it's checked
+                        if (gradCheckBox.checked)
+                        // append graduation section if graduated
+                            addProgGradSect(e)
+                        else {
+                            // remove selected graduation section
+                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                        } // else
+                    }
+                ) // addEventListener
         } // listenStudtInsrFrm
 
     // rearrange form when inserting a student record  
@@ -112,7 +137,10 @@
             document.getElementById('sciPapInsrMdl').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
             listenSciPapInsrFrm()
-            cloneFrm.addEventListener('submit', insertSciPap)
+            cloneFrm.addEventListener(
+                    'submit',
+                    insertSciPap
+                ) // addEventListner
         } // toSciPapInsrFrm
 
     // attach listeners to student evidence table appropriate anchors and buttons   
@@ -126,13 +154,19 @@
                 acctDelLst = document.querySelectorAll('.acc-del-btn'), // array of buttons for deletion of a particular student account 
                 studtUpdLst = document.querySelectorAll('.stu-upd-a'), // array of anchors for exposing form for updating fundamental data of the student
                 studtDelLst = document.querySelectorAll('.stu-del-a') // array of anchors for exposing form for deletion of fundamental data of the student
-            studtInsrBtn.addEventListener('click', toStudtInsrFrm)
+            studtInsrBtn.addEventListener(
+                    'click',
+                    toStudtInsrFrm
+                ) // addEventListener
             sciPapViewLst.forEach(anchor => {
                     // preview scientific papers   
-                    anchor.addEventListener('click', () => {
-                            selectSciPaps(anchor.getAttribute('data-id-attendances'))
-                            sciPapInsrFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
-                        }) //addEventListener
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                selectSciPaps(anchor.getAttribute('data-id-attendances'))
+                                sciPapInsrFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                            }
+                        ) //addEventListener
                 }) // forEach
             sciPapInsrLst.forEach(anchor => {
                     // modify form for scientific paper insertion
@@ -140,43 +174,61 @@
                 }) // forEach
             gradCertInsrLst.forEach(anchor => {
                     // assign an attendance id value to an upload forms hidden input type 
-                    anchor.addEventListener('click', e => {
-                            gradCertUplFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
-                        }) //addEventListener
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                gradCertUplFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
+                            }
+                        ) //addEventListener
                 }) // forEach
             gradCertViewLst.forEach(anchor => {
                     // view certificate particulars in a form of a card in the modal
-                    anchor.addEventListener('click', () => {
-                            selectGradCert(anchor.getAttribute('data-id-attendances'))
-                                // set value of id to the hidden input of the form
-                            certCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
-                        }) // addEventListener
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                selectGradCert(anchor.getAttribute('data-id-attendances'))
+                                    // set value of id to the hidden input of the form
+                                certCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                            }
+                        ) // addEventListener
                 }) // forEach
             studtUpdLst.forEach(anchor => {
                     // propagate update form with student particulars
-                    anchor.addEventListener('click', e => {
-                            selectStudt(e, anchor.getAttribute('data-id-students'))
-                        }) // addEventListener
+                    anchor.addEventListener(
+                            'click',
+                            e => {
+                                selectStudt(e, anchor.getAttribute('data-id-students'))
+                            }
+                        ) // addEventListener
                 }) // forEach
             studtDelLst.forEach(anchor => {
                     // delete student from the student evidence table
-                    anchor.addEventListener('click', () => {
-                            // if record deletion was confirmed
-                            if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
-                                deleteStudt(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
-                        }) // addEventListener
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                // if record deletion was confirmed
+                                if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
+                                    deleteStudt(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
+                            }
+                        ) // addEventListener
                 }) // forEach
             acctDelLst.forEach(btn => {
                     // delete particular account 
-                    btn.addEventListener('click', () => {
-                            deleteAcctOfStudt(btn.getAttribute('data-id-attendances'))
-                        }) //addEventListener
+                    btn.addEventListener(
+                            'click',
+                            () => {
+                                deleteAcctOfStudt(btn.getAttribute('data-id-attendances'))
+                            }
+                        ) //addEventListener
                 }) // forEach
             acctInsrLst.forEach(btn => {
                     // pass an id of an attendance through forms hidden input type 
-                    btn.addEventListener('click', () => {
-                            acctAssignFrm.querySelector('input[name=id_attendances]').value = btn.value
-                        }) // addEventListener
+                    btn.addEventListener(
+                            'click',
+                            () => {
+                                acctAssignFrm.querySelector('input[name=id_attendances]').value = btn.value
+                            }
+                        ) // addEventListener
                 }) // forEach
         } // attachStudentTableListeners
     listenStudtEvidTbl()
@@ -192,21 +244,27 @@
             return new Promise((resolve, reject) => {
                 // instanitate an XHR object
                 let xmlhttp = new XMLHttpRequest()
-                xmlhttp.addEventListener('load', () => {
-                        // resolve the promise if transaction was successful
-                        resolve(xmlhttp.response)
-                    }) // addEventListener
-                xmlhttp.addEventListener('error', () => {
-                        // reject the promise if transaction encountered an error
-                        reject('Prišlo je do napake na strežniku!')
-                    }) // addEventListener
+                xmlhttp.addEventListener(
+                        'load',
+                        () => {
+                            // resolve the promise if transaction was successful
+                            resolve(xmlhttp.response)
+                        }
+                    ) // addEventListener
+                xmlhttp.addEventListener(
+                        'error',
+                        () => {
+                            // reject the promise if transaction encountered an error
+                            reject('Prišlo je do napake na strežniku!')
+                        }
+                    ) // addEventListener
                 xmlhttp.open(method, script, true)
                 xmlhttp.responseType = resType
                 xmlhttp.send(frmData)
             })
         } // request
 
-    // laod student evidence table upon latterly data amendment 
+    // load student evidence table upon latterly data amendment 
     let loadStudtEvidTbl = () => {
             request
                 (
@@ -232,7 +290,11 @@
      */
     let propagateSelEl = async(select, script, id = 0) => {
             try {
-                const response = await request(script, 'GET', 'document')
+                const response = await request(
+                    script,
+                    'GET',
+                    'document'
+                )
                 frag = response
                     // remove previously disposable options
                 while (select.options.length)
@@ -285,11 +347,13 @@
                         addressInptEl = document.createElement('input'),
                         index = document.querySelectorAll('div#residences > div.row').length // the following index for an array of data on student temporal residences 
                         // set the target and options of observation
-                    observer.observe(document.getElementById('residences'), {
-                            attributes: false,
-                            childList: true,
-                            subtree: false
-                        }) // observe
+                    observer.observe(
+                            document.getElementById('residences'), {
+                                attributes: false,
+                                childList: true,
+                                subtree: false
+                            }
+                        ) // observe
                     ctr.className = 'row temporal-residence'
                     ctr.style.position = 'relative'
                     headline.classList = 'col-12 h6'
@@ -298,12 +362,15 @@
                     cross.style.cursor = 'pointer'
                     cross.innerHTML = '&#10007;'
                     cross.setAttribute('data-id-residences', !residences ? '' : residences[0].id_residences)
-                    cross.addEventListener('click', () => {
-                            // if data attributes value isn't empty 
-                            if (cross.getAttribute('data-id-residences') !== '')
-                                deleteTempResOfStudt(cross.getAttribute('data-id-residences'))
-                            document.getElementById('residences').removeChild(ctr)
-                        }) // addEventListener
+                    cross.addEventListener(
+                            'click',
+                            () => {
+                                // if data attributes value isn't empty 
+                                if (cross.getAttribute('data-id-residences') !== '')
+                                    deleteTempResOfStudt(cross.getAttribute('data-id-residences'))
+                                document.getElementById('residences').removeChild(ctr)
+                            }
+                        ) // addEventListener
                     ctryFrmGrp.className = 'form-group col-4'
                     postCodeFrmGrp.className = 'form-group col-4'
                     addressFrmGrp.className = 'form-group col-4'
@@ -317,12 +384,15 @@
                     statusInptEl.name = `residences[${index}][status]`
                     statusInptEl.value = 'ZAČASNO'
                     ctrySelEl.classList = 'form-control country-select'
-                    ctrySelEl.addEventListener('input', () => {
-                            propagateSelEl(
-                                postCodeSelEl,
-                                `/eArchive/postalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`
-                            )
-                        }) // addEventListener
+                    ctrySelEl.addEventListener(
+                            'input',
+                            () => {
+                                propagateSelEl(
+                                    postCodeSelEl,
+                                    `/eArchive/postalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`
+                                )
+                            }
+                        ) // addEventListener
                     postCodeSelEl.classList = 'form-control'
                     postCodeSelEl.name = `residences[${index}][id_postal_codes]`
                     postCodeSelEl.required = true
@@ -342,23 +412,20 @@
                     ctr.appendChild(ctryFrmGrp)
                     ctr.appendChild(postCodeFrmGrp)
                     ctr.appendChild(addressFrmGrp)
-                    propagateSelEl
-                        (
+                    propagateSelEl(
                             ctrySelEl,
                             '/eArchive/Countries/select.php', !residences ? null : residences[0].id_countries
                         )
                         .then(() => {
-                            propagateSelEl
-                                (
-                                    postCodeSelEl,
-                                    `/eArchive/PostalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
-                                )
+                            propagateSelEl(
+                                postCodeSelEl,
+                                `/eArchive/PostalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
+                            )
                             return
                         }).then(() => {
                             addressInptEl.value = !residences ? '' : residences[0].address
-                        }).then(() => {
-                            document.getElementById('residences').appendChild(ctr)
-                        }).catch((error) => {
+                        }).then(() => document.getElementById('residences').appendChild(ctr))
+                        .catch((error) => {
                             alert(error)
                         }) // catch
                 }) // Promise
@@ -399,9 +466,12 @@
             certInptEl.accept = '.pdf'
             certInptEl.required = true
                 // determine hidden input type value if graduated
-            certInptEl.addEventListener('change', e => {
-                    certNameInptEl.value = e.target.files[0].name
-                }) // addEventListener
+            certInptEl.addEventListener(
+                    'change',
+                    e => {
+                        certNameInptEl.value = e.target.files[0].name
+                    }
+                ) // addEventListener
             certNameInptEl.type = 'hidden'
             certNameInptEl.name = `attendances[${indx}][certificate]`
             defendedInptEl.id = `defendedInpt${lblNum}`
@@ -450,26 +520,32 @@
                 gradCheckBox = document.createElement('input'),
                 gradTxt = document.createTextNode('Diplomiral')
             index = document.querySelectorAll('div#attendances > div.row').length - 1 // the following index for an array od data on program attendance       
-            gradCheckBox.addEventListener('change', e => {
-                    // append or remove graduation section depending on the condition
-                    // if it's checked
-                    if (gradCheckBox.checked)
-                        addProgGradSect(e)
-                    else {
-                        ctr.removeChild(ctr.lastChild)
-                        ctr.removeChild(ctr.lastChild)
-                        ctr.removeChild(ctr.lastChild)
-                    } // else
-                }) // addEventListener
+            gradCheckBox.addEventListener(
+                    'change',
+                    e => {
+                        // append or remove graduation section depending on the condition
+                        // if it's checked
+                        if (gradCheckBox.checked)
+                            addProgGradSect(e)
+                        else {
+                            ctr.removeChild(ctr.lastChild)
+                            ctr.removeChild(ctr.lastChild)
+                            ctr.removeChild(ctr.lastChild)
+                        } // else
+                    }
+                ) // addEventListener
             headline.className = 'col-12 h6'
             cross.style.float = 'right'
             cross.style.transform = 'scale(1.2)'
             cross.style.cursor = 'pointer'
             cross.innerHTML = '&#10007'
                 // remove selected attendance section
-            cross.addEventListener('click', () => {
-                    document.getElementById('attendances').removeChild(ctr)
-                }) // addEventListener
+            cross.addEventListener(
+                    'click',
+                    () => {
+                        document.getElementById('attendances').removeChild(ctr)
+                    }
+                ) // addEventListener
             ctr.className = 'row'
             facFrmGrp.className = 'form-group col-6'
             progFrmGrp.className = 'form-group col-6'
@@ -484,14 +560,16 @@
             facSelEl.className = 'form-control'
             facSelEl.name = `attendances[${index}][id_faculties]`
             facSelEl.required = true
-            facSelEl.addEventListener('change', e => {
-                    // propagate programs by faculty selection
-                    propagateSelEl
-                        (
+            facSelEl.addEventListener(
+                    'change',
+                    e => {
+                        // propagate programs by faculty selection
+                        propagateSelEl(
                             progSelEl,
                             `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`
                         )
-                }) // addEventListener
+                    }
+                ) // addEventListener
             progSelEl.className = 'form-control'
             progSelEl.name = `attendances[${index}][id_programs]`
             progSelEl.required = true
@@ -526,17 +604,15 @@
             ctr.appendChild(indexFrmGrp)
             ctr.appendChild(gradFrmGrp)
                 // initial propagation
-            propagateSelEl
-                (
+            propagateSelEl(
                     facSelEl,
                     '/eArchive/Faculties/select.php'
                 )
                 .then(() => propagateSelEl(
                     progSelEl,
                     `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`))
-                .then(() => {
-                    document.getElementById('attendances').appendChild(ctr)
-                }).catch(error => alert(error)) // catch
+                .then(() => document.getElementById('attendances').appendChild(ctr))
+                .catch(error => alert(error)) // catch
         } // addProgAttendanceSect 
 
     // create and subsequently append partaker section of the scientific paper insertion form 
@@ -559,9 +635,12 @@
             cross.style.cursor = 'pointer'
             cross.innerHTML = '&#10007'
                 // remove selected attendance section
-            cross.addEventListener('click', () => {
-                    document.getElementById('sciPapPartakerSect').removeChild(ctr)
-                }) // addEventListener
+            cross.addEventListener(
+                    'click',
+                    () => {
+                        document.getElementById('sciPapPartakerSect').removeChild(ctr)
+                    }
+                ) // addEventListener
             partakerFrmGrp.classList = 'form-group col-6'
             partFrmGrp.classList = 'form-group col-6'
             partakerLbl.textContent = 'Sodelovalec'
@@ -598,14 +677,20 @@
                 docInptEl = document.createElement('input'), // document input 
                 docNameInptEl = document.createElement('input'), // document hidden input 
                 index = document.querySelectorAll('div#documents > div.row').length // the following index for an array of data on documents of scientific paper  
-            docInptEl.addEventListener('change', e => {
-                    // assign chosen document name as a value to the docNameInputElement
-                    docNameInptEl.value = e.target.files[0].name
-                }) // addEventListener
-            cross.addEventListener('click', () => {
-                    // remove appended controls
-                    document.getElementById('sciPapDocs').removeChild(ctr)
-                }) // addEventListener
+            docInptEl.addEventListener(
+                    'change',
+                    e => {
+                        // assign chosen document name as a value to the docNameInputElement
+                        docNameInptEl.value = e.target.files[0].name
+                    }
+                ) // addEventListener
+            cross.addEventListener(
+                    'click',
+                    () => {
+                        // remove appended controls
+                        document.getElementById('sciPapDocs').removeChild(ctr)
+                    }
+                ) // addEventListener
             ctr.classList = 'row mt-2'
             ctr.style.position = 'relative'
             versionFrmGrp.classList = 'form-group col-6'
@@ -670,9 +755,12 @@
             cross.style.cursor = 'pointer'
             cross.innerHTML = '&#10007'
                 // remove selected attendance section
-            cross.addEventListener('click', () => {
-                    document.getElementById('sciPapMentorSect').removeChild(ctr)
-                }) // addEventListener
+            cross.addEventListener(
+                    'click',
+                    () => {
+                        document.getElementById('sciPapMentorSect').removeChild(ctr)
+                    }
+                ) // addEventListener
             mentorFrmGrp.classList = 'form-group col-12'
             facFrmGrp.classList = 'form-group col-6'
             taughtFrmGrp.classList = 'form-group col-6'
@@ -725,14 +813,12 @@
             ctr.appendChild(emailFrmGrp)
             ctr.appendChild(telFrmGrp)
                 // populate HTMLSelectElement with the data regarding faculties 
-            propagateSelEl
-                (
+            propagateSelEl(
                     facSelEl,
                     '/eArchive/Faculties/select.php'
                 )
-                .then(() => {
-                    document.getElementById('sciPapMentorSect').appendChild(ctr)
-                }).catch(error => alert(error))
+                .then(() => document.getElementById('sciPapMentorSect').appendChild(ctr))
+                .catch(error => alert(error))
         } // addMentoringsSect
 
     /*
@@ -763,8 +849,7 @@
      *   @param Number idStudents
      */
     let selectStudt = (e, idStudents) => {
-            request
-                (
+            request(
                     `/eArchive/Students/select.php?id_students=${idStudents}`,
                     'GET',
                     'json'
@@ -778,8 +863,7 @@
      *   @param Number index
      */
     let selStudtsByIndx = index => {
-            request
-                (
+            request(
                     `/eArchive/Students/filterByIndex.php?index=${index}`,
                     'GET',
                     'document'
@@ -807,8 +891,7 @@
     let insertStudt = (e, frm) => {
             // prevent default action of submitting student data through a form
             e.preventDefault()
-            request
-                (
+            request(
                     '/eArchive/Students/insert.php',
                     'POST',
                     'text',
@@ -829,8 +912,7 @@
      */
     let setBirthplaceOfStudt = (idPostalCodes, idCountries) => {
             // propagate target select element with postal codes of the chosen country
-            propagateSelEl
-                (
+            propagateSelEl(
                     document.querySelector('#birthCtrySelEl'),
                     '/eArchive/Countries/select.php',
                     idCountries
@@ -854,8 +936,7 @@
             idResidencesInputElement.value = residence.id_residences
             document.querySelector('#studentInsertionFrm #perResCtrySelElement').parentElement.prepend(idResidencesInputElement)
                 // propagate target select element with postal codes of the chosen country
-            propagateSelEl
-                (
+            propagateSelEl(
                     document.querySelector('#permResCtrySelElement'),
                     '/eArchive/Countries/select.php',
                     residence.id_countries
@@ -881,8 +962,7 @@
      *   @param idResidences
      */
     let deleteTempResOfStudt = idResidences => {
-            request
-                (
+            request(
                     `/eArchive/Residences/delete.php?id_residences=${idResidences}`,
                     'GET',
                     'text'
@@ -898,8 +978,7 @@
     let updateStudt = (e, frm) => {
             // prevent default action of submitting updated student data through a form
             e.preventDefault()
-            request
-                (
+            request(
                     '/eArchive/Students/update.php',
                     'POST',
                     'text',
@@ -917,8 +996,7 @@
      *   @param Number idAttendances
      */
     let deleteStudt = (idStudents, idAttendances) => {
-            request
-                (
+            request(
                     `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`,
                     'GET',
                     'text'
@@ -935,8 +1013,7 @@
     let assignAcctCred = e => {
             // prevent default action of submutting the form containing account credentials
             e.preventDefault()
-            request
-                (
+            request(
                     '/eArchive/Accounts/authorized/insert.php',
                     'POST',
                     'text',
@@ -948,19 +1025,21 @@
                 .catch(error => alert(error)) // catch
         } // assignAcctCred
 
-    acctAssignFrm.addEventListener('submit', e => {
-            // prevent form from submitting account details  
-            e.preventDefault()
-            assignAcctCred(e)
-        }) // addEventListener
+    acctAssignFrm.addEventListener(
+            'submit',
+            e => {
+                // prevent form from submitting account details  
+                e.preventDefault()
+                assignAcctCred(e)
+            }
+        ) // addEventListener
 
     /*
      *   asynchronous script execution for deletion of the given account 
      *   @param idAttendances
      */
     let deleteAcctOfStudt = idAttendances => {
-            request
-                (
+            request(
                     `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`,
                     'GET',
                     'text'
@@ -994,11 +1073,14 @@
             cloneFrm.querySelectorAll('div.row:nth-child(4), #sPDocs').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
-            cloneFrm.addEventListener('submit', e => {
-                    // prevent default action of submitting scientific paper data    
-                    e.preventDefault()
-                    updateSciPap(cloneFrm)
-                }) // addEventListener
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // prevent default action of submitting scientific paper data    
+                        e.preventDefault()
+                        updateSciPap(cloneFrm)
+                    }
+                ) // addEventListener
         } // toSciPapUpdateFrm
 
     /*
@@ -1024,11 +1106,14 @@
             cloneFrm.querySelectorAll('div#particulars, div.row:nth-child(4)').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
-            cloneFrm.addEventListener('submit', e => {
-                    // prevent upload of scientific paper documents
-                    e.preventDefault()
-                    uploadDocsOfSciPap(cloneFrm)
-                }) // addEventListener
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // prevent upload of scientific paper documents
+                        e.preventDefault()
+                        uploadDocsOfSciPap(cloneFrm)
+                    }
+                ) // addEventListener
         } // toSciPapDocUploadFrm
 
     /*
@@ -1056,11 +1141,14 @@
             cloneFrm.querySelectorAll('div#particulars, #sPMentors, #sPDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
-            cloneFrm.addEventListener('submit', e => {
-                    // cancel submitting partaker data by default
-                    e.preventDefault()
-                    insertPartakerOfSciPap(cloneFrm)
-                }) // addEventListener
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // cancel submitting partaker data by default
+                        e.preventDefault()
+                        insertPartakerOfSciPap(cloneFrm)
+                    }
+                ) // addEventListener
         } // toPartakerInsertFrm
 
     /*
@@ -1091,11 +1179,14 @@
             cloneFrm.querySelector('input[name="partakers[1][index]"]').value = e.target.getAttribute('data-index')
             cloneFrm.querySelector('input[name="partakers[1][part]"]').value = e.target.getAttribute('data-part')
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-            cloneFrm.addEventListener('submit', e => {
-                    // cancel submitting partaker data by default
-                    e.preventDefault()
-                    updatePartakerOfSciPap(cloneFrm)
-                }) // addEventListener
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // cancel submitting partaker data by default
+                        e.preventDefault()
+                        updatePartakerOfSciPap(cloneFrm)
+                    }
+                ) // addEventListener
         } // toPartakerUpdateFrm
 
     /*
@@ -1123,11 +1214,14 @@
             cloneFrm.querySelectorAll('div#particulars, #sPPartkers, #sPDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
-            cloneFrm.addEventListener('submit', e => {
-                    // cancel submitting mentor data by default
-                    e.preventDefault()
-                    insertMentorOfSciPap(cloneFrm)
-                }) // addEventListener
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // cancel submitting mentor data by default
+                        e.preventDefault()
+                        insertMentorOfSciPap(cloneFrm)
+                    }
+                ) // addEventListener
         } // toMentorInsertFrm
 
     /*
@@ -1168,11 +1262,14 @@
                     cloneFrm.querySelector('input[name="mentors[0][email]"]').value = response.email
                     cloneFrm.querySelector('input[name="mentors[0][telephone]"]').value = response.telephone
                 }).catch(error => alert(error)) // catch
-            cloneFrm.addEventListener('submit', e => {
-                    // prevent form from submitting updated mentor data 
-                    e.preventDefault();
-                    updateMentorOfSciPap(cloneFrm)
-                }) // addEventListener
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // prevent form from submitting updated mentor data 
+                        e.preventDefault();
+                        updateMentorOfSciPap(cloneFrm)
+                    }
+                ) // addEventListener
         } // toMentorUpdateFrm
 
     /*
@@ -1198,11 +1295,14 @@
             cloneFrm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
                 // change submit buttons value
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-            cloneFrm.addEventListener('submit', e => {
-                    // cancel submitting updated certificate data by default
-                    e.preventDefault()
-                    updateGradCert(cloneFrm)
-                }) // addEventListener
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // cancel submitting updated certificate data by default
+                        e.preventDefault()
+                        updateGradCert(cloneFrm)
+                    }
+                ) // addEventListener
         } // toGradCertUpdateFrm
 
     /*
@@ -1248,9 +1348,12 @@
             if (document.querySelectorAll('.par-del-spn'))
                 document.querySelectorAll('.par-del-spn').forEach(span => {
                     // attempt deletion of a partaker
-                    span.addEventListener('click', () => {
-                            deletePartakerOfSciPap(span.getAttribute('data-id-partakings'))
-                        }) // addEventListener
+                    span.addEventListener(
+                            'click',
+                            () => {
+                                deletePartakerOfSciPap(span.getAttribute('data-id-partakings'))
+                            }
+                        ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper partaker data update exist
             if (document.querySelectorAll('.par-upd-a'))
@@ -1280,31 +1383,36 @@
             if (document.querySelectorAll('.men-del-spn'))
                 document.querySelectorAll('.men-del-spn').forEach(anchor => {
                     // restructure form for document upload
-                    anchor.addEventListener('click', () => {
-                            deleteMentorOfSciPap(anchor.getAttribute('data-id-mentorings'))
-                        }) // addEventListener
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                deleteMentorOfSciPap(anchor.getAttribute('data-id-mentorings'))
+                            }
+                        ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper update are rendered
             if (document.querySelectorAll('.sp-upd-а'))
                 document.querySelectorAll('.sp-upd-а').forEach(anchor => {
                     // fill form fields and modify the form
                     anchor.addEventListener('click', e => {
-                            request
-                                (`/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id-scientific-papers')}`,
+                            request(
+                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id-scientific-papers')}`,
                                     'GET',
-                                    'json')
+                                    'json'
+                                )
                                 .then(response => toSciPapUpdateFrm(response))
-                                .catch(error => {
-                                    alert(error)
-                                }) // catch
+                                .catch(error => alert(error)) // catch
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper deletion are rendered
             if (document.querySelectorAll('.sp-del-a'))
                 document.querySelectorAll('.sp-del-a').forEach(anchor => {
-                    anchor.addEventListener('click', () => {
-                            deleteSciPap(anchor.getAttribute('data-id-scientific-papers'))
-                        }) // addEventListener
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                deleteSciPap(anchor.getAttribute('data-id-scientific-papers'))
+                            }
+                        ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper document upload exist
             if (document.querySelectorAll('.doc-upl-a'))
@@ -1316,9 +1424,12 @@
             if (document.querySelectorAll('.doc-del-spn'))
                 document.querySelectorAll('.doc-del-spn').forEach(span => {
                     // delete particular document
-                    span.addEventListener('click', () => {
-                            deleteDocsOfSciPap(span.getAttribute('data-source'))
-                        }) // addEventListener
+                    span.addEventListener(
+                            'click',
+                            () => {
+                                deleteDocsOfSciPap(span.getAttribute('data-source'))
+                            }
+                        ) // addEventListener
                 }) // forEach
         } // attachSPCardListeners
 
@@ -1331,15 +1442,17 @@
                 mdl.querySelector('.modal-content .cert-upd-a').addEventListener('click', toGradCertUpdateFrm)
                 // if anchor element for certificate deletion is contained
             if (mdl.querySelector('.modal-content .cert-del-a'))
-                mdl.querySelector('.modal-content .cert-del-a').addEventListener('click', e => {
-                    deleteGradCert(e.target.getAttribute('data-id-attendances'), e.target.getAttribute('data-source'))
-                }) // addEventListner
+                mdl.querySelector('.modal-content .cert-del-a').addEventListener(
+                    'click',
+                    e => {
+                        deleteGradCert(e.target.getAttribute('data-id-attendances'), e.target.getAttribute('data-source'))
+                    }
+                ) // addEventListner
         } // attachCertificateCardListeners
 
     // asynchronous script execution for insertion of a scientific paper partaker    
     let insertPartakerOfSciPap = frm => {
-            request
-                (
+            request(
                     '/eArchive/Partakings/insert.php',
                     'POST',
                     'text',
@@ -1356,8 +1469,7 @@
      *  @param HTMLFormElement frm
      */
     let updatePartakerOfSciPap = frm => {
-            request
-                (
+            request(
                     '/eArchive/Partakings/update.php',
                     'POST',
                     'text',
@@ -1373,8 +1485,7 @@
      *  @param Number idPartakings
      */
     let deletePartakerOfSciPap = idPartakings => {
-            request
-                (
+            request(
                     `/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`,
                     'GET',
                     'text'
@@ -1389,8 +1500,7 @@
      *  @param HTMLFormElement frm
      */
     let insertMentorOfSciPap = frm => {
-            request
-                (
+            request(
                     '/eArchive/Mentorings/insert.php',
                     'POST',
                     'text',
@@ -1404,8 +1514,7 @@
 
     // asynchronously script run for updating data regarding mentor of the scientific paper       
     let updateMentorOfSciPap = frm => {
-            request
-                (
+            request(
                     '/eArchive/Mentorings/update.php',
                     'POST',
                     'text',
@@ -1421,8 +1530,7 @@
      *  @param Number idMentorings
      */
     let deleteMentorOfSciPap = idMentorings => {
-            request
-                (
+            request(
                     `/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`,
                     'GET',
                     'text'
@@ -1437,8 +1545,7 @@
      *   @param HTMLFormElement frm
      */
     let uploadDocsOfSciPap = frm => {
-            request
-                (
+            request(
                     '/eArchive/Documents/insert.php',
                     'POST',
                     'text',
@@ -1455,8 +1562,7 @@
      *  @param String source  
      */
     let deleteDocsOfSciPap = source => {
-            request
-                (
+            request(
                     `/eArchive/Documents/delete.php?source=${source}`,
                     'GET',
                     'text'
@@ -1472,8 +1578,7 @@
      */
     let selectSciPaps = idAttendances => {
             // fetch resources
-            request
-                (
+            request(
                     `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`,
                     'GET',
                     'document'
@@ -1496,8 +1601,7 @@
     let insertSciPap = (e, frm) => {
             // prevent default action of submitting scientific paper data    
             e.preventDefault()
-            request
-                (
+            request(
                     '/eArchive/ScientificPapers/insert.php',
                     'POST',
                     'text',
@@ -1513,8 +1617,7 @@
      *   @param HTMLFormElement frm
      */
     let updateSciPap = frm => {
-            request
-                (
+            request(
                     '/eArchive/ScientificPapers/update.php',
                     'POST',
                     'text',
@@ -1531,8 +1634,7 @@
      *  @param Number idScientificPapers
      */
     let deleteSciPap = idScientificPapers => {
-            request
-                (
+            request(
                     `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`,
                     'GET',
                     'text'
@@ -1549,8 +1651,7 @@
     let uploadGradCert = e => {
             // prevent default action of submitting certificate upload form
             e.preventDefault()
-            request
-                (
+            request(
                     '/eArchive/Certificates/insert.php',
                     'POST',
                     'text',
@@ -1569,19 +1670,19 @@
      *  @param Number idAttendances
      */
     let selectGradCert = idAttendances => {
-
-            (
-                `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`,
-                'GET',
-                'document'
-            )
-            .then(response => {
+            request(
+                    `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`,
+                    'GET',
+                    'document'
+                )
+                .then(response => {
                     // compose node tree structure
                     frag = response
                         // reflect fragments body     
                     document.querySelector('div#gradCertViewingMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
-                    listenToGradCertCard()
-                }).catch(error => alert(error)) // catch
+                })
+                .then(() => listenToGradCertCard())
+                .catch(error => alert(error)) // catch
         } // selectGradCert
 
     /*
@@ -1589,8 +1690,7 @@
      *  @param HTMLFormElement frm
      */
     let updateGradCert = frm => {
-            request
-                (
+            request(
                     '/eArchive/Certificates/update.php',
                     'POST',
                     'text',
@@ -1611,7 +1711,8 @@
                     `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`,
                     'GET',
                     'text'
-                ).then(response => rprtOnAction(response))
+                )
+                .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
                 .then(() => $('#gradCertViewingMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
