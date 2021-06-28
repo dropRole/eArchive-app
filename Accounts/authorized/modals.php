@@ -41,7 +41,7 @@
                     </div>
                     <div class="form-group col-6">
                         <label class="w-100">Kraj
-                            <select id="birtsPostCodeSelEl" class="form-control" name="id_postal_codes" required>
+                            <select id="birthPostCodeSelEl" class="form-control" name="id_postal_codes" required>
                                 <?php
                                 foreach ($DBC->selectCountries()[0]->getIdCountries() as $postalCode) {
                                 ?>
