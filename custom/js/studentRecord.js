@@ -30,11 +30,11 @@
                 }) // addEventListener
                 // if button for subsequent mentor section additon exists 
             if (frm.querySelector('#addMentorBtn'))
-                frm.querySelector('#addMentorBtn').addEventListener('click', addMentSect)
+                frm.querySelector('#addMentorBtn').addEventListener('click', addMentoringsSect)
                 // if button for subsequent document section additon exists
             if (frm.querySelector('#addDocumentBtn'))
             // append controls for additional scientific paper document upload
-                frm.querySelector('#addDocumentBtn').addEventListener('click', addDocUplSect)
+                frm.querySelector('#addDocumentBtn').addEventListener('click', addDocUploadSect)
         } // attachSciPapFrmListeners
 
     // attach event listeners to corresponding input and selecet elements
@@ -81,7 +81,7 @@
             listenStudtInsrFrm()
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // exchange callbacks
-            studtInsrFrm.addEventListener('submit', e => insertStudent(e, cloneFrm))
+            studtInsrFrm.addEventListener('submit', e => insertStudt(e, cloneFrm))
         } // toStudtInsrFrm
 
     /*
@@ -140,7 +140,7 @@
             studtUpdLst.forEach(anchor => {
                     // propagate update form with student particulars
                     anchor.addEventListener('click', e => {
-                            selectStudent(e, anchor.getAttribute('data-id-students'))
+                            selectStudt(e, anchor.getAttribute('data-id-students'))
                         }) // addEventListener
                 }) // forEach
             studtDelLst.forEach(anchor => {
@@ -148,7 +148,7 @@
                     anchor.addEventListener('click', () => {
                             // if record deletion was confirmed
                             if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
-                                deleteStudent(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
+                                deleteStudt(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
                         }) // addEventListener
                 }) // forEach
             acctDelLst.forEach(btn => {
@@ -558,7 +558,7 @@
         } // addPartakerSection
 
     //  create and append additional form controls for uploading document of the scientific paper
-    let addDocUplSect = () => {
+    let addDocUploadSect = () => {
             // form controls 
             let ctr = document.createElement('div'), // row
                 cross = document.createElement('span'), // removal sign
@@ -611,10 +611,10 @@
             ctr.appendChild(docFrmGrp)
                 // append controls to scientific paper insert form
             document.getElementById('sciPapDocs').appendChild(ctr)
-        } // addDocUplSect
+        } // addDocUploadSect
 
     //  create and append additional form controls for providing data on mentors 
-    let addMentSect = () => {
+    let addMentoringsSect = () => {
             // create form controls 
             let ctr = document.createElement('div'), // row
                 headline = document.createElement('p'),
@@ -706,7 +706,7 @@
                 }).catch(error => {
                     alert(error)
                 })
-        } // addMentSect
+        } // addMentoringsSect
 
     /*
      *  clear input field values of a form 
@@ -723,19 +723,19 @@
      *   @param String fullname
      *   @param Number index
      */
-    let interpolateStudentDatalist = (fullname, index) => {
+    let interpolateStudtDatalst = (fullname, index) => {
             let option = document.createElement('option')
             option.value = index
             option.textContent = fullname
             document.getElementById('sciPapInsertionMdl').querySelector('datalist').appendChild(option)
-        } // interpolateStudentDatalist
+        } // interpolateStudtDatalst
 
     /*
      *   asynchronous script execution for selection of student particulars and scientific achievements    
      *   @param Event e
      *   @param Number idStudents
      */
-    let selectStudent = (e, idStudents) => {
+    let selectStudt = (e, idStudents) => {
             request(
                     `/eArchive/Students/select.php?id_students=${idStudents}`,
                     'GET',
@@ -746,13 +746,13 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // selectStudent
+        } // selectStudt
 
     /*
      *   asynchronous script execution for filtered student selection by index      
      *   @param Number index
      */
-    let selectStudentsByIndex = index => {
+    let selStudtsByIndx = index => {
             request(
                     `/eArchive/Students/filterByIndex.php?index=${index}`,
                     'GET',
@@ -766,11 +766,11 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // selectStudentsByIndex
+        } // selStudtsByIndx
 
     fltrInputEl.addEventListener('input', () => {
             // filter students by their index numbers 
-            selectStudentsByIndex(fltrInputEl.value)
+            selStudtsByIndx(fltrInputEl.value)
         }) // addEventListener
 
     /*
@@ -778,7 +778,7 @@
      *  @param Event e
      *  @param HTMLFormElement form
      */
-    let insertStudent = (e, frm) => {
+    let insertStudt = (e, frm) => {
             // prevent default action of submitting student data through a form
             e.preventDefault()
             request(
@@ -798,18 +798,18 @@
                     return
                 })
                 .then(() => {
-                    interpolateStudentDatalist()
+                    interpolateStudtDatalst()
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // insertStudent
+        } // insertStudt
 
     /*
      *  fill out form fields with student birthplace particulars
      *  @param Number idpostalCode
      *  @param Number idCountries
      */
-    let determineBirthplaceOfStudt = (idPostalCodes, idCountries) => {
+    let setBirthplaceOfStudt = (idPostalCodes, idCountries) => {
             // propagate target select element with postal codes of the chosen country
             propagateSelEl(
                 document.querySelector('#birthCtrySelElement'),
@@ -826,7 +826,7 @@
      *  fill out form fields with student permanent residence particulars
      *  @param Array residence
      */
-    let determinePermResOfStudt = (residence) => {
+    let setPermResOfStudt = (residence) => {
             // create hidden input type that stores record if of the residence  
             let idResidencesInputElement = document.createElement('input')
             idResidencesInputElement.type = 'hidden'
@@ -845,13 +845,13 @@
             )).then(() => {
                 document.querySelector('#permResAddressInputElement').value = residence.address
             })
-        } // determinePermResOfStudt
+        } // setPermResOfStudt
 
     /*
      *  fill out form fields with student temporal residence particulars
      *  @param Array residences
      */
-    let determineTempResOfStudt = residences =>
+    let setTempResOfStudt = residences =>
         addTempResSect(residences)
 
     /*
@@ -876,7 +876,7 @@
      *  asynchronous script execution for updating of student particulars
      *  Event e
      */
-    let updateStudent = (e, frm) => {
+    let updateStudt = (e, frm) => {
             // prevent default action of submitting updated student data through a form
             e.preventDefault()
             request(
@@ -894,14 +894,14 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // updateStudent
+        } // updateStudt
 
     /*
      *   asynchronous script execution for deletion of all records regarding the student   
      *   @param Number idStudents
      *   @param Number idAttendances
      */
-    let deleteStudent = (idStudents, idAttendances) => {
+    let deleteStudt = (idStudents, idAttendances) => {
             request(
                     `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`,
                     'GET',
@@ -914,7 +914,7 @@
                 }).catch(error => {
                     alert(error)
                 }) // catch
-        } // deleteStudent
+        } // deleteStudt
 
     /*
      *   asynchronous script run for assigning an account credentials to the student 
@@ -1225,14 +1225,14 @@
             cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
             cloneFrm.querySelector('input[name=email]').value = student.particulars.email
             cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
-            determineBirthplaceOfStudt(cloneFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
-            determinePermResOfStudt(cloneFrm, student.permResidence)
-            determineTempResOfStudt(student.tempResidence)
+            setBirthplaceOfStudt(cloneFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
+            setPermResOfStudt(cloneFrm, student.permResidence)
+            setTempResOfStudt(student.tempResidence)
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
             cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
                 // exchange callbacks
-            cloneFrm.removeEventListener('submit', insertStudent)
-            cloneFrm.addEventListener('submit', updateStudent)
+            cloneFrm.removeEventListener('submit', insertStudt)
+            cloneFrm.addEventListener('submit', updateStudt)
         } // toStudentUpdateFrm
 
     // attach event listeners to a scientific paper cards when rendered
