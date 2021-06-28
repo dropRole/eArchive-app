@@ -51,17 +51,17 @@
             addAttendanceBtn.addEventListener('click', addProgAttendanceSect)
             birthCtrySelEl.addEventListener(
                 // propagate postal codes by selected country 
-                'click',
-                propagateSelEl(
-                    '#birthPostCodeSelEl',
+                'change',
+                () => propagateSelEl(
+                    document.getElementById('birthPostCodeSelEl'),
                     `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySelEl.selectedOptions[0].value}`
                 )
             )
             permResCtrySelEl.addEventListener(
                 // propagate postal codes by selected country 
-                'click',
-                propagateSelEl(
-                    '#permResPostCodeSelEl',
+                'change',
+                () => propagateSelEl(
+                    document.getElementById('permResPostCodeSelEl'),
                     `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySelEl.selectedOptions[0].value}`
                 )
             )
