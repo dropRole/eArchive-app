@@ -11,7 +11,7 @@
         fltrInputEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
 
     gradCertUplFrm.querySelector('input[type=file]').addEventListener(
-            'change',
+            'input',
             () => {
                 // assign the name of the uploaded certificate to hidden input type
                 gradCertUplFrm.querySelector('input[name=certificate]').value = gradCertUplFrm.querySelector('input[type=file]').files[0].name
@@ -31,7 +31,7 @@
                 // if file input is rendered 
             if (frm.querySelector('input[name="document[]"]'))
                 frm.querySelector('input[name="document[]"]').addEventListener(
-                    'change',
+                    'input',
                     e => {
                         // assign the filename of the uploaded document to the hidden input type
                         frm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
@@ -72,7 +72,7 @@
             )
             birthCtrySelEl.addEventListener(
                     // propagate postal codes by selected country 
-                    'change',
+                    'input',
                     () => propagateSelEl(
                         document.getElementById('birthPostCodeSelEl'),
                         `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySelEl.selectedOptions[0].value}`
@@ -80,7 +80,7 @@
                 ) // addEventListener
             permResCtrySelEl.addEventListener(
                     // propagate postal codes by selected country 
-                    'change',
+                    'input',
                     () => propagateSelEl(
                         document.getElementById('permResPostCodeSelEl'),
                         `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySelEl.selectedOptions[0].value}`
@@ -91,12 +91,12 @@
                     () => {
                         // propagate programs by faculty selection
                         propagateSelEl(
-                            document.getElementById('progSelElement'),
+                            document.getElementById('progSelEl'),
                             `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`
                         )
                     }) // addEventListener
             gradCheckBox.addEventListener(
-                    'change',
+                    'input',
                     e => {
                         // if it's checked
                         if (gradCheckBox.checked)
@@ -121,7 +121,7 @@
             listenStudtInsrFrm()
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // exchange callbacks
-            studtInsrFrm.addEventListener('submit', e => insertStudt(e, cloneFrm))
+            cloneFrm.addEventListener('submit', e => insertStudt(e, cloneFrm))
         } // toStudtInsrFrm
 
     /*
@@ -461,7 +461,7 @@
             certInptEl.required = true
                 // determine hidden input type value if graduated
             certInptEl.addEventListener(
-                    'change',
+                    'input',
                     e => {
                         certNameInptEl.value = e.target.files[0].name
                     }
@@ -513,7 +513,7 @@
                 gradTxt = document.createTextNode('Diplomiral')
             index = document.querySelectorAll('div#attendances > div.row').length - 1 // the following index for an array od data on program attendance       
             gradCheckBox.addEventListener(
-                    'change',
+                    'input',
                     e => {
                         // append or remove graduation section depending on the condition
                         // if it's checked
@@ -553,7 +553,7 @@
             facSelEl.name = `attendances[${index}][id_faculties]`
             facSelEl.required = true
             facSelEl.addEventListener(
-                    'change',
+                    'input',
                     e => {
                         // propagate programs by faculty selection
                         propagateSelEl(
@@ -670,7 +670,7 @@
                 docNameInptEl = document.createElement('input'), // document hidden input 
                 index = document.querySelectorAll('div#documents > div.row').length // the following index for an array of data on documents of scientific paper  
             docInptEl.addEventListener(
-                    'change',
+                    'input',
                     e => {
                         // assign chosen document name as a value to the docNameInputElement
                         docNameInptEl.value = e.target.files[0].name
