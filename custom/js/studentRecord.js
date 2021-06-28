@@ -436,8 +436,7 @@
      *  @param Event e
      */
     let addProgGradSect = e => {
-            let lblNum = e.target.getAttribute('data-lbl-nm'), // get ordinal number for label numeration   
-                indx = e.target.getAttribute('data-indx'), // get next index position for attendances array 
+            indx = e.target.getAttribute('data-indx'), // get next index position for attendances array 
                 // create form controls 
                 gradCertFrmGrp = document.createElement('div'),
                 defendedFrmGrp = document.createElement('div'),
@@ -453,14 +452,9 @@
             defendedFrmGrp.className = 'form-group col-4'
             issuedFrmGrp.className = 'form-group col-4'
             gradCertLbl.textContent = 'Certifikat'
-            gradCertLbl.setAttribute('for', `certificateInpt${lblNum}`)
             defendedLbl.textContent = 'Zagovorjen'
-            defendedLbl.setAttribute('for', `defendedInpt${lblNum}`)
             issuedLbl.textContent = 'Izdan'
-            issuedLbl.setAttribute('for', `issuedInpt${lblNum}`)
             issuedInptEl.textContent = 'Izdan'
-            issuedInptEl.setAttribute('for', `iInpt${lblNum}`)
-            certInptEl.id = `certificateInpt${lblNum}`
             certInptEl.type = 'file'
             certInptEl.setAttribute('name', 'certificate[]')
             certInptEl.accept = '.pdf'
@@ -474,23 +468,21 @@
                 ) // addEventListener
             certNameInptEl.type = 'hidden'
             certNameInptEl.name = `attendances[${indx}][certificate]`
-            defendedInptEl.id = `defendedInpt${lblNum}`
             defendedInptEl.className = 'form-control'
             defendedInptEl.type = 'date'
             defendedInptEl.required = true
             defendedInptEl.name = `attendances[${indx}][defended]`
-            issuedInptEl.id = `issuedInpt${lblNum}`
             issuedInptEl.className = 'form-control'
             issuedInptEl.type = 'date'
             issuedInptEl.name = `attendances[${indx}][issued]`
             issuedInptEl.required = true
                 // append graduation form controls to a particular attendance section
+            gradCertLbl.appendChild(certInptEl)
             gradCertFrmGrp.appendChild(gradCertLbl)
-            gradCertFrmGrp.appendChild(certInptEl)
+            defendedLbl.appendChild(defendedInptEl)
             defendedFrmGrp.appendChild(defendedLbl)
-            defendedFrmGrp.appendChild(defendedInptEl)
+            issuedLbl.appendChild(issuedInptEl)
             issuedFrmGrp.appendChild(issuedLbl)
-            issuedFrmGrp.appendChild(issuedInptEl)
             e.target.closest('.row').appendChild(certNameInptEl)
             e.target.closest('.row').appendChild(gradCertFrmGrp)
             e.target.closest('.row').appendChild(defendedFrmGrp)
