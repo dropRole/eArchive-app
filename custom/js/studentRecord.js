@@ -710,13 +710,13 @@
 
     /*
      *  clear input field values of a form 
-     *  @param HTMLFormElement form
+     *  @param HTMLFormElement frm
      */
-    let emptyFrmInputFields = form => {
-            form.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
+    let emptyFrmInptFields = frm => {
+            frm.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
                     input.value = ''
                 }) // forEach
-        } // emptyFrmInputFields
+        } // emptyFrmInptFields
 
     /*  
      *   interpolate datalist with name, surname and index number of the inserted student
@@ -736,7 +736,11 @@
      *   @param Number idStudents
      */
     let selectStudent = (e, idStudents) => {
-            request(`/eArchive/Students/select.php?id_students=${idStudents}`, 'GET', 'json').then(response => {
+            request(
+                    `/eArchive/Students/select.php?id_students=${idStudents}`,
+                    'GET',
+                    'json'
+                ).then(response => {
                     // pass JSON response
                     toStudentUpdateFrm(e, response)
                 }).catch(error => {
@@ -749,12 +753,15 @@
      *   @param Number index
      */
     let selectStudentsByIndex = index => {
-            request(`/eArchive/Students/filterByIndex.php?index=${index}`, 'GET', 'document').then(response => {
-                    let tblCtr = document.querySelector('.table-responsive')
-                        // compose node passive tree structure
+            request(
+                    `/eArchive/Students/filterByIndex.php?index=${index}`,
+                    'GET',
+                    'document'
+                ).then(response => {
+                    // compose node passive tree structure
                     frag = response
                         // reflect fragments body  
-                    tblCtr.innerHTML = frag.body.innerHTML
+                    document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
                     listenStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
@@ -782,7 +789,7 @@
                 ).then(response => {
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
-                    emptyFrmInputFields(studtInsrFrm)
+                    emptyFrmInptFields(studtInsrFrm)
                         // close the modal after insertion 
                     document.getElementById('studentInsBtn').click()
                     return
@@ -882,7 +889,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    emptyFrmInputFields(studtInsrFrm)
+                    emptyFrmInptFields(studtInsrFrm)
                     loadStudtEvidTbl()
                 }).catch(error => {
                     alert(error)
