@@ -7,7 +7,7 @@
         acctAssignFrm = document.getElementById('acctAssignFrm'), // form for assigning student account and its credentials
         gradCertUplFrm = document.getElementById('gradCertUplFrm'), // form for uploading graduation certificates
         rprtMdl = document.getElementById('rprtMdl'), // modal for reporting about performed operations 
-        reportMdlBtn = document.getElementById('reportMdlBtn'), // report modal toggler
+        reportMdlBtn = document.getElementById('rprtMdlBtn'), // report modal toggler
         fltrInputEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
 
     gradCertUplFrm.querySelector('input[type=file]').addEventListener('change', () => {
@@ -18,7 +18,7 @@
     // attach event listeners to corresponding input element 
     let listenSciPapInsrFrm = () => {
             // get the form 
-            let frm = document.getElementById('sciPapInsertionMdl')
+            let frm = document.getElementById('sciPapInsrMdl')
                 // if button for subsequent partaker section additon exists
             if (frm.querySelector('#addPartakerBtn'))
                 addPartakerBtn.addEventListener('click', addPartakerSect)
@@ -77,7 +77,7 @@
             // clone from the existing form node
             let cloneFrm = studtInsrFrm.cloneNode(true)
                 // replace form element node with its clone
-            document.getElementById('studentInsertionFrm').replaceWith(cloneFrm)
+            document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
             listenStudtInsrFrm()
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // exchange callbacks
@@ -89,12 +89,12 @@
      *   @param Event e
      */
     let toSciPapInsrFrm = e => {
-            document.querySelector('#sciPapInsertionMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
+            document.querySelector('#sciPapInsrMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true)
             cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsertionMdl').replaceWith(cloneFrm)
+            document.getElementById('sciPapInsrMdl').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
             listenSciPapInsrFrm()
             cloneFrm.addEventListener('submit', insertSciPap)
@@ -727,7 +727,7 @@
             let option = document.createElement('option')
             option.value = index
             option.textContent = fullname
-            document.getElementById('sciPapInsertionMdl').querySelector('datalist').appendChild(option)
+            document.getElementById('sciPapInsrMdl').querySelector('datalist').appendChild(option)
         } // interpolateStudtDatalst
 
     /*
@@ -973,7 +973,7 @@
      *   @param Object sciPap
      */
     let toSciPapUpdateFrm = sciPap => {
-            document.querySelector('#sciPapInsertionPMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScienitificPapersInputElement = document.createElement('input')
@@ -981,7 +981,7 @@
             idScienitificPapersInputElement.name = 'id_scientific_papers'
             idScienitificPapersInputElement.value = sciPap.id_scientific_papers
                 // replace form element node with its clone
-            document.getElementById('sPFrm').replaceWith(cloneFrm)
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScienitificPapersInputElement)
             listenSciPapInsrFrm()
             cloneFrm.querySelector('input[name="topic"]').value = sciPap.topic
@@ -1004,7 +1004,7 @@
      *   @param Event e
      */
     let toSciPapDocUploadFrm = e => {
-            document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPaperInputElement = document.createElement('input')
@@ -1012,7 +1012,7 @@
             idScientificPaperInputElement.name = 'id_scientific_papers'
             idScientificPaperInputElement.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form node with its clone
-            sPFrm.replaceWith(cloneFrm)
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScientificPaperInputElement)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
@@ -1034,7 +1034,7 @@
      *  @param Event e
      */
     let toPartakerInsertFrm = e => {
-            document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInputElement = document.createElement('input')
@@ -1042,7 +1042,7 @@
             idScientificPapersInputElement.name = 'id_scientific_papers'
             idScientificPapersInputElement.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScientificPapersInputElement)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
@@ -1066,7 +1066,7 @@
      *  @param Event e
      */
     let toPartakerUpdateFrm = e => {
-            document.querySelector('#sciPapInsertionMdl .modal-header .modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+            document.querySelector('#sciPapInsrMdl .modal-header .modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idPartakingsHiddInpt = document.createElement('input')
@@ -1074,7 +1074,7 @@
             idPartakingsHiddInpt.name = 'id_partakings'
             idPartakingsHiddInpt.value = e.target.getAttribute('data-id-partakings')
                 // replace form node with its clone
-            document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idPartakingsHiddInpt)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
@@ -1101,7 +1101,7 @@
      *  @param Event e
      */
     let toMentorInsertFrm = e => {
-            document.querySelector('#sciPapInsertionMdl .modal-header > .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInputElement = document.createElement('input')
@@ -1109,7 +1109,7 @@
             idScientificPapersInputElement.name = 'id_scientific_papers'
             idScientificPapersInputElement.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScientificPapersInputElement)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapMentorSect').classList = 'col-12'
@@ -1133,14 +1133,14 @@
      *  @param Event e
      */
     let toMentorUpdateFrm = e => {
-            document.querySelector('#sciPapInsertionPMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idMentoringsInputElement = document.createElement('input')
             idMentoringsInputElement.type = 'hidden'
             idMentoringsInputElement.name = 'id_mentorings'
             idMentoringsInputElement.value = e.target.getAttribute('data-id-mentorings')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsertionFrm').replaceWith(cloneFrm)
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idMentoringsInputElement)
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
             listenSciPapInsrFrm()
@@ -1179,7 +1179,7 @@
      *  @param Event e
      */
     let toGradCertUpdateFrm = e => {
-            document.querySelector('#certUploadMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov certifikata'
+            document.querySelector('#gradCertUploadMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov certifikata'
                 // clone from the existing form node
             let cloneFrm = certCloneFrm.cloneNode(true),
                 idCertificatesInputElement = document.createElement('input')
@@ -1391,7 +1391,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    selectSciPaps(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1412,7 +1412,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after submission
-                    $('#sciPapInsertionMdl').modal('hide')
+                    $('#sciPapInsrMdl').modal('hide')
                     return
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers
@@ -1499,7 +1499,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                 }).then(() => {
-                    selectSciPaps(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1545,7 +1545,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after insertion 
-                    $('#sciPapInsertionMdl').modal('hide')
+                    $('#sciPapInsrMdl').modal('hide')
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1566,7 +1566,7 @@
                     rprtMdl.querySelector('.modal-body').textContent = response
                     reportMdlBtn.click()
                         // close the modal after update
-                    $('#sciPapInsertionMdl').modal('hide')
+                    $('#sciPapInsrMdl').modal('hide')
                     return
                 }).then(() => {
                     // repaint cards containing data concerning scientific papers 
@@ -1591,7 +1591,7 @@
                     reportMdlBtn.click()
                     return
                 }).then(() => {
-                    selectSciPaps(document.getElementById('sciPapInsertionFrm').querySelector('input[name=id_attendances]').value)
+                    selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value)
                 }).catch(error => {
                     alert(error)
                 }) // catch
@@ -1616,7 +1616,7 @@
                 }).then(() => {
                     loadStudtEvidTbl()
                         // close certificate upload modal after uploading the certificate
-                    $('#certUploadMdl').modal('hide')
+                    $('#gradCertUploadMdl').modal('hide')
                 }).catch(error => {
                     alert(error)
                 }) // catch
