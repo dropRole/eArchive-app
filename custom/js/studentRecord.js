@@ -193,19 +193,20 @@
 
     // laod student evidence table upon latterly data amendment 
     let loadStudtEvidTbl = () => {
-            request(
+            request
+                (
                     '/eArchive/Students/selectAll.php',
                     'GET',
                     'document'
-                ).then(response => {
+                )
+                .then(response => {
                     // compose node tree structure
                     frag = response
                         // reflect fragments body  
                     document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
-                    listenStudtEvidTbl()
-                }).catch(error => {
-                    alert(error)
-                }) // catch
+                })
+                .then(() => listenStudtEvidTbl())
+                .catch(error => alert(error)) // catch
         } // loadStudtEvidTbl
 
     /*
@@ -507,9 +508,7 @@
                 .then(() => propagateSelEl(progSelEl, `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`))
                 .then(() => {
                     document.getElementById('attendances').appendChild(ctr)
-                }).catch(error => {
-                    alert(error)
-                }) // catch
+                }).catch(error => alert(error)) // catch
         } // addProgAttendanceSect 
 
     // create and subsequently append partaker section of the scientific paper insertion form 
@@ -704,9 +703,7 @@
                     '/eArchive/Faculties/select.php'
                 ).then(() => {
                     document.getElementById('sciPapMentorSect').appendChild(ctr)
-                }).catch(error => {
-                    alert(error)
-                })
+                }).catch(error => alert(error))
         } // addMentoringsSect
 
     /*
@@ -737,16 +734,14 @@
      *   @param Number idStudents
      */
     let selectStudt = (e, idStudents) => {
-            request(
+            request
+                (
                     `/eArchive/Students/select.php?id_students=${idStudents}`,
                     'GET',
                     'json'
-                ).then(response => {
-                    // pass JSON response
-                    toStudentUpdateFrm(e, response)
-                }).catch(error => {
-                    alert(error)
-                }) // catch
+                )
+                .then(response => toStudentUpdateFrm(e, response))
+                .catch(error => alert(error)) // catch
         } // selectStudt
 
     /*
@@ -754,19 +749,20 @@
      *   @param Number index
      */
     let selStudtsByIndx = index => {
-            request(
+            request
+                (
                     `/eArchive/Students/filterByIndex.php?index=${index}`,
                     'GET',
                     'document'
-                ).then(response => {
+                )
+                .then(response => {
                     // compose node passive tree structure
                     frag = response
                         // reflect fragments body  
                     document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
-                    listenStudtEvidTbl()
-                }).catch(error => {
-                    alert(error)
-                }) // catch
+                })
+                .then(() => listenStudtEvidTbl())
+                .catch(error => alert(error)) // catch
         } // selStudtsByIndx
 
     fltrInputEl.addEventListener('input', () => {
@@ -794,9 +790,7 @@
                 .then(() => emptyFrmInptFields(studtInsrFrm))
                 .then(() => document.getElementById('studentInsBtn').click())
                 .then(() => interpolateStudtDatalst())
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // insertStudt
 
     /*
@@ -861,9 +855,7 @@
                     'text'
                 )
                 .then(response => rprtOnAction(response))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // deleteTempResOfStudt
 
     /*
@@ -883,9 +875,7 @@
                 .then(response => rprtOnAction(response))
                 .then(() => emptyFrmInptFields(studtInsrFrm))
                 .then(() => loadStudtEvidTbl())
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // updateStudt
 
     /*
@@ -902,9 +892,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // deleteStudt
 
     /*
@@ -924,9 +912,7 @@
                 .then(response => rprtOnAction(response))
                 .then(() => $('#acctAssigningMdl').modal('hide'))
                 .then(() => loadStudtEvidTbl())
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // assignAcctCred
 
     acctAssignFrm.addEventListener('submit', e => {
@@ -948,9 +934,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // deleteAcctOfStudt
 
     /*
@@ -1141,7 +1125,8 @@
                     `/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`,
                     'GET',
                     'json'
-                ).then(response => {
+                )
+                .then(response => {
                     // populate form fields with selected mentor data
                     cloneFrm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id-mentorings')
                     cloneFrm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
@@ -1149,9 +1134,7 @@
                     cloneFrm.querySelector('input[name="mentors[0][taught]"]').value = response.taught
                     cloneFrm.querySelector('input[name="mentors[0][email]"]').value = response.email
                     cloneFrm.querySelector('input[name="mentors[0][telephone]"]').value = response.telephone
-                }).catch(error => {
-                    alert(error)
-                }) // catch
+                }).catch(error => alert(error)) // catch
             cloneFrm.addEventListener('submit', e => {
                     // prevent form from submitting updated mentor data 
                     e.preventDefault();
@@ -1273,10 +1256,12 @@
                 document.querySelectorAll('.sp-upd-а').forEach(anchor => {
                     // fill form fields and modify the form
                     anchor.addEventListener('click', e => {
-                            request(`/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id-scientific-papers')}`, 'GET', 'json').then(response => {
-                                    // retrieve JSON of ScientificPapers object 
-                                    toSciPapUpdateFrm(response)
-                                }).catch(error => {
+                            request
+                                (`/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id-scientific-papers')}`,
+                                    'GET',
+                                    'json')
+                                .then(response => toSciPapUpdateFrm(response))
+                                .catch(error => {
                                     alert(error)
                                 }) // catch
                         }) // addEventListener
@@ -1320,17 +1305,17 @@
 
     // asynchronous script execution for insertion of a scientific paper partaker    
     let insertPartakerOfSciPap = frm => {
-            request(
+            request
+                (
                     '/eArchive/Partakings/insert.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => rprtOnAction(response))
+                )
+                .then(response => rprtOnAction(response))
                 .then(() => $('#sciPapMdl').modal('hide'))
                 .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // insertPartakerOfSciPap
 
     /*
@@ -1347,9 +1332,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // updatePartakerOfSciPap
 
     /*
@@ -1365,9 +1348,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // deletePartakerOfSciPap
 
     /*
@@ -1385,9 +1366,7 @@
                 .then(response => rprtOnAction(response))
                 .then(() => $('#sciPapInsrMdl').modal('hide'))
                 .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // insertMentorOfSciPap
 
     // asynchronously script run for updating data regarding mentor of the scientific paper       
@@ -1401,9 +1380,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // updateMentorOfSciPap
 
     /*
@@ -1419,9 +1396,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => selectSciPaps(document.getElementById('sciPapFrm').querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // deleteMentorOfSciPap
 
     /*  
@@ -1439,9 +1414,7 @@
                 .then(response => rprtOnAction(response))
                 .then(() => $('#sicPapMdl').modal('hide'))
                 .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // uploadDocsOfSciPap
 
     /*
@@ -1457,9 +1430,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // deleteDocsOfSciPap
 
     /*
@@ -1468,20 +1439,20 @@
      */
     let selectSciPaps = idAttendances => {
             // fetch resources
-            request(
+            request
+                (
                     `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`,
                     'GET',
                     'document'
-                ).then(response => {
+                )
+                .then(response => {
                     // compose node tree structure
                     frag = response
                         // reflect fragments body     
                     document.querySelector('#sciPapViewingMdl .modal-content').innerHTML = frag.body.innerHTML
-                }).then(() => {
-                    listenToSciPapCards()
-                }).catch(error => {
-                    alert(error)
-                }) // catch
+                })
+                .then(() => listenToSciPapCards())
+                .catch(error => alert(error)) // catch
         } // selectSciPaps
 
     /*
@@ -1501,9 +1472,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // insertSciPap
 
     /*
@@ -1521,9 +1490,7 @@
                 .then(response => rprtOnAction(response))
                 .then(() => $('#sciPapInsrMdl').modal('hide'))
                 .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // updateSciPap
 
     /*
@@ -1539,9 +1506,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // deleteScientificPaper
 
     /*
@@ -1561,9 +1526,7 @@
                 .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
                 .then(() => $('#gradCertUploadMdl').modal('hide'))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // uploadGradCert
 
     gradCertUplFrm.addEventListener('submit', uploadGradCert)
@@ -1573,19 +1536,19 @@
      *  @param Number idAttendances
      */
     let selectGradCert = idAttendances => {
-            request(
-                    `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`,
-                    'GET',
-                    'document'
-                ).then(response => {
+
+            (
+                `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`,
+                'GET',
+                'document'
+            )
+            .then(response => {
                     // compose node tree structure
                     frag = response
                         // reflect fragments body     
                     document.querySelector('div#gradCertViewingMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
                     listenToGradCertCard()
-                }).catch(error => {
-                    alert(error)
-                }) // catch
+                }).catch(error => alert(error)) // catch
         } // selectGradCert
 
     /*
@@ -1602,9 +1565,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => selectGradCert(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // updateGradCert
 
     /*
@@ -1620,9 +1581,7 @@
                 ).then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
                 .then(() => $('#gradCertViewingMdl').modal('hide'))
-                .catch(error => {
-                    alert(error)
-                }) // catch
+                .catch(error => alert(error)) // catch
         } // deleteGradCert
 
     /*  
