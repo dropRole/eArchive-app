@@ -782,25 +782,19 @@
     let insertStudt = (e, frm) => {
             // prevent default action of submitting student data through a form
             e.preventDefault()
-            request(
+            request
+                (
                     '/eArchive/Students/insert.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                    emptyFrmInptFields(studtInsrFrm)
-                        // close the modal after insertion 
-                    document.getElementById('studentInsBtn').click()
-                    return
-                }).then(() => {
-                    loadStudtEvidTbl()
-                    return
-                })
-                .then(() => {
-                    interpolateStudtDatalst()
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .then(() => emptyFrmInptFields(studtInsrFrm))
+                .then(() => document.getElementById('studentInsBtn').click())
+                .then(() => interpolateStudtDatalst())
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // insertStudt
@@ -860,15 +854,14 @@
      *   @param idResidences
      */
     let deleteTempResOfStudt = idResidences => {
-            request(
+            request
+                (
                     `/eArchive/Residences/delete.php?id_residences=${idResidences}`,
                     'GET',
                     'text'
-                ).then(response => {
-                    // report the result
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // deleteTempResOfStudt
@@ -880,19 +873,17 @@
     let updateStudt = (e, frm) => {
             // prevent default action of submitting updated student data through a form
             e.preventDefault()
-            request(
+            request
+                (
                     '/eArchive/Students/update.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on update
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                }).then(() => {
-                    emptyFrmInptFields(studtInsrFrm)
-                    loadStudtEvidTbl()
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => emptyFrmInptFields(studtInsrFrm))
+                .then(() => loadStudtEvidTbl())
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // updateStudt
@@ -903,16 +894,15 @@
      *   @param Number idAttendances
      */
     let deleteStudt = (idStudents, idAttendances) => {
-            request(
+            request
+                (
                     `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`,
                     'GET',
                     'text'
-                ).then(response => {
-                    // report on deletion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                    loadStudtEvidTbl()
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // deleteStudt
@@ -924,22 +914,17 @@
     let assignAcctCred = e => {
             // prevent default action of submutting the form containing account credentials
             e.preventDefault()
-            request(
+            request
+                (
                     '/eArchive/Accounts/authorized/insert.php',
                     'POST',
                     'text',
                     (new FormData(acctAssignFrm))
-                ).then(response => {
-                    // report on account assignment 
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    $('#reportMdl').modal('show')
-                        // close the modal after account assignment
-                    $('#acctAssigningMdl').modal('hide')
-                    return
-                }).then(() => {
-                    // repaint student evidence table
-                    loadStudtEvidTbl()
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#acctAssigningMdl').modal('hide'))
+                .then(() => loadStudtEvidTbl())
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // assignAcctCred
@@ -955,16 +940,15 @@
      *   @param idAttendances
      */
     let deleteAcctOfStudt = idAttendances => {
-            request(
+            request
+                (
                     `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`,
                     'GET',
                     'text'
-                ).then(response => {
-                    // report on account deletion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                    loadStudtEvidTbl()
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // deleteAcctOfStudt
@@ -1341,17 +1325,10 @@
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on the insertion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                        // close the modal after submission
-                    $('#sciPapMdl').modal('hide')
-                    return
-                }).then(() => {
-                    // repaint cards containing data concerning scientific papers
-                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                ).then(response => rprtOnAction(response))
+                .then(() => $('#sciPapMdl').modal('hide'))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // insertPartakerOfSciPap
@@ -1361,19 +1338,16 @@
      *  @param HTMLFormElement frm
      */
     let updatePartakerOfSciPap = frm => {
-            request(
+            request
+                (
                     '/eArchive/Partakings/update.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on update
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                    return
-                }).then(() => {
-                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // updatePartakerOfSciPap
@@ -1383,17 +1357,15 @@
      *  @param Number idPartakings
      */
     let deletePartakerOfSciPap = idPartakings => {
-            request(
+            request
+                (
                     `/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`,
                     'GET',
                     'text'
-                ).then(response => {
-                    // report on deletion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                }).then(() => {
-                    selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // deletePartakerOfSciPap
@@ -1403,41 +1375,33 @@
      *  @param HTMLFormElement frm
      */
     let insertMentorOfSciPap = frm => {
-            request(
+            request
+                (
                     '/eArchive/Mentorings/insert.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on update
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                        // close the modal after submission
-                    $('#sciPapInsrMdl').modal('hide')
-                    return
-                }).then(() => {
-                    // repaint cards containing data concerning scientific papers
-                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sciPapInsrMdl').modal('hide'))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // insertMentorOfSciPap
 
     // asynchronously script run for updating data regarding mentor of the scientific paper       
     let updateMentorOfSciPap = frm => {
-            request(
+            request
+                (
                     '/eArchive/Mentorings/update.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on update
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                    return
-                }).then(() => {
-                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // updateMentorOfSciPap
@@ -1447,17 +1411,15 @@
      *  @param Number idMentorings
      */
     let deleteMentorOfSciPap = idMentorings => {
-            request(
+            request
+                (
                     `/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`,
                     'GET',
                     'text'
-                ).then(response => {
-                    // report on deletion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                }).then(() => {
-                    selectSciPaps(document.getElementById('sciPapFrm').querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(document.getElementById('sciPapFrm').querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // deleteMentorOfSciPap
@@ -1467,21 +1429,17 @@
      *   @param HTMLFormElement frm
      */
     let uploadDocsOfSciPap = frm => {
-            request(
+            request
+                (
                     '/eArchive/Documents/insert.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on document upload
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                        // close the modal after upload
-                    $('#sicPapMdl').modal('hide')
-                }).then(() => {
-                    // repaint cards containing data concerning scientific papers
-                    selectSciPaps(frm.querySelector('input[name=id_attendances').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sicPapMdl').modal('hide'))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // uploadDocsOfSciPap
@@ -1491,17 +1449,15 @@
      *  @param String source  
      */
     let deleteDocsOfSciPap = source => {
-            request(
+            request
+                (
                     `/eArchive/Documents/delete.php?source=${source}`,
                     'GET',
                     'text'
-                ).then(response => {
-                    // report on document deletion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                }).then(() => {
-                    selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // deleteDocsOfSciPap
@@ -1536,18 +1492,16 @@
     let insertSciPap = (e, frm) => {
             // prevent default action of submitting scientific paper data    
             e.preventDefault()
-            request(
+            request
+                (
                     '/eArchive/ScientificPapers/insert.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on scientific papers insertion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                        // close the modal after insertion 
-                    $('#sciPapInsrMdl').modal('hide')
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sciPapInsrMdl').modal('hide'))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // insertSciPap
@@ -1557,22 +1511,17 @@
      *   @param HTMLFormElement frm
      */
     let updateSciPap = frm => {
-            request(
+            request
+                (
                     '/eArchive/ScientificPapers/update.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on scientific paper update
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                        // close the modal after update
-                    $('#sciPapInsrMdl').modal('hide')
-                    return
-                }).then(() => {
-                    // repaint cards containing data concerning scientific papers 
-                    selectSciPaps(frm.querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sciPapInsrMdl').modal('hide'))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // updateSciPap
@@ -1582,18 +1531,15 @@
      *  @param Number idScientificPapers
      */
     let deleteSciPap = idScientificPapers => {
-            request(
+            request
+                (
                     `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`,
                     'GET',
                     'text'
-                ).then(response => {
-                    // report on the deletion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                    return
-                }).then(() => {
-                    selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // deleteScientificPaper
@@ -1605,20 +1551,17 @@
     let uploadGradCert = e => {
             // prevent default action of submitting certificate upload form
             e.preventDefault()
-            request(
+            request
+                (
                     '/eArchive/Certificates/insert.php',
                     'POST',
                     'text',
                     (new FormData(gradCertUplFrm))
-                ).then(response => {
-                    // report on upload
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                }).then(() => {
-                    loadStudtEvidTbl()
-                        // close certificate upload modal after uploading the certificate
-                    $('#gradCertUploadMdl').modal('hide')
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .then(() => $('#gradCertUploadMdl').modal('hide'))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // uploadGradCert
@@ -1650,22 +1593,16 @@
      *  @param HTMLFormElement frm
      */
     let updateGradCert = frm => {
-            request(
+            request
+                (
                     '/eArchive/Certificates/update.php',
                     'POST',
                     'text',
                     (new FormData(frm))
-                ).then(response => {
-                    // report on update
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                        // close certificate upload modal after update
-                    $('#gradCertUploadMdl').modal('hide')
-                    return
-                }).then(() => {
-                    // select update graduation certificate
-                    selectGradCert(frm.querySelector('input[name=id_attendances]').value)
-                }).catch(error => {
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectGradCert(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // updateGradCert
@@ -1680,16 +1617,20 @@
                     `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`,
                     'GET',
                     'text'
-                ).then(response => {
-                    // report on deletion
-                    rprtMdl.querySelector('.modal-body').textContent = response
-                    reportMdlBtn.click()
-                }).then(() => {
-                    loadStudtEvidTbl()
-                        // close certificate review modal after deletion
-                    $('#gradCertViewingMdl').modal('hide')
-                }).catch(error => {
+                ).then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .then(() => $('#gradCertViewingMdl').modal('hide'))
+                .catch(error => {
                     alert(error)
                 }) // catch
         } // deleteGradCert
+
+    /*  
+     *   report to the user on the performed action
+     *   @param String mssg
+     */
+    let rprtOnAction = mssg => {
+            rprtMdl.querySelector('.modal-body').textContent = mssg
+            reportMdlBtn.click()
+        } // rprtOnAction
 })()
