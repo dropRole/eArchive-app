@@ -6,28 +6,28 @@
                 <p class="h4 pt-2 px-3">Osnovni podatki</p>
                 <div class="row px-3">
                     <div class="form-group col-6">
-                        <label>Ime
+                        <label class="w-100">Ime
                             <input id="nameInptEl" class="form-control" type="text" name="name" required>
                         </label>
                     </div>
                     <div class="form-group col-6">
-                        <label>Priimek
+                        <label class="w-100">Priimek
                             <input id="surnameInptEl" class="form-control" type="text" name="surname" required>
                         </label>
                     </div>
                     <div class="form-group col-6">
-                        <label>E-naslov
+                        <label class="w-100">E-naslov
                             <input id="emailInptEl" class="form-control" type="email" name="email">
                         </label>
                     </div>
                     <div class="form-group col-6">
-                        <label>Telefon
+                        <label class="w-100">Telefon
                             <input id="telInptEl" class="form-control" type="text" name="telephone">
                         </label>
                     </div>
                     <p class="h6 col-12">Rojen</p>
                     <div class="form-group col-6">
-                        <label>Država
+                        <label class="w-100">Država
                             <select id="birthCtrySelEl" class="form-control country-select">
                                 <?php
                                 foreach ($DBC->selectCountries() as $country) {
@@ -40,7 +40,7 @@
                         </label>
                     </div>
                     <div class="form-group col-6">
-                        <label>Kraj
+                        <label class="w-100">Kraj
                             <select id="birtsPostCodeSelEl" class="form-control" name="id_postal_codes" required>
                                 <?php
                                 foreach ($DBC->selectCountries()[0]->getIdCountries() as $postalCode) {
@@ -61,7 +61,7 @@
                         <p class="col-12 h6">Stalno prebivališče</p>
                         <input type="hidden" name="residences[0][status]" value="STALNO">
                         <div class="form-group col-4">
-                            <label>Država
+                            <label class="w-100">Država
                                 <select id="permResCtrySelEl" class="form-control country-select" data-target="permResPostCodeSelEl">
                                     <?php
                                     foreach ($DBC->selectCountries() as $id_countries) {
@@ -74,7 +74,7 @@
                             </label>
                         </div>
                         <div class="form-group col-4">
-                            <label>Kraj
+                            <label class="w-100">Kraj
                                 <select id="permResPostCodeSelEl" class="form-control" name="residences[0][id_postal_codes]" required>
                                     <?php
                                     foreach ($DBC->selectPostalCodes($DBC->selectCountries()[0]->getIdCountries()) as $postalCode) {
@@ -87,7 +87,7 @@
                             </label>
                         </div>
                         <div class="form-group col-4">
-                            <label>Naslov
+                            <label class="w-100">Naslov
                                 <input id="permResAddressInptEl" class="form-control" type="text" name="residences[0][address]" required>
                             </label>
                         </div>
@@ -102,7 +102,7 @@
                     <div class="row">
                         <p class="col-12 h6">Študijski programi</p>
                         <div class="form-group col-6">
-                            <label>
+                            <label class="w-100">
                                 Fakulteta
                                 <select id="facSelEl" class="form-control" name="attendances[0][id_faculties]" required>
                                     <?php
@@ -116,7 +116,7 @@
                             </label>
                         </div>
                         <div class="form-group col-6">
-                            <label>Program(polje, stopnja, trajanje)
+                            <label class="w-100">Program(polje, stopnja, trajanje)
                                 <select id="progSelEl" class="form-control" name="attendances[0][id_programs]" required>
                                     <?php
                                     foreach ($DBC->selectPrograms($DBC->selectFaculties()[0]->getIdFaculties()) as $program) {
@@ -129,12 +129,12 @@
                             </label>
                         </div>
                         <div class="form-group col-4">
-                            <label>Vpisan
+                            <label class="w-100">Vpisan
                                 <input id="enrlInptEl" class="form-control" type="date" name="attendances[0][enrolled]" required>
                             </label>
                         </div>
                         <div class="form-group col-4">
-                            <label>Indeks
+                            <label class="w-100">Indeks
                                 <input id="indexInptEl" class="form-control" type="text" name="attendances[0][index]" required>
                             </label>
                         </div>
@@ -175,12 +175,12 @@
                     <input type="hidden" name="id_attendances" value="">
                     <div class="row">
                         <div class="form-group col-12">
-                            <label>Predmet
+                            <label class="w-100">Predmet
                                 <input id="topicInptEl" class="form-control" type="text" name="topic" required>
                             </label>
                         </div>
                         <div class="form-group col-6">
-                            <label>Vrsta
+                            <label class="w-100">Vrsta
                                 <select id="typeInptEl" class="form-control" name="type">
                                     <option value="DOKTORSKO DELO">Doktorsko delo</option>
                                     <option value="MAGISTRSKO DELO">Magistrsko delo</option>
@@ -191,7 +191,7 @@
                             </label>
                         </div>
                         <div class="form-group col-6">
-                            <label>Napisano
+                            <label class="w-100">Napisano
                                 <input id="writtenInptEl" class="form-control" type="date" name="written" required>
                             </label>
                         </div>
@@ -224,13 +224,13 @@
                         <p class="h6">Dokumentacija</p>
                         <div class="row">
                             <div class="form-group col-6">
-                                <label>Verzija
+                                <label class="w-100">Verzija
                                     <input id="versionInptEl" class="form-control" type="text" name="documents[0][version]" required>
                                 </label>
                             </div>
                             <div class="form-group col-6">
                                 <input id="docNameInptEl" type="hidden" name="documents[0][name]" value="">
-                                <label>Dokument
+                                <label class="w-100">Dokument
                                     <input id="docInptEl" type="file" name="document[]" accept=".pdf" required>
                                 </label>
                             </div>
@@ -267,17 +267,17 @@
                     <div class="row">
                         <div class="form-group col-12">
                             <input type="hidden" name="certificate" value="">
-                            <label>Certifikat
+                            <label class="w-100">Certifikat
                                 <input id="certInptEl" type="file" name="certificate[]" required>
                             </label>
                         </div>
                         <div class="form-group col-6">
-                            <label>Zagovarjan
+                            <label class="w-100">Zagovarjan
                                 <input id="defendedInptEl" class="form-control" type="date" name="defended" required>
                             </label>
                         </div>
                         <div class="form-group col-6">
-                            <label>Izdan
+                            <label class="w-100">Izdan
                                 <input id="issuedInptEl" class="form-control" type="date" name="issued" required>
                             </label>
                         </div>
@@ -302,7 +302,7 @@
                 <form id="acctAssignFrm">
                     <input type="hidden" name="id_attendances">
                     <div class="form-group">
-                        <label>Geslo
+                        <label class="w-100">Geslo
                             <input id="passInptEl" class="form-control" name="pass" required>
                         </label>
                     </div>
