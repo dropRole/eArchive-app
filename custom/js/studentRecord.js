@@ -51,12 +51,20 @@
             ctrySelElLst.forEach(element => {
                     // propagate target select element with postal codes of the chosen country
                     element.addEventListener('input', () => {
-                            propagateSelEl(document.querySelector(`#${element.getAttribute('data-target')}`), `/eArchive/PostalCodes/select.php?id_countries=${element.selectedOptions[0].value}`)
+                            propagateSelEl
+                                (
+                                    document.getElementById('birthPostCodeSelEl'),
+                                    `/eArchive/PostalCodes/select.php?id_countries=${element.selectedOptions[0].value}`
+                                )
                         }) // addEventListener
                 }) // forEach
             facSelEl.addEventListener('input', () => {
                     // propagate programs by faculty selection
-                    propagateSelEl(document.getElementById('progSelElement'), `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`)
+                    propagateSelEl
+                        (
+                            document.getElementById('progSelElement'),
+                            `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`
+                        )
                 }) // addEventListener
             gradCheckBox.addEventListener('change', e => {
                     // if it's checked
@@ -327,14 +335,17 @@
                     ctr.appendChild(ctryFrmGrp)
                     ctr.appendChild(postCodeFrmGrp)
                     ctr.appendChild(addressFrmGrp)
-                    propagateSelEl(
+                    propagateSelEl
+                        (
                             ctrySelEl,
                             '/eArchive/Countries/select.php', !residences ? null : residences[0].id_countries
-                        ).then(() => {
-                            propagateSelEl(
-                                postCodeSelEl,
-                                `/eArchive/PostalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
-                            )
+                        )
+                        .then(() => {
+                            propagateSelEl
+                                (
+                                    postCodeSelEl,
+                                    `/eArchive/PostalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
+                                )
                             return
                         }).then(() => {
                             addressInptEl.value = !residences ? '' : residences[0].address
@@ -468,7 +479,11 @@
             facSelEl.required = true
             facSelEl.addEventListener('change', e => {
                     // propagate programs by faculty selection
-                    propagateSelEl(progSelEl, `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`)
+                    propagateSelEl
+                        (
+                            progSelEl,
+                            `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`
+                        )
                 }) // addEventListener
             progSelEl.className = 'form-control'
             progSelEl.name = `attendances[${index}][id_programs]`
@@ -504,8 +519,14 @@
             ctr.appendChild(indexFrmGrp)
             ctr.appendChild(gradFrmGrp)
                 // initial propagation
-            propagateSelEl(facSelEl, '/eArchive/Faculties/select.php')
-                .then(() => propagateSelEl(progSelEl, `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`))
+            propagateSelEl
+                (
+                    facSelEl,
+                    '/eArchive/Faculties/select.php'
+                )
+                .then(() => propagateSelEl(
+                    progSelEl,
+                    `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`))
                 .then(() => {
                     document.getElementById('attendances').appendChild(ctr)
                 }).catch(error => alert(error)) // catch
@@ -701,7 +722,8 @@
                 (
                     facSelEl,
                     '/eArchive/Faculties/select.php'
-                ).then(() => {
+                )
+                .then(() => {
                     document.getElementById('sciPapMentorSect').appendChild(ctr)
                 }).catch(error => alert(error))
         } // addMentoringsSect
@@ -800,15 +822,17 @@
      */
     let setBirthplaceOfStudt = (idPostalCodes, idCountries) => {
             // propagate target select element with postal codes of the chosen country
-            propagateSelEl(
-                document.querySelector('#birthCtrySelElement'),
-                '/eArchive/Countries/select.php',
-                idCountries
-            ).then(() => propagateSelEl(
-                document.querySelector('#birthPostalCodeSelElement'),
-                `eArchive/PostalCodes/select.php?id_countries=${idCountries}`,
-                idPostalCodes
-            ))
+            propagateSelEl
+                (
+                    document.querySelector('#birthCtrySelEl'),
+                    '/eArchive/Countries/select.php',
+                    idCountries
+                )
+                .then(() => propagateSelEl(
+                    document.querySelector('#birthPostCodeSelEl'),
+                    `eArchive/PostalCodes/select.php?id_countries=${idCountries}`,
+                    idPostalCodes
+                ))
         } // determineStudenBirthplace
 
     /*
@@ -823,17 +847,19 @@
             idResidencesInputElement.value = residence.id_residences
             document.querySelector('#studentInsertionFrm #perResCtrySelElement').parentElement.prepend(idResidencesInputElement)
                 // propagate target select element with postal codes of the chosen country
-            propagateSelEl(
-                document.querySelector('#permResCtrySelElement'),
-                '/eArchive/Countries/select.php',
-                residence.id_countries
-            ).then(() => propagateSelEl(
-                document.querySelector('#permResPostalCodeSelElement'),
-                `/eArchive/PostalCodes/select.php?id_countries=${residence.id_countries}`,
-                residence.id_postal_codes
-            )).then(() => {
-                document.querySelector('#permResAddressInputElement').value = residence.address
-            })
+            propagateSelEl
+                (
+                    document.querySelector('#permResCtrySelElement'),
+                    '/eArchive/Countries/select.php',
+                    residence.id_countries
+                )
+                .then(() => propagateSelEl(
+                    document.querySelector('#permResPostalCodeSelElement'),
+                    `/eArchive/PostalCodes/select.php?id_countries=${residence.id_countries}`,
+                    residence.id_postal_codes
+                )).then(() => {
+                    document.querySelector('#permResAddressInputElement').value = residence.address
+                })
         } // setPermResOfStudt
 
     /*
