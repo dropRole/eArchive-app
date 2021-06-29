@@ -619,7 +619,7 @@
                 partLbl = document.createElement('label'),
                 partakerInptEl = document.createElement('input'),
                 partInptEl = document.createElement('input'),
-                index = document.querySelectorAll('div#sciPapPartakerSect > div.row').length // the following index for an array of data on a partaker  
+                index = document.querySelectorAll('div#sciPapPartakers > div.row').length // the following index for an array of data on a partaker  
             ctr.classList = 'row'
             headline.classList = 'h6 col-12'
             cross.style.float = 'right'
@@ -630,7 +630,7 @@
             cross.addEventListener(
                     'click',
                     () => {
-                        document.getElementById('sciPapPartakerSect').removeChild(ctr)
+                        document.getElementById('sciPapPartakers').removeChild(ctr)
                     }
                 ) // addEventListener
             partakerFrmGrp.classList = 'form-group col-6'
@@ -656,7 +656,7 @@
             ctr.appendChild(headline)
             ctr.appendChild(partakerFrmGrp)
             ctr.appendChild(partFrmGrp)
-            document.getElementById('sciPapPartakerSect').appendChild(ctr)
+            document.getElementById('sciPapPartakers').appendChild(ctr)
         } // addPartakerSection
 
     //  create and append additional form controls for uploading document of the scientific paper
@@ -742,7 +742,7 @@
                 taughtInptEl = document.createElement('input'), // subject input
                 emailInptEl = document.createElement('input'), // email input
                 telInptEl = document.createElement('input'), // telephone input
-                index = document.querySelectorAll('div#sciPapMentorSect > div.row').length // the following index for an array of data on documents of scientific paper  
+                index = document.querySelectorAll('div#sciPapMentors > div.row').length // the following index for an array of data on documents of scientific paper  
             ctr.classList = 'row'
             headline.classList = 'col-12 h6'
             cross.style.float = 'right'
@@ -753,7 +753,7 @@
             cross.addEventListener(
                     'click',
                     () => {
-                        document.getElementById('sciPapMentorSect').removeChild(ctr)
+                        document.getElementById('sciPapMentors').removeChild(ctr)
                     }
                 ) // addEventListener
             mentorFrmGrp.classList = 'form-group col-12'
@@ -812,7 +812,7 @@
                     facSelEl,
                     '/eArchive/Faculties/select.php'
                 )
-                .then(() => document.getElementById('sciPapMentorSect').appendChild(ctr))
+                .then(() => document.getElementById('sciPapMentors').appendChild(ctr))
                 .catch(error => alert(error))
         } // addMentoringsSect
 
@@ -1128,7 +1128,7 @@
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScientificPapersInputElement)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
+            cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
             listenSciPapInsrFrm()
                 // dispatch a synthetic click event
@@ -1163,12 +1163,12 @@
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idPartakingsHiddInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapPartakerSect').classList = 'col-12'
+            cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
             listenSciPapInsrFrm()
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, #sPMentors, #sPDocs, p, .d-flex, button').forEach(node => {
+            cloneFrm.querySelectorAll('div.row:nth-child(3), #sciPapMento, #sPDocs, p, .d-flex, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
                 // populate form fields concerning data of the partaker
@@ -1201,7 +1201,7 @@
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScientificPapersInputElement)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapMentorSect').classList = 'col-12'
+            cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Določi'
             listenSciPapInsrFrm()
                 // dispatch a synthetic click event
@@ -1239,7 +1239,7 @@
                 // dispatch a synthetic click event to button for subsequent addition of form mentor section
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove DIV nodes except matching given selector expression 
-            cloneFrm.querySelectorAll('#particulars, #sciPapPartakerSect, #sPDocs, p, button').forEach(node => {
+            cloneFrm.querySelectorAll('#particulars, #sciPapPartakers, #sPDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
                 // widen form group across the whole grid

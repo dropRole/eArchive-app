@@ -197,7 +197,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div id="sciPapPartakerSect" class="col-6">
+                        <div id="sciPapPartakers" class="col-6">
                             <p class="h6">Soavtorji</p>
                             <div class="d-flex justify-content-center col-12">
                                 <button id="addPartakerBtn" class="btn btn-secondary" type="button">&plus;</button>
@@ -213,7 +213,7 @@
                                 ?>
                             </datalist>
                         </div>
-                        <div id="sciPapMentorSect" class="col-6">
+                        <div id="sciPapMentors" class="col-6">
                             <p class="h6">Mentorji</p>
                             <div class="d-flex justify-content-center col-12">
                                 <button id="addMentorBtn" class="btn btn-secondary" type="button">&plus;</button>
