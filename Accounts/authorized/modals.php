@@ -173,7 +173,7 @@
             <div class="modal-body">
                 <form id="sciPapInsrFrm">
                     <input type="hidden" name="id_attendances" value="">
-                    <div class="row">
+                    <div id="particulars" class="row">
                         <div class="form-group col-12">
                             <label class="w-100">Predmet
                                 <input id="topicInptEl" class="form-control" type="text" name="topic" required>
