@@ -636,7 +636,9 @@
             partakerFrmGrp.classList = 'form-group col-6'
             partFrmGrp.classList = 'form-group col-6'
             partakerLbl.textContent = 'Sodelovalec'
+            partakerLbl.classList = 'w-100'
             partLbl.textContent = 'Vloga'
+            partLbl.classList = 'w-100'
             partakerInptEl.classList = 'form-control'
             partakerInptEl.setAttribute('list', 'students')
             partakerInptEl.name = `partakers[${index}][index]`
