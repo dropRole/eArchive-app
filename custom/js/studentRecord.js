@@ -1168,12 +1168,12 @@
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div.row:nth-child(3), #sciPapMento, #sPDocs, p, .d-flex, button').forEach(node => {
+            cloneFrm.querySelectorAll('div#particulars, div#sciPapMentors, div#sciPapDocs, p, div.d-flex, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
                 // populate form fields concerning data of the partaker
-            cloneFrm.querySelector('input[name="partakers[1][index]"]').value = e.target.getAttribute('data-index')
-            cloneFrm.querySelector('input[name="partakers[1][part]"]').value = e.target.getAttribute('data-part')
+            cloneFrm.querySelector('input[name="partakers[0][index]"]').value = e.target.getAttribute('data-index')
+            cloneFrm.querySelector('input[name="partakers[0][part]"]').value = e.target.getAttribute('data-part')
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
             cloneFrm.addEventListener(
                     'submit',
@@ -1207,7 +1207,7 @@
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, #sPPartkers, #sPDocs, p, button').forEach(node => {
+            cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
             cloneFrm.addEventListener(
@@ -1239,11 +1239,11 @@
                 // dispatch a synthetic click event to button for subsequent addition of form mentor section
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove DIV nodes except matching given selector expression 
-            cloneFrm.querySelectorAll('#particulars, #sciPapPartakers, #sPDocs, p, button').forEach(node => {
+            cloneFrm.querySelectorAll('#particulars, #sciPapPartakers, #sciPapDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sPMentors').classList = 'col-12'
+            cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
             request(
                     `/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`,
                     'GET',
