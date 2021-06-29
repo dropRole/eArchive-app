@@ -1132,7 +1132,7 @@
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, #sPMentors, #sPDocs, p, button').forEach(node => {
+            cloneFrm.querySelectorAll('div.row:nth-child(3), #sciPapDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
             cloneFrm.addEventListener(
