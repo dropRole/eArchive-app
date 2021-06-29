@@ -21,10 +21,10 @@
     // attach event listeners to corresponding input element 
     let listenSciPapInsrFrm = () => {
             // get the form 
-            let frm = document.getElementById('sciPapInsrMdl')
+            let frm = document.getElementById('sciPapInsrFrm')
                 // if button for subsequent partaker section additon exists
             if (frm.querySelector('#addPartakerBtn'))
-                addPartakerBtn.addEventListener(
+                frm.querySelector('#addPartakerBtn').addEventListener(
                     'click',
                     addPartakerSect
                 )
@@ -129,17 +129,17 @@
      *   @param Event e
      */
     let toSciPapInsrFrm = e => {
-            document.querySelector('#sciPapInsrMdl .modal-header .modal-title').textContent = 'Vstavljanje znanstvenega dela'
+            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true)
             cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrMdl').replaceWith(cloneFrm)
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
             listenSciPapInsrFrm()
             cloneFrm.addEventListener(
                     'submit',
-                    insertSciPap
+                    e => { insertSciPap(e, cloneFrm) }
                 ) // addEventListner
         } // toSciPapInsrFrm
 
@@ -639,6 +639,7 @@
             partLbl.textContent = 'Vloga'
             partakerInptEl.classList = 'form-control'
             partakerInptEl.setAttribute('list', 'students')
+            partakerInptEl.name = `partakers[${index}][index]`
             partakerInptEl.required = true
             partInptEl.classList = 'form-control'
             partInptEl.type = 'text'
@@ -893,6 +894,7 @@
                 .then(() => loadStudtEvidTbl())
                 .then(() => emptyFrmInptFields(studtInsrFrm))
                 .then(() => document.getElementById('studentInsBtn').click())
+                .then(() => document.getElementById('studtInsrBtn').click())
                 .then(() => interpolateStudtDatalst())
                 .catch(error => alert(error)) // catch
         } // insertStudt
@@ -1579,7 +1581,7 @@
                     // compose node tree structure
                     frag = response
                         // reflect fragments body     
-                    document.querySelector('#sciPapViewingMdl .modal-content').innerHTML = frag.body.innerHTML
+                    document.querySelector('#sciPapViewMdl .modal-content').innerHTML = frag.body.innerHTML
                 })
                 .then(() => listenSciPapCards())
                 .catch(error => alert(error)) // catch
