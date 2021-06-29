@@ -18,5 +18,5 @@ if (isset($id_partakings, $partaker)) {
     // return a new PDO object instance that carries connection with the database server 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // update the part
-    echo $DBC->updatePartInScientificPaper($id_partakings, $partaker[1]['part']);
+    echo $DBC->updatePartInScientificPaper($id_partakings, $partaker[0]['part']);
 } // if
