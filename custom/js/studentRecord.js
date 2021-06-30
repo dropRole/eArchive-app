@@ -44,9 +44,9 @@
                     addMentoringsSect
                 )
                 // if button for subsequent document section additon exists
-            if (frm.querySelector('#addDocumentBtn'))
+            if (frm.querySelector('#addDocBtn'))
             // append controls for additional scientific paper document upload
-                frm.querySelector('#addDocumentBtn').addEventListener(
+                frm.querySelector('#addDocBtn').addEventListener(
                 'click',
                 addDocUploadSect
             )

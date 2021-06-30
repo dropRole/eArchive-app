@@ -236,7 +236,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-center col-12">
-                            <button id="addDocumentBtn" class="btn btn-secondary" type="button">&plus;</button>
+                            <button id="addDocBtn" class="btn btn-secondary" type="button">&plus;</button>
                         </div>
                     </div>
                     <input class="btn btn-secondary float-right" type="submit" value="Dodaj">
