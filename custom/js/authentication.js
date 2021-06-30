@@ -1,13 +1,13 @@
 // IIFE
 (() => {
     // global variable declaration
-    var fragment = new DocumentFragment(), // minimal document object structure
-        lFrm = document.getElementById('lFrm') // login form
-    let checkAccountCredentials = e => {
+    var frag = new DocumentFragment(), // minimal document object structure
+        lgnFrm = document.getElementById('lgnFrm') // login form
+    let checkAcctCred = e => {
             // prevent default action of form submit
             e.preventDefault();
             let xmlhttp = new XMLHttpRequest(),
-                fData = new FormData(lFrm),
+                fData = new FormData(lgnFrm),
                 lReport = document.getElementById('lRprt')
                 // report result of login attempt
             xmlhttp.addEventListener('load', () => {
@@ -16,11 +16,11 @@
                     p.classList.add('text-warning')
                     p.classList.add('font-italic')
                     p.textContent = report.message
-                    fragment.appendChild(p)
+                    frag.appendChild(p)
                         // if report has been sent
                     if (lReport.hasChildNodes())
                         lReport.removeChild(lReport.firstChild)
-                    lReport.appendChild(fragment)
+                    lReport.appendChild(frag)
                         // if report contains script location
                     if (report.script.length > 0) {
                         setTimeout(() => {
@@ -30,7 +30,7 @@
                 }) // addEventListener
             xmlhttp.open('POST', 'Accounts/authentication.php', true)
             xmlhttp.send(fData)
-        } // checkAccountCredentials
-    lFrm.addEventListener('submit', checkAccountCredentials)
+        } // checkAcctCred
+    lgnFrm.addEventListener('submit', checkAcctCred)
         // check out account credentials and respond respectively
 })()
