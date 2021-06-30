@@ -906,7 +906,7 @@
      *  @param Number idpostalCode
      *  @param Number idCountries
      */
-    let setBirthplaceOfStudt = (idPostalCodes, idCountries) => {
+    let setBirthplaceOfStudt = (idCountries, idPostalCodes) => {
             // propagate target select element with postal codes of the chosen country
             propagateSelEl(
                     document.querySelector('#birthCtrySelEl'),
@@ -1322,7 +1322,7 @@
             cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
             cloneFrm.querySelector('input[name=email]').value = student.particulars.email
             cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
-            setBirthplaceOfStudt(cloneFrm, student.particulars.id_postal_codes, student.particulars.id_countries)
+            setBirthplaceOfStudt(student.particulars.id_countries, student.particulars.id_postal_codes)
             setPermResOfStudt(cloneFrm, student.permResidence)
             setTempResOfStudt(student.tempResidence)
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
