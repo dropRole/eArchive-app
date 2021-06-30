@@ -5,16 +5,16 @@
         studtInsrFrm = document.getElementById('studtInsrFrm'), // form for inserting and updating data regarding the student
         sciPapInsrFrm = document.getElementById('sciPapInsrFrm'), // form for inserting, updating and deleting data regarding the scientific paper 
         acctAssignFrm = document.getElementById('acctAssignFrm'), // form for assigning student account and its credentials
-        gradCertUplFrm = document.getElementById('gradCertUpldFrm'), // form for uploading graduation certificates
+        gradCertUpldFrm = document.getElementById('gradCertUpldFrm'), // form for uploading graduation certificates
         rprtMdl = document.getElementById('rprtMdl'), // modal for reporting about performed operations 
-        reportMdlBtn = document.getElementById('rprtMdlBtn'), // report modal toggler
-        fltrInputEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
+        rprtMdlBtn = document.getElementById('rprtMdlBtn'), // report modal toggler
+        fltrInptEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
 
-    gradCertUplFrm.querySelector('input[type=file]').addEventListener(
+    gradCertUpldFrm.querySelector('input[type=file]').addEventListener(
             'input',
             () => {
                 // assign the name of the uploaded certificate to hidden input type
-                gradCertUplFrm.querySelector('input[name=certificate]').value = gradCertUplFrm.querySelector('input[type=file]').files[0].name
+                gradCertUpldFrm.querySelector('input[name=certificate]').value = gradCertUpldFrm.querySelector('input[type=file]').files[0].name
             }
         ) // addEventListener
 
@@ -177,7 +177,7 @@
                     anchor.addEventListener(
                             'click',
                             () => {
-                                gradCertUplFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
+                                gradCertUpldFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
                             }
                         ) //addEventListener
                 }) // forEach
@@ -188,7 +188,7 @@
                             () => {
                                 selectGradCert(anchor.getAttribute('data-id-attendances'))
                                     // set value of id to the hidden input of the form
-                                gradCertUplFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                                gradCertUpldFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                             }
                         ) // addEventListener
                 }) // forEach
@@ -872,9 +872,9 @@
                 .catch(error => alert(error)) // catch
         } // selStudtsByIndx
 
-    fltrInputEl.addEventListener('input', () => {
+    fltrInptEl.addEventListener('input', () => {
             // filter students by their index numbers 
-            selStudtsByIndx(fltrInputEl.value)
+            selStudtsByIndx(fltrInptEl.value)
         }) // addEventListener
 
     /*
@@ -1274,7 +1274,7 @@
     let toGradCertUpdateFrm = e => {
             document.querySelector('div#gradCertUpldMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov certifikata'
                 // clone from the existing form node
-            let cloneFrm = gradCertUplFrm.cloneNode(true),
+            let cloneFrm = gradCertUpldFrm.cloneNode(true),
                 idCertificatesInputElement = document.createElement('input')
             idCertificatesInputElement.type = 'hidden'
             idCertificatesInputElement.name = 'id_certificates'
@@ -1653,7 +1653,7 @@
                     '/eArchive/Certificates/insert.php',
                     'POST',
                     'text',
-                    (new FormData(gradCertUplFrm))
+                    (new FormData(gradCertUpldFrm))
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
@@ -1661,7 +1661,7 @@
                 .catch(error => alert(error)) // catch
         } // uploadGradCert
 
-    gradCertUplFrm.addEventListener('submit', uploadGradCert)
+    gradCertUpldFrm.addEventListener('submit', uploadGradCert)
 
     /*
      *  asynchronous script execution for graduation certificate selection    
@@ -1723,6 +1723,6 @@
      */
     let rprtOnAction = mssg => {
             rprtMdl.querySelector('.modal-body').textContent = mssg
-            reportMdlBtn.click()
+            rprtMdlBtn.click()
         } // rprtOnAction
 })()
