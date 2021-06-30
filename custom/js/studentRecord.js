@@ -48,7 +48,7 @@
             // append controls for additional scientific paper document upload
                 frm.querySelector('#addDocBtn').addEventListener(
                 'click',
-                addDocUploadSect
+                addDocUpldSect
             )
         } // attachSciPapFrmListeners
 
@@ -656,10 +656,10 @@
             ctr.appendChild(partakerFrmGrp)
             ctr.appendChild(partFrmGrp)
             document.getElementById('sciPapPartakers').appendChild(ctr)
-        } // addPartakerSection
+        } // addPartakerSect
 
     //  create and append additional form controls for uploading document of the scientific paper
-    let addDocUploadSect = () => {
+    let addDocUpldSect = () => {
             // form controls 
             let ctr = document.createElement('div'), // row
                 cross = document.createElement('span'), // removal sign
@@ -718,7 +718,7 @@
             ctr.appendChild(docFrmGrp)
                 // append controls to scientific paper insert form
             document.getElementById('sciPapDocs').appendChild(ctr)
-        } // addDocUploadSect
+        } // addDocUpldSect
 
     //  create and append additional form controls for providing data on mentors 
     let addMentoringsSect = () => {
