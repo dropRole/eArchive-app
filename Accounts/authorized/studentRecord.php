@@ -78,7 +78,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             if ($DBC->checkStudentAccount($student->id_attendances)) {
                             ?>
                                 Dodeljen: <span class="text-warning"><?php echo $DBC->getAccountParticulars($student->id_attendances); ?></span>
-                                <span class="acc-del-btn" data-id="<?php echo $student->id_attendances; ?>">&#10007;</span>
+                                <span class="acc-del-btn" data-id-attendances="<?php echo $student->id_attendances; ?>">&#10007;</span>
                             <?php
                             } // if
                             else {
@@ -89,7 +89,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             ?>
                         </td>
                         <td>
-                            <a class="stu-upd-a" href="#studtInsrMdl" data-toggle="modal" data-id="<?php echo $student->id_students; ?>">Uredi</a>
+                            <a class="stu-upd-a" href="#studtInsrMdl" data-toggle="modal" data-id-students="<?php echo $student->id_students; ?>">Uredi</a>
                         </td>
                         <td>
                             <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>">Izbriši</a>
