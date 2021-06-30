@@ -59,7 +59,7 @@ if (isset($index)) {
                         // if student doesn't  possess a certificate
                         if ($DBC->selectCertificate($student->id_attendances) == NULL) {
                         ?>
-                            <a class="cert-ins-a" href="#gradCertUploadMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
+                            <a class="cert-ins-a" href="#gradCertUpldMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">Vstavljanje</a>
                         <?php
                         } // if
                         ?>
