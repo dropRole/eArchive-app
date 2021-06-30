@@ -848,7 +848,7 @@
                     'GET',
                     'json'
                 )
-                .then(response => toStudentUpdateFrm(e, response))
+                .then(response => toStudtUpdtFrm(e, response))
                 .catch(error => alert(error)) // catch
         } // selectStudt
 
@@ -1049,7 +1049,7 @@
      *   @param Object sciPap
      */
     let toSciPapUpdtFrm = sciPap => {
-            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScienitificPapersInputElement = document.createElement('input')
@@ -1065,7 +1065,7 @@
             cloneFrm.querySelector('input[name="written"]').value = sciPap.written
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
                 // remove determined element nodes 
-            cloneFrm.querySelectorAll('div.row:nth-child(4), #sciPapDocs').forEach(node => {
+            cloneFrm.querySelectorAll('div.row:nth-child(4), div#sciPapDocs').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
             cloneFrm.addEventListener(
@@ -1083,7 +1083,7 @@
      *   @param Event e
      */
     let toSciPapUpldFrm = e => {
-            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPaperInputElement = document.createElement('input')
@@ -1116,7 +1116,7 @@
      *  @param Event e
      */
     let toPartakerInsrFrm = e => {
-            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInputElement = document.createElement('input')
@@ -1133,7 +1133,7 @@
                 // dispatch a synthetic click event
             cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
                 // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div.row:nth-child(3), #sciPapDocs, p, button').forEach(node => {
+            cloneFrm.querySelectorAll('div.row:nth-child(3), div#sciPapDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
             cloneFrm.addEventListener(
@@ -1150,8 +1150,8 @@
      *  rearrange form when updating data with regard to partaker of the scientific paper 
      *  @param Event e
      */
-    let toPartakerUpdateFrm = e => {
-            document.querySelector('#sciPapInsrMdl .modal-header .modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+    let toPartakerUpdtFrm = e => {
+            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idPartakingsHiddInpt = document.createElement('input')
@@ -1182,14 +1182,14 @@
                         updatePartakerOfSciPap(cloneFrm)
                     }
                 ) // addEventListener
-        } // toPartakerUpdateFrm
+        } // toPartakerUpdtFrm
 
     /*
      *  rearrange form when inserting data regarding mentor of the scientific paper 
      *  @param Event e
      */
-    let toMentorInsertFrm = e => {
-            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+    let toMentorInsrFrm = e => {
+            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInputElement = document.createElement('input')
@@ -1217,14 +1217,14 @@
                         insertMentorOfSciPap(cloneFrm)
                     }
                 ) // addEventListener
-        } // toMentorInsertFrm
+        } // toMentorInsrFrm
 
     /*
      *  rearrange form when updating data with regard to mentor of the scientific paper  
      *  @param Event e
      */
-    let toMentorUpdateFrm = e => {
-            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+    let toMentorUpdtFrm = e => {
+            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idMentoringsInputElement = document.createElement('input')
             idMentoringsInputElement.type = 'hidden'
@@ -1238,7 +1238,7 @@
                 // dispatch a synthetic click event to button for subsequent addition of form mentor section
             cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
                 // remove DIV nodes except matching given selector expression 
-            cloneFrm.querySelectorAll('#particulars, #sciPapPartakers, #sciPapDocs, p, button').forEach(node => {
+            cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
                 // widen form group across the whole grid
@@ -1265,13 +1265,13 @@
                         updateMentorOfSciPap(cloneFrm)
                     }
                 ) // addEventListener
-        } // toMentorUpdateFrm
+        } // toMentorUpdtFrm
 
     /*
      *  rearrange form when updating data regarding students graduation certificate  
      *  @param Event e
      */
-    let toGradCertUpdateFrm = e => {
+    let toGradCertUpdtFrm = e => {
             document.querySelector('div#gradCertUpldMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov certifikata'
                 // clone from the existing form node
             let cloneFrm = gradCertUpldFrm.cloneNode(true),
@@ -1298,14 +1298,14 @@
                         updateGradCert(cloneFrm)
                     }
                 ) // addEventListener
-        } // toGradCertUpdateFrm
+        } // toGradCertUpdtFrm
 
     /*
      *   rearrange form when updating data related to the student
      *   @param Event e
      *   @param Object student
      */
-    let toStudentUpdateFrm = (e, student) => {
+    let toStudtUpdtFrm = (e, student) => {
             let // clone from the existing form node
                 cloneFrm = studtInsrFrm.cloneNode(true),
                 idStudentsInputElement = document.createElement('input')
@@ -1332,7 +1332,7 @@
                         updateStudt(e, cloneFrm)
                     }
                 ) // addEventListener
-        } // toStudentUpdateFrm
+        } // toStudtUpdtFrm
 
     // attach event listeners to a scientific paper cards when rendered
     let listenSciPapCards = () => {
@@ -1357,25 +1357,25 @@
             if (document.querySelectorAll('.par-upd-a'))
                 document.querySelectorAll('.par-upd-a').forEach(anchor => {
                     // attempt deletion of a partaker
-                    anchor.addEventListener('click', toPartakerUpdateFrm) // addEventListener
+                    anchor.addEventListener('click', toPartakerUpdtFrm) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper partaker data update exist
             if (document.querySelectorAll('.par-upd-a'))
                 document.querySelectorAll('.par-upd-a').forEach(anchor => {
                     // attempt deletion of a partaker
-                    anchor.addEventListener('click', toPartakerUpdateFrm) // addEventListener
+                    anchor.addEventListener('click', toPartakerUpdtFrm) // addEventListener
                 }) // forEach
                 // if anchors for mentor insertion are rendered
             if (document.querySelectorAll('.men-ins-a'))
                 document.querySelectorAll('.men-ins-a').forEach(anchor => {
                     // restructure form for document upload
-                    anchor.addEventListener('click', toMentorInsertFrm)
+                    anchor.addEventListener('click', toMentorInsrFrm)
                 }) // forEach
                 // if anchor elements for mentor data update exist
             if (document.querySelectorAll('.men-upd-a'))
                 document.querySelectorAll('.men-upd-a').forEach(anchor => {
                     // restructure form for document upload
-                    anchor.addEventListener('click', toMentorUpdateFrm)
+                    anchor.addEventListener('click', toMentorUpdtFrm)
                 }) // forEachF
                 // if span elements for mentor deletion are rendered
             if (document.querySelectorAll('.men-del-spn'))
@@ -1437,7 +1437,7 @@
             let mdl = document.getElementById('gradCertViewMdl')
                 // if anchor element for update of certificate connected data exist
             if (mdl.querySelector('.modal-content .cert-upd-a'))
-                mdl.querySelector('.modal-content .cert-upd-a').addEventListener('click', toGradCertUpdateFrm)
+                mdl.querySelector('.modal-content .cert-upd-a').addEventListener('click', toGradCertUpdtFrm)
                 // if anchor element for certificate deletion is contained
             if (mdl.querySelector('.modal-content .cert-del-a'))
                 mdl.querySelector('.modal-content .cert-del-a').addEventListener(
