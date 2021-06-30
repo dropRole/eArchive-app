@@ -1,16 +1,14 @@
 // IIFE
 (() => {
     // global variable declaration
-    var frag = new DocumentFragment(), // minimal document object structure
-        lgnFrm = document.getElementById('lgnFrm') // login form
-
-    /*
-     *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
-     *   @param String script
-     *   @param String method
-     *   @param String responseType 
-     *   @param FormData frmData 
-     */
+    var lgnFrm = document.getElementById('lgnFrm') // login form
+        /*
+         *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
+         *   @param String script
+         *   @param String method
+         *   @param String responseType 
+         *   @param FormData frmData 
+         */
     let request = (script, method, resType = '', frmData = null) => {
             return new Promise((resolve, reject) => {
                 // instanitate an XHR object
@@ -38,30 +36,34 @@
     let checkAcctCred = e => {
             // prevent default action of form submit
             e.preventDefault();
-            let xmlhttp = new XMLHttpRequest(),
-                frmData = new FormData(lgnFrm),
-                lgnRprt = document.getElementById('lgnRprt')
-                // report result of login attempt
-            xmlhttp.addEventListener('load', () => {
-                    let report = JSON.parse(xmlhttp.responseText)
-                    let p = document.createElement('p')
-                    p.classList.add('text-warning')
-                    p.classList.add('font-italic')
-                    p.textContent = report.message
-                    frag.appendChild(p)
-                        // if report has been sent
-                    if (lgnRprt.hasChildNodes())
-                        lgnRprt.removeChild(lgnRprt.firstChild)
-                    lgnRprt.appendChild(frag)
-                        // if report contains script location
-                    if (report.script.length > 0) {
-                        setTimeout(() => {
-                                window.location.href = report.script;
-                            }, 2000) // setTimeout
-                    } // if
-                }) // addEventListener
-            xmlhttp.open('POST', 'Accounts/authentication.php', true)
-            xmlhttp.send(frmData)
+            request(
+                    '/eArchive/Accounts/authentication.php',
+                    'POST',
+                    'json',
+                    (new FormData(lgnFrm))
+                )
+                .then(response => {
+                    let observer = new MutationObserver(() => {
+                            // if credentials are valid
+                            if (response.script.length)
+                                setTimeout(() => {
+                                    this.location.href = response.script
+                                }, 2000) // setTimeout
+                        }),
+                        rprt = document.createElement('p')
+                    observer.observe(
+                        document.getElementById('lgnRprt'), {
+                            attributes: false,
+                            childList: true,
+                            subtree: false
+                        }
+                    )
+                    rprt.classList = 'text-warning font-italic'
+                    rprt.textContent = response.message
+                    document.getElementById('lgnRprt').innerHTML = ''
+                    document.getElementById('lgnRprt').appendChild(rprt)
+                })
+                .catch(error => alert(error))
         } // checkAcctCred
     lgnFrm.addEventListener('submit', checkAcctCred)
         // check out account credentials and respond respectively
