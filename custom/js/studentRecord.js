@@ -915,7 +915,7 @@
                 )
                 .then(() => propagateSelEl(
                     document.querySelector('#birthPostCodeSelEl'),
-                    `eArchive/PostalCodes/select.php?id_countries=${idCountries}`,
+                    `/eArchive/PostalCodes/select.php?id_countries=${idCountries}`,
                     idPostalCodes
                 ))
         } // determineStudenBirthplace
@@ -1016,7 +1016,7 @@
                     (new FormData(acctAssignFrm))
                 )
                 .then(response => rprtOnAction(response))
-                .then(() => $('#acctAssigningMdl').modal('hide'))
+                .then(() => $('#acctAssignMdl').modal('hide'))
                 .then(() => loadStudtEvidTbl())
                 .catch(error => alert(error)) // catch
         } // assignAcctCred
@@ -1314,7 +1314,7 @@
             idStudentsInputElement.name = 'id_students'
             idStudentsInputElement.value = e.target.getAttribute('data-id-students')
                 // replace node with its clone
-            document.getElementById('studentInsertionFrm').replaceWith(cloneFrm)
+            document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
             listenStudtInsrFrm()
             cloneFrm.prepend(idStudentsInputElement)
                 // fill out input fields with student particulars
@@ -1327,8 +1327,7 @@
             setTempResOfStudt(student.tempResidence)
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
             cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
-                // exchange callbacks
-            cloneFrm.removeEventListener('submit', insertStudt)
+
             cloneFrm.addEventListener('submit', updateStudt)
         } // toStudentUpdateFrm
 
@@ -1655,7 +1654,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
-                .then(() => $('#gradCertUploadMdl').modal('hide'))
+                .then(() => $('#gradCertUpldMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
         } // uploadGradCert
 
@@ -1711,7 +1710,7 @@
                 )
                 .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
-                .then(() => $('#gradCertViewingMdl').modal('hide'))
+                .then(() => $('#gradCertViewMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
         } // deleteGradCert
 
