@@ -129,7 +129,7 @@
      *   @param Event e
      */
     let toSciPapInsrFrm = e => {
-            document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Vstavljanje znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true)
             cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
