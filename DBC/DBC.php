@@ -2092,7 +2092,7 @@ class DBC extends PDO
 
     /*
     *   delete student account 
-    *   @param int $id_accounts
+    *   @param int $id_attendances
     */
     public function deleteStudentAccount($id_attendances)
     {
@@ -2114,5 +2114,4 @@ class DBC extends PDO
             return 'Račun je uspešno izbrisan.';
         return 'Račun ni uspešno izbrisan.';
     } // deleteStudentAccount
-
 } // DBC
