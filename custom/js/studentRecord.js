@@ -217,7 +217,7 @@
                     btn.addEventListener(
                             'click',
                             () => {
-                                deleteAcctOfStudt(btn.getAttribute('data-id-attendances'))
+                                deleteAcctCred(btn.getAttribute('data-id-attendances'))
                             }
                         ) //addEventListener
                 }) // forEach
@@ -856,7 +856,7 @@
      *   asynchronous script execution for filtered student selection by index      
      *   @param Number index
      */
-    let selStudtsByIndx = index => {
+    let selectStudtsByIndx = index => {
             request(
                     `/eArchive/Students/filterByIndex.php?index=${index}`,
                     'GET',
@@ -870,11 +870,11 @@
                 })
                 .then(() => listenStudtEvidTbl())
                 .catch(error => alert(error)) // catch
-        } // selStudtsByIndx
+        } // selectStudtsByIndx
 
     fltrInptEl.addEventListener('input', () => {
             // filter students by their index numbers 
-            selStudtsByIndx(fltrInptEl.value)
+            selectStudtsByIndx(fltrInptEl.value)
         }) // addEventListener
 
     /*
@@ -1033,7 +1033,7 @@
      *   asynchronous script execution for deletion of the given account 
      *   @param idAttendances
      */
-    let deleteAcctOfStudt = idAttendances => {
+    let deleteAcctCred = idAttendances => {
             request(
                     `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`,
                     'GET',
@@ -1042,13 +1042,13 @@
                 .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
                 .catch(error => alert(error)) // catch
-        } // deleteAcctOfStudt
+        } // deleteAcctCred
 
     /*
      *   rearrange form and fill out form fields when updating student data
      *   @param Object sciPap
      */
-    let toSciPapUpdateFrm = sciPap => {
+    let toSciPapUpdtFrm = sciPap => {
             document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
@@ -1076,13 +1076,13 @@
                         updateSciPap(cloneFrm)
                     }
                 ) // addEventListener
-        } // toSciPapUpdateFrm
+        } // toSciPapUpdtFrm
 
     /*
      *   rearrange form for uploading document of the subject scientific paper
      *   @param Event e
      */
-    let toSciPapDocUploadFrm = e => {
+    let toSciPapUpldFrm = e => {
             document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
@@ -1109,13 +1109,13 @@
                         uploadDocsOfSciPap(cloneFrm)
                     }
                 ) // addEventListener
-        } // toSciPapDocUploadFrm
+        } // toSciPapUpldFrm
 
     /*
      *  rearrange form when inserting data of the scientific paper partaker   
      *  @param Event e
      */
-    let toPartakerInsertFrm = e => {
+    let toPartakerInsrFrm = e => {
             document.querySelector('#sciPapInsrMdl .modal-header > .modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
@@ -1144,7 +1144,7 @@
                         insertPartakerOfSciPap(cloneFrm)
                     }
                 ) // addEventListener
-        } // toPartakerInsertFrm
+        } // toPartakerInsrFrm
 
     /*
      *  rearrange form when updating data with regard to partaker of the scientific paper 
@@ -1340,7 +1340,7 @@
             if (document.querySelectorAll('.par-ins-a'))
                 document.querySelectorAll('.par-ins-a').forEach(anchor => {
                     // form will contain only control for partaker insertion
-                    anchor.addEventListener('click', toPartakerInsertFrm)
+                    anchor.addEventListener('click', toPartakerInsrFrm)
                 }) // forEach
                 // if spans for scientific paper partaker deletion exist
             if (document.querySelectorAll('.par-del-spn'))
@@ -1398,7 +1398,7 @@
                                     'GET',
                                     'json'
                                 )
-                                .then(response => toSciPapUpdateFrm(response))
+                                .then(response => toSciPapUpdtFrm(response))
                                 .catch(error => alert(error)) // catch
                         }) // addEventListener
                 }) // forEach
@@ -1416,7 +1416,7 @@
             if (document.querySelectorAll('.doc-upl-a'))
                 document.querySelectorAll('.doc-upl-a').forEach(span => {
                     // delete particular document
-                    span.addEventListener('click', toSciPapDocUploadFrm)
+                    span.addEventListener('click', toSciPapUpldFrm)
                 }) // forEach
                 // if anchors for scientific paper documentation deletion are rendered
             if (document.querySelectorAll('.doc-del-spn'))
