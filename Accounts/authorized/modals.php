@@ -252,7 +252,7 @@
     </div>
 </div>
 <!-- Modal for uploading graduation certificate and inserting data regarding its issuance and defence dates  -->
-<div class="modal fade" id="gradCertUplMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModlaLabel" aria-hidden="true">
+<div class="modal fade" id="gradCertUpldMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModlaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -262,7 +262,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="gradCertUplFrm">
+                <form id="gradCertUpldFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div class="row">
                         <div class="form-group col-12">
