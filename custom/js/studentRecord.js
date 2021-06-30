@@ -421,7 +421,6 @@
                                 postCodeSelEl,
                                 `/eArchive/PostalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
                             )
-                            return
                         }).then(() => {
                             addressInptEl.value = !residences ? '' : residences[0].address
                         }).then(() => document.getElementById('residences').appendChild(ctr))
@@ -1323,8 +1322,7 @@
             cloneFrm.querySelector('input[name=email]').value = student.particulars.email
             cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
             setBirthplaceOfStudt(student.particulars.id_countries, student.particulars.id_postal_codes)
-            setPermResOfStudt(student.permResidence)
-            setTempResOfStudt(student.tempResidence)
+            student.tempResidence.length ? setTempResOfStudt() : null
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
             cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
             cloneFrm.addEventListener(
