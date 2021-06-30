@@ -29,7 +29,7 @@ if (isset($id_attendances)) {
                 <p class="card-text">
                     <a href="<?php echo "../../{$certificate->getSource()}"; ?>" target="_blank"><?php echo basename($certificate->getSource()); ?></a>
                 </p>
-                <a href="#certUploadMdl" class="card-link cert-upd-a" data-id-certificates="<?php echo $certificate->getIdCertificates(); ?>" data-defended="<?php echo $certificate->defended; ?>" data-issued="<?php echo $certificate->getIssued(); ?>" data-toggle="modal">Uredi</a>
+                <a href="#gradCertUpldMdl" class="card-link cert-upd-a" data-id-certificates="<?php echo $certificate->getIdCertificates(); ?>" data-defended="<?php echo $certificate->defended; ?>" data-issued="<?php echo $certificate->getIssued(); ?>" data-toggle="modal">Uredi</a>
                 <a href="#" class="card-link cert-del-a" data-id-attendances="<?php echo $id_attendances; ?>" data-source="<?php echo $certificate->getSource(); ?>">Izbriši</a>
             </div>
         </div>
