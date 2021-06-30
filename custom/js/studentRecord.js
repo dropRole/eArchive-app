@@ -930,19 +930,19 @@
             idResidencesInputElement.type = 'hidden'
             idResidencesInputElement.name = 'residences[0][id_residences]'
             idResidencesInputElement.value = residence.id_residences
-            document.querySelector('#studentInsertionFrm #perResCtrySelElement').parentElement.prepend(idResidencesInputElement)
+            document.querySelector('select#permResCtrySelEl').parentElement.prepend(idResidencesInputElement)
                 // propagate target select element with postal codes of the chosen country
             propagateSelEl(
-                    document.querySelector('#permResCtrySelElement'),
+                    document.querySelector('#permResCtrySelEl'),
                     '/eArchive/Countries/select.php',
                     residence.id_countries
                 )
                 .then(() => propagateSelEl(
-                    document.querySelector('#permResPostalCodeSelElement'),
+                    document.querySelector('#permResPostCodeSelEl'),
                     `/eArchive/PostalCodes/select.php?id_countries=${residence.id_countries}`,
                     residence.id_postal_codes
                 )).then(() => {
-                    document.querySelector('#permResAddressInputElement').value = residence.address
+                    document.querySelector('#permResAddressInptEl').value = residence.address
                 })
         } // setPermResOfStudt
 
@@ -1323,11 +1323,10 @@
             cloneFrm.querySelector('input[name=email]').value = student.particulars.email
             cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
             setBirthplaceOfStudt(student.particulars.id_countries, student.particulars.id_postal_codes)
-            setPermResOfStudt(cloneFrm, student.permResidence)
+            setPermResOfStudt(student.permResidence)
             setTempResOfStudt(student.tempResidence)
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
             cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
-
             cloneFrm.addEventListener('submit', updateStudt)
         } // toStudentUpdateFrm
 
