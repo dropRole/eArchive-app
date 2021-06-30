@@ -5,7 +5,7 @@
         studtInsrFrm = document.getElementById('studtInsrFrm'), // form for inserting and updating data regarding the student
         sciPapInsrFrm = document.getElementById('sciPapInsrFrm'), // form for inserting, updating and deleting data regarding the scientific paper 
         acctAssignFrm = document.getElementById('acctAssignFrm'), // form for assigning student account and its credentials
-        gradCertUplFrm = document.getElementById('gradCertUplFrm'), // form for uploading graduation certificates
+        gradCertUplFrm = document.getElementById('gradCertUpldFrm'), // form for uploading graduation certificates
         rprtMdl = document.getElementById('rprtMdl'), // modal for reporting about performed operations 
         reportMdlBtn = document.getElementById('rprtMdlBtn'), // report modal toggler
         fltrInputEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
@@ -188,7 +188,7 @@
                             () => {
                                 selectGradCert(anchor.getAttribute('data-id-attendances'))
                                     // set value of id to the hidden input of the form
-                                certCloneFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                                gradCertUplFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1066,7 +1066,7 @@
             cloneFrm.querySelector('input[name="written"]').value = sciPap.written
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
                 // remove determined element nodes 
-            cloneFrm.querySelectorAll('div.row:nth-child(4), #sPDocs').forEach(node => {
+            cloneFrm.querySelectorAll('div.row:nth-child(4), #sciPapDocs').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
             cloneFrm.addEventListener(
@@ -1099,7 +1099,7 @@
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
             listenSciPapInsrFrm()
                 // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, div.row:nth-child(4)').forEach(node => {
+            cloneFrm.querySelectorAll('div#particulars, p, div.row:nth-child(4)').forEach(node => {
                     node.parentElement.removeChild(node)
                 }) // forEach
             cloneFrm.addEventListener(
@@ -1273,19 +1273,19 @@
      *  @param Event e
      */
     let toGradCertUpdateFrm = e => {
-            document.querySelector('#gradCertUploadMdl .modal-header > .modal-title').textContent = 'Urejanje podatkov certifikata'
+            document.querySelector('div#gradCertUpldMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov certifikata'
                 // clone from the existing form node
-            let cloneFrm = certCloneFrm.cloneNode(true),
+            let cloneFrm = gradCertUplFrm.cloneNode(true),
                 idCertificatesInputElement = document.createElement('input')
             idCertificatesInputElement.type = 'hidden'
             idCertificatesInputElement.name = 'id_certificates'
             idCertificatesInputElement.value = e.target.getAttribute('data-id-certificates')
                 // replace form element node with its clone
-            document.getElementById('certUploadFrm').replaceWith(cloneFrm)
+            document.getElementById('gradCertUpldFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idCertificatesInputElement)
             listenGradCertCard()
                 // remove certificate file input 
-            cloneFrm.querySelector('div.row').removeChild(cloneFrm.querySelector('div.row').querySelector('.form-group'))
+            cloneFrm.querySelector('div.row > div.form-group').remove()
                 // fill out form fileds with carried data
             cloneFrm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
             cloneFrm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
@@ -1432,7 +1432,7 @@
     // attach listeners to certificate card when selected
     let listenGradCertCard = () => {
             // get modal for graduation certificate review
-            let mdl = document.getElementById('certViewingMdl')
+            let mdl = document.getElementById('gradCertViewMdl')
                 // if anchor element for update of certificate connected data exist
             if (mdl.querySelector('.modal-content .cert-upd-a'))
                 mdl.querySelector('.modal-content .cert-upd-a').addEventListener('click', toGradCertUpdateFrm)
@@ -1532,7 +1532,7 @@
                     'text'
                 )
                 .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapFrm').querySelector('input[name=id_attendances]').value))
+                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // deleteMentorOfSciPap
 
@@ -1675,7 +1675,7 @@
                     // compose node tree structure
                     frag = response
                         // reflect fragments body     
-                    document.querySelector('div#gradCertViewingMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
+                    document.querySelector('div#gradCertViewMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
                 })
                 .then(() => listenGradCertCard())
                 .catch(error => alert(error)) // catch
