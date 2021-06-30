@@ -1327,7 +1327,12 @@
             setTempResOfStudt(student.tempResidence)
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
             cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
-            cloneFrm.addEventListener('submit', updateStudt)
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        updateStudt(e, cloneFrm)
+                    }
+                ) // addEventListener
         } // toStudentUpdateFrm
 
     // attach event listeners to a scientific paper cards when rendered
