@@ -1944,11 +1944,16 @@ class DBC extends PDO
         $stmt = '   SELECT 
                         pass 
                     FROM 
-                        students
-                        INNER JOIN attendances 
-                        USING(id_students) 
+                        accounts 
                     WHERE 
-                        index = :index  ';
+                        id_attendances = (
+                                            SELECT 
+                                                id_attendances
+                                            FROM 
+                                                attendances
+                                            WHERE 
+                                                index = :index 
+                                        )   ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
@@ -1956,9 +1961,9 @@ class DBC extends PDO
             $prpStmt->execute();
             // if single row is affected
             if ($prpStmt->rowCount() == 1) {
-                $credentials = $prpStmt->fetch(PDO::FETCH_COLUMN);
+                $hash = $prpStmt->fetch(PDO::FETCH_COLUMN);
                 // if hash is composed of given pass
-                if (password_verify($pass, $credentials['pass'])) {
+                if (password_verify($pass, $hash)) {
                     // register var and assign index
                     $_SESSION['user'] = 'stu_' . $index;
                     // register var and assign pass
