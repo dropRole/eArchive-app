@@ -1693,6 +1693,7 @@
                     (new FormData(frm))
                 )
                 .then(response => rprtOnAction(response))
+                .then(() => $('#gradCertUpldMdl').modal('hide'))
                 .then(() => selectGradCert(frm.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // updateGradCert
