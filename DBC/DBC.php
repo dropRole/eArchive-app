@@ -2001,25 +2001,23 @@ class DBC extends PDO
     *   !DML 
     *   create database user in the cluster with student role privileges
     *   @param string $index
-    *   @param string $pass
+    *   @param string $hash
     */
-    public function createDBUser(string $index, string $pass)
+    private function createDBUser(string $index, string $hash)
     {
         $stmt = "   CREATE USER 
                         stu_$index
                     WITH 
-                        PASSWORD '$pass'
+                        PASSWORD '$hash'
                         IN ROLE student
                         VALID UNTIL 'infinity'  ";
         try {
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt);
             // if stmt executed successfully 
-            /* if ($prpStmt->execute())
+            if ($prpStmt->execute())
                 return TRUE;
-            return FALSE; */
-            $prpStmt->execute();
-            return var_dump($prpStmt->errorInfo());
+            return FALSE;
         } // try
         catch (PDOException $e) {
             return "Napaka: {$e->getMessage}.";
@@ -2027,43 +2025,56 @@ class DBC extends PDO
     } // createDBUser
 
     /*
-    *   insert student account
+    *   create new database user and insert account credentials 
     *   @param int $id_attendances
+    *   @param string $index
     *   @param string $pass
     */
-    public function insertAccount(int $id_attendances, string $pass)
+    public function insertStudtAcct(int $id_attendances, string $index, string $pass)
     {
-        $stmt = '   INSERT INTO 
-                        accounts
-                    (  
-                        id_attendances,
-                        pass,
-                        granted,
-                        avatar
-                    )
-                    VALUES(
-                        :id_attendances,
-                        :pass,
-                        :granted,
-                        DEFAULT
-                    )   ';
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
-            $prpStmt->bindValue(':pass', password_hash($pass, PASSWORD_BCRYPT), PDO::PARAM_STR);
-            $prpStmt->bindValue(':granted', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
-            $prpStmt->execute();
-        } // try
-        catch (PDOException $e) {
-            // output error message
-            return "Napaka: {$e->getMessage()}.";
-        } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return 'Račun je uspešno ustvarjen.';
-        return 'Račun ni uspešno ustvarjen.';
-    } // insertAccount
+        // check if not already in a transaction
+        if (!$this->inTransaction()) {
+            // establish a new transaction
+            $this->beginTransaction();
+            $hash = password_hash($pass, PASSWORD_BCRYPT);
+            if ($this->createDBUser($index, $hash)) {
+                $stmt = '   INSERT INTO 
+                                accounts
+                            (  
+                                id_attendances,
+                                pass,
+                                granted,
+                                avatar
+                            )
+                            VALUES(
+                                :id_attendances,
+                                :pass,
+                                :granted,
+                                DEFAULT
+                            )   ';
+                try {
+                    // prepare, bind params to and execute stmt
+                    $prpStmt = $this->prepare($stmt);
+                    $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+                    $prpStmt->bindValue(':pass', $hash, PDO::PARAM_STR);
+                    $prpStmt->bindValue(':granted', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
+                    $prpStmt->execute();
+                } // try
+                catch (PDOException $e) {
+                    // output error message
+                    return "Napaka: {$e->getMessage()}.";
+                } // catch
+                // if single row is affected 
+                if ($prpStmt->rowCount() == 1)
+                    return 'Račun je uspešno ustvarjen.';
+                return 'Račun ni uspešno ustvarjen.';
+            } // if
+            else
+                return 'Napaka: uporabniški račun ni uspešno ustvarjen.';
+        } // if
+        else
+            return 'Opozorilo: transkacija s podatkovno zbirko je v izvajanju.';
+    } // insertStudtAcct
 
     /*
     *   get particulars of the given account
