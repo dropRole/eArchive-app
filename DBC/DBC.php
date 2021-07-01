@@ -2059,21 +2059,26 @@ class DBC extends PDO
                     $prpStmt->bindValue(':pass', $hash, PDO::PARAM_STR);
                     $prpStmt->bindValue(':granted', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
                     $prpStmt->execute();
+                    // if single row is affected 
+                    if ($prpStmt->rowCount() == 1) {
+                        // commit the changes
+                        $this->commit();
+                        return 'Račun je uspešno ustvarjen.';
+                    } // if 
+                    // rollback the changes
+                    $this->rollback();
+                    return 'Račun ni uspešno ustvarjen.';
                 } // try
                 catch (PDOException $e) {
                     // output error message
                     return "Napaka: {$e->getMessage()}.";
                 } // catch
-                // if single row is affected 
-                if ($prpStmt->rowCount() == 1)
-                    return 'Račun je uspešno ustvarjen.';
-                return 'Račun ni uspešno ustvarjen.';
             } // if
-            else
-                return 'Napaka: uporabniški račun ni uspešno ustvarjen.';
+            // rollback the changes
+            $this->rollback();
+            return 'Napaka: uporabniški račun ni uspešno ustvarjen.';
         } // if
-        else
-            return 'Opozorilo: transkacija s podatkovno zbirko je v izvajanju.';
+        return 'Opozorilo: transkacija s podatkovno zbirko je v izvajanju.';
     } // insertStudtAcct
 
     /*
