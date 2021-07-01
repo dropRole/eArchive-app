@@ -1924,7 +1924,7 @@ class DBC extends PDO
             return "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
-        if ($prpStmt->rowCount() == 1) 
+        if ($prpStmt->rowCount() == 1)
             return TRUE;
         return FALSE;
     } // checkStudentAccount
@@ -1996,6 +1996,35 @@ class DBC extends PDO
         // return JSON value 
         return json_encode($report);
     } // checkAccountCredentials
+
+    /*
+    *   !DML 
+    *   create database user in the cluster with student role privileges
+    *   @param string $index
+    *   @param string $pass
+    */
+    public function createDBUser(string $index, string $pass)
+    {
+        $stmt = "   CREATE USER 
+                        stu_$index
+                    WITH 
+                        PASSWORD '$pass'
+                        IN ROLE student
+                        VALID UNTIL 'infinity'  ";
+        try {
+            // prepare and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            // if stmt executed successfully 
+            /* if ($prpStmt->execute())
+                return TRUE;
+            return FALSE; */
+            $prpStmt->execute();
+            return var_dump($prpStmt->errorInfo());
+        } // try
+        catch (PDOException $e) {
+            return "Napaka: {$e->getMessage}.";
+        } // catch
+    } // createDBUser
 
     /*
     *   insert student account
