@@ -13,12 +13,13 @@ require_once '../Accounts.php';
 session_start();
 
 $id_attendances = $_POST['id_attendances'];
+$index = $_POST['index'];
 $pass = $_POST['pass'];
 
 // if id of attendance and password are prosperously passed
-if (isset($id_attendances, $pass)) {
+if (isset($id_attendances, $index, $pass)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt an account insertion
-    echo $DBC->insertAccount($id_attendances, $pass);
+    echo $DBC->insertStudtAcct($id_attendances, $index, $pass);
 } // if
