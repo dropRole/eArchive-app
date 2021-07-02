@@ -75,7 +75,7 @@ if (isset($index)) {
                         } // if
                         else {
                         ?>
-                            <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#acctAssignMdl">Ustvari</button>
+                            <button class="btn btn-warning acc-ins-btn" type="button" value="<?php echo $student->id_attendances; ?>" data-toggle="modal" data-target="#acctAssignMdl" data-index="<?php echo $student->index; ?>">Ustvari</button>
                         <?php
                         } // else
                         ?>
