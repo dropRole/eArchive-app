@@ -208,7 +208,7 @@
                             () => {
                                 // if record deletion was confirmed
                                 if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
-                                    deleteStudt(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'))
+                                    deleteStudt(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'), anchor.getAttribute('data-index'))
                             }
                         ) // addEventListener
                 }) // forEach
@@ -988,12 +988,13 @@
 
     /*
      *   asynchronous script execution for deletion of all records regarding the student   
+     *   @param Number idAttendances 
      *   @param Number idStudents
-     *   @param Number idAttendances
+     *   @param String index 
      */
-    let deleteStudt = (idStudents, idAttendances) => {
+    let deleteStudt = (idAttendances, idStudents, index) => {
             request(
-                    `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}`,
+                    `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}&index=${index}`,
                     'GET',
                     'text'
                 )
