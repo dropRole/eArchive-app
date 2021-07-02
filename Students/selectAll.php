@@ -79,7 +79,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                     <a class="stu-upd-a" href="#studtInsrMdl" data-toggle="modal" data-id-students="<?php echo $student->id_students; ?>">Uredi</a>
                 </td>
                 <td>
-                    <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>">Izbriši</a>
+                    <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>">Izbriši</a>
                 </td>
             </tr>
         <?php
