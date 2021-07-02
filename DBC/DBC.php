@@ -2025,6 +2025,28 @@ class DBC extends PDO
     } // createDBUser
 
     /*
+    *   !DML 
+    *   drop database user in the cluster with student role privileges
+    *   @param string $index
+    */
+    private function dropDBUser(string $index)
+    {
+        $stmt = "   DROP USER 
+                        stu_$index  ";
+        try {
+            // prepare and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            // if stmt executed successfully 
+            if ($prpStmt->execute())
+                return TRUE;
+            return FALSE;
+        } // try
+        catch (PDOException $e) {
+            return "Napaka: {$e->getMessage}.";
+        } // catch
+    } // dropDBUser
+
+    /*
     *   create new database user and insert account credentials 
     *   @param int $id_attendances
     *   @param string $index
@@ -2085,7 +2107,6 @@ class DBC extends PDO
     *   get particulars of the given account
     *   @param int $id_attendances
     */
-
     public function getAccountParticulars($id_attendances)
     {
         $stmt = '   SELECT
