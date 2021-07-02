@@ -222,11 +222,12 @@
                         ) //addEventListener
                 }) // forEach
             acctInsrLst.forEach(btn => {
-                    // pass an id of an attendance through forms hidden input type 
+                    // pass an id and index of an attendance through forms hidden input types 
                     btn.addEventListener(
                             'click',
                             () => {
                                 acctAssignFrm.querySelector('input[name=id_attendances]').value = btn.value
+                                acctAssignFrm.querySelector('input[name=index]').value = btn.getAttribute('data-index')
                             }
                         ) // addEventListener
                 }) // forEach
