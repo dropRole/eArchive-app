@@ -20,13 +20,15 @@ require_once './Students.php';
 // proceed with the current session
 session_start();
 
-$id_students = $_GET['id_students'];
 $id_attendances = $_GET['id_attendances'];
+$id_students = $_GET['id_students'];
+$index = $_GET['index'];
+
 
 // if id of a student and its program attendance id were forwarded by URL query string
-if (isset($id_students, $id_attendances)) {
+if (isset($id_attendances, $id_students, $index)) {
     // create a new PDO interface object instance 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attemt a deletion
-    echo $DBC->deleteStudent($id_students, $id_attendances);
+    echo $DBC->deleteStudent($id_attendances, $id_students, $index);
 } // if 
