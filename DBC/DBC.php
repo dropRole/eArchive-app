@@ -807,7 +807,7 @@ class DBC extends PDO
             } // foreach
         // if account was granted to, delete if
         if ($this->checkStudentAccount($id_attendances))
-            $this->deleteStudentAccount($id_attendances);
+            $this->deleteStudtAcct($id_attendances);
         $this->deleteStudentProgramAttendance($id_attendances);
         try {
             $stmt = '   DELETE FROM
@@ -2162,27 +2162,45 @@ class DBC extends PDO
     } // alterAccountPass
 
     /*
-    *   delete student account 
+    *   drop the subject user and delete account credentials
     *   @param int $id_attendances
+    *   @param string $index
     */
-    public function deleteStudentAccount($id_attendances)
+    public function deleteStudtAcct(int $id_attendances, string $index)
     {
-        $stmt = '   DELETE FROM 
-                        accounts
-                    WHERE 
-                        id_attendances = :id_attendances    ';
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
-            $prpStmt->execute();
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return 'Račun je uspešno izbrisan.';
-        return 'Račun ni uspešno izbrisan.';
-    } // deleteStudentAccount
+        // if not in a transation
+        if (!$this->inTransaction()) {
+            // begin a new one
+            $this->beginTransaction();
+            // if the user was droped
+            if ($this->dropDBUser($index)) {
+                $stmt = '   DELETE FROM 
+                                accounts
+                            WHERE 
+                                id_attendances = :id_attendances    ';
+                try {
+                    // prepare, bind param to and execute stmt
+                    $prpStmt = $this->prepare($stmt);
+                    $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+                    $prpStmt->execute();
+                    // if single row is affected
+                    if ($prpStmt->rowCount() == 1) {
+                        // commit the current transaction
+                        $this->commit();
+                        return 'Račun je uspešno izbrisan.';
+                    }
+                    // rollback the current transaction
+                    $this->rollback();
+                    return 'Račun ni uspešno izbrisan.';
+                } // try
+                catch (PDOException $e) {
+                    echo "Napaka: {$e->getMessage()}.";
+                } // catch
+            }
+            // rollback the current transaction
+            $this->rollback();
+            return 'Napaka: uporabniški račun ni uspešno izbrisan.';
+        } // if
+        return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
+    } // deleteStudtAcct
 } // DBC
