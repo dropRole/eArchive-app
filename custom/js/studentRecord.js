@@ -208,7 +208,7 @@
                             () => {
                                 // if record deletion was confirmed
                                 if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
-                                    deleteStudt(anchor.getAttribute('data-id-students'), anchor.getAttribute('data-id-attendances'), anchor.getAttribute('data-index'))
+                                    deleteStudt(anchor.getAttribute('data-id-attendances'), anchor.getAttribute('data-id-students'), anchor.getAttribute('data-index'))
                             }
                         ) // addEventListener
                 }) // forEach
