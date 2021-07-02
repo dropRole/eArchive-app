@@ -301,6 +301,7 @@
             <div class="modal-body">
                 <form id="acctAssignFrm">
                     <input type="hidden" name="id_attendances">
+                    <input type="hidden" name="index">
                     <div class="form-group">
                         <label class="w-100">Geslo
                             <input id="passInptEl" class="form-control" name="pass" required>
