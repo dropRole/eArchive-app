@@ -217,7 +217,7 @@
                     btn.addEventListener(
                             'click',
                             () => {
-                                deleteAcctCred(btn.getAttribute('data-id-attendances'))
+                                deleteAcctCred(btn.getAttribute('data-id-attendances'), btn.getAttribute('data-index'))
                             }
                         ) //addEventListener
                 }) // forEach
@@ -1032,11 +1032,12 @@
 
     /*
      *   asynchronous script execution for deletion of the given account 
-     *   @param idAttendances
+     *   @param Number idAttendances
+     *   @param String index
      */
-    let deleteAcctCred = idAttendances => {
+    let deleteAcctCred = (idAttendances, index) => {
             request(
-                    `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}`,
+                    `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}&index=${index}`,
                     'GET',
                     'text'
                 )
