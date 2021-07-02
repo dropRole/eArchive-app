@@ -790,9 +790,11 @@ class DBC extends PDO
 
     /*
     *   delete all data related to a particular program attendance by student 
+    *   @param int $id_attendances 
     *   @param int $id_students 
+    *   @param string $index 
     */
-    public function deleteStudent(int $id_students, int $id_attendances)
+    public function deleteStudent(int $id_attendances, int $id_students, string $index)
     {
         $this->deleteStudentResidences($id_students);
         // if graduated, select certificate and delete it
@@ -807,7 +809,7 @@ class DBC extends PDO
             } // foreach
         // if account was granted to, delete if
         if ($this->checkStudentAccount($id_attendances))
-            $this->deleteStudtAcct($id_attendances);
+            $this->deleteStudtAcct($id_attendances, $index);
         $this->deleteStudentProgramAttendance($id_attendances);
         try {
             $stmt = '   DELETE FROM
