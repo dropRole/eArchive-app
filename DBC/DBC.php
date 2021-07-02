@@ -797,17 +797,17 @@ class DBC extends PDO
     public function deleteStudent(int $id_attendances, int $id_students, string $index)
     {
         $this->deleteStudentResidences($id_students);
-        // if graduated, select certificate and delete it
+        // if graduated
         $certificate = $this->selectCertificate($id_attendances);
         if (count($certificate) == 1)
             $this->deleteGraduation($id_attendances, $certificate[0]->getSource());
-        // if any scientific paper was written, delete it 
+        // if any scientific paper was written 
         $scientificPapers = $this->selectScientificPapers($id_attendances);
         if (count($scientificPapers) >= 1)
             foreach ($scientificPapers as $scientificPaper) {
                 $this->deleteScientificPaper($scientificPaper->getIdScientificPapers());
             } // foreach
-        // if account was granted to, delete if
+        // if account was granted to
         if ($this->checkStudentAccount($id_attendances))
             $this->deleteStudtAcct($id_attendances, $index);
         $this->deleteStudentProgramAttendance($id_attendances);
