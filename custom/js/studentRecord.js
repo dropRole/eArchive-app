@@ -926,11 +926,11 @@
      */
     let setPermResOfStudt = (residence) => {
             // create hidden input type that stores record if of the residence  
-            let idResidencesInputElement = document.createElement('input')
-            idResidencesInputElement.type = 'hidden'
-            idResidencesInputElement.name = 'residences[0][id_residences]'
-            idResidencesInputElement.value = residence.id_residences
-            document.querySelector('select#permResCtrySelEl').parentElement.prepend(idResidencesInputElement)
+            let idResidenceInptEl = document.createElement('input')
+            idResidenceInptEl.type = 'hidden'
+            idResidenceInptEl.name = 'residences[0][id_residences]'
+            idResidenceInptEl.value = residence.id_residences
+            document.querySelector('select#permResCtrySelEl').parentElement.prepend(idResidenceInptEl)
                 // propagate target select element with postal codes of the chosen country
             propagateSelEl(
                     document.querySelector('#permResCtrySelEl'),
@@ -1055,13 +1055,13 @@
             document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScienitificPapersInputElement = document.createElement('input')
-            idScienitificPapersInputElement.type = 'hidden'
-            idScienitificPapersInputElement.name = 'id_scientific_papers'
-            idScienitificPapersInputElement.value = sciPap.id_scientific_papers
+                idScientificPapersInptEl = document.createElement('input')
+            idScientificPapersInptEl.type = 'hidden'
+            idScientificPapersInptEl.name = 'id_scientific_papers'
+            idScientificPapersInptEl.value = sciPap.id_scientific_papers
                 // replace form element node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScienitificPapersInputElement)
+            cloneFrm.prepend(idScientificPapersInptEl)
             listenSciPapInsrFrm()
             cloneFrm.querySelector('input[name="topic"]').value = sciPap.topic
             cloneFrm.querySelector('select[name="type"]').value = sciPap.type
@@ -1089,13 +1089,13 @@
             document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPaperInputElement = document.createElement('input')
-            idScientificPaperInputElement.type = 'hidden'
-            idScientificPaperInputElement.name = 'id_scientific_papers'
-            idScientificPaperInputElement.value = e.target.getAttribute('data-id-scientific-papers')
+                idScientificPapersIntpEl = document.createElement('input')
+            idScientificPapersIntpEl.type = 'hidden'
+            idScientificPapersIntpEl.name = 'id_scientific_papers'
+            idScientificPapersIntpEl.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPaperInputElement)
+            cloneFrm.prepend(idScientificPapersIntpEl)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
@@ -1122,13 +1122,13 @@
             document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInputElement = document.createElement('input')
-            idScientificPapersInputElement.type = 'hidden'
-            idScientificPapersInputElement.name = 'id_scientific_papers'
-            idScientificPapersInputElement.value = e.target.getAttribute('data-id-scientific-papers')
+                idScientificPapersInptEl = document.createElement('input')
+            idScientificPapersInptEl.type = 'hidden'
+            idScientificPapersInptEl.name = 'id_scientific_papers'
+            idScientii.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInputElement)
+            cloneFrm.prepend(idScientificPapersInptEl)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
@@ -1157,13 +1157,13 @@
             document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idPartakingsHiddInpt = document.createElement('input')
-            idPartakingsHiddInpt.type = 'hidden'
-            idPartakingsHiddInpt.name = 'id_partakings'
-            idPartakingsHiddInpt.value = e.target.getAttribute('data-id-partakings')
+                idPartakingsInptEl = document.createElement('input')
+            idPartakingsInptEl.type = 'hidden'
+            idPartakingsInptEl.name = 'id_partakings'
+            idPartakingsInptEl.value = e.target.getAttribute('data-id-partakings')
                 // replace form node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idPartakingsHiddInpt)
+            cloneFrm.prepend(idPartakingsInptEl)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
             listenSciPapInsrFrm()
@@ -1195,13 +1195,13 @@
             document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInputElement = document.createElement('input')
-            idScientificPapersInputElement.type = 'hidden'
-            idScientificPapersInputElement.name = 'id_scientific_papers'
-            idScientificPapersInputElement.value = e.target.getAttribute('data-id-scientific-papers')
+                idScientificPapersInptEl = document.createElement('input')
+            idScientificPapersInptEl.type = 'hidden'
+            idScientificPapersInptEl.name = 'id_scientific_papers'
+            idScientificPapersInptEl.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInputElement)
+            cloneFrm.prepend(idScientificPapersInptEl)
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Določi'
@@ -1229,13 +1229,13 @@
     let toMentorUpdtFrm = e => {
             document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idMentoringsInputElement = document.createElement('input')
-            idMentoringsInputElement.type = 'hidden'
-            idMentoringsInputElement.name = 'id_mentorings'
-            idMentoringsInputElement.value = e.target.getAttribute('data-id-mentorings')
+                idMentoringsInptEl = document.createElement('input')
+            idMentoringsInptEl.type = 'hidden'
+            idMentoringsInptEl.name = 'id_mentorings'
+            idMentoringsInptEl.value = e.target.getAttribute('data-id-mentorings')
                 // replace form element node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idMentoringsInputElement)
+            cloneFrm.prepend(idMentoringsInptEl)
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
             listenSciPapInsrFrm()
                 // dispatch a synthetic click event to button for subsequent addition of form mentor section
@@ -1278,13 +1278,13 @@
             document.querySelector('div#gradCertUpldMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov certifikata'
                 // clone from the existing form node
             let cloneFrm = gradCertUpldFrm.cloneNode(true),
-                idCertificatesInputElement = document.createElement('input')
-            idCertificatesInputElement.type = 'hidden'
-            idCertificatesInputElement.name = 'id_certificates'
-            idCertificatesInputElement.value = e.target.getAttribute('data-id-certificates')
+                idCertificatesIntpEL = document.createElement('input')
+            idCertificatesIntpEL.type = 'hidden'
+            idCertificatesIntpEL.name = 'id_certificates'
+            idCertificatesIntpEL.value = e.target.getAttribute('data-id-certificates')
                 // replace form element node with its clone
             document.getElementById('gradCertUpldFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idCertificatesInputElement)
+            cloneFrm.prepend(idCertificatesIntpEL)
             listenGradCertCard()
                 // remove certificate file input 
             cloneFrm.querySelector('div.row > div.form-group').remove()
@@ -1311,14 +1311,14 @@
     let toStudtUpdtFrm = (e, student) => {
             let // clone from the existing form node
                 cloneFrm = studtInsrFrm.cloneNode(true),
-                idStudentsInputElement = document.createElement('input')
-            idStudentsInputElement.type = 'hidden'
-            idStudentsInputElement.name = 'id_students'
-            idStudentsInputElement.value = e.target.getAttribute('data-id-students')
+                idStudentsInptEl = document.createElement('input')
+            idStudentsInptEl.type = 'hidden'
+            idStudentsInptEl.name = 'id_students'
+            idStudentsInptEl.value = e.target.getAttribute('data-id-students')
                 // replace node with its clone
             document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
             listenStudtInsrFrm()
-            cloneFrm.prepend(idStudentsInputElement)
+            cloneFrm.prepend(idStudentsInptEl)
                 // fill out input fields with student particulars
             cloneFrm.querySelector('input[name=name]').value = student.particulars.name
             cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
