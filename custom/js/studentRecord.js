@@ -1082,39 +1082,6 @@
         } // toSciPapUpdtFrm
 
     /*
-     *   rearrange form for uploading document of the subject scientific paper
-     *   @param Event e
-     */
-    let toSciPapDocUpldFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
-                // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersIntpEl = document.createElement('input')
-            idScientificPapersIntpEl.type = 'hidden'
-            idScientificPapersIntpEl.name = 'id_scientific_papers'
-            idScientificPapersIntpEl.value = e.target.getAttribute('data-id-scientific-papers')
-                // replace form node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersIntpEl)
-                // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
-            cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
-            listenSciPapInsrFrm()
-                // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, p, div.row:nth-child(4)').forEach(node => {
-                    node.parentElement.removeChild(node)
-                }) // forEach
-            cloneFrm.addEventListener(
-                    'submit',
-                    e => {
-                        // prevent upload of scientific paper documents
-                        e.preventDefault()
-                        uploadDocsOfSciPap(cloneFrm)
-                    }
-                ) // addEventListener
-        } // toSciPapDocUpldFrm
-
-    /*
      *  rearrange form when inserting data of the scientific paper partaker   
      *  @param Event e
      */
@@ -1269,6 +1236,39 @@
                     }
                 ) // addEventListener
         } // toMentorUpdtFrm
+
+    /*
+     *   rearrange form for uploading document of the subject scientific paper
+     *   @param Event e
+     */
+    let toSciPapDocUpldFrm = e => {
+            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+                // clone from the existing form node
+            let cloneFrm = sciPapInsrFrm.cloneNode(true),
+                idScientificPapersIntpEl = document.createElement('input')
+            idScientificPapersIntpEl.type = 'hidden'
+            idScientificPapersIntpEl.name = 'id_scientific_papers'
+            idScientificPapersIntpEl.value = e.target.getAttribute('data-id-scientific-papers')
+                // replace form node with its clone
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
+            cloneFrm.prepend(idScientificPapersIntpEl)
+                // widen form group across the whole grid
+            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
+            cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
+            listenSciPapInsrFrm()
+                // remove nodes except those matching given selector expression 
+            cloneFrm.querySelectorAll('div#particulars, p, div.row:nth-child(4)').forEach(node => {
+                    node.parentElement.removeChild(node)
+                }) // forEach
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // prevent upload of scientific paper documents
+                        e.preventDefault()
+                        uploadDocsOfSciPap(cloneFrm)
+                    }
+                ) // addEventListener
+        } // toSciPapDocUpldFrm
 
     /*
      *  rearrange form when updating data regarding students graduation certificate  
