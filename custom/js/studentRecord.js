@@ -1085,7 +1085,7 @@
      *   rearrange form for uploading document of the subject scientific paper
      *   @param Event e
      */
-    let toSciPapUpldFrm = e => {
+    let toSciPapDocUpldFrm = e => {
             document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
@@ -1112,7 +1112,7 @@
                         uploadDocsOfSciPap(cloneFrm)
                     }
                 ) // addEventListener
-        } // toSciPapUpldFrm
+        } // toSciPapDocUpldFrm
 
     /*
      *  rearrange form when inserting data of the scientific paper partaker   
@@ -1419,7 +1419,7 @@
             if (document.querySelectorAll('.doc-upl-a'))
                 document.querySelectorAll('.doc-upl-a').forEach(span => {
                     // delete particular document
-                    span.addEventListener('click', toSciPapUpldFrm)
+                    span.addEventListener('click', toSciPapDocUpldFrm)
                 }) // forEach
                 // if anchors for scientific paper documentation deletion are rendered
             if (document.querySelectorAll('.doc-del-spn'))
