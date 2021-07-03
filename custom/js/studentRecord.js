@@ -1432,7 +1432,7 @@
                             }
                         ) // addEventListener
                 }) // forEach
-        } // attachSPCardListeners
+        } // listenSciPapCards
 
     // attach listeners to certificate card when selected
     let listenGradCertCard = () => {
