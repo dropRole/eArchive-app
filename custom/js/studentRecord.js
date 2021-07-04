@@ -610,62 +610,62 @@
     // create and subsequently append partaker section of the scientific paper insertion form 
     let addPartakerSect = () => {
             return new Promise((resolve) => {
-                // create form controls 
-                let observer = new MutationObserver(() => resolve()),
-                    ctr = document.createElement('div'),
-                    headline = document.createElement('p'),
-                    cross = document.createElement('span'),
-                    partakerFrmGrp = document.createElement('div'),
-                    partFrmGrp = document.createElement('div'),
-                    partakerLbl = document.createElement('label'),
-                    partLbl = document.createElement('label'),
-                    partakerInptEl = document.createElement('input'),
-                    partInptEl = document.createElement('input'),
-                    index = document.querySelectorAll('div#sciPapPartakers > div.row').length // the following index for an array of data on a partaker  
-                    // set observation criterion
-                observer.observe(document.getElementById('sciPapPartakers'), {
-                    attributes: false,
-                    childList: true,
-                    subtree: false
-                })
-                ctr.classList = 'row'
-                headline.classList = 'h6 col-12'
-                cross.style.float = 'right'
-                cross.style.transform = 'scale(1.2)'
-                cross.style.cursor = 'pointer'
-                cross.innerHTML = '&#10007'
-                    // remove selected attendance section
-                cross.addEventListener(
-                        'click',
-                        () => {
-                            document.getElementById('sciPapPartakers').removeChild(ctr)
-                        }
-                    ) // addEventListener
-                partakerFrmGrp.classList = 'form-group col-6'
-                partFrmGrp.classList = 'form-group col-6'
-                partakerLbl.textContent = 'Sodelovalec'
-                partakerLbl.classList = 'w-100'
-                partLbl.textContent = 'Vloga'
-                partLbl.classList = 'w-100'
-                partakerInptEl.classList = 'form-control'
-                partakerInptEl.setAttribute('list', 'students')
-                partakerInptEl.name = `partakers[${index}][index]`
-                partakerInptEl.required = true
-                partInptEl.classList = 'form-control'
-                partInptEl.type = 'text'
-                partInptEl.name = `partakers[${index}][part]`
-                partInptEl.required = true
-                    // compose a node hierarchy by appending them to active tree structure 
-                headline.appendChild(cross)
-                partakerLbl.appendChild(partakerInptEl)
-                partakerFrmGrp.appendChild(partakerLbl)
-                partLbl.appendChild(partInptEl)
-                partFrmGrp.appendChild(partLbl)
-                ctr.appendChild(headline)
-                ctr.appendChild(partakerFrmGrp)
-                ctr.appendChild(partFrmGrp)
-                document.getElementById('sciPapPartakers').appendChild(ctr)
-            })
+                    let observer = new MutationObserver(() => resolve()),
+                        // create form controls 
+                        ctr = document.createElement('div'),
+                        headline = document.createElement('p'),
+                        cross = document.createElement('span'),
+                        partakerFrmGrp = document.createElement('div'),
+                        partFrmGrp = document.createElement('div'),
+                        partakerLbl = document.createElement('label'),
+                        partLbl = document.createElement('label'),
+                        partakerInptEl = document.createElement('input'),
+                        partInptEl = document.createElement('input'),
+                        index = document.querySelectorAll('div#sciPapPartakers > div.row').length // the following index for an array of data on a partaker  
+                        // set observation criterion
+                    observer.observe(document.getElementById('sciPapPartakers'), {
+                        attributes: false,
+                        childList: true,
+                        subtree: false
+                    })
+                    ctr.classList = 'row'
+                    headline.classList = 'h6 col-12'
+                    cross.style.float = 'right'
+                    cross.style.transform = 'scale(1.2)'
+                    cross.style.cursor = 'pointer'
+                    cross.innerHTML = '&#10007'
+                        // remove selected attendance section
+                    cross.addEventListener(
+                            'click',
+                            () => {
+                                document.getElementById('sciPapPartakers').removeChild(ctr)
+                            }
+                        ) // addEventListener
+                    partakerFrmGrp.classList = 'form-group col-6'
+                    partFrmGrp.classList = 'form-group col-6'
+                    partakerLbl.textContent = 'Sodelovalec'
+                    partakerLbl.classList = 'w-100'
+                    partLbl.textContent = 'Vloga'
+                    partLbl.classList = 'w-100'
+                    partakerInptEl.classList = 'form-control'
+                    partakerInptEl.setAttribute('list', 'students')
+                    partakerInptEl.name = `partakers[${index}][index]`
+                    partakerInptEl.required = true
+                    partInptEl.classList = 'form-control'
+                    partInptEl.type = 'text'
+                    partInptEl.name = `partakers[${index}][part]`
+                    partInptEl.required = true
+                        // compose a node hierarchy by appending them to active tree structure 
+                    headline.appendChild(cross)
+                    partakerLbl.appendChild(partakerInptEl)
+                    partakerFrmGrp.appendChild(partakerLbl)
+                    partLbl.appendChild(partInptEl)
+                    partFrmGrp.appendChild(partLbl)
+                    ctr.appendChild(headline)
+                    ctr.appendChild(partakerFrmGrp)
+                    ctr.appendChild(partFrmGrp)
+                    document.getElementById('sciPapPartakers').appendChild(ctr)
+                }) // Promise
         } // addPartakerSect
 
     //  create and append additional form controls for uploading document of the scientific paper
@@ -732,97 +732,106 @@
 
     //  create and append additional form controls for providing data on mentors 
     let addMentorSect = () => {
-            // create form controls 
-            let ctr = document.createElement('div'), // row
-                headline = document.createElement('p'),
-                cross = document.createElement('span'), // removal sign 
-                mentorFrmGrp = document.createElement('div'), // form group
-                facFrmGrp = document.createElement('div'), // form group
-                taughtFrmGrp = document.createElement('div'), // form group
-                emailFrmGrp = document.createElement('div'), // form group
-                telFrmGrp = document.createElement('div'), // form group
-                mentorLbl = document.createElement('label'), // mentor label
-                facLbl = document.createElement('label'), // faculty label
-                taughtLbl = document.createElement('label'), // subject label
-                emailLbl = document.createElement('label'), // email label
-                telLbl = document.createElement('label'), // telephone label
-                facSelEl = document.createElement('select'), // faculty input
-                mentorSelEl = document.createElement('input'), // mentor input
-                taughtInptEl = document.createElement('input'), // subject input
-                emailInptEl = document.createElement('input'), // email input
-                telInptEl = document.createElement('input'), // telephone input
-                index = document.querySelectorAll('div#sciPapMentors > div.row').length // the following index for an array of data on documents of scientific paper  
-            ctr.classList = 'row'
-            headline.classList = 'col-12 h6'
-            cross.style.float = 'right'
-            cross.style.transform = 'scale(1.2)'
-            cross.style.cursor = 'pointer'
-            cross.innerHTML = '&#10007'
-                // remove selected attendance section
-            cross.addEventListener(
-                    'click',
-                    () => {
-                        document.getElementById('sciPapMentors').removeChild(ctr)
-                    }
-                ) // addEventListener
-            mentorFrmGrp.classList = 'form-group col-12'
-            facFrmGrp.classList = 'form-group col-6'
-            taughtFrmGrp.classList = 'form-group col-6'
-            emailFrmGrp.classList = 'form-group col-6'
-            telFrmGrp.classList = 'form-group col-6'
-            facLbl.textContent = 'Fakulteta'
-            facLbl.classList = 'w-100'
-            mentorLbl.textContent = 'Mentor'
-            mentorLbl.classList = 'w-100'
-            taughtLbl.textContent = 'Poučeval'
-            taughtLbl.classList = 'w-100'
-            emailLbl.textContent = 'E-naslov'
-            emailLbl.classList = 'w-100'
-            telLbl.textContent = 'Telefon'
-            telLbl.classList = 'w-100'
-            facSelEl.classList = 'form-control'
-            facSelEl.name = `mentors[${index}][id_faculties]`
-            facSelEl.required = true
-            mentorSelEl.classList = 'form-control'
-            mentorSelEl.type = 'text'
-            mentorSelEl.name = `mentors[${index}][mentor]`
-            mentorSelEl.required = true
-            taughtInptEl.classList = 'form-control'
-            taughtInptEl.type = 'text'
-            taughtInptEl.name = `mentors[${index}][taught]`
-            taughtInptEl.required = true
-            emailInptEl.classList = 'form-control'
-            emailInptEl.type = 'email'
-            emailInptEl.name = `mentors[${index}][email]`
-            emailInptEl.required = true
-            telInptEl.classList = 'form-control'
-            telInptEl.type = 'telephone'
-            telInptEl.name = `mentors[${index}][telephone]`
-            telInptEl.required = true
-            headline.appendChild(cross)
-            mentorLbl.appendChild(mentorSelEl)
-            mentorFrmGrp.appendChild(mentorLbl)
-            facLbl.appendChild(facSelEl)
-            facFrmGrp.appendChild(facLbl)
-            taughtLbl.appendChild(taughtInptEl)
-            taughtFrmGrp.appendChild(taughtLbl)
-            emailLbl.appendChild(emailInptEl)
-            emailFrmGrp.appendChild(emailLbl)
-            telLbl.appendChild(telInptEl)
-            telFrmGrp.appendChild(telLbl)
-            ctr.appendChild(headline)
-            ctr.appendChild(mentorFrmGrp)
-            ctr.appendChild(facFrmGrp)
-            ctr.appendChild(taughtFrmGrp)
-            ctr.appendChild(emailFrmGrp)
-            ctr.appendChild(telFrmGrp)
-                // populate HTMLSelectElement with the data regarding faculties 
-            propagateSelEl(
-                    facSelEl,
-                    '/eArchive/Faculties/select.php'
-                )
-                .then(() => document.getElementById('sciPapMentors').appendChild(ctr))
-                .catch(error => alert(error))
+            return new Promise((resolve) => {
+                    let ctr = document.createElement('div'), // row
+                        observer = new MutationObserver(() => resolve()),
+                        // create form controls 
+                        headline = document.createElement('p'),
+                        cross = document.createElement('span'), // removal sign 
+                        mentorFrmGrp = document.createElement('div'), // form group
+                        facFrmGrp = document.createElement('div'), // form group
+                        taughtFrmGrp = document.createElement('div'), // form group
+                        emailFrmGrp = document.createElement('div'), // form group
+                        telFrmGrp = document.createElement('div'), // form group
+                        mentorLbl = document.createElement('label'), // mentor label
+                        facLbl = document.createElement('label'), // faculty label
+                        taughtLbl = document.createElement('label'), // subject label
+                        emailLbl = document.createElement('label'), // email label
+                        telLbl = document.createElement('label'), // telephone label
+                        facSelEl = document.createElement('select'), // faculty input
+                        mentorSelEl = document.createElement('input'), // mentor input
+                        taughtInptEl = document.createElement('input'), // subject input
+                        emailInptEl = document.createElement('input'), // email input
+                        telInptEl = document.createElement('input'), // telephone input
+                        index = document.querySelectorAll('div#sciPapMentors > div.row').length // the following index for an array of data on documents of scientific paper  
+                        // set observation criterion
+                    observer.observe(document.getElementById('sciPapMentors'), {
+                        attributes: false,
+                        childList: true,
+                        subtree: false
+                    })
+                    ctr.classList = 'row'
+                    headline.classList = 'col-12 h6'
+                    cross.style.float = 'right'
+                    cross.style.transform = 'scale(1.2)'
+                    cross.style.cursor = 'pointer'
+                    cross.innerHTML = '&#10007'
+                        // remove selected attendance section
+                    cross.addEventListener(
+                            'click',
+                            () => {
+                                document.getElementById('sciPapMentors').removeChild(ctr)
+                            }
+                        ) // addEventListener
+                    mentorFrmGrp.classList = 'form-group col-12'
+                    facFrmGrp.classList = 'form-group col-6'
+                    taughtFrmGrp.classList = 'form-group col-6'
+                    emailFrmGrp.classList = 'form-group col-6'
+                    telFrmGrp.classList = 'form-group col-6'
+                    facLbl.textContent = 'Fakulteta'
+                    facLbl.classList = 'w-100'
+                    mentorLbl.textContent = 'Mentor'
+                    mentorLbl.classList = 'w-100'
+                    taughtLbl.textContent = 'Poučeval'
+                    taughtLbl.classList = 'w-100'
+                    emailLbl.textContent = 'E-naslov'
+                    emailLbl.classList = 'w-100'
+                    telLbl.textContent = 'Telefon'
+                    telLbl.classList = 'w-100'
+                    facSelEl.classList = 'form-control'
+                    facSelEl.name = `mentors[${index}][id_faculties]`
+                    facSelEl.required = true
+                    mentorSelEl.classList = 'form-control'
+                    mentorSelEl.type = 'text'
+                    mentorSelEl.name = `mentors[${index}][mentor]`
+                    mentorSelEl.required = true
+                    taughtInptEl.classList = 'form-control'
+                    taughtInptEl.type = 'text'
+                    taughtInptEl.name = `mentors[${index}][taught]`
+                    taughtInptEl.required = true
+                    emailInptEl.classList = 'form-control'
+                    emailInptEl.type = 'email'
+                    emailInptEl.name = `mentors[${index}][email]`
+                    emailInptEl.required = true
+                    telInptEl.classList = 'form-control'
+                    telInptEl.type = 'telephone'
+                    telInptEl.name = `mentors[${index}][telephone]`
+                    telInptEl.required = true
+                    headline.appendChild(cross)
+                    mentorLbl.appendChild(mentorSelEl)
+                    mentorFrmGrp.appendChild(mentorLbl)
+                    facLbl.appendChild(facSelEl)
+                    facFrmGrp.appendChild(facLbl)
+                    taughtLbl.appendChild(taughtInptEl)
+                    taughtFrmGrp.appendChild(taughtLbl)
+                    emailLbl.appendChild(emailInptEl)
+                    emailFrmGrp.appendChild(emailLbl)
+                    telLbl.appendChild(telInptEl)
+                    telFrmGrp.appendChild(telLbl)
+                    ctr.appendChild(headline)
+                    ctr.appendChild(mentorFrmGrp)
+                    ctr.appendChild(facFrmGrp)
+                    ctr.appendChild(taughtFrmGrp)
+                    ctr.appendChild(emailFrmGrp)
+                    ctr.appendChild(telFrmGrp)
+                        // populate HTMLSelectElement with the data regarding faculties 
+                    propagateSelEl(
+                            facSelEl,
+                            '/eArchive/Faculties/select.php'
+                        )
+                        .then(() => document.getElementById('sciPapMentors').appendChild(ctr))
+                        .catch(error => alert(error))
+                }) // Promise
         } // addMentorSect
 
     /*
