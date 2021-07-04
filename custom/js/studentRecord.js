@@ -10,108 +10,6 @@
         rprtMdlBtn = document.getElementById('rprtMdlBtn'), // report modal toggler
         fltrInptEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
 
-    gradCertUpldFrm.querySelector('input[type=file]').addEventListener(
-            'input',
-            () => {
-                // assign the name of the uploaded certificate to hidden input type
-                gradCertUpldFrm.querySelector('input[name=certificate]').value = gradCertUpldFrm.querySelector('input[type=file]').files[0].name
-            }
-        ) // addEventListener
-
-    // attach event listeners to corresponding input element 
-    let listenSciPapInsrFrm = () => {
-            // get the form 
-            let frm = document.getElementById('sciPapInsrFrm')
-                // if button for subsequent partaker section additon exists
-            if (frm.querySelector('#addPartakerBtn'))
-                frm.querySelector('#addPartakerBtn').addEventListener(
-                    'click',
-                    addPartakerSect
-                )
-                // if file input is rendered 
-            if (frm.querySelector('input[name="document[]"]'))
-                frm.querySelector('input[name="document[]"]').addEventListener(
-                    'input',
-                    e => {
-                        // assign the filename of the uploaded document to the hidden input type
-                        frm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
-                    }
-                ) // addEventListener
-                // if button for subsequent mentor section additon exists 
-            if (frm.querySelector('#addMentorBtn'))
-                frm.querySelector('#addMentorBtn').addEventListener(
-                    'click',
-                    addMentorSect
-                )
-                // if button for subsequent document section additon exists
-            if (frm.querySelector('#addDocBtn'))
-            // append controls for additional scientific paper document upload
-                frm.querySelector('#addDocBtn').addEventListener(
-                'click',
-                addDocUpldSect
-            )
-        } // attachSciPapFrmListeners
-
-    // attach event listeners to corresponding input and selecet elements
-    let listenStudtInsrFrm = () => {
-            let addTempResBtn = document.getElementById('addTempResBtn'), // button for appending addiational temporal residence section 
-                addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for apppending additional program attendance section
-                birthCtrySelEl = document.getElementById('birthCtrySelEl'),
-                permResCtrySelEl = document.getElementById('permResCtrySelEl'),
-                facSelEl = document.getElementById('facSelEl'), // faculty select element
-                gradCheckBox = document.getElementById('gradCheckBox') // checkbox for denoting graduation
-            addTempResBtn.addEventListener(
-                    'click',
-                    () => {
-                        addTempResSect()
-                    }
-                ) // addEventListener
-            addAttendanceBtn.addEventListener(
-                'click',
-                addProgAttendanceSect
-            )
-            birthCtrySelEl.addEventListener(
-                    // propagate postal codes by selected country 
-                    'input',
-                    () => propagateSelEl(
-                        document.getElementById('birthPostCodeSelEl'),
-                        `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySelEl.selectedOptions[0].value}`
-                    )
-                ) // addEventListener
-            permResCtrySelEl.addEventListener(
-                    // propagate postal codes by selected country 
-                    'input',
-                    () => propagateSelEl(
-                        document.getElementById('permResPostCodeSelEl'),
-                        `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySelEl.selectedOptions[0].value}`
-                    )
-                ) // addEventListener
-            facSelEl.addEventListener(
-                    'input',
-                    () => {
-                        // propagate programs by faculty selection
-                        propagateSelEl(
-                            document.getElementById('progSelEl'),
-                            `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`
-                        )
-                    }) // addEventListener
-            gradCheckBox.addEventListener(
-                    'input',
-                    e => {
-                        // if it's checked
-                        if (gradCheckBox.checked)
-                        // append graduation section if graduated
-                            addProgGradSect(e)
-                        else {
-                            // remove selected graduation section
-                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
-                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
-                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
-                        } // else
-                    }
-                ) // addEventListener
-        } // listenStudtInsrFrm
-
     // rearrange form when inserting a student record  
     let toStudtInsrFrm = () => {
             // clone from the existing form node
@@ -265,6 +163,284 @@
             })
         } // request
 
+    // asynchronous script execution for insertion of a scientific paper partaker    
+    let insertPartakerOfSciPap = frm => {
+            request(
+                    '/eArchive/Partakings/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sciPapMdl').modal('hide'))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // insertPartakerOfSciPap
+
+    /*
+     *  asynchronous script execution for updating data of the scientific paper partaker    
+     *  @param HTMLFormElement frm
+     */
+    let updatePartakerOfSciPap = frm => {
+            request(
+                    '/eArchive/Partakings/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // updatePartakerOfSciPap
+
+    /*
+     *  asynchronous script execution for deletion of the scientific paper partaker    
+     *  @param Number idPartakings
+     */
+    let deletePartakerOfSciPap = idPartakings => {
+            request(
+                    `/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`,
+                    'GET',
+                    'text'
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // deletePartakerOfSciPap
+
+    /*
+     *  asynchronous script execution for inserting submitted mentor data     
+     *  @param HTMLFormElement frm
+     */
+    let insertMentorOfSciPap = frm => {
+            request(
+                    '/eArchive/Mentorings/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sciPapInsrMdl').modal('hide'))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // insertMentorOfSciPap
+
+    // asynchronously script run for updating data regarding mentor of the scientific paper       
+    let updateMentorOfSciPap = frm => {
+            request(
+                    '/eArchive/Mentorings/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // updateMentorOfSciPap
+
+    /*
+     *  asynchronously script run for deletion of data concerning scientific paper mentor       
+     *  @param Number idMentorings
+     */
+    let deleteMentorOfSciPap = idMentorings => {
+            request(
+                    `/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`,
+                    'GET',
+                    'text'
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // deleteMentorOfSciPap
+
+    /*  
+     *   asynchronous script execution for scientific paper documents upload    
+     *   @param HTMLFormElement frm
+     */
+    let uploadDocsOfSciPap = frm => {
+            request(
+                    '/eArchive/Documents/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sicPapMdl').modal('hide'))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances').value))
+                .catch(error => alert(error)) // catch
+        } // uploadDocsOfSciPap
+
+    /*
+     *  asynchronous script execution for scientific paper documents deletion    
+     *  @param String source  
+     */
+    let deleteDocsOfSciPap = source => {
+            request(
+                    `/eArchive/Documents/delete.php?source=${source}`,
+                    'GET',
+                    'text'
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // deleteDocsOfSciPap
+
+    /*
+     *   asynchronous script execution for selection of scientific papers per student program attendance 
+     *   @param Number idAttendances
+     */
+    let selectSciPaps = idAttendances => {
+            // fetch resources
+            request(
+                    `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`,
+                    'GET',
+                    'document'
+                )
+                .then(response => {
+                    // compose node tree structure
+                    frag = response
+                        // reflect fragments body     
+                    document.querySelector('#sciPapViewMdl .modal-content').innerHTML = frag.body.innerHTML
+                })
+                .then(() => listenSciPapCards())
+                .catch(error => alert(error)) // catch
+        } // selectSciPaps
+
+    /*
+     *   asynchronous script execution for insertion data regarding scientific paper and its documents upload 
+     *   @param Event e
+     *   @param HTMLFormElement frm
+     */
+    let insertSciPap = (e, frm) => {
+            // prevent default action of submitting scientific paper data    
+            e.preventDefault()
+            request(
+                    '/eArchive/ScientificPapers/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sciPapInsrMdl').modal('hide'))
+                .catch(error => alert(error)) // catch
+        } // insertSciPap
+
+    /*
+     *   asynchronous script execution for scientific paper data alteration 
+     *   @param HTMLFormElement frm
+     */
+    let updateSciPap = frm => {
+            request(
+                    '/eArchive/ScientificPapers/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#sciPapInsrMdl').modal('hide'))
+                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // updateSciPap
+
+    /*
+     *  asynchronous script execution for scientific paper deletion with its belonging documents     
+     *  @param Number idScientificPapers
+     */
+    let deleteSciPap = idScientificPapers => {
+            request(
+                    `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`,
+                    'GET',
+                    'text'
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // deleteScientificPaper
+
+    /*
+     *   asynchronous script execution for graduation certificate upload     
+     *   @param Event e
+     */
+    let uploadGradCert = e => {
+            // prevent default action of submitting certificate upload form
+            e.preventDefault()
+            request(
+                    '/eArchive/Certificates/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(gradCertUpldFrm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .then(() => $('#gradCertUpldMdl').modal('hide'))
+                .catch(error => alert(error)) // catch
+        } // uploadGradCert
+
+    gradCertUpldFrm.addEventListener('submit', uploadGradCert)
+
+    /*
+     *  asynchronous script execution for graduation certificate selection    
+     *  @param Number idAttendances
+     */
+    let selectGradCert = idAttendances => {
+            request(
+                    `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`,
+                    'GET',
+                    'document'
+                )
+                .then(response => {
+                    // compose node tree structure
+                    frag = response
+                        // reflect fragments body     
+                    document.querySelector('div#gradCertViewMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
+                })
+                .then(() => listenGradCertCard())
+                .catch(error => alert(error)) // catch
+        } // selectGradCert
+
+    /*
+     *  asynchronously script run for graduation certificate data update     
+     *  @param HTMLFormElement frm
+     */
+    let updateGradCert = frm => {
+            request(
+                    '/eArchive/Certificates/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => $('#gradCertUpldMdl').modal('hide'))
+                .then(() => selectGradCert(frm.querySelector('input[name=id_attendances]').value))
+                .catch(error => alert(error)) // catch
+        } // updateGradCert
+
+    /*
+     *  asynchronous script execution for graduation certificate deletion    
+     *  @param Number idAttendance
+     *  @param String source
+     */
+    let deleteGradCert = (idAttendances, source) => {
+            request(
+                    `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`,
+                    'GET',
+                    'text'
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .then(() => $('#gradCertViewMdl').modal('hide'))
+                .catch(error => alert(error)) // catch
+        } // deleteGradCert
+
+    /*  
+     *   report to the user on the performed action
+     *   @param String mssg
+     */
+    let rprtOnAction = mssg => {
+            rprtMdl.querySelector('.modal-body').textContent = mssg
+            rprtMdlBtn.click()
+        } // rprtOnAction
+
     // load student evidence table upon latterly data amendment 
     let loadStudtEvidTbl = () => {
             request
@@ -312,6 +488,91 @@
                 alert(error)
             }
         } // propagateSelEl
+
+    /*
+     *  clear input field values of a form 
+     *  @param HTMLFormElement frm
+     */
+    let emptyFrmInptFields = frm => {
+            frm.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
+                    input.value = ''
+                }) // forEach
+        } // emptyFrmInptFields
+
+    /*  
+     *   interpolate datalist with name, surname and index number of the inserted student
+     *   @param String fullname
+     *   @param Number index
+     */
+    let interpolateStudtDatalst = (fullname, index) => {
+            let option = document.createElement('option')
+            option.value = index
+            option.textContent = fullname
+            document.getElementById('sciPapInsrMdl').querySelector('datalist').appendChild(option)
+        } // interpolateStudtDatalst
+
+    /*
+     *   asynchronous script execution for selection of student particulars and scientific achievements    
+     *   @param Event e
+     *   @param Number idStudents
+     */
+    let selectStudt = (e, idStudents) => {
+            request(
+                    `/eArchive/Students/select.php?id_students=${idStudents}`,
+                    'GET',
+                    'json'
+                )
+                .then(response => toStudtUpdtFrm(e, response))
+                .catch(error => alert(error)) // catch
+        } // selectStudt
+
+    /*
+     *   asynchronous script execution for filtered student selection by index      
+     *   @param Number index
+     */
+    let selectStudtsByIndx = index => {
+            request(
+                    `/eArchive/Students/filterByIndex.php?index=${index}`,
+                    'GET',
+                    'document'
+                )
+                .then(response => {
+                    // compose node passive tree structure
+                    frag = response
+                        // reflect fragments body  
+                    document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
+                })
+                .then(() => listenStudtEvidTbl())
+                .catch(error => alert(error)) // catch
+        } // selectStudtsByIndx
+
+    fltrInptEl.addEventListener('input', () => {
+            // filter students by their index numbers 
+            selectStudtsByIndx(fltrInptEl.value)
+        }) // addEventListener
+
+    /*
+     *  asynchronous script execution for insretion of student particulars and scientific achievements
+     *  @param Event e
+     *  @param HTMLFormElement form
+     */
+    let insertStudt = (e, frm) => {
+            // prevent default action of submitting student data through a form
+            e.preventDefault()
+            request(
+                    '/eArchive/Students/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .then(() => emptyFrmInptFields(studtInsrFrm))
+                .then(() => document.getElementById('studentInsBtn').click())
+                .then(() => document.getElementById('studtInsrBtn').click())
+                .then(() => interpolateStudtDatalst())
+                .catch(error => alert(error)) // catch
+        } // insertStudt
 
     /*
      *  !recursive 
@@ -852,91 +1113,6 @@
         } // addMentorSect
 
     /*
-     *  clear input field values of a form 
-     *  @param HTMLFormElement frm
-     */
-    let emptyFrmInptFields = frm => {
-            frm.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
-                    input.value = ''
-                }) // forEach
-        } // emptyFrmInptFields
-
-    /*  
-     *   interpolate datalist with name, surname and index number of the inserted student
-     *   @param String fullname
-     *   @param Number index
-     */
-    let interpolateStudtDatalst = (fullname, index) => {
-            let option = document.createElement('option')
-            option.value = index
-            option.textContent = fullname
-            document.getElementById('sciPapInsrMdl').querySelector('datalist').appendChild(option)
-        } // interpolateStudtDatalst
-
-    /*
-     *   asynchronous script execution for selection of student particulars and scientific achievements    
-     *   @param Event e
-     *   @param Number idStudents
-     */
-    let selectStudt = (e, idStudents) => {
-            request(
-                    `/eArchive/Students/select.php?id_students=${idStudents}`,
-                    'GET',
-                    'json'
-                )
-                .then(response => toStudtUpdtFrm(e, response))
-                .catch(error => alert(error)) // catch
-        } // selectStudt
-
-    /*
-     *   asynchronous script execution for filtered student selection by index      
-     *   @param Number index
-     */
-    let selectStudtsByIndx = index => {
-            request(
-                    `/eArchive/Students/filterByIndex.php?index=${index}`,
-                    'GET',
-                    'document'
-                )
-                .then(response => {
-                    // compose node passive tree structure
-                    frag = response
-                        // reflect fragments body  
-                    document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
-                })
-                .then(() => listenStudtEvidTbl())
-                .catch(error => alert(error)) // catch
-        } // selectStudtsByIndx
-
-    fltrInptEl.addEventListener('input', () => {
-            // filter students by their index numbers 
-            selectStudtsByIndx(fltrInptEl.value)
-        }) // addEventListener
-
-    /*
-     *  asynchronous script execution for insretion of student particulars and scientific achievements
-     *  @param Event e
-     *  @param HTMLFormElement form
-     */
-    let insertStudt = (e, frm) => {
-            // prevent default action of submitting student data through a form
-            e.preventDefault()
-            request(
-                    '/eArchive/Students/insert.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
-                .then(() => emptyFrmInptFields(studtInsrFrm))
-                .then(() => document.getElementById('studentInsBtn').click())
-                .then(() => document.getElementById('studtInsrBtn').click())
-                .then(() => interpolateStudtDatalst())
-                .catch(error => alert(error)) // catch
-        } // insertStudt
-
-    /*
      *  fill out form fields with student birthplace particulars
      *  @param Number idpostalCode
      *  @param Number idCountries
@@ -1374,6 +1550,100 @@
                 ) // addEventListener
         } // toStudtUpdtFrm
 
+    // attach event listeners to corresponding input element 
+    let listenSciPapInsrFrm = () => {
+            // get the form 
+            let frm = document.getElementById('sciPapInsrFrm')
+                // if button for subsequent partaker section additon exists
+            if (frm.querySelector('#addPartakerBtn'))
+                frm.querySelector('#addPartakerBtn').addEventListener(
+                    'click',
+                    addPartakerSect
+                )
+                // if file input is rendered 
+            if (frm.querySelector('input[name="document[]"]'))
+                frm.querySelector('input[name="document[]"]').addEventListener(
+                    'input',
+                    e => {
+                        // assign the filename of the uploaded document to the hidden input type
+                        frm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
+                    }
+                ) // addEventListener
+                // if button for subsequent mentor section additon exists 
+            if (frm.querySelector('#addMentorBtn'))
+                frm.querySelector('#addMentorBtn').addEventListener(
+                    'click',
+                    addMentorSect
+                )
+                // if button for subsequent document section additon exists
+            if (frm.querySelector('#addDocBtn'))
+            // append controls for additional scientific paper document upload
+                frm.querySelector('#addDocBtn').addEventListener(
+                'click',
+                addDocUpldSect
+            )
+        } // attachSciPapFrmListeners
+
+    // attach event listeners to corresponding input and selecet elements
+    let listenStudtInsrFrm = () => {
+            let addTempResBtn = document.getElementById('addTempResBtn'), // button for appending addiational temporal residence section 
+                addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for apppending additional program attendance section
+                birthCtrySelEl = document.getElementById('birthCtrySelEl'),
+                permResCtrySelEl = document.getElementById('permResCtrySelEl'),
+                facSelEl = document.getElementById('facSelEl'), // faculty select element
+                gradCheckBox = document.getElementById('gradCheckBox') // checkbox for denoting graduation
+            addTempResBtn.addEventListener(
+                    'click',
+                    () => {
+                        addTempResSect()
+                    }
+                ) // addEventListener
+            addAttendanceBtn.addEventListener(
+                'click',
+                addProgAttendanceSect
+            )
+            birthCtrySelEl.addEventListener(
+                    // propagate postal codes by selected country 
+                    'input',
+                    () => propagateSelEl(
+                        document.getElementById('birthPostCodeSelEl'),
+                        `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySelEl.selectedOptions[0].value}`
+                    )
+                ) // addEventListener
+            permResCtrySelEl.addEventListener(
+                    // propagate postal codes by selected country 
+                    'input',
+                    () => propagateSelEl(
+                        document.getElementById('permResPostCodeSelEl'),
+                        `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySelEl.selectedOptions[0].value}`
+                    )
+                ) // addEventListener
+            facSelEl.addEventListener(
+                    'input',
+                    () => {
+                        // propagate programs by faculty selection
+                        propagateSelEl(
+                            document.getElementById('progSelEl'),
+                            `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`
+                        )
+                    }) // addEventListener
+            gradCheckBox.addEventListener(
+                    'input',
+                    e => {
+                        // if it's checked
+                        if (gradCheckBox.checked)
+                        // append graduation section if graduated
+                            addProgGradSect(e)
+                        else {
+                            // remove selected graduation section
+                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                        } // else
+                    }
+                ) // addEventListener
+        } // listenStudtInsrFrm
+
     // attach event listeners to a scientific paper cards when rendered
     let listenSciPapCards = () => {
             // if anchor nodes for partaker insertion exist
@@ -1488,281 +1758,11 @@
                 ) // addEventListner
         } // attachCertificateCardListeners
 
-    // asynchronous script execution for insertion of a scientific paper partaker    
-    let insertPartakerOfSciPap = frm => {
-            request(
-                    '/eArchive/Partakings/insert.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // insertPartakerOfSciPap
-
-    /*
-     *  asynchronous script execution for updating data of the scientific paper partaker    
-     *  @param HTMLFormElement frm
-     */
-    let updatePartakerOfSciPap = frm => {
-            request(
-                    '/eArchive/Partakings/update.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // updatePartakerOfSciPap
-
-    /*
-     *  asynchronous script execution for deletion of the scientific paper partaker    
-     *  @param Number idPartakings
-     */
-    let deletePartakerOfSciPap = idPartakings => {
-            request(
-                    `/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`,
-                    'GET',
-                    'text'
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // deletePartakerOfSciPap
-
-    /*
-     *  asynchronous script execution for inserting submitted mentor data     
-     *  @param HTMLFormElement frm
-     */
-    let insertMentorOfSciPap = frm => {
-            request(
-                    '/eArchive/Mentorings/insert.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // insertMentorOfSciPap
-
-    // asynchronously script run for updating data regarding mentor of the scientific paper       
-    let updateMentorOfSciPap = frm => {
-            request(
-                    '/eArchive/Mentorings/update.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // updateMentorOfSciPap
-
-    /*
-     *  asynchronously script run for deletion of data concerning scientific paper mentor       
-     *  @param Number idMentorings
-     */
-    let deleteMentorOfSciPap = idMentorings => {
-            request(
-                    `/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`,
-                    'GET',
-                    'text'
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // deleteMentorOfSciPap
-
-    /*  
-     *   asynchronous script execution for scientific paper documents upload    
-     *   @param HTMLFormElement frm
-     */
-    let uploadDocsOfSciPap = frm => {
-            request(
-                    '/eArchive/Documents/insert.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sicPapMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances').value))
-                .catch(error => alert(error)) // catch
-        } // uploadDocsOfSciPap
-
-    /*
-     *  asynchronous script execution for scientific paper documents deletion    
-     *  @param String source  
-     */
-    let deleteDocsOfSciPap = source => {
-            request(
-                    `/eArchive/Documents/delete.php?source=${source}`,
-                    'GET',
-                    'text'
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // deleteDocsOfSciPap
-
-    /*
-     *   asynchronous script execution for selection of scientific papers per student program attendance 
-     *   @param Number idAttendances
-     */
-    let selectSciPaps = idAttendances => {
-            // fetch resources
-            request(
-                    `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`,
-                    'GET',
-                    'document'
-                )
-                .then(response => {
-                    // compose node tree structure
-                    frag = response
-                        // reflect fragments body     
-                    document.querySelector('#sciPapViewMdl .modal-content').innerHTML = frag.body.innerHTML
-                })
-                .then(() => listenSciPapCards())
-                .catch(error => alert(error)) // catch
-        } // selectSciPaps
-
-    /*
-     *   asynchronous script execution for insertion data regarding scientific paper and its documents upload 
-     *   @param Event e
-     *   @param HTMLFormElement frm
-     */
-    let insertSciPap = (e, frm) => {
-            // prevent default action of submitting scientific paper data    
-            e.preventDefault()
-            request(
-                    '/eArchive/ScientificPapers/insert.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .catch(error => alert(error)) // catch
-        } // insertSciPap
-
-    /*
-     *   asynchronous script execution for scientific paper data alteration 
-     *   @param HTMLFormElement frm
-     */
-    let updateSciPap = frm => {
-            request(
-                    '/eArchive/ScientificPapers/update.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // updateSciPap
-
-    /*
-     *  asynchronous script execution for scientific paper deletion with its belonging documents     
-     *  @param Number idScientificPapers
-     */
-    let deleteSciPap = idScientificPapers => {
-            request(
-                    `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`,
-                    'GET',
-                    'text'
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // deleteScientificPaper
-
-    /*
-     *   asynchronous script execution for graduation certificate upload     
-     *   @param Event e
-     */
-    let uploadGradCert = e => {
-            // prevent default action of submitting certificate upload form
-            e.preventDefault()
-            request(
-                    '/eArchive/Certificates/insert.php',
-                    'POST',
-                    'text',
-                    (new FormData(gradCertUpldFrm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
-                .then(() => $('#gradCertUpldMdl').modal('hide'))
-                .catch(error => alert(error)) // catch
-        } // uploadGradCert
-
-    gradCertUpldFrm.addEventListener('submit', uploadGradCert)
-
-    /*
-     *  asynchronous script execution for graduation certificate selection    
-     *  @param Number idAttendances
-     */
-    let selectGradCert = idAttendances => {
-            request(
-                    `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`,
-                    'GET',
-                    'document'
-                )
-                .then(response => {
-                    // compose node tree structure
-                    frag = response
-                        // reflect fragments body     
-                    document.querySelector('div#gradCertViewMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
-                })
-                .then(() => listenGradCertCard())
-                .catch(error => alert(error)) // catch
-        } // selectGradCert
-
-    /*
-     *  asynchronously script run for graduation certificate data update     
-     *  @param HTMLFormElement frm
-     */
-    let updateGradCert = frm => {
-            request(
-                    '/eArchive/Certificates/update.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#gradCertUpldMdl').modal('hide'))
-                .then(() => selectGradCert(frm.querySelector('input[name=id_attendances]').value))
-                .catch(error => alert(error)) // catch
-        } // updateGradCert
-
-    /*
-     *  asynchronous script execution for graduation certificate deletion    
-     *  @param Number idAttendance
-     *  @param String source
-     */
-    let deleteGradCert = (idAttendances, source) => {
-            request(
-                    `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`,
-                    'GET',
-                    'text'
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
-                .then(() => $('#gradCertViewMdl').modal('hide'))
-                .catch(error => alert(error)) // catch
-        } // deleteGradCert
-
-    /*  
-     *   report to the user on the performed action
-     *   @param String mssg
-     */
-    let rprtOnAction = mssg => {
-            rprtMdl.querySelector('.modal-body').textContent = mssg
-            rprtMdlBtn.click()
-        } // rprtOnAction
+    gradCertUpldFrm.querySelector('input[type=file]').addEventListener(
+            'input',
+            () => {
+                // assign the name of the uploaded certificate to hidden input type
+                gradCertUpldFrm.querySelector('input[name=certificate]').value = gradCertUpldFrm.querySelector('input[type=file]').files[0].name
+            }
+        ) // addEventListener
 })()
