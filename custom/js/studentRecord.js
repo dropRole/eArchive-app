@@ -1092,7 +1092,7 @@
                 idScientificPapersInptEl = document.createElement('input')
             idScientificPapersInptEl.type = 'hidden'
             idScientificPapersInptEl.name = 'id_scientific_papers'
-            idScientii.value = e.target.getAttribute('data-id-scientific-papers')
+            idScientificPapersInptEl.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScientificPapersInptEl)
