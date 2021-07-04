@@ -625,7 +625,7 @@
                     // set observation criterion
                 observer.observe(document.getElementById('sciPapPartakers'), {
                     attributes: false,
-                    childNodes: true,
+                    childList: true,
                     subtree: false
                 })
                 ctr.classList = 'row'
@@ -1109,12 +1109,13 @@
             cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
             listenSciPapInsrFrm()
-                // dispatch a synthetic click event
-            cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
-                // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div.row:nth-child(3), div#sciPapDocs, p, button').forEach(node => {
-                    node.parentElement.removeChild(node)
-                }) // forEach
+            addPartakerSect()
+                .then(() => {
+                    // remove nodes except those matching given selector expression 
+                    cloneFrm.querySelectorAll('div.row:nth-child(3), div#sciPapDocs, p, button').forEach(node => {
+                            node.parentElement.removeChild(node)
+                        }) // forEach
+                })
             cloneFrm.addEventListener(
                     'submit',
                     e => {
