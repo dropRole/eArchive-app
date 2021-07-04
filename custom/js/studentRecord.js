@@ -1192,12 +1192,13 @@
             cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Določi'
             listenSciPapInsrFrm()
-                // dispatch a synthetic click event
-            cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
-                // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
-                    node.parentElement.removeChild(node)
-                }) // forEach
+            addMentorSect()
+                .then(() => {
+                    // remove nodes except those matching given selector expression 
+                    cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
+                            node.parentElement.removeChild(node)
+                        }) // forEach
+                })
             cloneFrm.addEventListener(
                     'submit',
                     e => {
