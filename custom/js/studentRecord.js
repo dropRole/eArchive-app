@@ -546,11 +546,6 @@
                 .catch(error => alert(error)) // catch
         } // selectStudtsByIndx
 
-    fltrInptEl.addEventListener('input', () => {
-            // filter students by their index numbers 
-            selectStudtsByIndx(fltrInptEl.value)
-        }) // addEventListener
-
     /*
      *  asynchronous script execution for insretion of student particulars and scientific achievements
      *  @param Event e
@@ -1233,15 +1228,6 @@
                 .catch(error => alert(error)) // catch
         } // assignAcctCred
 
-    acctAssignFrm.addEventListener(
-            'submit',
-            e => {
-                // prevent form from submitting account details  
-                e.preventDefault()
-                assignAcctCred(e)
-            }
-        ) // addEventListener
-
     /*
      *   asynchronous script execution for deletion of the given account 
      *   @param Number idAttendances
@@ -1765,4 +1751,18 @@
                 gradCertUpldFrm.querySelector('input[name=certificate]').value = gradCertUpldFrm.querySelector('input[type=file]').files[0].name
             }
         ) // addEventListener
+
+    acctAssignFrm.addEventListener(
+            'submit',
+            e => {
+                // prevent form from submitting account details  
+                e.preventDefault()
+                assignAcctCred(e)
+            }
+        ) // addEventListener
+
+    fltrInptEl.addEventListener('input', () => {
+            // filter students by their index numbers 
+            selectStudtsByIndx(fltrInptEl.value)
+        }) // addEventListener
 })()
