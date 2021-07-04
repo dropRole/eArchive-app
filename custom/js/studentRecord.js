@@ -10,128 +10,6 @@
         rprtMdlBtn = document.getElementById('rprtMdlBtn'), // report modal toggler
         fltrInptEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
 
-    // rearrange form when inserting a student record  
-    let toStudtInsrFrm = () => {
-            // clone from the existing form node
-            let cloneFrm = studtInsrFrm.cloneNode(true)
-                // replace form element node with its clone
-            document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
-            listenStudtInsrFrm()
-            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-                // exchange callbacks
-            cloneFrm.addEventListener('submit', e => insertStudt(e, cloneFrm))
-        } // toStudtInsrFrm
-
-    /*
-     *   rearrange form when interpolating data regarding scientific paper and uploading its documents    
-     *   @param Event e
-     */
-    let toSciPapInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Vstavljanje znanstvenega dela'
-                // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true)
-            cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
-                // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-            listenSciPapInsrFrm()
-            cloneFrm.addEventListener(
-                    'submit',
-                    e => { insertSciPap(e, cloneFrm) }
-                ) // addEventListner
-        } // toSciPapInsrFrm
-
-    // attach listeners to student evidence table appropriate anchors and buttons   
-    let listenStudtEvidTbl = () => {
-            let studtInsrBtn = document.getElementById('studtInsrBtn'), // button for exposing form for student scientific achievements insertion
-                sciPapViewLst = document.querySelectorAll('.sp-vw-a'), // array of anchors for exposing scientific papers of the student
-                sciPapInsrLst = document.querySelectorAll('.sp-ins-a'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
-                gradCertInsrLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
-                gradCertViewLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
-                acctInsrLst = document.querySelectorAll('.acc-ins-btn'), // array of buttons for exposing form for assigning an account to student
-                acctDelLst = document.querySelectorAll('.acc-del-btn'), // array of buttons for deletion of a particular student account 
-                studtUpdLst = document.querySelectorAll('.stu-upd-a'), // array of anchors for exposing form for updating fundamental data of the student
-                studtDelLst = document.querySelectorAll('.stu-del-a') // array of anchors for exposing form for deletion of fundamental data of the student
-            studtInsrBtn.addEventListener(
-                    'click',
-                    toStudtInsrFrm
-                ) // addEventListener
-            sciPapViewLst.forEach(anchor => {
-                    // preview scientific papers   
-                    anchor.addEventListener(
-                            'click',
-                            () => {
-                                selectSciPaps(anchor.getAttribute('data-id-attendances'))
-                                sciPapInsrFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
-                            }
-                        ) //addEventListener
-                }) // forEach
-            sciPapInsrLst.forEach(anchor => {
-                    // modify form for scientific paper insertion
-                    anchor.addEventListener('click', toSciPapInsrFrm)
-                }) // forEach
-            gradCertInsrLst.forEach(anchor => {
-                    // assign an attendance id value to an upload forms hidden input type 
-                    anchor.addEventListener(
-                            'click',
-                            () => {
-                                gradCertUpldFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
-                            }
-                        ) //addEventListener
-                }) // forEach
-            gradCertViewLst.forEach(anchor => {
-                    // view certificate particulars in a form of a card in the modal
-                    anchor.addEventListener(
-                            'click',
-                            () => {
-                                selectGradCert(anchor.getAttribute('data-id-attendances'))
-                                    // set value of id to the hidden input of the form
-                                gradCertUpldFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
-                            }
-                        ) // addEventListener
-                }) // forEach
-            studtUpdLst.forEach(anchor => {
-                    // propagate update form with student particulars
-                    anchor.addEventListener(
-                            'click',
-                            e => {
-                                selectStudt(e, anchor.getAttribute('data-id-students'))
-                            }
-                        ) // addEventListener
-                }) // forEach
-            studtDelLst.forEach(anchor => {
-                    // delete student from the student evidence table
-                    anchor.addEventListener(
-                            'click',
-                            () => {
-                                // if record deletion was confirmed
-                                if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
-                                    deleteStudt(anchor.getAttribute('data-id-attendances'), anchor.getAttribute('data-id-students'), anchor.getAttribute('data-index'))
-                            }
-                        ) // addEventListener
-                }) // forEach
-            acctDelLst.forEach(btn => {
-                    // delete particular account 
-                    btn.addEventListener(
-                            'click',
-                            () => {
-                                deleteAcctCred(btn.getAttribute('data-id-attendances'), btn.getAttribute('data-index'))
-                            }
-                        ) //addEventListener
-                }) // forEach
-            acctInsrLst.forEach(btn => {
-                    // pass an id and index of an attendance through forms hidden input types 
-                    btn.addEventListener(
-                            'click',
-                            () => {
-                                acctAssignFrm.querySelector('input[name=id_attendances]').value = btn.value
-                                acctAssignFrm.querySelector('input[name=index]').value = btn.getAttribute('data-index')
-                            }
-                        ) // addEventListener
-                }) // forEach
-        } // attachStudentTableListeners
-    listenStudtEvidTbl()
-
     /*
      *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
      *   @param String script
@@ -162,6 +40,100 @@
                 xmlhttp.send(frmData)
             })
         } // request
+
+    /*
+     *   asynchronous script execution for selection of student particulars and scientific achievements    
+     *   @param Event e
+     *   @param Number idStudents
+     */
+    let selectStudt = (e, idStudents) => {
+            request(
+                    `/eArchive/Students/select.php?id_students=${idStudents}`,
+                    'GET',
+                    'json'
+                )
+                .then(response => toStudtUpdtFrm(e, response))
+                .catch(error => alert(error)) // catch
+        } // selectStudt
+
+    /*
+     *   asynchronous script execution for filtered student selection by index      
+     *   @param Number index
+     */
+    let selectStudtsByIndx = index => {
+            request(
+                    `/eArchive/Students/filterByIndex.php?index=${index}`,
+                    'GET',
+                    'document'
+                )
+                .then(response => {
+                    // compose node passive tree structure
+                    frag = response
+                        // reflect fragments body  
+                    document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
+                })
+                .then(() => listenStudtEvidTbl())
+                .catch(error => alert(error)) // catch
+        } // selectStudtsByIndx
+
+    /*
+     *  asynchronous script execution for insretion of student particulars and scientific achievements
+     *  @param Event e
+     *  @param HTMLFormElement form
+     */
+    let insertStudt = (e, frm) => {
+            // prevent default action of submitting student data through a form
+            e.preventDefault()
+            request(
+                    '/eArchive/Students/insert.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .then(() => emptyFrmInptFields(studtInsrFrm))
+                .then(() => document.getElementById('studentInsBtn').click())
+                .then(() => document.getElementById('studtInsrBtn').click())
+                .then(() => interpolateStudtDatalst())
+                .catch(error => alert(error)) // catch
+        } // insertStudt
+
+    /*
+     *  asynchronous script execution for updating of student particulars
+     *  Event e
+     */
+    let updateStudt = (e, frm) => {
+            // prevent default action of submitting updated student data through a form
+            e.preventDefault()
+            request(
+                    '/eArchive/Students/update.php',
+                    'POST',
+                    'text',
+                    (new FormData(frm))
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => emptyFrmInptFields(studtInsrFrm))
+                .then(() => loadStudtEvidTbl())
+                .catch(error => alert(error)) // catch
+        } // updateStudt
+
+    /*
+     *   asynchronous script execution for deletion of all records regarding the student   
+     *   @param Number idAttendances 
+     *   @param Number idStudents
+     *   @param String index 
+     */
+    let deleteStudt = (idAttendances, idStudents, index) => {
+            request(
+                    `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}&index=${index}`,
+                    'GET',
+                    'text'
+                )
+                .then(response => rprtOnAction(response))
+                .then(() => loadStudtEvidTbl())
+                .catch(error => alert(error)) // catch
+        } // deleteStudt
 
     // asynchronous script execution for insertion of a scientific paper partaker    
     let insertPartakerOfSciPap = frm => {
@@ -432,15 +404,6 @@
                 .catch(error => alert(error)) // catch
         } // deleteGradCert
 
-    /*  
-     *   report to the user on the performed action
-     *   @param String mssg
-     */
-    let rprtOnAction = mssg => {
-            rprtMdl.querySelector('.modal-body').textContent = mssg
-            rprtMdlBtn.click()
-        } // rprtOnAction
-
     // load student evidence table upon latterly data amendment 
     let loadStudtEvidTbl = () => {
             request
@@ -511,63 +474,14 @@
             document.getElementById('sciPapInsrMdl').querySelector('datalist').appendChild(option)
         } // interpolateStudtDatalst
 
-    /*
-     *   asynchronous script execution for selection of student particulars and scientific achievements    
-     *   @param Event e
-     *   @param Number idStudents
+    /*  
+     *   report to the user on the performed action
+     *   @param String mssg
      */
-    let selectStudt = (e, idStudents) => {
-            request(
-                    `/eArchive/Students/select.php?id_students=${idStudents}`,
-                    'GET',
-                    'json'
-                )
-                .then(response => toStudtUpdtFrm(e, response))
-                .catch(error => alert(error)) // catch
-        } // selectStudt
-
-    /*
-     *   asynchronous script execution for filtered student selection by index      
-     *   @param Number index
-     */
-    let selectStudtsByIndx = index => {
-            request(
-                    `/eArchive/Students/filterByIndex.php?index=${index}`,
-                    'GET',
-                    'document'
-                )
-                .then(response => {
-                    // compose node passive tree structure
-                    frag = response
-                        // reflect fragments body  
-                    document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
-                })
-                .then(() => listenStudtEvidTbl())
-                .catch(error => alert(error)) // catch
-        } // selectStudtsByIndx
-
-    /*
-     *  asynchronous script execution for insretion of student particulars and scientific achievements
-     *  @param Event e
-     *  @param HTMLFormElement form
-     */
-    let insertStudt = (e, frm) => {
-            // prevent default action of submitting student data through a form
-            e.preventDefault()
-            request(
-                    '/eArchive/Students/insert.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
-                .then(() => emptyFrmInptFields(studtInsrFrm))
-                .then(() => document.getElementById('studentInsBtn').click())
-                .then(() => document.getElementById('studtInsrBtn').click())
-                .then(() => interpolateStudtDatalst())
-                .catch(error => alert(error)) // catch
-        } // insertStudt
+    let rprtOnAction = mssg => {
+            rprtMdl.querySelector('.modal-body').textContent = mssg
+            rprtMdlBtn.click()
+        } // rprtOnAction
 
     /*
      *  !recursive 
@@ -1174,42 +1088,6 @@
         } // deleteTempResOfStudt
 
     /*
-     *  asynchronous script execution for updating of student particulars
-     *  Event e
-     */
-    let updateStudt = (e, frm) => {
-            // prevent default action of submitting updated student data through a form
-            e.preventDefault()
-            request(
-                    '/eArchive/Students/update.php',
-                    'POST',
-                    'text',
-                    (new FormData(frm))
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => emptyFrmInptFields(studtInsrFrm))
-                .then(() => loadStudtEvidTbl())
-                .catch(error => alert(error)) // catch
-        } // updateStudt
-
-    /*
-     *   asynchronous script execution for deletion of all records regarding the student   
-     *   @param Number idAttendances 
-     *   @param Number idStudents
-     *   @param String index 
-     */
-    let deleteStudt = (idAttendances, idStudents, index) => {
-            request(
-                    `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}&index=${index}`,
-                    'GET',
-                    'text'
-                )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
-                .catch(error => alert(error)) // catch
-        } // deleteStudt
-
-    /*
      *   asynchronous script run for assigning an account credentials to the student 
      *   @param Event e
      */
@@ -1243,6 +1121,25 @@
                 .then(() => loadStudtEvidTbl())
                 .catch(error => alert(error)) // catch
         } // deleteAcctCred
+
+    /*
+     *   rearrange form when interpolating data regarding scientific paper and uploading its documents    
+     *   @param Event e
+     */
+    let toSciPapInsrFrm = e => {
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Vstavljanje znanstvenega dela'
+                // clone from the existing form node
+            let cloneFrm = sciPapInsrFrm.cloneNode(true)
+            cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
+                // replace form element node with its clone
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
+            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
+            listenSciPapInsrFrm()
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => { insertSciPap(e, cloneFrm) }
+                ) // addEventListner
+        } // toSciPapInsrFrm
 
     /*
      *   rearrange form and fill out form fields when updating student data
@@ -1501,6 +1398,19 @@
                     }
                 ) // addEventListener
         } // toGradCertUpdtFrm
+
+
+    // rearrange form when inserting a student record  
+    let toStudtInsrFrm = () => {
+            // clone from the existing form node
+            let cloneFrm = studtInsrFrm.cloneNode(true)
+                // replace form element node with its clone
+            document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
+            listenStudtInsrFrm()
+            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
+                // exchange callbacks
+            cloneFrm.addEventListener('submit', e => insertStudt(e, cloneFrm))
+        } // toStudtInsrFrm
 
     /*
      *   rearrange form when updating data related to the student
@@ -1765,4 +1675,96 @@
             // filter students by their index numbers 
             selectStudtsByIndx(fltrInptEl.value)
         }) // addEventListener
+
+    // attach listeners to student evidence table appropriate anchors and buttons   
+    let listenStudtEvidTbl = () => {
+            let studtInsrBtn = document.getElementById('studtInsrBtn'), // button for exposing form for student scientific achievements insertion
+                sciPapViewLst = document.querySelectorAll('.sp-vw-a'), // array of anchors for exposing scientific papers of the student
+                sciPapInsrLst = document.querySelectorAll('.sp-ins-a'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
+                gradCertInsrLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
+                gradCertViewLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
+                acctInsrLst = document.querySelectorAll('.acc-ins-btn'), // array of buttons for exposing form for assigning an account to student
+                acctDelLst = document.querySelectorAll('.acc-del-btn'), // array of buttons for deletion of a particular student account 
+                studtUpdLst = document.querySelectorAll('.stu-upd-a'), // array of anchors for exposing form for updating fundamental data of the student
+                studtDelLst = document.querySelectorAll('.stu-del-a') // array of anchors for exposing form for deletion of fundamental data of the student
+            studtInsrBtn.addEventListener(
+                    'click',
+                    toStudtInsrFrm
+                ) // addEventListener
+            sciPapViewLst.forEach(anchor => {
+                    // preview scientific papers   
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                selectSciPaps(anchor.getAttribute('data-id-attendances'))
+                                sciPapInsrFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                            }
+                        ) //addEventListener
+                }) // forEach
+            sciPapInsrLst.forEach(anchor => {
+                    // modify form for scientific paper insertion
+                    anchor.addEventListener('click', toSciPapInsrFrm)
+                }) // forEach
+            gradCertInsrLst.forEach(anchor => {
+                    // assign an attendance id value to an upload forms hidden input type 
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                gradCertUpldFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
+                            }
+                        ) //addEventListener
+                }) // forEach
+            gradCertViewLst.forEach(anchor => {
+                    // view certificate particulars in a form of a card in the modal
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                selectGradCert(anchor.getAttribute('data-id-attendances'))
+                                    // set value of id to the hidden input of the form
+                                gradCertUpldFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                            }
+                        ) // addEventListener
+                }) // forEach
+            studtUpdLst.forEach(anchor => {
+                    // propagate update form with student particulars
+                    anchor.addEventListener(
+                            'click',
+                            e => {
+                                selectStudt(e, anchor.getAttribute('data-id-students'))
+                            }
+                        ) // addEventListener
+                }) // forEach
+            studtDelLst.forEach(anchor => {
+                    // delete student from the student evidence table
+                    anchor.addEventListener(
+                            'click',
+                            () => {
+                                // if record deletion was confirmed
+                                if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
+                                    deleteStudt(anchor.getAttribute('data-id-attendances'), anchor.getAttribute('data-id-students'), anchor.getAttribute('data-index'))
+                            }
+                        ) // addEventListener
+                }) // forEach
+            acctDelLst.forEach(btn => {
+                    // delete particular account 
+                    btn.addEventListener(
+                            'click',
+                            () => {
+                                deleteAcctCred(btn.getAttribute('data-id-attendances'), btn.getAttribute('data-index'))
+                            }
+                        ) //addEventListener
+                }) // forEach
+            acctInsrLst.forEach(btn => {
+                    // pass an id and index of an attendance through forms hidden input types 
+                    btn.addEventListener(
+                            'click',
+                            () => {
+                                acctAssignFrm.querySelector('input[name=id_attendances]').value = btn.value
+                                acctAssignFrm.querySelector('input[name=index]').value = btn.getAttribute('data-index')
+                            }
+                        ) // addEventListener
+                }) // forEach
+        } // attachStudentTableListeners
+
+    listenStudtEvidTbl()
 })()
