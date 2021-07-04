@@ -1229,8 +1229,7 @@
                 // widen form group across the whole grid
             cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
             listenSciPapInsrFrm()
-                // dispatch a synthetic click event
-            cloneFrm.querySelector('#addPartakerBtn').dispatchEvent((new Event('click')))
+            addPartakerSect()
                 // remove nodes except those matching given selector expression 
             cloneFrm.querySelectorAll('div#particulars, div#sciPapMentors, div#sciPapDocs, p, div.d-flex, button').forEach(node => {
                     node.parentElement.removeChild(node)
@@ -1301,8 +1300,7 @@
             cloneFrm.prepend(idMentoringsInptEl)
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
             listenSciPapInsrFrm()
-                // dispatch a synthetic click event to button for subsequent addition of form mentor section
-            cloneFrm.querySelector('#addMentorBtn').dispatchEvent((new Event('click')))
+            addMentorSect()
                 // remove DIV nodes except matching given selector expression 
             cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
                     node.parentElement.removeChild(node)
