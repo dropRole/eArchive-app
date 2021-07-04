@@ -1122,58 +1122,40 @@
                 .catch(error => alert(error)) // catch
         } // deleteAcctCred
 
-    /*
-     *   rearrange form when interpolating data regarding scientific paper and uploading its documents    
-     *   @param Event e
-     */
-    let toSciPapInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Vstavljanje znanstvenega dela'
-                // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true)
-            cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
-                // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-            listenSciPapInsrFrm()
-            cloneFrm.addEventListener(
-                    'submit',
-                    e => { insertSciPap(e, cloneFrm) }
-                ) // addEventListner
-        } // toSciPapInsrFrm
 
     /*
-     *   rearrange form and fill out form fields when updating student data
-     *   @param Object sciPap
+     *   rearrange form when updating data related to the student
+     *   @param Event e
+     *   @param Object student
      */
-    let toSciPapUpdtFrm = sciPap => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
-                // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInptEl = document.createElement('input')
-            idScientificPapersInptEl.type = 'hidden'
-            idScientificPapersInptEl.name = 'id_scientific_papers'
-            idScientificPapersInptEl.value = sciPap.id_scientific_papers
-                // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInptEl)
-            listenSciPapInsrFrm()
-            cloneFrm.querySelector('input[name="topic"]').value = sciPap.topic
-            cloneFrm.querySelector('select[name="type"]').value = sciPap.type
-            cloneFrm.querySelector('input[name="written"]').value = sciPap.written
-            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-                // remove determined element nodes 
-            cloneFrm.querySelectorAll('div.row:nth-child(4), div#sciPapDocs').forEach(node => {
-                    node.parentElement.removeChild(node)
-                }) // forEach
+    let toStudtUpdtFrm = (e, student) => {
+            let // clone from the existing form node
+                cloneFrm = studtInsrFrm.cloneNode(true),
+                idStudentsInptEl = document.createElement('input')
+            idStudentsInptEl.type = 'hidden'
+            idStudentsInptEl.name = 'id_students'
+            idStudentsInptEl.value = e.target.getAttribute('data-id-students')
+                // replace node with its clone
+            document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
+            listenStudtInsrFrm()
+            cloneFrm.prepend(idStudentsInptEl)
+                // fill out input fields with student particulars
+            cloneFrm.querySelector('input[name=name]').value = student.particulars.name
+            cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
+            cloneFrm.querySelector('input[name=email]').value = student.particulars.email
+            cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
+            setBirthplaceOfStudt(student.particulars.id_countries, student.particulars.id_postal_codes)
+            setPermResOfStudt(student.permResidence)
+            student.tempResidence.length ? setTempResOfStudt() : null
+            cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
+            cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
             cloneFrm.addEventListener(
                     'submit',
                     e => {
-                        // prevent default action of submitting scientific paper data    
-                        e.preventDefault()
-                        updateSciPap(cloneFrm)
+                        updateStudt(e, cloneFrm)
                     }
                 ) // addEventListener
-        } // toSciPapUpdtFrm
+        } // toStudtUpdtFrm
 
     /*
      *  rearrange form when inserting data of the scientific paper partaker   
@@ -1230,14 +1212,16 @@
             cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
             listenSciPapInsrFrm()
             addPartakerSect()
-                // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, div#sciPapMentors, div#sciPapDocs, p, div.d-flex, button').forEach(node => {
-                    node.parentElement.removeChild(node)
-                }) // forEach
-                // populate form fields concerning data of the partaker
-            cloneFrm.querySelector('input[name="partakers[0][index]"]').value = e.target.getAttribute('data-index')
-            cloneFrm.querySelector('input[name="partakers[0][part]"]').value = e.target.getAttribute('data-part')
-            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+                .then(() => {
+                    // remove nodes except those matching given selector expression 
+                    cloneFrm.querySelectorAll('div#particulars, div#sciPapMentors, div#sciPapDocs, p, div.d-flex, button').forEach(node => {
+                            node.parentElement.removeChild(node)
+                        }) // forEach
+                        // populate form fields concerning data of the partaker
+                    cloneFrm.querySelector('input[name="partakers[0][index]"]').value = e.target.getAttribute('data-index')
+                    cloneFrm.querySelector('input[name="partakers[0][part]"]').value = e.target.getAttribute('data-part')
+                    cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+                })
             cloneFrm.addEventListener(
                     'submit',
                     e => {
@@ -1301,18 +1285,18 @@
             cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
             listenSciPapInsrFrm()
             addMentorSect()
-                // remove DIV nodes except matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
-                    node.parentElement.removeChild(node)
-                }) // forEach
-                // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
-            request(
+                .then(() => {
+                    // remove DIV nodes except matching given selector expression 
+                    cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
+                            node.parentElement.removeChild(node)
+                        }) // forEach
+                        // widen form group across the whole grid
+                    cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
+                }).then(() => request(
                     `/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`,
                     'GET',
                     'json'
-                )
-                .then(response => {
+                )).then(response => {
                     // populate form fields with selected mentor data
                     cloneFrm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id-mentorings')
                     cloneFrm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
@@ -1350,10 +1334,12 @@
             cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
             listenSciPapInsrFrm()
-                // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, p, div.row:nth-child(4)').forEach(node => {
-                    node.parentElement.removeChild(node)
-                }) // forEach
+                .then(() => {
+                    // remove nodes except those matching given selector expression 
+                    cloneFrm.querySelectorAll('div#particulars, p, div.row:nth-child(4)').forEach(node => {
+                            node.parentElement.removeChild(node)
+                        }) // forEach
+                })
             cloneFrm.addEventListener(
                     'submit',
                     e => {
@@ -1380,13 +1366,15 @@
             document.getElementById('gradCertUpldFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idCertificatesIntpEL)
             listenGradCertCard()
-                // remove certificate file input 
-            cloneFrm.querySelector('div.row > div.form-group').remove()
-                // fill out form fileds with carried data
-            cloneFrm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
-            cloneFrm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
-                // change submit buttons value
-            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+                .then(() => {
+                    // remove certificate file input 
+                    cloneFrm.querySelector('div.row > div.form-group').remove()
+                        // fill out form fileds with carried data
+                    cloneFrm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
+                    cloneFrm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
+                        // change submit buttons value
+                    cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+                })
             cloneFrm.addEventListener(
                     'submit',
                     e => {
@@ -1397,6 +1385,58 @@
                 ) // addEventListener
         } // toGradCertUpdtFrm
 
+    /*
+     *   rearrange form when interpolating data regarding scientific paper and uploading its documents    
+     *   @param Event e
+     */
+    let toSciPapInsrFrm = e => {
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Vstavljanje znanstvenega dela'
+                // clone from the existing form node
+            let cloneFrm = sciPapInsrFrm.cloneNode(true)
+            cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
+                // replace form element node with its clone
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
+            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
+            listenSciPapInsrFrm()
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => { insertSciPap(e, cloneFrm) }
+                ) // addEventListner
+        } // toSciPapInsrFrm
+
+    /*
+     *   rearrange form and fill out form fields when updating student data
+     *   @param Object sciPap
+     */
+    let toSciPapUpdtFrm = sciPap => {
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+                // clone from the existing form node
+            let cloneFrm = sciPapInsrFrm.cloneNode(true),
+                idScientificPapersInptEl = document.createElement('input')
+            idScientificPapersInptEl.type = 'hidden'
+            idScientificPapersInptEl.name = 'id_scientific_papers'
+            idScientificPapersInptEl.value = sciPap.id_scientific_papers
+                // replace form element node with its clone
+            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
+            cloneFrm.prepend(idScientificPapersInptEl)
+            listenSciPapInsrFrm()
+            cloneFrm.querySelector('input[name="topic"]').value = sciPap.topic
+            cloneFrm.querySelector('select[name="type"]').value = sciPap.type
+            cloneFrm.querySelector('input[name="written"]').value = sciPap.written
+            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+                // remove determined element nodes 
+            cloneFrm.querySelectorAll('div.row:nth-child(4), div#sciPapDocs').forEach(node => {
+                    node.parentElement.removeChild(node)
+                }) // forEach
+            cloneFrm.addEventListener(
+                    'submit',
+                    e => {
+                        // prevent default action of submitting scientific paper data    
+                        e.preventDefault()
+                        updateSciPap(cloneFrm)
+                    }
+                ) // addEventListener
+        } // toSciPapUpdtFrm
 
     // rearrange form when inserting a student record  
     let toStudtInsrFrm = () => {
@@ -1409,40 +1449,6 @@
                 // exchange callbacks
             cloneFrm.addEventListener('submit', e => insertStudt(e, cloneFrm))
         } // toStudtInsrFrm
-
-    /*
-     *   rearrange form when updating data related to the student
-     *   @param Event e
-     *   @param Object student
-     */
-    let toStudtUpdtFrm = (e, student) => {
-            let // clone from the existing form node
-                cloneFrm = studtInsrFrm.cloneNode(true),
-                idStudentsInptEl = document.createElement('input')
-            idStudentsInptEl.type = 'hidden'
-            idStudentsInptEl.name = 'id_students'
-            idStudentsInptEl.value = e.target.getAttribute('data-id-students')
-                // replace node with its clone
-            document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
-            listenStudtInsrFrm()
-            cloneFrm.prepend(idStudentsInptEl)
-                // fill out input fields with student particulars
-            cloneFrm.querySelector('input[name=name]').value = student.particulars.name
-            cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
-            cloneFrm.querySelector('input[name=email]').value = student.particulars.email
-            cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
-            setBirthplaceOfStudt(student.particulars.id_countries, student.particulars.id_postal_codes)
-            setPermResOfStudt(student.permResidence)
-            student.tempResidence.length ? setTempResOfStudt() : null
-            cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
-            cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
-            cloneFrm.addEventListener(
-                    'submit',
-                    e => {
-                        updateStudt(e, cloneFrm)
-                    }
-                ) // addEventListener
-        } // toStudtUpdtFrm
 
     // attach event listeners to corresponding input element 
     let listenSciPapInsrFrm = () => {
