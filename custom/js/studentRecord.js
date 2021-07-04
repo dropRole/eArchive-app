@@ -436,57 +436,65 @@
      *  @param Event e
      */
     let addProgGradSect = e => {
-            indx = e.target.getAttribute('data-indx'), // get next index position for attendances array 
-                // create form controls 
-                gradCertFrmGrp = document.createElement('div'),
-                defendedFrmGrp = document.createElement('div'),
-                issuedFrmGrp = document.createElement('div'),
-                gradCertLbl = document.createElement('label'),
-                defendedLbl = document.createElement('label'),
-                issuedLbl = document.createElement('label'),
-                certNameInptEl = document.createElement('input'),
-                certInptEl = document.createElement('input'),
-                defendedInptEl = document.createElement('input'),
-                issuedInptEl = document.createElement('input')
-            gradCertFrmGrp.className = 'form-group col-4'
-            defendedFrmGrp.className = 'form-group col-4'
-            issuedFrmGrp.className = 'form-group col-4'
-            gradCertLbl.textContent = 'Certifikat'
-            defendedLbl.textContent = 'Zagovorjen'
-            issuedLbl.textContent = 'Izdan'
-            issuedInptEl.textContent = 'Izdan'
-            certInptEl.type = 'file'
-            certInptEl.setAttribute('name', 'certificate[]')
-            certInptEl.accept = '.pdf'
-            certInptEl.required = true
-                // determine hidden input type value if graduated
-            certInptEl.addEventListener(
-                    'input',
-                    e => {
-                        certNameInptEl.value = e.target.files[0].name
-                    }
-                ) // addEventListener
-            certNameInptEl.type = 'hidden'
-            certNameInptEl.name = `attendances[${indx}][certificate]`
-            defendedInptEl.className = 'form-control'
-            defendedInptEl.type = 'date'
-            defendedInptEl.required = true
-            defendedInptEl.name = `attendances[${indx}][defended]`
-            issuedInptEl.className = 'form-control'
-            issuedInptEl.type = 'date'
-            issuedInptEl.name = `attendances[${indx}][issued]`
-            issuedInptEl.required = true
-                // append graduation form controls to a particular attendance section
-            gradCertLbl.appendChild(certInptEl)
-            gradCertFrmGrp.appendChild(gradCertLbl)
-            defendedLbl.appendChild(defendedInptEl)
-            defendedFrmGrp.appendChild(defendedLbl)
-            issuedLbl.appendChild(issuedInptEl)
-            issuedFrmGrp.appendChild(issuedLbl)
-            e.target.closest('.row').appendChild(certNameInptEl)
-            e.target.closest('.row').appendChild(gradCertFrmGrp)
-            e.target.closest('.row').appendChild(defendedFrmGrp)
-            e.target.closest('.row').appendChild(issuedFrmGrp)
+            return new Promise((resolve) => {
+                    let observer = new MutationObserver(() => resolve())
+                        // create form controls 
+                    gradCertFrmGrp = document.createElement('div'),
+                        defendedFrmGrp = document.createElement('div'),
+                        issuedFrmGrp = document.createElement('div'),
+                        gradCertLbl = document.createElement('label'),
+                        defendedLbl = document.createElement('label'),
+                        issuedLbl = document.createElement('label'),
+                        certNameInptEl = document.createElement('input'),
+                        certInptEl = document.createElement('input'),
+                        defendedInptEl = document.createElement('input'),
+                        issuedInptEl = document.createElement('input'),
+                        index = e.target.getAttribute('data-indx'), // get next index position for attendances array 
+                        observer.observe(document.getElementById('attendances'), {
+                            attributes: false,
+                            childList: true,
+                            subtree: false
+                        })
+                    gradCertFrmGrp.className = 'form-group col-4'
+                    defendedFrmGrp.className = 'form-group col-4'
+                    issuedFrmGrp.className = 'form-group col-4'
+                    gradCertLbl.textContent = 'Certifikat'
+                    defendedLbl.textContent = 'Zagovorjen'
+                    issuedLbl.textContent = 'Izdan'
+                    issuedInptEl.textContent = 'Izdan'
+                    certInptEl.type = 'file'
+                    certInptEl.setAttribute('name', 'certificate[]')
+                    certInptEl.accept = '.pdf'
+                    certInptEl.required = true
+                        // determine hidden input type value if graduated
+                    certInptEl.addEventListener(
+                            'input',
+                            e => {
+                                certNameInptEl.value = e.target.files[0].name
+                            }
+                        ) // addEventListener
+                    certNameInptEl.type = 'hidden'
+                    certNameInptEl.name = `attendances[${index}][certificate]`
+                    defendedInptEl.className = 'form-control'
+                    defendedInptEl.type = 'date'
+                    defendedInptEl.required = true
+                    defendedInptEl.name = `attendances[${index}][defended]`
+                    issuedInptEl.className = 'form-control'
+                    issuedInptEl.type = 'date'
+                    issuedInptEl.name = `attendances[${index}][issued]`
+                    issuedInptEl.required = true
+                        // append graduation form controls to a particular attendance section
+                    gradCertLbl.appendChild(certInptEl)
+                    gradCertFrmGrp.appendChild(gradCertLbl)
+                    defendedLbl.appendChild(defendedInptEl)
+                    defendedFrmGrp.appendChild(defendedLbl)
+                    issuedLbl.appendChild(issuedInptEl)
+                    issuedFrmGrp.appendChild(issuedLbl)
+                    e.target.closest('.row').appendChild(certNameInptEl)
+                    e.target.closest('.row').appendChild(gradCertFrmGrp)
+                    e.target.closest('.row').appendChild(defendedFrmGrp)
+                    e.target.closest('.row').appendChild(issuedFrmGrp)
+                }) // Promise
         } // addProgGradSect
 
     // subsequently create and append attendance section of the student insertion form 
