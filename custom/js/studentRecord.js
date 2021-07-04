@@ -1482,7 +1482,7 @@
                 'click',
                 addDocUpldSect
             )
-        } // attachSciPapFrmListeners
+        } // listenSciPapInsrFrm
 
     // attach event listeners to corresponding input and selecet elements
     let listenStudtInsrFrm = () => {
