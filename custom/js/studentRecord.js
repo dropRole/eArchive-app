@@ -1052,7 +1052,7 @@
      *   @param Object sciPap
      */
     let toSciPapUpdtFrm = sciPap => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInptEl = document.createElement('input')
@@ -1086,7 +1086,7 @@
      *  @param Event e
      */
     let toPartakerInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInptEl = document.createElement('input')
@@ -1121,7 +1121,7 @@
      *  @param Event e
      */
     let toPartakerUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idPartakingsInptEl = document.createElement('input')
@@ -1159,7 +1159,7 @@
      *  @param Event e
      */
     let toMentorInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInptEl = document.createElement('input')
@@ -1194,7 +1194,7 @@
      *  @param Event e
      */
     let toMentorUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idMentoringsInptEl = document.createElement('input')
             idMentoringsInptEl.type = 'hidden'
@@ -1242,7 +1242,7 @@
      *   @param Event e
      */
     let toSciPapDocUpldFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > div.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersIntpEl = document.createElement('input')
