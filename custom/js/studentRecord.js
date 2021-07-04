@@ -93,7 +93,6 @@
                 .then(response => rprtOnAction(response))
                 .then(() => loadStudtEvidTbl())
                 .then(() => emptyFrmInptFields(studtInsrFrm))
-                .then(() => document.getElementById('studentInsBtn').click())
                 .then(() => document.getElementById('studtInsrBtn').click())
                 .then(() => interpolateStudtDatalst())
                 .catch(error => alert(error)) // catch
