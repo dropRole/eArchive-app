@@ -670,64 +670,73 @@
 
     //  create and append additional form controls for uploading document of the scientific paper
     let addDocUpldSect = () => {
-            // form controls 
-            let ctr = document.createElement('div'), // row
-                cross = document.createElement('span'), // removal sign
-                versionFrmGrp = document.createElement('div'), // form group
-                docFrmGrp = document.createElement('div'), // form group
-                versionLbl = document.createElement('label'), // version label
-                docLbl = document.createElement('label'), // document label
-                versionInptEl = document.createElement('input'), // version input
-                docInptEl = document.createElement('input'), // document input 
-                docNameInptEl = document.createElement('input'), // document hidden input 
-                index = document.querySelectorAll('div#documents > div.row').length // the following index for an array of data on documents of scientific paper  
-            docInptEl.addEventListener(
-                    'input',
-                    e => {
-                        // assign chosen document name as a value to the docNameInputElement
-                        docNameInptEl.value = e.target.files[0].name
-                    }
-                ) // addEventListener
-            cross.addEventListener(
-                    'click',
-                    () => {
-                        // remove appended controls
-                        document.getElementById('sciPapDocs').removeChild(ctr)
-                    }
-                ) // addEventListener
-            ctr.classList = 'row mt-2'
-            ctr.style.position = 'relative'
-            versionFrmGrp.classList = 'form-group col-6'
-            docFrmGrp.classList = 'form-group col-6'
-            versionLbl.textContent = 'Verzija'
-            versionLbl.classList = 'w-100'
-            docLbl.textContent = 'Dokument'
-            docLbl.classList = 'w-100'
-            versionInptEl.classList = 'form-control'
-            versionInptEl.type = 'text'
-            versionInptEl.name = `documents[${index}][version]`
-            docInptEl.type = 'file'
-            docInptEl.accept = '.pdf'
-            docInptEl.name = 'document[]'
-            docInptEl.required = true
-            docNameInptEl.type = 'hidden'
-            docNameInptEl.name = `documents[${index}][name]`
-            cross.style.position = 'absolute'
-            cross.style.top = 0
-            cross.style.right = '10px'
-            cross.style.zIndex = 1
-            cross.style.cursor = 'pointer'
-            cross.innerHTML = '&#10007;'
-            versionLbl.appendChild(versionInptEl)
-            versionFrmGrp.appendChild(versionLbl)
-            docLbl.appendChild(docInptEl)
-            docFrmGrp.appendChild(docNameInptEl)
-            docFrmGrp.appendChild(docLbl)
-            ctr.appendChild(cross)
-            ctr.appendChild(versionFrmGrp)
-            ctr.appendChild(docFrmGrp)
-                // append controls to scientific paper insert form
-            document.getElementById('sciPapDocs').appendChild(ctr)
+            return new Promise((resolve) => {
+                    let observer = new MutationObserver(() => resolve()),
+                        // form controls 
+                        ctr = document.createElement('div'), // row
+                        cross = document.createElement('span'), // removal sign
+                        versionFrmGrp = document.createElement('div'), // form group
+                        docFrmGrp = document.createElement('div'), // form group
+                        versionLbl = document.createElement('label'), // version label
+                        docLbl = document.createElement('label'), // document label
+                        versionInptEl = document.createElement('input'), // version input
+                        docInptEl = document.createElement('input'), // document input 
+                        docNameInptEl = document.createElement('input'), // document hidden input 
+                        index = document.querySelectorAll('div#documents > div.row').length // the following index for an array of data on documents of scientific paper  
+                        // set observation criterion
+                    observer.observe(document.getElementById('sciPapDocs'), {
+                        attributes: false,
+                        childList: true,
+                        subtree: false
+                    })
+                    docInptEl.addEventListener(
+                            'input',
+                            e => {
+                                // assign chosen document name as a value to the docNameInputElement
+                                docNameInptEl.value = e.target.files[0].name
+                            }
+                        ) // addEventListener
+                    cross.addEventListener(
+                            'click',
+                            () => {
+                                // remove appended controls
+                                document.getElementById('sciPapDocs').removeChild(ctr)
+                            }
+                        ) // addEventListener
+                    ctr.classList = 'row mt-2'
+                    ctr.style.position = 'relative'
+                    versionFrmGrp.classList = 'form-group col-6'
+                    docFrmGrp.classList = 'form-group col-6'
+                    versionLbl.textContent = 'Verzija'
+                    versionLbl.classList = 'w-100'
+                    docLbl.textContent = 'Dokument'
+                    docLbl.classList = 'w-100'
+                    versionInptEl.classList = 'form-control'
+                    versionInptEl.type = 'text'
+                    versionInptEl.name = `documents[${index}][version]`
+                    docInptEl.type = 'file'
+                    docInptEl.accept = '.pdf'
+                    docInptEl.name = 'document[]'
+                    docInptEl.required = true
+                    docNameInptEl.type = 'hidden'
+                    docNameInptEl.name = `documents[${index}][name]`
+                    cross.style.position = 'absolute'
+                    cross.style.top = 0
+                    cross.style.right = '10px'
+                    cross.style.zIndex = 1
+                    cross.style.cursor = 'pointer'
+                    cross.innerHTML = '&#10007;'
+                    versionLbl.appendChild(versionInptEl)
+                    versionFrmGrp.appendChild(versionLbl)
+                    docLbl.appendChild(docInptEl)
+                    docFrmGrp.appendChild(docNameInptEl)
+                    docFrmGrp.appendChild(docLbl)
+                    ctr.appendChild(cross)
+                    ctr.appendChild(versionFrmGrp)
+                    ctr.appendChild(docFrmGrp)
+                        // append controls to scientific paper insert form
+                    document.getElementById('sciPapDocs').appendChild(ctr)
+                }) // Promise
         } // addDocUpldSect
 
     //  create and append additional form controls for providing data on mentors 
