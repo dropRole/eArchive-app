@@ -143,7 +143,7 @@
                     (new FormData(frm))
                 )
                 .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapMdl').modal('hide'))
+                .then(() => $('#sciPapInsrMdl').modal('hide'))
                 .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // insertPartakerOfSciPap
