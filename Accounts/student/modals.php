@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <form id="sciPapInsrFrm">
-                    <input type="hidden" name="id_attendances" value="">
+                    <input type="hidden" name="id_attendances" value="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>">
                     <div id="particulars" class="row">
                         <div class="form-group col-12">
                             <label class="w-100">Predmet
@@ -80,6 +80,20 @@
                     <input class="btn btn-secondary float-right" type="submit" value="Dodaj">
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for reporting on performed operations -->
+<div class="modal fade" id="rprtMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Poročilo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"></div>
         </div>
     </div>
 </div>
