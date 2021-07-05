@@ -99,8 +99,8 @@
                 </div>
                 <div id="attendances" class="px-3 pb-3">
                     <p class="h4 pt-2">Podatki o študiranju</p>
+                    <p class="h6">Študijski programi</p>
                     <div class="row">
-                        <p class="col-12 h6">Študijski programi</p>
                         <div class="form-group col-6">
                             <label class="w-100">
                                 Fakulteta
