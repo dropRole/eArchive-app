@@ -53,6 +53,68 @@ class DBC extends PDO
     } // selectScientificPapers
 
     /*
+    *   filter and select scientific papers by their topics
+    *   @param string $topic
+    */
+    public function selectSciPapsByTopic(string $topic)
+    {
+        $stmt = '   SELECT 
+                        scientific_papers.id_scientific_papers,
+                        scientific_papers.topic,
+                        scientific_papers.type,
+                        scientific_papers.written
+                    FROM 
+                        scientific_papers
+                        INNER JOIN attendances
+                        USING(id_attendances)
+                    WHERE 
+                        UPPER(topic) LIKE UPPER(:topic)   ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindValue(':topic', "{$topic}%", PDO::PARAM_STR);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage}.";
+        } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
+    } // selectSciPapsByTopic
+
+    /*
+    *   select all scientific papers according to the index number of the student attending the program
+    *   @param int $index
+    */
+    public function selectSciPapsOfStudt($index)
+    {
+        $resultSet = [];
+        $stmt = '   SELECT 
+                        scientific_papers.id_scientific_papers,
+                        scientific_papers.topic,
+                        scientific_papers.type,
+                        scientific_papers.written
+                    FROM
+                        scientific_papers
+                        INNER JOIN attendances
+                        USING(id_attendances)
+                    WHERE 
+                        index = :index    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if single or more rows are affected
+        if ($prpStmt->rowCount() >= 1)
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
+        return $resultSet;
+    } // selectSciPapsOfStudt
+
+    /*
     *   select particular scientific paper 
     *   @param int $id_scientific_papers
     */
@@ -1411,7 +1473,7 @@ class DBC extends PDO
     *   select partakers on a scientific paper
     *   @param int $id_scientific_papers
     */
-    public function selectPartakersOfScientificPaper($id_scientific_papers)
+    public function selectPartakersOfScientificPaper(int $id_scientific_papers)
     {
         // array of generic object instances
         $resultSet = [];
@@ -1438,7 +1500,7 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single or more rows are affected
+        // if single or more rows are affected 
         if ($prpStmt->rowCount() >= 1)
             $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Partakings::class, ['id_partakings', 'id_scientific_papers', 'id_attendances', 'part']);
         return $resultSet;
@@ -2028,6 +2090,66 @@ class DBC extends PDO
 
     /*
     *   !DML 
+    *   revoke privileges on database object for the given student role  
+    *   @param string $index
+    */
+    private function revokeUserPrivileges(string $index)
+    {
+        $stmt = "   REVOKE  
+                        ALL PRIVILEGES 
+                    ON TABLE
+                            students, 
+                            faculties, 
+                            programs, 
+                            postal_codes, 
+                            countries,
+                            scientific_papers, 
+                            partakings, 
+                            mentorings, 
+                            documents, 
+                            residences,
+                            attendances, 
+                            graduations, 
+                            certificates,
+                            accounts    
+                        FROM 
+                            stu_$index  ";
+        $stmt2 = "  REVOKE  
+                        ALL PRIVILEGES 
+                    ON SEQUENCE
+                        students_id_students_seq,
+                        scientific_papers_id_scientific_papers_seq,
+                        partakings_id_partakings_seq, 
+                        mentorings_id_mentorings_seq, 
+                        documents_id_documents_seq, 
+                        residences_id_residences_seq,
+                        faculties_id_faculties_seq, 
+                        programs_id_programs_seq, 
+                        postal_codes_id_postal_codes_seq, 
+                        countries_id_countries_seq,
+                        attendances_id_attendances_seq,  
+                        certificates_id_certificates_seq  
+                    FROM 
+                            stu_$index  ";
+        try {
+            // prepare and execute stmts
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt2 = $this->prepare($stmt2);
+            // if stmts were successfully executed
+            if ($prpStmt->execute() && $prpStmt2->execute()) {
+                return TRUE;
+            }
+            echo $prpStmt->errorInfo()[2];
+            echo $prpStmt2->errorInfo()[2];
+            return FALSE;
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // revokeUserPrivileges
+
+    /*
+    *   !DML 
     *   drop database user in the cluster with student role privileges
     *   @param string $index
     */
@@ -2175,7 +2297,7 @@ class DBC extends PDO
             // begin a new one
             $this->beginTransaction();
             // if the user was droped
-            if ($this->dropDBUser($index)) {
+            if ($this->revokeUserPrivileges($index) && $this->dropDBUser($index)) {
                 $stmt = '   DELETE FROM 
                                 accounts
                             WHERE 
@@ -2205,4 +2327,96 @@ class DBC extends PDO
         } // if
         return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
     } // deleteStudtAcct
+
+    /*
+    *   if student has an account avatar
+    *   @param string $index
+    */
+    public function hasAcctAvatar(string $index)
+    {
+        $stmt = '   SELECT 
+                        avatar 
+                    FROM 
+                        accounts
+                    WHERE 
+                        id_attendances = (
+                                            SELECT 
+                                                id_attendances
+                                            FROM 
+                                                attendances
+                                            WHERE 
+                                                index = :index
+                                        )   ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
+            $prpStmt->execute();
+            $avatar = $prpStmt->fetch(PDO::FETCH_COLUMN);
+            // if avatar was uploaded
+            if (isset($avatar))
+                return $avatar;
+            return FALSE;
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // hasAcctAvatar
+
+    /* 
+    *   upload avatar for the given account 
+    *   @param int $id_attendances
+    */
+    public function uploadAcctAvtr(int $id_attendances)
+    {
+        // if not already running a transaction
+        if (!$this->inTransaction()) {
+            try {
+                // begin a new transaction
+                $this->beginTransaction();
+                // if document is uploaded successfully 
+                if ($_FILES['avatar']['error'] == UPLOAD_ERR_OK) {
+                    $finfo = new finfo();
+                    $mimetype = $finfo->file($_FILES['avatar']['tmp_name'], FILEINFO_MIME_TYPE);
+                    // if it's not a PNG document
+                    if ($mimetype != 'image/jpeg')
+                        return "Napaka: avatar '{$_FILES['avatar']['name']}' ni uspešno naložen saj ni tipa .jpg.";
+                    $upload = TRUE;
+                    // if document meets the condition 
+                    if ($upload) {
+                        // set destination of the uploded file
+                        $dir = 'uploads/avatars/';
+                        $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['avatar']['name']);
+                        $stmt = '   UPDATE 
+                                        accounts
+                                    SET 
+                                        avatar = :avatar 
+                                    WHERE 
+                                        id_attendances = :id_attendances    ';
+                        // prepare, bind params to and execute stmt
+                        $prpStmt = $this->prepare($stmt);
+                        $prpStmt->bindParam(':avatar', $destination, PDO::PARAM_STR);
+                        $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+                        $prpStmt->execute();
+                        // if data was inserted into the database and document moved to the server  
+                        if ($prpStmt->rowCount() == 1 && move_uploaded_file($_FILES['avatar']['tmp_name'], "../../{$destination}")) {
+                            // commit current transaction
+                            $this->commit();
+                            return "Avatar {$_FILES['avatar']['name']} je uspešno naložen." . PHP_EOL;
+                        } // if
+                        // rollback current transaction
+                        $this->rollBack();
+                        return 'Napaka: podatki dokumenta niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.' . $prpStmt->errorInfo()[2] . PHP_EOL;
+                    } // if
+                    return "Napaka: avatar {$_FILES['avatar']['name']} ni zadostil kriterij nalaganja." . PHP_EOL;
+                } // if
+                return "Napaka: avatar {$_FILES['avatar']['name']} ni uspešno naložen." . PHP_EOL;
+            } // try
+            catch (PDOException $e) {
+                // output error message 
+                return "Napaka: {$e->getMessage()}." . PHP_EOL;
+            } // catch 
+        } // if
+        return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
+    } // uploadAcctAvtr
 } // DBC
