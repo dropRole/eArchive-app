@@ -87,10 +87,10 @@
 <div class="modal fade" id="acctAvtrUpldMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
+            <div id="currAvtr">
+                <img src="<?php echo $DBC->hasAcctAvatar($_SESSION['index']) ? "/eArchive/{$DBC->hasAcctAvatar($_SESSION['index'])}"  : '/eArchive/custom/img/user.png'; ?>">
+            </div>
             <form id="acctAvtrUpldFrm">
-                <div id="currAvtr">
-                    <img src="<?php echo $DBC->hasAcctAvatar($_SESSION['index']) ? $DBC->hasAcctAvatar($_SESSION['index']) : '/eArchive/custom/img/user.png'; ?>">
-                </div>
                 <div class="form-group">
                     <input type="hidden" name="id_attendances" value="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>">
                     <label>Avatar
@@ -117,3 +117,5 @@
         </div>
     </div>
 </div>
+<!-- Custom stylesheet for modals -->
+<link rel="stylesheet" href="/eArchive/custom/css/modals.css">
