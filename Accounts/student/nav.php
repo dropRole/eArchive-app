@@ -19,10 +19,10 @@
                 </li>
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="<?php echo $DBC->hasAcctAvatar($_SESSION['index']) ? $DBC->hasAcctAvatar($_SESSION['index']) : '/eArchive/custom/img/user.png'; ?>">
+                        <img src="<?php echo $DBC->hasAcctAvatar($_SESSION['index']) ? "/eArchive/{$DBC->hasAcctAvatar($_SESSION['index'])}" : '/eArchive/custom/img/user.png'; ?>">
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Avatar</a>
+                        <a class="dropdown-item" href="#acctAvtrUpldMdl" data-toggle="modal">Avatar</a>
                         <a class="dropdown-item" href="../logout.php">Odjava</a>
                     </div>
                 </div>
