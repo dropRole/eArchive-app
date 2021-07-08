@@ -1,4 +1,11 @@
-nav img {
+nav img:first-child {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    z-index: 2;
+}
+
+nav img:last-child {
     width: 40px;
     height: 40px;
     object-fit: cover;
