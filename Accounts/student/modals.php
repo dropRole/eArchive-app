@@ -83,6 +83,26 @@
         </div>
     </div>
 </div>
+<!-- Modal for uploading account avatar -->
+<div class="modal fade" id="acctAvtrUpldMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="acctAvtrUpldFrm">
+                <div id="currAvtr">
+                    <img src="<?php echo $DBC->hasAcctAvatar($_SESSION['index']) ? $DBC->hasAcctAvatar($_SESSION['index']) : '/eArchive/custom/img/user.png'; ?>">
+                </div>
+                <div class="form-group">
+                    <input type="hidden" name="id_attendances" value="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>">
+                    <label>Avatar
+                        <input type="file" name="avatar" accept=".jpg" required>
+                    </label>
+                    <input class="btn btn-warning" type="submit" value="Naloži">
+                </div>
+            </form>
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
 <!-- Modal for reporting on performed operations -->
 <div class="modal fade" id="rprtMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
     <div class="modal-dialog" role="document">
