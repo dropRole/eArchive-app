@@ -19,11 +19,29 @@
                 </li>
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="/eArchive/custom/img/removeAvatar.png">
-                        <img src="<?php echo $DBC->hasAcctAvatar($_SESSION['index']) ? "/eArchive/{$DBC->hasAcctAvatar($_SESSION['index'])}" : '/eArchive/custom/img/user.png'; ?>">
+                        <?php
+                        // if student has account avatar
+                        if ($avatar = $DBC->hasAcctAvatar($_SESSION['index'])) {
+                        ?>
+                            <img id="acctAvtrRmvIcon" src="/eArchive/custom/img/removeAvatar.png" data-id-attendances="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>" data-avatar="<?php echo $avatar; ?>">
+                            <img id="usrAvtr" src="<?php echo "/eArchive/{$DBC->hasAcctAvatar($_SESSION['index'])}"; ?>">
+                        <?php
+                        } else {
+                        ?>
+                            <img id="defAvtr" src="/eArchive/custom/img/defaultAvatar.png">
+                        <?php
+                        }
+                        ?>
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#acctAvtrUpldMdl" data-toggle="modal">Avatar</a>
+                        <?php
+                        // if student doesn't have account avatar
+                        if ($DBC->hasAcctAvatar($_SESSION['index']) == NULL) {
+                        ?>
+                            <a class="dropdown-item" href="#acctAvtrUpldMdl" data-toggle="modal">Avatar</a>
+                        <?php
+                        }
+                        ?>
                         <a class="dropdown-item" href="../logout.php">Odjava</a>
                     </div>
                 </div>
