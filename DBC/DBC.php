@@ -67,11 +67,21 @@ class DBC extends PDO
                         scientific_papers
                         INNER JOIN attendances
                         USING(id_attendances)
-                    WHERE 
+                    WHERE
+                        id_attendances = (
+                                            SELECT 
+                                                id_attendances
+                                            FROM 
+                                                attendances
+                                            WHERE 
+                                                index = :index
+                                        )
+                        AND 
                         UPPER(topic) LIKE UPPER(:topic)   ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindValue(':index', $_SESSION['index'], PDO::PARAM_STR);
             $prpStmt->bindValue(':topic', "{$topic}%", PDO::PARAM_STR);
             $prpStmt->execute();
         } // try
