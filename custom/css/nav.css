@@ -1,13 +1,18 @@
-nav img:first-child {
+nav img#acctAvtrRmvIcon {
     position: absolute;
     top: 0;
     left: 10px;
     z-index: 2;
 }
 
-nav img:last-child {
+nav img#usrAvtr {
     width: 40px;
     height: 40px;
     object-fit: cover;
     border-radius: 50%;
+}
+
+nav img#defAvtr {
+    width: 30px;
+    height: 30px;
 }
