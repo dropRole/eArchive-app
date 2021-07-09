@@ -2418,5 +2418,45 @@ class DBC extends PDO
             } // catch 
         } // if
         return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
-    } // uploadAcctAvtr
+    } // uploadAcctAvatar
+
+    /* 
+    *   delete avatar for the given account 
+    *   @param string $id_attendances
+    *   @param string $avatar 
+    */
+    public function deleteAcctAvatar(string $id_attendances, string $avatar)
+    {
+        // if not already running a transaction
+        if (!$this->inTransaction()) {
+            try {
+                // begin a new transaction
+                $this->beginTransaction();
+                $stmt = '   UPDATE 
+                                accounts
+                            SET 
+                                avatar = NULL 
+                            WHERE 
+                                id_attendances = :id_attendances    ';
+                // prepare, bind params to and execute stmt
+                $prpStmt = $this->prepare($stmt);
+                $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+                $prpStmt->execute();
+                // if avatar was set to NULL and document removed from the server  
+                if ($prpStmt->rowCount() == 1 && unlink("../../{$avatar}")) {
+                    // commit current transaction
+                    $this->commit();
+                    return "Avatar je uspešno izbrisan.";
+                } // if
+                // rollback current transaction
+                $this->rollBack();
+                return 'Napaka: lokacija avatarja ni uspešno logično ali fizično odstranjena.';
+            } // try
+            catch (PDOException $e) {
+                // output error message 
+                return "Napaka: {$e->getMessage()}." . PHP_EOL;
+            } // catch 
+        } // if
+        return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
+    } // deleteAcctAvatar
 } // DBC
