@@ -25,6 +25,39 @@ class DBC extends PDO
     } // __construct
 
     /*
+    *   select all scientific paper records
+    *   @param int $id_attendances
+    */
+    public function selectSciPaps()
+    {
+        $stmt = "   SELECT 
+                        (students.name || ' ' || students.surname) AS author,
+                        scientific_papers.*,
+                        attendances.id_attendances,
+                        graduations.id_certificates
+                    FROM
+                        students    
+                        INNER JOIN attendances 
+                        USING(id_students)
+                        INNER JOIN scientific_papers
+                        USING(id_attendances)
+                        LEFT JOIN graduations 
+                        USING(id_attendances)    
+                    ORDER BY
+                        scientific_papers.written DESC    ";
+        try {
+            // prepare and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            return "Napaka: {$e->getMessage()}.";
+        } // catch
+        return  $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
+    } // selectSciPaps
+
+
+    /*
     *   select every scientific paper by students faculty program attendance
     *   @param int $id_attendances
     */
@@ -202,37 +235,23 @@ class DBC extends PDO
     } // selectPapersByKeywords
 
     /*
-    *   select scientific papers by particular author 
+    *   select scientific papers written by the given author 
     *   @param string $author
     */
-    public function selectPapersByAutor(string $author)
+    public function selectSciPapsByAuthor(string $author)
     {
-        $resultSet = [];
         $stmt = "   SELECT 
-                        documents.*,
-                        certificates.*,
-                        (name || ' ' || surname) AS fullname,
-                        part,
-                        topic,
-                        written,
-                        id_mentorings,
-                        mentor
+                        scientific_papers.*
+                        graduations.id_certificates,
+                        (students.name || ' ' || students.surname) AS author
                     FROM 
                         students 
-                        INNER JOIN scientific_papers 
-                        USING (id_students)
-                        INNER JOIN documents 
-                        USING (id_scientific_papers)
-                        INNER JOIN mentorings  
-                        USING (id_scientific_papers)
-                        INNER JOIN partaking 
-                        USING (id_students)
                         INNER JOIN attendances 
-                        USING(id_students) 
-                        INNER JOIN graduations 
-                        USING (id_attendances) 
-                        LEFT JOIN certificates 
-                        USING (id_certificates)
+                        USING(id_attendances)
+                        INNER JOIN scientific_papers
+                        USING(id_scientific_papers)
+                        LEFT JOIN graduations 
+                        USING(id_attendances)
                     WHERE 
                         UPPER(name || surname) LIKE UPPER(:author)  ";
         try {
@@ -247,7 +266,7 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         return $resultSet;
-    } // selectPapersByAutor
+    } // selectSciPapsByAuthor
 
     /*
     *   select scientific papers by particular mentor 
@@ -1455,7 +1474,7 @@ class DBC extends PDO
         $report = '';
         $report .= $this->deleteDocuments($id_scientific_papers);
         // select and delete every single partaker on a scientific paper
-        foreach ($this->selectPartakersOfScientificPaper($id_scientific_papers) as $partaker)
+        foreach ($this->selectSciPapPartakers($id_scientific_papers) as $partaker)
             $this->deletePartakerOfScientificPaper($partaker->getIdPartakings());
         // select and delete every single mentor of the scientific paper
         foreach ($this->selectMentorsOfScientificPaper($id_scientific_papers) as $mentor)
@@ -1483,10 +1502,8 @@ class DBC extends PDO
     *   select partakers on a scientific paper
     *   @param int $id_scientific_papers
     */
-    public function selectPartakersOfScientificPaper(int $id_scientific_papers)
+    public function selectSciPapPartakers(int $id_scientific_papers)
     {
-        // array of generic object instances
-        $resultSet = [];
         $stmt = "   SELECT 
                         id_attendances,
                         id_partakings,
@@ -1510,11 +1527,9 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single or more rows are affected 
-        if ($prpStmt->rowCount() >= 1)
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Partakings::class, ['id_partakings', 'id_scientific_papers', 'id_attendances', 'part']);
-        return $resultSet;
-    } // selectPartakersOfScientificPaper
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Partakings::class, ['id_partakings', 'id_scientific_papers', 'id_attendances', 'part']);
+
+    } // selectSciPapPartakers
 
     /*
     *   delete partaker of a scientific papersf
