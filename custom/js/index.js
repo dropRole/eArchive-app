@@ -35,27 +35,53 @@
      *   @param HTMLTableElement tbl   
      */
     let listenSciPapEvidTbl = tbl => {
-            // if sup elements for partaker view exist
+            // if superscript elements for partaker view exist
             if (tbl.getElementsByClassName('par-vw-a'))
-                Array.from(tbl.getElementsByClassName('par-vw-a'), sup => {
-                    sup.addEventListener(
-                            'click',
-                            () => {
-                                request(
-                                        `/eArchive/Partakings/select.php?id_scientific_papers=${sup.dataset.idScientificPapers}`,
-                                        'GET',
-                                        'document'
-                                    )
-                                    .then(response => {
-                                        // comprise a node tree structure
-                                        frag = response
-                                            // replace nodes of the active with the passive document nodes 
-                                        document.body.querySelector('div#sciPapPrtViewMdl div.modal-content').innerHTML = frag.body.innerHTML
-                                    })
-                                    .catch(error => alert(error))
-                            }
-                        ) // addEventListener
-                }) // from 
+                Array.from(
+                    tbl.getElementsByClassName('par-vw-a'),
+                    sup => {
+                        sup.addEventListener(
+                                'click',
+                                () => {
+                                    request(
+                                            `/eArchive/Partakings/select.php?id_scientific_papers=${sup.dataset.idScientificPapers}`,
+                                            'GET',
+                                            'document'
+                                        )
+                                        .then(response => {
+                                            // comprise a node tree structure
+                                            frag = response
+                                                // replace nodes of the active with the passive document nodes 
+                                            document.body.querySelector('div#sciPapPrtViewMdl div.modal-content').innerHTML = frag.body.innerHTML
+                                        })
+                                        .catch(error => alert(error))
+                                }
+                            ) // addEventListener
+                    }) // from
+                // if achor element for document view exist
+            if (tbl.getElementsByClassName('doc-vw-a')) {
+                Array.from(
+                        tbl.getElementsByClassName('doc-vw-a'),
+                        anchor => {
+                            anchor.addEventListener(
+                                'click',
+                                () => {
+                                    request(
+                                            `/eArchive/Documents/select.php?id_scientific_papers=${anchor.dataset.idScientificPapers}`,
+                                            'GET',
+                                            'document'
+                                        )
+                                        .then(response => {
+                                            // comprise a node tree structure
+                                            frag = response
+                                                // replace nodes of the active with the passive document nodes 
+                                            document.body.querySelector('div#sciPapDocsViewMdl div.modal-content').innerHTML = frag.body.innerHTML
+                                        })
+                                        .catch(error => alert(error))
+                                }
+                            )
+                        }) // from
+            } // if
         } // listenSciPapEvidTbl
 
     listenSciPapEvidTbl(document.querySelector('table'))
