@@ -16,19 +16,49 @@
                 // comprise a node tree structure
                 frag = response
                     // replace nodes of the active with the passive document nodes 
-                document.body.querySelector('#sciPapSrchRslt').replaceWith(frag.body.querySelector('#sciPapSrchRslt'))
+                document.body.querySelector('div#sciPapSrchRslt').replaceWith(frag.body.querySelector('div#sciPapSrchRslt'))
             })
         ) // addEventListener
 
     Array.from(drpDwnItms, item => {
-        item.addEventListener(
-                'click',
-                () => {
-                    searchInptEl.dataset.criterion = item.dataset.criterion
-                    searchInptEl.placeholder = item.dataset.placeholder
-                }
-            ) // addEventListener
-    })
+            item.addEventListener(
+                    'click',
+                    () => {
+                        searchInptEl.dataset.criterion = item.dataset.criterion
+                        searchInptEl.placeholder = item.dataset.placeholder
+                    }
+                ) // addEventListener
+        }) // from 
+
+    /* 
+     *   listen to elements of the scientific paper evidence table
+     *   @param HTMLTableElement tbl   
+     */
+    let listenSciPapEvidTbl = tbl => {
+            // if sup elements for partaker view exist
+            if (tbl.getElementsByClassName('par-vw-a'))
+                Array.from(tbl.getElementsByClassName('par-vw-a'), sup => {
+                    sup.addEventListener(
+                            'click',
+                            () => {
+                                request(
+                                        `/eArchive/Partakings/select.php?id_scientific_papers=${sup.dataset.idScientificPapers}`,
+                                        'GET',
+                                        'document'
+                                    )
+                                    .then(response => {
+                                        // comprise a node tree structure
+                                        frag = response
+                                            // replace nodes of the active with the passive document nodes 
+                                        document.body.querySelector('div#sciPapPrtViewMdl div.modal-content').innerHTML = frag.body.innerHTML
+                                    })
+                                    .catch(error => alert(error))
+                            }
+                        ) // addEventListener
+                }) // from 
+        } // listenSciPapEvidTbl
+
+    listenSciPapEvidTbl(document.querySelector('table'))
 
     /*
      *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
@@ -60,5 +90,4 @@
                 xmlhttp.send(frmData)
             })
         } // request
-
 })()
