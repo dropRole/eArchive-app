@@ -3,15 +3,8 @@
 // proceed or start a new session
 session_start();
 
-// if superglobal doesn't contain vars and server isn't currently executing one of the given scripts
-if (!isset($_SESSION['user'], $_SESSION['pass']) && basename($_SERVER['REQUEST_URI']) != 'login.php') {
-    header('Location:login.php');
+// if unauthorized or unaccredited user is running scripts, redirect to
+if(!(isset($_SESSION['user']) || isset($_SESSION['authorized'])) && basename($_SERVER['REQUEST_URI']) != 'index.php' && basename($_SERVER['REQUEST_URI']) != 'login.php'){
+    header('Location: /eArchive/login.php');
     die();
 } // if
-else {
-    // if unauthorized user is running scripts
-    if (!isset($_SESSION['authorized']) && basename($_SERVER['REQUEST_URI']) == 'studentRecord.php') {
-        header('Location:index.php');
-        die();
-    } // if
-} // else
