@@ -39,7 +39,7 @@
             request(
                     '/eArchive/Accounts/authentication.php',
                     'POST',
-                    'json',
+                    'text',
                     (new FormData(lgnFrm))
                 )
                 .then(response => {
@@ -47,7 +47,7 @@
                             // if credentials are valid
                             if (response.script.length)
                                 setTimeout(() => {
-                                    this.location.href = response.script
+                                    this.location.href = 'index.php'
                                 }, 2000) // setTimeout
                         }),
                         rprt = document.createElement('p')
@@ -59,7 +59,7 @@
                         }
                     )
                     rprt.classList = 'text-warning font-italic'
-                    rprt.textContent = response.message
+                    rprt.textContent = response
                     document.getElementById('lgnRprt').innerHTML = ''
                     document.getElementById('lgnRprt').appendChild(rprt)
                 })
