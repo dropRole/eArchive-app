@@ -48,12 +48,7 @@
                                             'GET',
                                             'document'
                                         )
-                                        .then(response => {
-                                            // comprise a node tree structure
-                                            frag = response
-                                                // replace nodes of the active with the passive document nodes 
-                                            document.body.querySelector('div#sciPapPrtViewMdl div.modal-content').innerHTML = frag.body.innerHTML
-                                        })
+                                        .then(response => exposeResp(response, document.getElementById('sciPapPrtViewMdl')))
                                         .catch(error => alert(error))
                                 }
                             ) // addEventListener
@@ -71,12 +66,7 @@
                                             'GET',
                                             'document'
                                         )
-                                        .then(response => {
-                                            // comprise a node tree structure
-                                            frag = response
-                                                // replace nodes of the active with the passive document nodes 
-                                            document.body.querySelector('div#sciPapDocsViewMdl div.modal-content').innerHTML = frag.body.innerHTML
-                                        })
+                                        .then(response => exposeResp(response, document.getElementById('sciPapDocsViewMdl')))
                                         .catch(error => alert(error))
                                 }
                             )
@@ -116,4 +106,16 @@
                 xmlhttp.send(frmData)
             })
         } // request
+
+    /* 
+     *  expose the response of the sent request through the given modal 
+     *  @param Document response
+     *  @param HTMLDivElement modal
+     */
+    let exposeResp = (response, modal) => {
+            // comprise a node tree structure
+            frag = response
+                // replace nodes of the active with the passive document nodes 
+            modal.querySelector('div.modal-content').innerHTML = frag.body.innerHTML
+        } // exposeResp
 })()
