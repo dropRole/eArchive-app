@@ -1528,7 +1528,6 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Partakings::class, ['id_partakings', 'id_scientific_papers', 'id_attendances', 'part']);
-
     } // selectSciPapPartakers
 
     /*
@@ -2025,11 +2024,6 @@ class DBC extends PDO
     */
     public function checkAccountCredentials(string $index, string $pass)
     {
-        // action report
-        $report = [
-            'script' => '',
-            'message' => ''
-        ];
         $stmt = '   SELECT 
                         pass 
                     FROM 
@@ -2058,11 +2052,9 @@ class DBC extends PDO
                     // register var and assign pass
                     $_SESSION['pass'] = $pass;
                     $_SESSION['index'] = $index;
-                    $report['message'] = 'Prijava študenta je bila uspešna.';
-                    $report['script'] = 'Accounts/student/home.php';
+                    return 'Prijava študenta je bila uspešna.';
                 } // if
-                else
-                    $report['message'] = 'Geslo računa z dano indeks številko ni pravilno.';
+                return 'Geslo računa z dano indeks številko ni pravilno.';
             } // if
             else {
                 // if credentials from superuser
@@ -2072,18 +2064,14 @@ class DBC extends PDO
                     // register var and assign pass
                     $_SESSION['pass'] = self::PASS;
                     $_SESSION['authorized'] = TRUE;
-                    $report['message'] = 'Prijava pooblaščenega je bila uspešna.';
-                    $report['script'] = 'Accounts/authorized/home.php';
+                    return 'Prijava pooblaščenega je bila uspešna.';
                 } // if
-                else
-                    $report['message'] = 'Račun z dano indeks številko ne obstaja.';
+                return 'Račun z dano indeks številko ne obstaja.';
             } // else
         } // try
         catch (PDOException $e) {
             $report['message'] = "Napaka: {$e->getMessage()}.";
         } // catch
-        // return JSON value 
-        return json_encode($report);
     } // checkAccountCredentials
 
     /*
