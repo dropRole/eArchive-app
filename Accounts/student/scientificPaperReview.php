@@ -53,7 +53,7 @@ include_once './nav.php';
                         <td>
                             <a class="par-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
                             <?php
-                            foreach ($DBC->selectPartakersOfScientificPaper($sciPap->getIdScientificPapers()) as $partaker) {
+                            foreach ($DBC->selectSciPapPartakers($sciPap->getIdScientificPapers()) as $partaker) {
                             ?>
                                 <ul class="list-inline">
                                     <li class="list-group-item">
