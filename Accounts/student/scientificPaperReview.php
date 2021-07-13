@@ -15,7 +15,8 @@ include_once '../../header.php';
 
 $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
 
-include_once './nav.php';
+include_once '../../nav.php';
+
 ?>
 <section class="container p-3">
     <p class="h2">Evidenca znanstvenih del</p>
