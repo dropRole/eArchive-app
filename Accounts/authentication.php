@@ -17,6 +17,6 @@ $pass = $_POST['pass'];
 if (isset($index, $pass)) {
     // create a new instance
     $DBC = new DBC();
-    echo $DBC->checkAccountCredentials($index, $pass);
+    echo $DBC->checkAcctCredentials($index, $pass);
 } // if
 
