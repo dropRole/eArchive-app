@@ -53,25 +53,43 @@
                                 }
                             ) // addEventListener
                     }) // from
-                // if achor element for document view exist
-            if (tbl.getElementsByClassName('doc-vw-a')) {
+                // if anchor elements for document view exist
+            if (tbl.getElementsByClassName('doc-vw-a'))
                 Array.from(
-                        tbl.getElementsByClassName('doc-vw-a'),
-                        anchor => {
-                            anchor.addEventListener(
-                                'click',
-                                () => {
-                                    request(
-                                            `/eArchive/Documents/select.php?id_scientific_papers=${anchor.dataset.idScientificPapers}`,
-                                            'GET',
-                                            'document'
-                                        )
-                                        .then(response => exposeResp(response, document.getElementById('sciPapDocsViewMdl')))
-                                        .catch(error => alert(error))
-                                }
-                            )
-                        }) // from
-            } // if
+                    tbl.getElementsByClassName('doc-vw-a'),
+                    anchor => {
+                        anchor.addEventListener(
+                            'click',
+                            () => {
+                                request(
+                                        `/eArchive/Documents/select.php?id_scientific_papers=${anchor.dataset.idScientificPapers}`,
+                                        'GET',
+                                        'document'
+                                    )
+                                    .then(response => exposeResp(response, document.getElementById('sciPapDocsViewMdl')))
+                                    .catch(error => alert(error))
+                            }
+                        )
+                    }) // from
+                // if anchor elements for graduation certificate insight exist
+            if (tbl.getElementsByClassName('cert-vw-a'))
+                Array.from(
+                    tbl.getElementsByClassName('cert-vw-a'),
+                    anchor => {
+                        anchor.addEventListener(
+                            'click',
+                            () => {
+                                request(
+                                        `/eArchive/Certificates/select.php?id_attendances=${anchor.dataset.idAttendances}`,
+                                        'GET',
+                                        'document'
+                                    )
+                                    .then(response => exposeResp(response, document.getElementById('gradCertViewMdl')))
+                                    .catch(error => alert(error))
+                            }
+                        )
+                    }
+                ) // from
         } // listenSciPapEvidTbl
 
     listenSciPapEvidTbl(document.querySelector('table'))
