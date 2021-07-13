@@ -45,9 +45,9 @@
                 .then(response => {
                     let observer = new MutationObserver(() => {
                             // if credentials are valid
-                            if (response.script.length)
+                            if (response.logged)
                                 setTimeout(() => {
-                                    this.location.href = response.script
+                                    this.location.href = 'index.php'
                                 }, 2000) // setTimeout
                         }),
                         rprt = document.createElement('p')
