@@ -899,7 +899,7 @@ class DBC extends PDO
                 $this->deleteScientificPaper($scientificPaper->getIdScientificPapers());
             } // foreach
         // if account was granted to
-        if ($this->checkStudentAccount($id_attendances))
+        if ($this->checkStudtAcct($id_attendances))
             $this->deleteStudtAcct($id_attendances, $index);
         $this->deleteStudentProgramAttendance($id_attendances);
         try {
@@ -1024,6 +1024,43 @@ class DBC extends PDO
         $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
         $prpStmt->execute();
     } // deleteStudentResidences
+
+    /* 
+    *   select particulars of the program attendance by the student
+    *   @param int $id_attendances
+    */
+    public function selectProgAttnParticulars(int $id_attendances){
+        $stmt = '   SELECT 
+                        (students.name || students.surname) AS student,
+                        students.email, 
+                        attendances.index, 
+                        attendances.enrolled,
+                        graduations.defended,
+                        faculties.name AS program, 
+                        programs.name AS faculty
+                    FROM 
+                        students
+                        INNER JOIN attendances
+                        USING(id_students)
+                        LEFT JOIN graduations 
+                        USING(id_attendances) 
+                        INNER JOIN faculties
+                        USING(id_faculties)
+                        INNER JOIN programs 
+                        USING(id_programs)
+                    WHERE 
+                        id_attendances = :id_attendances    ';
+        try{
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch(PDOException $e){
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        return $prpStmt->fetch(PDO::FETCH_OBJ);
+    } // selectProgAttnParticulars
 
     /*
     *   insert attendance of a student
@@ -1991,10 +2028,10 @@ class DBC extends PDO
     } // deleteDocuments          
 
     /*
-    *   check for student account 
+    *   if the student has been assigned with an account
     *   @param int $id_attendances
     */
-    public function checkStudentAccount(int $id_attendances)
+    public function checkStudtAcct(int $id_attendances)
     {
         $stmt = '   SELECT 
                         * 
@@ -2015,7 +2052,7 @@ class DBC extends PDO
         if ($prpStmt->rowCount() == 1)
             return TRUE;
         return FALSE;
-    } // checkStudentAccount
+    } // checkStudtAcct
 
     /*
     *   check for account credentials
