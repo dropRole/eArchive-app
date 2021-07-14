@@ -1,6 +1,15 @@
-img.acct-avtr {
-    width: 50px;
-    height: 50px;
+img.acct-avtr-big,
+img.acct-avtr-small {
     object-fit: cover;
     border-radius: 50%;
+}
+
+img.acct-avtr-big {
+    width: 150px;
+    height: 150px;
+}
+
+img.acct-avtr-small {
+    width: 50px;
+    height: 50px;
 }
