@@ -46,8 +46,7 @@ include_once './nav.php';
                     <th></th>
                 </tr>
             </thead>
-
-            <body>
+            <tbody>
                 <?php
                 foreach ($DBC->selectSciPaps() as $sciPap) {
                 ?>
@@ -83,7 +82,7 @@ include_once './nav.php';
                 <?php
                 } // foreach
                 ?>
-            </body>
+            </tbody>
         </table>
     </div>
 </div>
