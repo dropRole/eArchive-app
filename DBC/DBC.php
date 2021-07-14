@@ -241,25 +241,28 @@ class DBC extends PDO
     public function selectSciPapsByAuthor(string $author)
     {
         $stmt = "   SELECT 
-                        scientific_papers.*
-                        graduations.id_certificates,
-                        (students.name || ' ' || students.surname) AS author
-                    FROM 
-                        students 
-                        INNER JOIN attendances 
-                        USING(id_attendances)
-                        INNER JOIN scientific_papers
-                        USING(id_scientific_papers)
-                        LEFT JOIN graduations 
-                        USING(id_attendances)
-                    WHERE 
-                        UPPER(name || surname) LIKE UPPER(:author)  ";
+                    (students.name || ' ' || students.surname) AS author,
+                    scientific_papers.*,
+                    attendances.id_attendances,
+                    graduations.id_certificates
+                FROM
+                    students    
+                    INNER JOIN attendances 
+                    USING(id_students)
+                    INNER JOIN scientific_papers
+                    USING(id_attendances)
+                    LEFT JOIN graduations 
+                    USING(id_attendances)    
+                WHERE 
+                    UPPER(students.name || ' ' || students.surname) LIKE UPPER(:author)
+                ORDER BY
+                    scientific_papers.written DESC  ";
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':author', $author, PDO::PARAM_STR);
+            $prpStmt->bindValue(':author', "%{$author}%", PDO::PARAM_STR);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
         } // try
         catch (PDOException $e) {
             // output error message 
