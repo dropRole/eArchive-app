@@ -90,6 +90,25 @@
                         )
                     }
                 ) // from
+                // if anchor elements for student particulars view exist
+            if (tbl.getElementsByClassName('stu-vw-a'))
+                Array.from(
+                    tbl.getElementsByClassName('stu-vw-a'),
+                    anchor => {
+                        anchor.addEventListener(
+                            'click',
+                            () => {
+                                request(
+                                        `/eArchive/Attendances/select.php?id_attendances=${anchor.dataset.idAttendances}`,
+                                        'GET',
+                                        'document'
+                                    )
+                                    .then(response => exposeResp(response, document.getElementById('studtViewMdl')))
+                                    .catch(error => alert(error))
+                            }
+                        )
+                    }
+                ) // from
         } // listenSciPapEvidTbl
 
     listenSciPapEvidTbl(document.querySelector('table'))
@@ -134,6 +153,6 @@
             // comprise a node tree structure
             frag = response
                 // replace nodes of the active with the passive document nodes 
-            modal.querySelector('div.modal-content').innerHTML = frag.body.innerHTML
+            modal.querySelector('div.modal-body').innerHTML = frag.body.innerHTML
         } // exposeResp
 })()
