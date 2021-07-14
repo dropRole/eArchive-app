@@ -54,8 +54,8 @@ include_once './nav.php';
                     <tr>
                         <td><?php echo $sciPap->getTopic(); ?></td>
                         <td>
+                            <a class="stu-vw-a" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>"><?php echo $sciPap->author; ?></a>
                             <?php
-                            echo $sciPap->author;
                             // if author had partakers in writting 
                             if (count($DBC->selectSciPapPartakers($sciPap->getIdScientificPapers()))) {
                             ?>
