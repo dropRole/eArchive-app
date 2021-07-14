@@ -46,3 +46,13 @@
         </div>
     </div>
 </div>
+<!-- Modal for student particulars view -->
+<div class="modal fade" id="studtViewMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+            
+            </div>
+        </div>
+    </div>
+</div>
