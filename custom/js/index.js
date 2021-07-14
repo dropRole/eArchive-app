@@ -16,8 +16,9 @@
                 // comprise a node tree structure
                 frag = response
                     // replace nodes of the active with the passive document nodes 
-                document.body.querySelector('div#sciPapSrchRslt').replaceWith(frag.body.querySelector('div#sciPapSrchRslt'))
+                document.body.querySelector('table > tbody').replaceWith(frag.body.querySelector('table > tbody'))
             })
+            .catch(error => alert(error))
         ) // addEventListener
 
     Array.from(drpDwnItms, item => {
