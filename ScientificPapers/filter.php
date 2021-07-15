@@ -15,10 +15,9 @@ require_once '../Documents/Documents.php';
 // proceed with the session
 session_start();
 
-$topic = $_GET['topic'];
-
 // if topic searched for was passed by URL query string
-if (isset($topic)) {
+if (isset($_GET['topic'])) {
+    $topic = $_GET['topic'];
     // retrieve an instance of PDO holding database server connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // filter scientific papers by their topics
@@ -46,7 +45,7 @@ if (isset($topic)) {
                     <td>
                         <a class="par-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
                         <?php
-                        foreach ($DBC->selectPartakersOfScientificPaper($sciPap->getIdScientificPapers()) as $partaker) {
+                        foreach ($DBC->selectSciPapPartakers($sciPap->getIdScientificPapers()) as $partaker) {
                         ?>
                             <ul class="list-inline">
                                 <li class="list-group-item">
@@ -62,7 +61,7 @@ if (isset($topic)) {
                     <td>
                         <a class="men-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
                         <?php
-                        foreach ($DBC->selectMentorsOfScientificPaper($sciPap->getIdScientificPapers()) as $mentor) {
+                        foreach ($DBC->selectSciPapMentors($sciPap->getIdScientificPapers()) as $mentor) {
                         ?>
                             <ul class="list-inline">
                                 <li class="list-group-item">
@@ -104,3 +103,187 @@ if (isset($topic)) {
     </table>
 <?php
 } // if
+// if author was prosperously passed via URL query string
+else if (isset($_GET['author'])) {
+    $author = $_GET['author'];
+    // retrieve new PDO object instance holding database connection
+    $DBC = new DBC();
+?>
+    <table class="table table-hover">
+        <caption>EVIDENCA ZNANSTVENIH DOSEŽKOV</caption>
+        <thead class="thead-dark">
+            <tr>
+                <th>Predmet</th>
+                <th>Avtor</th>
+                <th>Vrsta</th>
+                <th>Napisano</th>
+                <th>Dokumenti</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // select scientific achievements of the given author
+            foreach ($DBC->selectSciPapsByAuthor($author) as $sciPap) {
+            ?>
+                <tr>
+                    <td><?php echo $sciPap->getTopic(); ?></td>
+                    <td>
+                        <a class="stu-vw-a" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>">
+                            <span class="bg-warning"><?php echo substr($sciPap->author, 0, strlen($author)); ?></span><?php echo substr($sciPap->author, strlen($author)); ?>
+                        </a>
+                        <?php
+                        // if author had partakers in writting 
+                        if (count($DBC->selectSciPapPartakers($sciPap->getIdScientificPapers()))) {
+                        ?>
+                            <sup><a class="par-vw-a" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                        <?php
+                        }
+                        ?>
+                    </td>
+                    <td><?php echo $sciPap->getType(); ?></td>
+                    <td><?php echo (new DateTime($sciPap->getWritten()))->format('d-m-Y'); ?></td>
+                    <td>
+                        <a class="doc-vw-a" href="#sciPapDocsViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Pregled</a>
+                    </td>
+                    <td>
+                        <?php
+                        // if graduated on the scientific paper
+                        if ($sciPap->id_certificates != NULL) {
+                        ?>
+                            <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>">Pregled</a>
+                        <?php
+                        } // if
+                        ?>
+                    </td>
+                </tr>
+            <?php
+            } // foreach
+            ?>
+        </tbody>
+    </table>
+<?php
+} // else if
+// if mentor was prosperously passed via URL query string
+else if (isset($_GET['mentor'])) {
+    $mentor = $_GET['mentor'];
+    // retrieve new PDO object instance holding database connection
+    $DBC = new DBC();
+?>
+    <table class="table table-hover">
+        <caption>EVIDENCA ZNANSTVENIH DOSEŽKOV</caption>
+        <thead class="thead-dark">
+            <tr>
+                <th>Predmet</th>
+                <th>Avtor</th>
+                <th>Vrsta</th>
+                <th>Napisano</th>
+                <th>Dokumenti</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // select scientific achievements mentored by the given mentor
+            foreach ($DBC->selectSciPapsByMentor($mentor) as $sciPap) {
+            ?>
+                <tr>
+                    <td><?php echo $sciPap->getTopic(); ?></td>
+                    <td>
+                        <a class="stu-vw-a" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>"><?php echo $sciPap->author; ?></a>
+                        <?php
+                        // if author had partakers in writting 
+                        if (count($DBC->selectSciPapPartakers($sciPap->getIdScientificPapers()))) {
+                        ?>
+                            <sup><a class="par-vw-a" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                        <?php
+                        }
+                        ?>
+                    </td>
+                    <td><?php echo $sciPap->getType(); ?></td>
+                    <td><?php echo (new DateTime($sciPap->getWritten()))->format('d-m-Y'); ?></td>
+                    <td>
+                        <a class="doc-vw-a" href="#sciPapDocsViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Pregled</a>
+                        <sup>
+                            <a class="men-vw-a" href="#sciPapMenViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-mentor="<?php echo $sciPap->mentor; ?>">Mentorji</a>
+                        </sup>
+                    </td>
+                    <td>
+                        <?php
+                        // if graduated on the scientific paper
+                        if ($sciPap->id_certificates != NULL) {
+                        ?>
+                            <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>">Pregled</a>
+                        <?php
+                        } // if
+                        ?>
+                    </td>
+                </tr>
+            <?php
+            } // foreach
+            ?>
+        </tbody>
+    </table>
+<?php
+} // else if
+// if date of writing was prosperously passed via URL query string
+else if (isset($_GET['written'])) {
+    $written = $_GET['written'];
+    // retrieve new PDO object instance holding database connection
+    $DBC = new DBC();
+?>
+    <table class="table table-hover">
+        <caption>EVIDENCA ZNANSTVENIH DOSEŽKOV</caption>
+        <thead class="thead-dark">
+            <tr>
+                <th>Predmet</th>
+                <th>Avtor</th>
+                <th>Vrsta</th>
+                <th>Napisano</th>
+                <th>Dokumenti</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // select scientific by the year of writing
+            foreach ($DBC->selectSciPapsByYear($written) as $sciPap) {
+            ?>
+                <tr>
+                    <td><?php echo $sciPap->getTopic(); ?></td>
+                    <td>
+                        <a class="stu-vw-a" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>"><?php echo $sciPap->author; ?></a>
+                        <?php
+                        // if author had partakers in writting 
+                        if (count($DBC->selectSciPapPartakers($sciPap->getIdScientificPapers()))) {
+                        ?>
+                            <sup><a class="par-vw-a" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                        <?php
+                        }
+                        ?>
+                    </td>
+                    <td><?php echo $sciPap->getType(); ?></td>
+                    <td><?php echo (new DateTime($sciPap->getWritten()))->format('d-m-'); ?>
+                        <span class="bg-warning"><?php echo (new DateTime($sciPap->getWritten()))->format('Y') ?></span>
+                    </td>
+                    <td>
+                        <a class="doc-vw-a" href="#sciPapDocsViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Pregled</a>
+                    </td>
+                    <td>
+                        <?php
+                        // if graduated on the scientific paper
+                        if ($sciPap->id_certificates != NULL) {
+                        ?>
+                            <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>">Pregled</a>
+                        <?php
+                        } // if
+                        ?>
+                    </td>
+                </tr>
+            <?php
+            } // foreach
+            ?>
+        </tbody>
+    </table>
+<?php
+} // else if
