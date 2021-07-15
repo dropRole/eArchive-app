@@ -18,6 +18,7 @@
                     // replace nodes of the active with the passive document nodes 
                 document.body.querySelector('table > tbody').replaceWith(frag.body.querySelector('table > tbody'))
             })
+            .then(() => listenSciPapEvidTbl(document.querySelector('table')))
             .catch(error => alert(error))
         ) // addEventListener
 
@@ -107,6 +108,23 @@
                                     .then(response => exposeResp(response, document.getElementById('studtViewMdl')))
                                     .catch(error => alert(error))
                             }
+                        )
+                    }
+                ) // from
+                // if anchor elements for scientific paper mentor view exist
+            if (tbl.getElementsByClassName('men-vw-a'))
+                Array.from(
+                    tbl.getElementsByClassName('men-vw-a'),
+                    anchor => {
+                        anchor.addEventListener(
+                            'click',
+                            () => request(
+                                `/eArchive/Mentorings/select.php?id_scientific_papers=${anchor.dataset.idScientificPapers}`,
+                                'GET',
+                                'document'
+                            )
+                            .then(response => exposeResp(response, document.getElementById('sciPapMenViewMdl')))
+                            .catch(error => alert(error))
                         )
                     }
                 ) // from
