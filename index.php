@@ -29,7 +29,7 @@ include_once './nav.php';
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="#" data-criterion="author" data-placeholder="Ime in priimek avtorja dela">Po avtrojih</a>
                 <a class="dropdown-item" href="#" data-criterion="mentor" data-placeholder="Ime in priimek mentorja dela">Po mentorjih</a>
-                <a class="dropdown-item" href="#" data-criterion="pubslihed" data-placeholder="Leto objave dela">Po letih objave</a>
+                <a class="dropdown-item" href="#" data-criterion="written" data-placeholder="Leto pisanja dela">Po letu pisanja</a>
             </div>
         </div>
     </div>
