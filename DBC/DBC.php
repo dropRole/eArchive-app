@@ -241,26 +241,26 @@ class DBC extends PDO
     public function selectSciPapsByAuthor(string $author)
     {
         $stmt = "   SELECT 
-                    (students.name || ' ' || students.surname) AS author,
-                    scientific_papers.*,
-                    attendances.id_attendances,
-                    graduations.id_certificates
-                FROM
-                    students    
-                    INNER JOIN attendances 
-                    USING(id_students)
-                    INNER JOIN scientific_papers
-                    USING(id_attendances)
-                    LEFT JOIN graduations 
-                    USING(id_attendances)    
-                WHERE 
-                    UPPER(students.name || ' ' || students.surname) LIKE UPPER(:author)
-                ORDER BY
-                    scientific_papers.written DESC  ";
+                        (students.name || ' ' || students.surname) AS author,
+                        scientific_papers.*,
+                        attendances.id_attendances,
+                        graduations.id_certificates
+                    FROM
+                        students    
+                        INNER JOIN attendances 
+                        USING(id_students)
+                        INNER JOIN scientific_papers
+                        USING(id_attendances)
+                        LEFT JOIN graduations 
+                        USING(id_attendances)    
+                    WHERE 
+                        UPPER(students.name || ' ' || students.surname) LIKE UPPER(:author)
+                    ORDER BY
+                        scientific_papers.written DESC  ";
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindValue(':author', "%{$author}%", PDO::PARAM_STR);
+            $prpStmt->bindValue(':author', "{$author}%", PDO::PARAM_STR);
             $prpStmt->execute();
             $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
         } // try
@@ -270,6 +270,46 @@ class DBC extends PDO
         } // catch
         return $resultSet;
     } // selectSciPapsByAuthor
+
+    /*
+    *   select scientific papers mentored by the given mentor 
+    *   @param string $mentor
+    */
+    public function selectSciPapsByMentor(string $mentor)
+    {
+        $stmt = "   SELECT 
+                        (students.name || ' ' || students.surname) AS author,
+                        scientific_papers.*,
+                        mentorings.mentor,
+                        attendances.id_attendances,
+                        graduations.id_certificates
+                    FROM
+                        students    
+                        INNER JOIN attendances 
+                        USING(id_students)
+                        INNER JOIN scientific_papers
+                        USING(id_attendances)
+                        INNER JOIN mentorings
+                        USING(id_scientific_papers)
+                        LEFT JOIN graduations 
+                        USING(id_attendances)    
+                    WHERE 
+                        UPPER(mentorings.mentor) LIKE UPPER(:mentor)
+                    ORDER BY
+                        scientific_papers.written DESC  ";
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindValue(':mentor', "%{$mentor}%", PDO::PARAM_STR);
+            $prpStmt->execute();
+            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+        } // try
+        catch (PDOException $e) {
+            // output error message 
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        return $resultSet;
+    } // selectSciPapsByMentor
 
     /*
     *   select scientific papers by particular mentor 
@@ -1517,7 +1557,7 @@ class DBC extends PDO
         foreach ($this->selectSciPapPartakers($id_scientific_papers) as $partaker)
             $this->deletePartakerOfScientificPaper($partaker->getIdPartakings());
         // select and delete every single mentor of the scientific paper
-        foreach ($this->selectMentorsOfScientificPaper($id_scientific_papers) as $mentor)
+        foreach ($this->selectSciPapMentors($id_scientific_papers) as $mentor)
             $this->deleteMentorOfScientificPaper($mentor->getIdMentorings());
         $stmt = '   DELETE FROM
                         scientific_papers 
@@ -1662,17 +1702,17 @@ class DBC extends PDO
     } // updatePartInScientificPaper
 
     /*
-    *   select mentors of a scientific paper
+    *   select mentors of the scientific paper
     *   @param int $id_scientific_papers
     */
-    public function selectMentorsOfScientificPaper($id_scientific_papers)
+    public function selectSciPapMentors($id_scientific_papers)
     {
-        // array of Mentors class object instances 
-        $resultSet = [];
         $stmt = '   SELECT 
-                        id_mentorings,
-                        mentor,
-                        name
+                        mentorings.id_mentorings,
+                        mentorings.mentor,
+                        mentorings.taught,
+                        mentorings.email,
+                        faculties.name AS faculty
                     FROM 
                         mentorings
                         INNER JOIN faculties
@@ -1688,11 +1728,8 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single or more rows are affected
-        if ($prpStmt->rowCount() >= 1)
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone']);
-        return $resultSet;
-    } // selectMentorsOfScientificPaper
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone']);;
+    } // selectSciPapMentors
 
     /*
     *   insert mentoring of scientific paper
