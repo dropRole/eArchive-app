@@ -262,13 +262,12 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindValue(':author', "{$author}%", PDO::PARAM_STR);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $resultSet;
     } // selectSciPapsByAuthor
 
     /*
@@ -302,14 +301,49 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindValue(':mentor', "%{$mentor}%", PDO::PARAM_STR);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $resultSet;
     } // selectSciPapsByMentor
+
+    /*
+    *   select scientific papers written at the given year 
+    *   @param DateTime $published
+    */
+    public function selectSciPapsByYear(string $year)
+    {
+        $stmt = "   SELECT 
+                        (students.name || ' ' || students.surname) AS author,
+                        scientific_papers.*,
+                        attendances.id_attendances,
+                        graduations.id_certificates
+                    FROM
+                        students    
+                        INNER JOIN attendances 
+                        USING(id_students)
+                        INNER JOIN scientific_papers
+                        USING(id_attendances)
+                        LEFT JOIN graduations 
+                        USING(id_attendances)    
+                    WHERE 
+                        DATE_PART('year', written) = :year
+                    ORDER BY
+                        scientific_papers.written DESC  ";
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':year', $year, PDO::PARAM_STR);
+            $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+        } // try
+        catch (PDOException $e) {
+            // output error message 
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // selectSciPapsByWritingYear
 
     /*
     *   select scientific papers by particular mentor 
@@ -1072,7 +1106,8 @@ class DBC extends PDO
     *   select particulars of the program attendance by the student
     *   @param int $id_attendances
     */
-    public function selectProgAttnParticulars(int $id_attendances){
+    public function selectProgAttnParticulars(int $id_attendances)
+    {
         $stmt = '   SELECT 
                         (students.name || students.surname) AS student,
                         students.email, 
@@ -1093,13 +1128,13 @@ class DBC extends PDO
                         USING(id_programs)
                     WHERE 
                         id_attendances = :id_attendances    ';
-        try{
+        try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
-        catch(PDOException $e){
+        catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         return $prpStmt->fetch(PDO::FETCH_OBJ);
