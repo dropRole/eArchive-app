@@ -6,9 +6,7 @@ use DBC\DBC;
 
 // script import declaration
 
-require_once '../DBC/DBC.php';
-
-session_start();
+require_once '../autoload.php';
 
 $index = $_POST['index'];
 $pass = $_POST['pass'];

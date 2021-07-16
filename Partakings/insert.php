@@ -4,8 +4,7 @@
 use DBC\DBC;
 
 // script import declaration
-require_once '../DBC/DBC.php';
-require_once '../Partakings/Partakings.php';
+require_once '../autoload.php';
 
 // proceed with the session
 session_start();

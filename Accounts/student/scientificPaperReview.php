@@ -6,11 +6,7 @@ use DBC\DBC;
 
 // script import declaration
 
-require_once '../../DBC/DBC.php';
-include_once '../../ScientificPapers/ScientificPapers.php';
-include_once '../../Partakings/Partakings.php';
-include_once '../../Mentorings/Mentorings.php';
-include_once '../../Documents/Documents.php';
+require_once '../../autoload.php';
 include_once '../../header.php';
 
 $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
@@ -70,11 +66,11 @@ include_once '../../nav.php';
                         <td>
                             <a class="men-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
                             <?php
-                            foreach ($DBC->selectMentorsOfScientificPaper($sciPap->getIdScientificPapers()) as $mentor) {
+                            foreach ($DBC->selectSciPapMentors($sciPap->getIdScientificPapers()) as $mentor) {
                             ?>
                                 <ul class="list-inline">
                                     <li class="list-group-item">
-                                        <?php echo "{$mentor->getMentor()} -> Fakulteta {$mentor->name}"; ?>
+                                        <?php echo "{$mentor->getMentor()} -> Fakulteta {$mentor->faculty}"; ?>
                                         <a class="men-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
                                         <a class="men-del-a" href="#sciPapInsrMdl" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Izbriši</a>
                                     </li>

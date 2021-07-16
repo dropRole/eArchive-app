@@ -6,8 +6,7 @@
 
     // script import declaration
 
-    require_once '../DBC/DBC.php';
-    require_once './Students.php';
+    require_once '../autoload.php';
 
     session_start();
 

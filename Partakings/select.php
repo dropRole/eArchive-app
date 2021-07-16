@@ -6,8 +6,7 @@ use DBC\DBC;
 
 // script import declaration
 
-require_once '../DBC/DBC.php';
-include_once './Partakings.php';
+require_once '../autoload.php';
 
 $id_scientific_papers = $_GET['id_scientific_papers'];
 

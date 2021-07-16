@@ -6,8 +6,7 @@ use DBC\DBC;
 
 // script import declaration
 
-require_once '../DBC/DBC.php';
-require_once './PostalCodes.php';
+require_once '../autoload.php';
 
 $id_countries = $_GET['id_countries'];
 
@@ -15,9 +14,8 @@ $id_countries = $_GET['id_countries'];
 if (isset($id_countries)) {
     // create a new instance
     $DBC = new DBC();
-    $postalCodes = $DBC->selectPostalCodes($id_countries);
-    foreach ($postalCodes as $postalCode) {
-    ?>
+    foreach ($DBC->selectPostalCodes($id_countries) as $postalCode) {
+?>
         <option value="<?php echo $postalCode->getIdPostalCodes(); ?>"><?php echo "{$postalCode->getMunicipality()}({$postalCode->getCode()})"; ?></option>
     <?php
     } // foreach

@@ -6,11 +6,7 @@ use DBC\DBC;
 
 // script import declaration
 
-require_once '../../DBC/DBC.php';
-require_once '../Accounts.php';
-
-// proceed with the session
-session_start();
+require_once '../../autoload.php';
 
 $id_attendances = $_GET['id_attendances'];
 $avatar = $_GET['avatar'];

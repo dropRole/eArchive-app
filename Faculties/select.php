@@ -6,15 +6,13 @@ use DBC\DBC;
 
 // script import declaration
 
-require_once '../DBC/DBC.php';
-require_once './Faculties.php';
+require_once '../autoload.php';
 
-// create a new instance
+// retrieve a database connection
 $DBC = new DBC();
-$faculties = $DBC->selectFaculties();
 ?>
 <?php
-foreach ($faculties as $faculty) {
+foreach ($DBC->selectFaculties() as $faculty) {
 ?>
     <option value="<?php echo $faculty->getIdFaculties(); ?>"><?php echo "{$faculty->getName()}"; ?></option>
 <?php

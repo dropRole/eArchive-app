@@ -6,9 +6,7 @@ use DBC\DBC;
 
 // script import declaration
 
-require_once '../DBC/DBC.php';
-require_once '../Certificates/Certificates.php';
-require_once './Students.php';
+require_once '../autoload.php';
 
 // proceed with the current session
 session_start();
@@ -67,7 +65,7 @@ if (isset($index)) {
                     <td>
                         <?php
                         // if student is assigned an account to  
-                        if ($DBC->checkStudentAccount($student->id_attendances)) {
+                        if ($DBC->checkStudtAcct($student->id_attendances)) {
                         ?>
                             Dodeljen: <span class="text-warning"><?php echo $DBC->getAccountParticulars($student->id_attendances); ?></span>
                             <span class="acc-del-btn" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>">&#10007;</span>

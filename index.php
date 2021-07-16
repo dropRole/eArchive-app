@@ -6,10 +6,7 @@ use DBC\DBC;
 
 // script import declaration
 
-require_once './DBC/DBC.php';
 include_once './header.php';
-include_once './ScientificPapers/ScientificPapers.php';
-include_once './Partakings/Partakings.php';
 
 $DBC = new DBC();
 
