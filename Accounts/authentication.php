@@ -8,6 +8,9 @@ use DBC\DBC;
 
 require_once '../autoload.php';
 
+// commence a new session
+session_start();
+
 $index = $_POST['index'];
 $pass = $_POST['pass'];
 
