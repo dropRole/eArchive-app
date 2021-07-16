@@ -2,7 +2,7 @@
 (() => {
     // globally encompassed variable declaration
     var frag = new DocumentFragment(), // minimal passive document object 
-        searchInptEl = document.getElementById('searchInptEl'), // input element for search for scientific papers
+        searchInptEl = document.getElementById('searchInptEl'), // input element for search of scientific papers
         drpDwnItms = document.getElementsByClassName('dropdown-item') // dropdown items for denoting type of search
 
     searchInptEl.addEventListener(
@@ -44,15 +44,13 @@
                     sup => {
                         sup.addEventListener(
                                 'click',
-                                () => {
-                                    request(
-                                            `/eArchive/Partakings/select.php?id_scientific_papers=${sup.dataset.idScientificPapers}`,
-                                            'GET',
-                                            'document'
-                                        )
-                                        .then(response => exposeResp(response, document.getElementById('sciPapPrtViewMdl')))
-                                        .catch(error => alert(error))
-                                }
+                                () => request(
+                                    `/eArchive/Partakings/select.php?id_scientific_papers=${sup.dataset.idScientificPapers}`,
+                                    'GET',
+                                    'document'
+                                )
+                                .then(response => exposeResp(response, document.getElementById('sciPapPrtViewMdl')))
+                                .catch(error => alert(error))
                             ) // addEventListener
                     }) // from
                 // if anchor elements for document view exist
@@ -62,15 +60,13 @@
                     anchor => {
                         anchor.addEventListener(
                             'click',
-                            () => {
-                                request(
-                                        `/eArchive/Documents/select.php?id_scientific_papers=${anchor.dataset.idScientificPapers}`,
-                                        'GET',
-                                        'document'
-                                    )
-                                    .then(response => exposeResp(response, document.getElementById('sciPapDocsViewMdl')))
-                                    .catch(error => alert(error))
-                            }
+                            () => request(
+                                `/eArchive/Documents/select.php?id_scientific_papers=${anchor.dataset.idScientificPapers}`,
+                                'GET',
+                                'document'
+                            )
+                            .then(response => exposeResp(response, document.getElementById('sciPapDocsViewMdl')))
+                            .catch(error => alert(error))
                         )
                     }) // from
                 // if anchor elements for graduation certificate insight exist
@@ -80,15 +76,13 @@
                     anchor => {
                         anchor.addEventListener(
                             'click',
-                            () => {
-                                request(
-                                        `/eArchive/Certificates/select.php?id_attendances=${anchor.dataset.idAttendances}`,
-                                        'GET',
-                                        'document'
-                                    )
-                                    .then(response => exposeResp(response, document.getElementById('gradCertViewMdl')))
-                                    .catch(error => alert(error))
-                            }
+                            () => request(
+                                `/eArchive/Certificates/select.php?id_attendances=${anchor.dataset.idAttendances}`,
+                                'GET',
+                                'document'
+                            )
+                            .then(response => exposeResp(response, document.getElementById('gradCertViewMdl')))
+                            .catch(error => alert(error))
                         )
                     }
                 ) // from
@@ -99,15 +93,13 @@
                     anchor => {
                         anchor.addEventListener(
                             'click',
-                            () => {
-                                request(
-                                        `/eArchive/Attendances/select.php?id_attendances=${anchor.dataset.idAttendances}`,
-                                        'GET',
-                                        'document'
-                                    )
-                                    .then(response => exposeResp(response, document.getElementById('studtViewMdl')))
-                                    .catch(error => alert(error))
-                            }
+                            () => request(
+                                `/eArchive/Attendances/select.php?id_attendances=${anchor.dataset.idAttendances}`,
+                                'GET',
+                                'document'
+                            )
+                            .then(response => exposeResp(response, document.getElementById('studtViewMdl')))
+                            .catch(error => alert(error))
                         )
                     }
                 ) // from
