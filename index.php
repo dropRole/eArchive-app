@@ -6,6 +6,7 @@ use DBC\DBC;
 
 // script import declaration
 
+require_once './autoload.php';
 include_once './header.php';
 
 $DBC = new DBC();
