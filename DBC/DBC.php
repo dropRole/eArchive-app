@@ -2164,7 +2164,7 @@ class DBC extends PDO
                 $hash = $prpStmt->fetch(PDO::FETCH_COLUMN);
                 // if hash is composed of given pass
                 if (password_verify($pass, $hash)) {
-                    // register var and assign index
+                    // register vars and assign index
                     $_SESSION['user'] = 'stu_' . $index;
                     // register var and assign pass
                     $_SESSION['pass'] = $pass;
@@ -2175,9 +2175,9 @@ class DBC extends PDO
                 else
                     $report['message'] = 'Geslo računa z dano indeks številko ni pravilno.';
             } // if
-            // if credentials from superuser
+            // if passed credentials are for superuser 
             else if (strpos(self::SUPERUSER, $index) && self::PASS == $pass) {
-                // register var and assign index
+                // register vars and denote the authorized
                 $_SESSION['user'] = self::SUPERUSER;
                 // register var and assign pass
                 $_SESSION['pass'] = self::PASS;
