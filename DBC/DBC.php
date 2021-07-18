@@ -29,7 +29,7 @@ class DBC extends PDO
     *   select all scientific paper records
     *   @param int $id_attendances
     */
-    public function selectSciPaps()
+    public function selectScientificPapers()
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
@@ -50,12 +50,12 @@ class DBC extends PDO
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->execute();
+            return  $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return  $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
-    } // selectSciPaps
+    } // selectScientificPapers
 
 
     /*
@@ -90,7 +90,7 @@ class DBC extends PDO
     *   filter and select scientific papers by their topics
     *   @param string $topic
     */
-    public function selectSciPapsByTopic(string $topic)
+    public function selectScientificPapersByTopic(string $topic)
     {
         $stmt = '   SELECT 
                         scientific_papers.id_scientific_papers,
@@ -123,13 +123,13 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage}.";
         } // catch
         return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
-    } // selectSciPapsByTopic
+    } // selectScientificPapersByTopic
 
     /*
     *   select all scientific papers according to the index number of the student attending the program
     *   @param int $index
     */
-    public function selectSciPapsOfStudt($index)
+    public function selectScientificPapersOfStudt($index)
     {
         $resultSet = [];
         $stmt = '   SELECT 
@@ -156,7 +156,7 @@ class DBC extends PDO
         if ($prpStmt->rowCount() >= 1)
             $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         return $resultSet;
-    } // selectSciPapsOfStudt
+    } // selectScientificPapersOfStudt
 
     /*
     *   select particular scientific paper 
@@ -239,7 +239,7 @@ class DBC extends PDO
     *   select scientific papers written by the given author 
     *   @param string $author
     */
-    public function selectSciPapsByAuthor(string $author)
+    public function selectScientificPapersByAuthor(string $author)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
@@ -269,13 +269,13 @@ class DBC extends PDO
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectSciPapsByAuthor
+    } // selectScientificPapersByAuthor
 
     /*
     *   select scientific papers mentored by the given mentor 
     *   @param string $mentor
     */
-    public function selectSciPapsByMentor(string $mentor)
+    public function selectScientificPapersByMentor(string $mentor)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
@@ -308,13 +308,13 @@ class DBC extends PDO
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectSciPapsByMentor
+    } // selectScientificPapersByMentor
 
     /*
     *   select scientific papers written at the given year 
     *   @param DateTime $published
     */
-    public function selectSciPapsByYear(string $year)
+    public function selectScientificPapersByYear(string $year)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
@@ -344,7 +344,7 @@ class DBC extends PDO
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectSciPapsByWritingYear
+    } // selectScientificPapersByWritingYear
 
     /*
     *   select scientific papers by particular mentor 
