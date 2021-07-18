@@ -152,12 +152,11 @@ class DBC extends PDO
     } // selectStudtSciPapers
 
     /*
-    *   select particular scientific paper 
+    *   select the given scientific paper record 
     *   @param int $id_scientific_papers
     */
-    public function selectScientificPaper($id_scientific_papers)
+    public function selectScientificPaper(int $id_scientific_papers)
     {
-        $result = NULL;
         $stmt = '   SELECT 
                         scientific_papers.*
                     FROM
@@ -169,14 +168,11 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written'])[0];
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            $result = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written'])[0];
-        return $result;
     } // selectScientificPaper
 
 
