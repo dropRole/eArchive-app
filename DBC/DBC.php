@@ -2,10 +2,11 @@
 
 namespace DBC;
 
-// namespace import declaration
+// namespace and class import declaration
 
 use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Partakings\Partakings, Mentorings\Mentorings, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
 
+// extend integtated PDO interface
 class DBC extends PDO
 {
     private const SUPERUSER = 'auth_69141238';
@@ -19,8 +20,8 @@ class DBC extends PDO
             parent::__construct("pgsql:host=localhost;dbname=eArchive;port=5432;user={$user};password=" . password_hash($pass, PASSWORD_BCRYPT) . ";");
         } // try
         catch (PDOException $e) {
-            // output error message
-            echo 'Napaka pri vzpostavljanju povezave s podatkovno zbirko: ' . $e->getMessage();
+            // compose an error message
+            echo "Napaka: {$e->getMessage()}.";
         } // catch 
     } // __construct
 
