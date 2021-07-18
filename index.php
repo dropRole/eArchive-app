@@ -46,7 +46,7 @@ include_once './nav.php';
             </thead>
             <tbody>
                 <?php
-                foreach ($DBC->selectSciPaps() as $sciPap) {
+                foreach ($DBC->selectScientificPapers() as $sciPap) {
                 ?>
                     <tr>
                         <td><?php echo $sciPap->getTopic(); ?></td>
