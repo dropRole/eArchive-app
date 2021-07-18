@@ -126,9 +126,8 @@ class DBC extends PDO
     *   select all scientific papers according to the index number of the student attending the program
     *   @param int $index
     */
-    public function selectScientificPapersOfStudt($index)
+    public function selectStudtSciPapers(string $index)
     {
-        $resultSet = [];
         $stmt = '   SELECT 
                         scientific_papers.id_scientific_papers,
                         scientific_papers.topic,
@@ -139,21 +138,18 @@ class DBC extends PDO
                         INNER JOIN attendances
                         USING(id_attendances)
                     WHERE 
-                        index = :index    ';
+                        attendances.index = :index    ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
             $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single or more rows are affected
-        if ($prpStmt->rowCount() >= 1)
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
-        return $resultSet;
-    } // selectScientificPapersOfStudt
+    } // selectStudtSciPapers
 
     /*
     *   select particular scientific paper 
