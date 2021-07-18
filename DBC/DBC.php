@@ -26,7 +26,7 @@ class DBC extends PDO
     } // __construct
 
     /*
-    *   select all scientific paper records
+    *   select all scientific papers
     *   @param int $id_attendances
     */
     public function selectScientificPapers()
@@ -175,60 +175,11 @@ class DBC extends PDO
         } // catch
     } // selectScientificPaper
 
-
-    /*
-    *   select scientific papers by keywords 
-    *   @param string $keywords
-    */
-    public function selectPapersByKeywords(string $keywords)
-    {
-        $resultSet = [];
-        $stmt = "   SELECT 
-                        documents.*,
-                        certificates.*,
-                        (name || ' ' || surname) AS fullname,
-                        part,
-                        topic,
-                        written,
-                        id_mentorings,
-                        mentor
-                    FROM 
-                        students 
-                        INNER JOIN scientific_papers 
-                        USING (id_students)
-                        INNER JOIN documents 
-                        USING (id_scientific_papers)
-                        INNER JOIN mentorings  
-                        USING (id_scientific_papers)
-                        INNER JOIN partaking 
-                        USING (id_students)
-                        INNER JOIN attendances 
-                        USING(id_students) 
-                        INNER JOIN graduations 
-                        USING (id_attendances) 
-                        LEFT JOIN certificates 
-                        USING (id_certificates)
-                    WHERE 
-                        UPPER(name || surname) LIKE UPPER(:keywords)  ";
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':author', $author, PDO::PARAM_STR);
-            $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
-        } // try
-        catch (PDOException $e) {
-            // output error message 
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        return $resultSet;
-    } // selectPapersByKeywords
-
     /*
     *   select scientific papers written by the given author 
     *   @param string $author
     */
-    public function selectScientificPapersByAuthor(string $author)
+    public function selectSciPapsByAuthor(string $author)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
@@ -258,13 +209,13 @@ class DBC extends PDO
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectScientificPapersByAuthor
+    } // selectSciPapsByAuthor
 
     /*
     *   select scientific papers mentored by the given mentor 
     *   @param string $mentor
     */
-    public function selectScientificPapersByMentor(string $mentor)
+    public function selectSciPapsByMentor(string $mentor)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
@@ -297,11 +248,11 @@ class DBC extends PDO
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectScientificPapersByMentor
+    } // selectSciPapsByMentor
 
     /*
     *   select scientific papers written at the given year 
-    *   @param DateTime $published
+    *   @param string $year
     */
     public function selectScientificPapersByYear(string $year)
     {
@@ -333,55 +284,7 @@ class DBC extends PDO
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectScientificPapersByWritingYear
-
-    /*
-    *   select scientific papers by particular mentor 
-    *   @param string $mentor
-    */
-    public function selectPapersByMentor($mentor)
-    {
-        $resultSet = [];
-        $stmt = "   SELECT 
-                        documents.*,
-                        certificates.*,
-                        (name || ' ' || surname) AS fullname,
-                        part,
-                        topic,
-                        written,
-                        id_mentorings,
-                        mentor
-                    FROM 
-                        students 
-                        INNER JOIN scientific_papers 
-                        USING (id_students)
-                        INNER JOIN documents 
-                        USING (id_scientific_papers)
-                        INNER JOIN mentorings  
-                        USING (id_scientific_papers)
-                        INNER JOIN partaking 
-                        USING (id_students)
-                        INNER JOIN attendances 
-                        USING(id_students) 
-                        INNER JOIN graduations 
-                        USING (id_attendances) 
-                        LEFT JOIN certificates 
-                        USING (id_certificates)
-                    WHERE 
-                        UPPER(mentor) LIKE UPPER(:mentor)  ";
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':mentor', $mentor, PDO::PARAM_STR);
-            $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
-        } // try
-        catch (PDOException $e) {
-            // output error message 
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        return $resultSet;
-    } // selectPapersByMentor
+    } // selectSciPapsByYear
 
     /*
     *   select all students 
