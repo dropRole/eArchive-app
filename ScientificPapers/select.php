@@ -17,7 +17,7 @@ if (isset($_GET['id_attendances'])) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // fetch scientific papers
-    $scientificPapers = $DBC->selectScientificPapers($id_attendances);
+    $scientificPapers = $DBC->selectSciPapsByProgAttendance($id_attendances);
     // if there're no papers at all
     if (count($scientificPapers) == 0) {
 ?>
