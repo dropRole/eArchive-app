@@ -86,7 +86,7 @@ class DBC extends PDO
     *   filter and select scientific papers by their topics
     *   @param string $topic
     */
-    public function selectScientificPapersByTopic(string $topic)
+    public function selectSciPapsByTopic(string $topic)
     {
         $stmt = '   SELECT 
                         scientific_papers.id_scientific_papers,
@@ -98,28 +98,29 @@ class DBC extends PDO
                         INNER JOIN attendances
                         USING(id_attendances)
                     WHERE
-                        id_attendances = (
-                                            SELECT 
-                                                id_attendances
-                                            FROM 
-                                                attendances
-                                            WHERE 
-                                                index = :index
-                                        )
+                        id_attendances = 
+                        (
+                            SELECT 
+                                id_attendances
+                            FROM 
+                                attendances
+                            WHERE 
+                                index = :index
+                        )
                         AND 
-                        UPPER(topic) LIKE UPPER(:topic)   ';
+                        UPPER(scientific_papers.topic) LIKE UPPER(:topic)   ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindValue(':index', $_SESSION['index'], PDO::PARAM_STR);
             $prpStmt->bindValue(':topic', "{$topic}%", PDO::PARAM_STR);
             $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage}.";
         } // catch
-        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
-    } // selectScientificPapersByTopic
+    } // selectSciPapsByTopic
 
     /*
     *   select all scientific papers according to the index number of the student attending the program
