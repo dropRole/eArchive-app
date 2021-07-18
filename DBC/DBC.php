@@ -322,143 +322,42 @@ class DBC extends PDO
     } // selectStudents
 
     /*
-    *   select students by given name and surname 
-    *   @param string $name
-    *   @param string $surname
-    *   @param string $order
-    */
-    public function selectStudentsByName(string $name, string $surname, string $order = 'ASC')
-    {
-        // restult set
-        $resultSet = [];
-        switch ($order) {
-            case 'ASC':
-                break;
-                $stmt = "   SELECT 
-                                id_students,
-                                (students.name || ' ' || surname) AS fullname, 
-                                faculties.name AS faculty, 
-                                programs.name AS program,
-                                index,
-                                degree
-                            FROM 
-                                students 
-                                INNER JOIN attendances
-                                USING(id_students)
-                                INNER JOIN faculties
-                                USING(id_faculties)
-                                INNER JOIN programs
-                                USING(id_programs)
-                            WHERE 
-                                UPPER(name || surname) LIKE UPPER(:fullname)
-                            ORDER BY
-                                fullname    ";
-            case 'DESC':
-                $stmt = "   SELECT 
-                                id_students,
-                                (students.name || ' ' || surname) AS fullname, 
-                                faculties.name AS faculty, 
-                                programs.name AS program,
-                                index,
-                                degree
-                            FROM 
-                                students 
-                                INNER JOIN attendances
-                                USING(id_students)
-                                INNER JOIN faculties
-                                USING(id_faculties)
-                                INNER JOIN programs
-                                USING(id_programs)
-                            WHERE 
-                                UPPER(name || surname) LIKE UPPER(:fullname)
-                            ORDER BY
-                                fullname DESC   ";
-                break;
-        } // switch
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':fullname' . strtoupper($name . $surname), PDO::PARAM_STR);
-            $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        // if not student was selected
-        if ($prpStmt->rowCount() == 0)
-            echo 'Ni študentov po danem imenu.';
-        return $resultSet;
-    } // selectStudentsByName 
-
-    /*
     *   select students by index number 
     *   @param int $index
     *   @param string $order
     */
     public function selectStudentsByIndex(string $index, string $order = 'ASC')
     {
-        // restult set
-        $resultSet = [];
-        $stmt = '';
-        switch ($order) {
-            case 'ASC':
-                $stmt = "   SELECT 
-                            id_students,
-                            id_attendances,
-                            (students.name  || ' ' || students.surname) AS fullname, 
-                            faculties.name AS faculty, 
-                            programs.name AS program,
-                            index,
-                            degree
-                        FROM 
-                            students 
-                            INNER JOIN attendances
-                            USING(id_students)
-                            INNER JOIN faculties
-                            USING(id_faculties)
-                            INNER JOIN programs
-                            USING(id_programs)
-                            WHERE 
-                                index LIKE :index
-                            ORDER BY
-                                fullname    ";
-                break;
-            case 'DESC':
-                $stmt = "   SELECT 
-                                id_students,
-                                id_attendances,
-                                (students.name  || ' ' || students.surname) AS fullname, 
-                                faculties.name AS faculty, 
-                                programs.name AS program,
-                                index,
-                                degree
-                            FROM 
-                                students 
-                                INNER JOIN attendances
-                                USING(id_students)
-                                INNER JOIN faculties
-                                USING(id_faculties)
-                                INNER JOIN programs
-                                USING(id_programs)
-                            WHERE 
-                                index LIKE :index
-                            ORDER BY
-                                fullname DESC   ";
-                break;
-        } // switch
+        $stmt = "   SELECT 
+                        students.id_students,
+                        (students.name || ' ' || students.surname) AS fullname, 
+                        attendances.id_attendances,
+                        attendances.index,
+                        faculties.name AS faculty, 
+                        programs.name AS program,
+                        programs.degree
+                    FROM 
+                        students 
+                        INNER JOIN attendances
+                        USING(id_students)
+                        INNER JOIN faculties
+                        USING(id_faculties)
+                        INNER JOIN programs
+                        USING(id_programs)
+                    WHERE 
+                        attendances.index LIKE :index
+                    ORDER BY
+                        fullname {$order}   ";
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindValue(':index', "{$index}%", PDO::PARAM_STR);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
-            // if not student was selected
+            return $prpStmt->fetchAll(PDO::FETCH_OBJ);
         } // if
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $resultSet;
     } // selectStudentsByIndex 
 
     /*
