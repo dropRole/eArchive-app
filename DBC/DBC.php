@@ -364,61 +364,72 @@ class DBC extends PDO
     *   select particulars of a student
     *   @param int $id_students
     */
-    public function selectStudent($id_students)
+    public function selectStudtParticulars(int $id_students)
     {
-        $student = [
-            'particulars' => NULL,
-            'permResidence' => NULL,
-            'tempResidence' => []
-        ];
         $stmt = '   SELECT 
                         students.*,
-                        id_countries
+                        postal_codes.id_countries
                     FROM
                         students
                         INNER JOIN postal_codes
                         USING(id_postal_codes)
                     WHERE 
-                        id_students = :id_students  ';
-        $stmt2 = '  SELECT 
-                        id_residences,
-                        id_postal_codes,
-                        id_countries,
-                        address,
-                        status
+                        students.id_students = :id_students  ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->execute();
+            return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Students::class, ['id_students', 'id_postal_codes', 'name', 'surname', 'email', 'telephone'])[0]);
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // selectStudtParticulars
+
+    /* 
+    *   select residences of the given student
+    *   @param int $id_students
+    */
+    public function selectStudtResidences(int $id_students)
+    {
+        // permanent and temporary residences
+        $residences = [
+            'permResidence' => NULL,
+            'tempResidence' => []
+        ];
+        $stmt = '  SELECT 
+                        residences.id_residences,
+                        residences.id_postal_codes,
+                        residences.address,
+                        residences.status
+                        postal_codes.id_countries,
                     FROM
                         residences
                         INNER JOIN postal_codes
                         USING(id_postal_codes)
                     WHERE 
-                        id_students = :id_students
+                        residences.id_students = :id_students
                     ORDER BY 
-                        status ';
+                        residences.status ';
         try {
             // prepare, bind params to and execute stmts
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt2 = $this->prepare($stmt2, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-            $prpStmt2->bindParam(':id_students', $id_students, PDO::PARAM_INT);
             $prpStmt->execute();
-            $prpStmt2->execute();
+            foreach ($prpStmt->fetchAll(PDO::FETCH_ASSOC) as $residence) {
+                // designate residence according to its status
+                if ($residence['status'] == 'STALNO')
+                    $residences['permResidence'] = $residence;
+                else
+                    array_push($residences['tempResidence'], $residence);
+            } // foreach
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if student particulars and merely one permanent residence were fetched    
-        if ($prpStmt->rowCount() == 1 && $prpStmt2->rowCount() >= 0) {
-            $student['particulars'] = $prpStmt->fetch(PDO::FETCH_ASSOC);
-            foreach ($prpStmt2->fetchAll(PDO::FETCH_ASSOC) as $residence) {
-                // designate residence according to its status
-                if ($residence['status'] == 'STALNO')
-                    $student['permResidence'] = $residence;
-                else
-                    array_push($student['tempResidence'], $residence);
-            } // foreach
-        } // if
-        return json_encode($student);
-    } // selectStudent
+        return json_encode($residences);
+    } // selectStudtResidences
 
     /*
     *   check if student resides at 
