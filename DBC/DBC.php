@@ -292,62 +292,33 @@ class DBC extends PDO
     */
     public function selectStudents(string $order = 'ASC')
     {
-        $resultSet = [];
-        switch ($order) {
-            case 'ASC':
-                $stmt = "   SELECT 
-                                id_students,
-                                id_attendances,
-                                (students.name  || ' ' || students.surname) AS fullname, 
-                                faculties.name AS faculty, 
-                                programs.name AS program,
-                                index,
-                                degree
-                            FROM 
-                                students 
-                                INNER JOIN attendances
-                                USING(id_students)
-                                INNER JOIN faculties
-                                USING(id_faculties)
-                                INNER JOIN programs
-                                USING(id_programs)
-                            ORDER BY
-                                surname    ";
-                break;
-            case 'DESC':
-                $stmt = "   SELECT 
-                                id_students,
-                                id_attendances,
-                                (students.name || ' ' || surname) AS fullname, 
-                                faculties.name AS faculty, 
-                                programs.name AS program,
-                                index,
-                                degree
-                            FROM 
-                                students 
-                                INNER JOIN attendances
-                                USING(id_students)
-                                INNER JOIN faculties
-                                USING(id_faculties)
-                                INNER JOIN programs
-                                USING(id_programs)
-                            ORDER BY
-                                surname DESC    ";
-                break;
-        } // 
+        $stmt = "   SELECT 
+                        students.id_students,
+                        (students.name || ' ' || students.surname) AS fullname, 
+                        attendances.id_attendances,
+                        attendances.index,
+                        faculties.name AS faculty, 
+                        programs.name AS program,
+                        programs.degree
+                    FROM 
+                        students 
+                        INNER JOIN attendances
+                        USING(id_students)
+                        INNER JOIN faculties
+                        USING(id_faculties)
+                        INNER JOIN programs
+                        USING(id_programs)
+                    ORDER BY
+                        students.surname {$order}   ";
         try {
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_OBJ);
+            return $prpStmt->fetchAll(PDO::FETCH_OBJ);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if there are no student in the evidence
-        if ($prpStmt->rowCount() == 0)
-            echo 'Opozorilo: študentov ni v evidenci.';
-        return $resultSet;
     } // selectStudents
 
     /*
