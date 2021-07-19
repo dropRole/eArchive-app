@@ -83,99 +83,6 @@ class DBC extends PDO
     } // selectScientificPapers
 
     /*
-    *   filter and select scientific papers by their topics
-    *   @param string $topic
-    */
-    public function selectSciPapsByTopic(string $topic)
-    {
-        $stmt = '   SELECT 
-                        scientific_papers.id_scientific_papers,
-                        scientific_papers.topic,
-                        scientific_papers.type,
-                        scientific_papers.written
-                    FROM 
-                        scientific_papers
-                        INNER JOIN attendances
-                        USING(id_attendances)
-                    WHERE
-                        id_attendances = 
-                        (
-                            SELECT 
-                                id_attendances
-                            FROM 
-                                attendances
-                            WHERE 
-                                index = :index
-                        )
-                        AND 
-                        UPPER(scientific_papers.topic) LIKE UPPER(:topic)   ';
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindValue(':index', $_SESSION['index'], PDO::PARAM_STR);
-            $prpStmt->bindValue(':topic', "{$topic}%", PDO::PARAM_STR);
-            $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage}.";
-        } // catch
-    } // selectSciPapsByTopic
-
-    /*
-    *   select all scientific papers according to the index number of the student attending the program
-    *   @param int $index
-    */
-    public function selectStudtSciPapers(string $index)
-    {
-        $stmt = '   SELECT 
-                        scientific_papers.id_scientific_papers,
-                        scientific_papers.topic,
-                        scientific_papers.type,
-                        scientific_papers.written
-                    FROM
-                        scientific_papers
-                        INNER JOIN attendances
-                        USING(id_attendances)
-                    WHERE 
-                        attendances.index = :index    ';
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
-            $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-    } // selectStudtSciPapers
-
-    /*
-    *   select the given scientific paper record 
-    *   @param int $id_scientific_papers
-    */
-    public function selectScientificPaper(int $id_scientific_papers)
-    {
-        $stmt = '   SELECT 
-                        scientific_papers.*
-                    FROM
-                        scientific_papers
-                    WHERE 
-                        id_scientific_papers = :id_scientific_papers    ';
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
-            $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written'])[0];
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-    } // selectScientificPaper
-
-    /*
     *   select scientific papers written by the given author 
     *   @param string $author
     */
@@ -285,6 +192,99 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
     } // selectSciPapsByYear
+
+    /*
+    *   filter and select scientific papers by their topics
+    *   @param string $topic
+    */
+    public function selectSciPapsByTopic(string $topic)
+    {
+        $stmt = '   SELECT 
+                        scientific_papers.id_scientific_papers,
+                        scientific_papers.topic,
+                        scientific_papers.type,
+                        scientific_papers.written
+                    FROM 
+                        scientific_papers
+                        INNER JOIN attendances
+                        USING(id_attendances)
+                    WHERE
+                        id_attendances = 
+                        (
+                            SELECT 
+                                id_attendances
+                            FROM 
+                                attendances
+                            WHERE 
+                                index = :index
+                        )
+                        AND 
+                        UPPER(scientific_papers.topic) LIKE UPPER(:topic)   ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindValue(':index', $_SESSION['index'], PDO::PARAM_STR);
+            $prpStmt->bindValue(':topic', "{$topic}%", PDO::PARAM_STR);
+            $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage}.";
+        } // catch
+    } // selectSciPapsByTopic
+
+    /*
+    *   select all scientific papers according to the index number of the student attending the program
+    *   @param int $index
+    */
+    public function selectStudtSciPapers(string $index)
+    {
+        $stmt = '   SELECT 
+                        scientific_papers.id_scientific_papers,
+                        scientific_papers.topic,
+                        scientific_papers.type,
+                        scientific_papers.written
+                    FROM
+                        scientific_papers
+                        INNER JOIN attendances
+                        USING(id_attendances)
+                    WHERE 
+                        attendances.index = :index    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
+            $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // selectStudtSciPapers
+
+    /*
+    *   select the given scientific paper record 
+    *   @param int $id_scientific_papers
+    */
+    public function selectScientificPaper(int $id_scientific_papers)
+    {
+        $stmt = '   SELECT 
+                        scientific_papers.*
+                    FROM
+                        scientific_papers
+                    WHERE 
+                        id_scientific_papers = :id_scientific_papers    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
+            $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written'])[0];
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // selectScientificPaper
 
     /*
     *   select all students 
