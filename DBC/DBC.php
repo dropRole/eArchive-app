@@ -668,7 +668,7 @@ class DBC extends PDO
                 $report['mssg'] = 'Osnovni podatki študenta so uspešno evidentirani.' . PHP_EOL;
                 return $report['mssg'] .= $this->insertStudtResidences($id_students, $residences);
             } // if
-                return $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
+            return $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
         } // try
         catch (PDOException $e) {
             echo  "Napaka: {$e->getMessage()}.";
@@ -676,7 +676,7 @@ class DBC extends PDO
     } // insertStudent
 
     /*
-    *   update student fundemental data
+    *   update student basics
     *   @param int $id_students
     *   @param int $id_postal_codes
     *   @param int $id_accounts
@@ -710,17 +710,16 @@ class DBC extends PDO
             $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if values of the single record were updated
+            if ($prpStmt->rowCount() == 1)
+                $report = 'Osnovni podatki študenta so uspešno posodobljeni.' . PHP_EOL;
+            else
+                $report = 'Osnovni podatki študenta niso uspešno posodobljeni.' . PHP_EOL;
+            return ($report .= $this->updateStudentResidences($id_students, $residences));
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            $report = 'Osnovni podatki študenta so uspešno posodobljeni.' . PHP_EOL;
-        else
-            $report = 'Osnovni podatki študenta niso uspešno posodobljeni.' . PHP_EOL;
-
-        return ($report .= $this->updateStudentResidences($id_students, $residences));
     } // updateStudent
 
     /*
