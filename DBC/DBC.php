@@ -908,7 +908,7 @@ class DBC extends PDO
     *   @param DateTime $enrolled 
     *   @param int $enrolled 
     */
-    public function insertAttendances(int $id_students, int $id_faculties, int $id_programs, DateTime $enrolled, string $index)
+    public function insertAttendance(int $id_students, int $id_faculties, int $id_programs, DateTime $enrolled, string $index)
     {
         // insertion report
         $report = [
@@ -947,7 +947,7 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // insertAttendances
+    } // insertAttendance
 
     /*
     *   update attendance of a student

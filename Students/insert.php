@@ -29,7 +29,7 @@
         if ($insrtStudtRprt['id_students']) {
             // insert every student attendance
             foreach ($attendances as $attendance) {
-                $insrtAttnRprt = $DBC->insertAttendances($insrtStudtRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
+                $insrtAttnRprt = $DBC->insertAttendance($insrtStudtRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
                 // if insretion isn't successful
                 if (!$insrtAttnRprt['id_attendances'])
                     echo 'Napaka: študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->program . '\' ni uspešno evidentiran.' . PHP_EOL;
