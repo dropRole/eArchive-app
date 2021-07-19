@@ -619,7 +619,7 @@ class DBC extends PDO
     } // selectPrograms
 
     /*
-    *   insert student fundemental data 
+    *   insert student basics  
     *   @param int $id_postal_codes
     *   @param int $id_accounts
     *   @param string $name
@@ -630,28 +630,27 @@ class DBC extends PDO
     */
     public function insertStudent(int $id_postal_codes, string $name, string $surname, string $email = NULL, string $telephone = NULL, $residences = [])
     {
-
-        // result
+        // insertion report
         $report = [
             'id_students' => 0,
-            'message' => ''
+            'mssg' => ''
         ];
         $stmt = '   INSERT INTO 
-                                students 
-                            (
-                                id_postal_codes,
-                                name,   
-                                surname, 
-                                email, 
-                                telephone
-                            )
-                            VALUES(
-                                :id_postal_codes,
-                                :name,
-                                :surname,
-                                :email,
-                                :telephone
-                            )   ';
+                        students 
+                    (
+                        id_postal_codes,
+                        name,   
+                        surname, 
+                        email, 
+                        telephone
+                    )
+                    VALUES(
+                        :id_postal_codes,
+                        :name,
+                        :surname,
+                        :email,
+                        :telephone
+                    )   ';
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
@@ -661,21 +660,19 @@ class DBC extends PDO
             $prpStmt->bindParam(':email', $email, PDO::PARAM_STR);
             $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $prpStmt->execute();
+            // if student record was inserted
+            if ($prpStmt->rowCount() == 1) {
+                $id_students = $this->lastInsertId('students_id_students_seq');
+                // form a report
+                $report['id_students'] = $id_students;
+                $report['mssg'] = 'Osnovni podatki študenta so uspešno evidentirani.' . PHP_EOL;
+                return $report['mssg'] .= $this->insertStudtResidences($id_students, $residences);
+            } // if
+                return $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
         } // try
         catch (PDOException $e) {
-            $report['message'] = "Napaka: {$e->getMessage()}.";
+            echo  "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1) {
-            $id_students = $this->lastInsertId('students_id_students_seq');
-            // form a report
-            $report['id_students'] = $id_students;
-            $report['message'] = 'Osnovni podatki študenta so uspešno evidentirani.' . PHP_EOL;
-            $report['message'] .= $this->insertStudtResidences($id_students, $residences);
-        } // if
-        else
-            $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
-        return $report;
     } // insertStudent
 
     /*
