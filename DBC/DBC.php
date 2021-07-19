@@ -432,6 +432,76 @@ class DBC extends PDO
     } // selectStudtResidences
 
     /*
+    *   insert permanent and temporary residences of a student
+    *   @param int $id_students
+    *   @param Array $residenes
+    */
+    private function insertStudtResidences(int $id_students, array $residences)
+    {
+        // insert report
+        $report = '';
+        $stmt = '   INSERT INTO 
+                        residences 
+                    (
+                        id_postal_codes,
+                        id_students,
+                        address, 
+                        status
+                    )
+                    VALUES(
+                        :id_postal_codes,
+                        :id_students,
+                        :address,
+                        :status
+                    )   ';
+        foreach ($residences as $residence) {
+            try {
+                // prepare, bind params to and execute stmt
+                $prpStmt = $this->prepare($stmt);
+                $prpStmt->bindParam(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
+                $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+                $prpStmt->bindParam(':address', $residence['address'], PDO::PARAM_STR);
+                $prpStmt->bindParam(':status', $residence['status'], PDO::PARAM_STR);
+                $prpStmt->execute();
+                // if single row is affected
+                if ($prpStmt->rowCount() == 1)
+                    $report .= "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}." . PHP_EOL;
+                else
+                    $report .= "Bivališče na naslovu '{$residence['address']}' ni evidentirano." . PHP_EOL;
+            } // try
+            catch (PDOException $e) {
+                echo "Napaka: {$e->getMessage()}.";
+            } // catch 
+        } // foreach
+        return $report;
+    } // insertStudtResidences
+
+    /*
+    *   delete the given temporary residence of a student 
+    *   @param int $id_residences
+    */
+    public function deleteStudtTempResidence(int $id_residences)
+    {
+        $stmt = '   DELETE FROM
+                        residences
+                    WHERE 
+                        id_residences = :id_residences   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_residences', $id_residences, PDO::PARAM_INT);
+            $prpStmt->execute();
+            // if single row is affected
+            if ($prpStmt->rowCount() == 1)
+                return 'Bivališče je uspešno izbrisano.';
+            return 'Bivališče ni uspešno izbrisano.';
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // deleteStudtTempResidence
+
+    /*
     *   check if student resides at 
     *   @param int id_students
     *   @param int id_postal_codes
@@ -504,79 +574,9 @@ class DBC extends PDO
         } // catch
     } // selectCountries
 
-    /*
-    *   insert permanent and temporary residences of a student
-    *   @param int $id_students
-    *   @param Array $residenes
-    */
-    private function insertStudtResidences(int $id_students, array $residences)
-    {
-        // insert report
-        $report = '';
-        $stmt = '   INSERT INTO 
-                        residences 
-                    (
-                        id_postal_codes,
-                        id_students,
-                        address, 
-                        status
-                    )
-                    VALUES(
-                        :id_postal_codes,
-                        :id_students,
-                        :address,
-                        :status
-                    )   ';
-        foreach ($residences as $residence) {
-            try {
-                // prepare, bind params to and execute stmt
-                $prpStmt = $this->prepare($stmt);
-                $prpStmt->bindParam(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
-                $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-                $prpStmt->bindParam(':address', $residence['address'], PDO::PARAM_STR);
-                $prpStmt->bindParam(':status', $residence['status'], PDO::PARAM_STR);
-                $prpStmt->execute();
-                // if single row is affected
-                if ($prpStmt->rowCount() == 1)
-                    $report .= "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}." . PHP_EOL;
-                else
-                    $report .= "Bivališče na naslovu '{$residence['address']}' ni evidentirano." . PHP_EOL;
-            } // try
-            catch (PDOException $e) {
-                echo "Napaka: {$e->getMessage()}.";
-            } // catch 
-        } // foreach
-        return $report;
-    } // insertStudtResidences
-
-    /*
-    *   delete the given temporary residence of a student 
-    *   @param int $id_residences
-    */
-    public function deleteStudtTempResidence(int $id_residences)
-    {
-        $stmt = '   DELETE FROM
-                        residences
-                    WHERE 
-                        id_residences = :id_residences   ';
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_residences', $id_residences, PDO::PARAM_INT);
-            $prpStmt->execute();
-            // if single row is affected
-            if ($prpStmt->rowCount() == 1)
-                return 'Bivališče je uspešno izbrisano.';
-            return 'Bivališče ni uspešno izbrisano.';
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-    } // deleteStudtTempResidence
-
+    
     public function selectFaculties()
     {
-
         $resultSet = [];
         $stmt = '   SELECT 
                         * 
