@@ -505,11 +505,11 @@ class DBC extends PDO
     } // selectCountries
 
     /*
-    *   insert permanent and temporal residences of a student
+    *   insert permanent and temporary residences of a student
     *   @param int $id_students
     *   @param Array $residenes
     */
-    private function insertResidencesOfStudent(int $id_students, array $residences)
+    private function insertStudtResidences(int $id_students, array $residences)
     {
         // insert report
         $report = '';
@@ -528,21 +528,26 @@ class DBC extends PDO
                         :status
                     )   ';
         foreach ($residences as $residence) {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-            $prpStmt->bindParam(':address', $residence['address'], PDO::PARAM_STR);
-            $prpStmt->bindParam(':status', $residence['status'], PDO::PARAM_STR);
-            $prpStmt->execute();
-            // if single row is affected
-            if ($prpStmt->rowCount() == 1)
-                $report .= "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}." . PHP_EOL;
-            else
-                $report .= "Bivališče na naslovu '{$residence['address']}' ni evidentirano.";
+            try {
+                // prepare, bind params to and execute stmt
+                $prpStmt = $this->prepare($stmt);
+                $prpStmt->bindParam(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
+                $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+                $prpStmt->bindParam(':address', $residence['address'], PDO::PARAM_STR);
+                $prpStmt->bindParam(':status', $residence['status'], PDO::PARAM_STR);
+                $prpStmt->execute();
+                // if single row is affected
+                if ($prpStmt->rowCount() == 1)
+                    $report .= "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}." . PHP_EOL;
+                else
+                    $report .= "Bivališče na naslovu '{$residence['address']}' ni evidentirano." . PHP_EOL;
+            } // try
+            catch (PDOException $e) {
+                echo "Napaka: {$e->getMessage()}.";
+            } // catch 
         } // foreach
         return $report;
-    } // insertResidencesOfStudent
+    } // insertStudtResidences
 
     /*
     *   delete the given temporal residence of a student 
@@ -670,7 +675,7 @@ class DBC extends PDO
             // form a report
             $report['id_students'] = $id_students;
             $report['message'] = 'Osnovni podatki študenta so uspešno evidentirani.' . PHP_EOL;
-            $report['message'] .= $this->insertResidencesOfStudent($id_students, $residences);
+            $report['message'] .= $this->insertStudtResidences($id_students, $residences);
         } // if
         else
             $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
