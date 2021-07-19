@@ -434,6 +434,7 @@ class DBC extends PDO
     /*
     *   check if student resides at 
     *   @param int id_students
+    *   @param int id_postal_codes
     */
     private function checkIfResides(int $id_students, int $id_postal_codes)
     {
@@ -449,14 +450,14 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
             $prpStmt->bindParam(':id_postal_codes', $id_postal_codes, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if single row is affected
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return TRUE;
-        return FALSE;
     } // checkIfResides
 
     /*
@@ -465,7 +466,6 @@ class DBC extends PDO
     */
     public function selectPostalCodes(int $id_countries)
     {
-        $resultSet = [];
         $stmt = '   SELECT 
                         id_postal_codes,
                         municipality,
@@ -479,14 +479,11 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam('id_countries', $id_countries, PDO::PARAM_INT);
             $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, PostalCodes::class, ['id_postal_codes', 'id_countries', 'municipality', 'code']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // is single or more rows are affected
-        if ($prpStmt->rowCount() >= 1)
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, PostalCodes::class, ['id_postal_codes', 'id_countries', 'municipality', 'code']);
-        return $resultSet;
     } // selectPostalCodes
 
     // select every country
