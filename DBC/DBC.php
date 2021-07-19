@@ -477,6 +477,45 @@ class DBC extends PDO
     } // insertStudtResidences
 
     /*
+    *   insert student temporary residence
+    *   @param int $id_students
+    *   @param Array $residence
+    */
+    private function insertStudtTempResidence(int $id_students, array $residence)
+    {
+        $stmt = '   INSERT INTO
+                        residences
+                    (
+                        id_postal_codes,
+                        id_students,
+                        address,
+                        status
+                    )
+                    VALUES(
+                        :id_postal_codes,
+                        :id_students,
+                        :address,
+                        :status
+                    )   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
+            $prpStmt->bindValue(':status', 'ZAČASNO', PDO::PARAM_STR);
+            $prpStmt->execute();
+            // if single residence record was inserted 
+            if ($prpStmt->rowCount() == 1)
+                return 'so uspešno vstavljeni.' . PHP_EOL;
+            return 'niso uspešno vstavljeni.' . PHP_EOL;
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka {$e->getMessage()}.";
+        } // catch
+    } // insertStudtTempResidence
+
+    /*
     *   delete the given temporary residence of a student 
     *   @param int $id_residences
     */
@@ -511,12 +550,12 @@ class DBC extends PDO
                         residences
                     WHERE 
                         id_students = :id_students  ';
-        try{
+        try {
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
             $prpStmt->execute();
         } // try
-        catch(PDOException $e){
+        catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
     } // deleteStudtResidences
@@ -784,45 +823,6 @@ class DBC extends PDO
     } // deleteStudent
 
     /*
-    *   insert student temporal residence
-    *   @param int $id_students
-    *   @param Array $residence
-    */
-    private function insertStudentTemporalResidence(int $id_students, array $residence)
-    {
-        $stmt = '   INSERT INTO
-                        residences
-                    (
-                        id_postal_codes,
-                        id_students,
-                        address,
-                        status
-                    )
-                    VALUES(
-                        :id_postal_codes,
-                        :id_students,
-                        :address,
-                        :status
-                    )   ';
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-            $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
-            $prpStmt->bindValue(':status', 'ZAČASNO', PDO::PARAM_STR);
-            $prpStmt->execute();
-        } // try
-        catch (PDOException $e) {
-            return "Napaka {$e->getMessage()}.";
-        } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return 'so uspešno vstavljeni.' . PHP_EOL;
-        return 'niso uspešno vstavljeni.' . PHP_EOL;
-    } // insertStudentTemporalResidence
-
-    /*
     *   update permanent and temporal residence of a student 
     *   @param int $id_students
     *   @param Array $residences
@@ -868,7 +868,7 @@ class DBC extends PDO
                         $permanent = FALSE;
                     } // else
             } else
-                $report .= "Podatki o {$i}. začasnem bivališču {$this->insertStudentTemporalResidence($id_students,$residence)}";
+                $report .= "Podatki o {$i}. začasnem bivališču {$this->insertStudtTempResidence($id_students,$residence)}";
         } // foreach
         return $report;
     } // updateStudentResidences
