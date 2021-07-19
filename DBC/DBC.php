@@ -799,7 +799,7 @@ class DBC extends PDO
         // if account was granted to
         if ($this->checkStudtAcct($id_attendances))
             $this->deleteStudtAcct($id_attendances, $index);
-        $this->deleteStudentProgramAttendance($id_attendances);
+        $this->deleteAttendance($id_attendances);
         try {
             $stmt = '   DELETE FROM
                                 students
@@ -950,51 +950,10 @@ class DBC extends PDO
     } // insertAttendance
 
     /*
-    *   update attendance of a student
-    *   @param int $id_attendances
-    *   @param int $id_students
-    *   @param int $id_faculties
-    *   @param int $id_programs
-    *   @param DateTime $enrolled 
-    *   @param int $enrolled 
-    */
-    public function updateAttendaces(int $id_attendances, int $id_students, int $id_faculties, int $id_programs, DateTime $enrolled, int $index)
-    {
-        $stmt = '   UPDATE 
-                        attendances 
-                    SET 
-                        id_faculties = :id_faculties,
-                        id_programs = :id_programs,
-                        enrolled = :enrolled,
-                        index = :index  
-                    WHERE 
-                        id_attendances = :id_attendances AND id_students = :id_students ';
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_faculties', $id_faculties, PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_programs', $id_programs, PDO::PARAM_INT);
-            $prpStmt->bindParam(':enrolled', $enrolled, PDO::PARAM_STR);
-            $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
-            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-            $prpStmt->execute();
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return 'Podatki o študiranju so uspešno ažurirani.';
-        else
-            return 'Napaka: podatki o študiranju niso uspešno ažurirani.';
-    } // updateAttendaces
-
-    /*
     *   delete program attendance of a student
     *   @param int $id_attendances
     */
-    public function deleteStudentProgramAttendance(int $id_attendances)
+    public function deleteAttendance(int $id_attendances)
     {
         $stmt = '   DELETE FROM 
                         attendances 
@@ -1005,15 +964,15 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if single attendance record was deleted
+            if ($prpStmt->rowCount() == 1)
+                return 'Podatki o poteku izobraževanja na danem študijskem programu so uspešno izbrisani.';
+            return 'Podatki o poteku izobraževanja na danem študijskem programu niso uspešno izbrisani.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return 'Podatki o poteku izobraževanja na danem študijskem programu so uspešno izbrisani.';
-        return 'Podatki o poteku izobraževanja na danem študijskem programu niso uspešno izbrisani.';
-    } // deleteStudentProgramAttendance
+    } // deleteAttendance
 
     /*
     *   insert graduation of a student
