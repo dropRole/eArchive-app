@@ -574,10 +574,9 @@ class DBC extends PDO
         } // catch
     } // selectCountries
 
-    
+    // select all faculties 
     public function selectFaculties()
     {
-        $resultSet = [];
         $stmt = '   SELECT 
                         * 
                     FROM 
@@ -586,12 +585,11 @@ class DBC extends PDO
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Faculties::class, ['id_faculties', 'id_postal_codes', 'name', 'address', 'email', 'telephone', 'dean']);
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Faculties::class, ['id_faculties', 'id_postal_codes', 'name', 'address', 'email', 'telephone', 'dean']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $resultSet;
     } // selectFaculties
 
     /*
