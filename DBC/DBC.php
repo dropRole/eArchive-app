@@ -486,10 +486,9 @@ class DBC extends PDO
         } // catch
     } // selectPostalCodes
 
-    // select every country
+    // select all countries
     public function selectCountries()
     {
-        $resultSet = [];
         $stmt = '   SELECT 
                         * 
                     FROM 
@@ -498,12 +497,11 @@ class DBC extends PDO
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Countries::class, ['id_countries', 'name', 'iso_3_code']);
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Countries::class, ['id_countries', 'name', 'iso_3_code']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $resultSet;
     } // selectCountries
 
     /*
