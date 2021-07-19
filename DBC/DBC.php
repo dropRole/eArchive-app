@@ -598,7 +598,6 @@ class DBC extends PDO
     */
     public function selectPrograms(int $id_faculties)
     {
-        $resultSet = [];
         $stmt = '   SELECT 
                         DISTINCT(programs.*) 
                     FROM 
@@ -606,18 +605,17 @@ class DBC extends PDO
                         INNER JOIN faculties
                         USING(id_faculties)
                     WHERE 
-                        id_faculties = :id_faculties  ';
+                        faculties.id_faculties = :id_faculties  ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_faculties', $id_faculties, PDO::PARAM_INT);
             $prpStmt->execute();
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Programs::class, ['id_programs', 'name', 'degree', 'duration', 'field']);
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Programs::class, ['id_programs', 'name', 'degree', 'duration', 'field']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $resultSet;
     } // selectPrograms
 
     /*
