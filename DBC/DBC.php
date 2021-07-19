@@ -477,6 +477,47 @@ class DBC extends PDO
     } // insertStudtResidences
 
     /*
+    *   update permanent and temporary residence of a student 
+    *   @param int $id_students
+    *   @param Array $residences
+    */
+    private function updateStudtResidences(int $id_students, array $residences)
+    {
+        // update report 
+        $report = '';
+        foreach ($residences as $residence) {
+            // check whether student resides
+            if ($this->checkIfResides($id_students, $residence['id_postal_codes'])) {
+                $stmt = '   UPDATE
+                                residences
+                            SET 
+                                id_postal_codes = :id_postal_codes,
+                                address = :address
+                            WHERE 
+                                id_students = :id_students AND id_residences = :id_residences  ';
+                try {
+                    // prepare, bind params to and execute stmt
+                    $prpStmt = $this->prepare($stmt);
+                    $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
+                    $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
+                    $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+                    $prpStmt->bindValue(':id_residences', $residence['id_residences'], PDO::PARAM_INT);
+                    $prpStmt->execute();
+                    // if residence record was updated
+                    if ($prpStmt->rowCount() == 1)
+                        $report .= "Podatki o bivališču na naslovu {$residence['address']} evidentirano kot {$residence['status']} so uspešno posodobljeni." . PHP_EOL;
+                    else
+                        $report .= "Podatki o bivališču na naslovu {$residence['address']} evidentirano kot {$residence['status']} niso uspešno posodobljeni." . PHP_EOL;
+                } // try
+                catch (PDOException $e) {
+                    echo "Napaka: {$e->getMessage()}.";
+                } // catch
+            } // if
+        } // foreach
+        return $report;
+    } // updateStudtResidences
+
+    /*
     *   insert student temporary residence
     *   @param int $id_students
     *   @param Array $residence
@@ -774,7 +815,7 @@ class DBC extends PDO
                 $report = 'Osnovni podatki študenta so uspešno posodobljeni.' . PHP_EOL;
             else
                 $report = 'Osnovni podatki študenta niso uspešno posodobljeni.' . PHP_EOL;
-            return ($report .= $this->updateStudentResidences($id_students, $residences));
+            return ($report .= $this->updateStudtResidences($id_students, $residences));
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
@@ -821,57 +862,6 @@ class DBC extends PDO
             return 'Podatki o študentu ter znanstvenih dosežkih so uspešno izbrisani.';
         return 'Podatki o študentu ter znanstvenih dosežkih niso uspešno izbrisani.';
     } // deleteStudent
-
-    /*
-    *   update permanent and temporal residence of a student 
-    *   @param int $id_students
-    *   @param Array $residences
-    */
-    private function updateStudentResidences(int $id_students, array $residences)
-    {
-        // action report 
-        $report = '';
-        // flag for permament residence
-        $permanent = TRUE;
-        // temporal residences counter
-        $i = 1;
-        foreach ($residences as $residence) {
-            // check whether student resides
-            if ($this->checkIfResides($id_students, $residence['id_postal_codes'])) {
-                $stmt = '   UPDATE
-                                residences
-                            SET 
-                                id_postal_codes = :id_postal_codes,
-                                address = :address
-                            WHERE 
-                                id_students = :id_students AND id_residences = :id_residences  ';
-                try {
-                    // prepare, bind params to and execute stmt
-                    $prpStmt = $this->prepare($stmt);
-                    $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
-                    $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
-                    $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-                    $prpStmt->bindValue(':id_residences', $residence['id_residences'], PDO::PARAM_INT);
-                    $prpStmt->execute();
-                } // try
-                catch (PDOException $e) {
-                    return "Napaka: {$e->getMessage()}." . PHP_EOL;
-                } // catch
-                // if single row is affected
-                if ($prpStmt->rowCount() == 1)
-                    if (!$permanent) {
-                        $report .= "Podatki o {$i}. začasnem bivališču so uspešno posodobljeni." . PHP_EOL;
-                        $i++;
-                    } // if
-                    else {
-                        $report = 'Podatki o stalnem prebivališču so uspešno posodobljeni.' . PHP_EOL;
-                        $permanent = FALSE;
-                    } // else
-            } else
-                $report .= "Podatki o {$i}. začasnem bivališču {$this->insertStudtTempResidence($id_students,$residence)}";
-        } // foreach
-        return $report;
-    } // updateStudentResidences
 
     /* 
     *   select particulars of the program attendance by the student
