@@ -502,6 +502,26 @@ class DBC extends PDO
     } // deleteStudtTempResidence
 
     /*
+    *   delete all of student residences
+    *   @param int $id_students
+    */
+    private function deleteStudtResidences(int $id_students)
+    {
+        $stmt = '   DELETE FROM 
+                        residences
+                    WHERE 
+                        id_students = :id_students  ';
+        try{
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch(PDOException $e){
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // deleteStudtResidences
+
+    /*
     *   check if student resides at 
     *   @param int id_students
     *   @param int id_postal_codes
@@ -730,7 +750,7 @@ class DBC extends PDO
     */
     public function deleteStudent(int $id_attendances, int $id_students, string $index)
     {
-        $this->deleteStudentResidences($id_students);
+        $this->deleteStudtResidences($id_students);
         // if graduated
         $certificate = $this->selectCertificate($id_attendances);
         if (count($certificate) == 1)
@@ -852,21 +872,6 @@ class DBC extends PDO
         } // foreach
         return $report;
     } // updateStudentResidences
-
-    /*
-    *   delete all of student residences
-    *   @param int $id_students
-    */
-    private function deleteStudentResidences(int $id_students)
-    {
-        $stmt = '   DELETE FROM 
-                        residences
-                    WHERE 
-                        id_students = :id_students  ';
-        $prpStmt = $this->prepare($stmt);
-        $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-        $prpStmt->execute();
-    } // deleteStudentResidences
 
     /* 
     *   select particulars of the program attendance by the student
