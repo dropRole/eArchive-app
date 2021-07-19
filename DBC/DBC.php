@@ -57,7 +57,6 @@ class DBC extends PDO
         } // catch
     } // selectScientificPapers
 
-
     /*
     *   select all scientific papers written while student attended a specific program
     *   @param int $id_attendances
@@ -674,50 +673,6 @@ class DBC extends PDO
         } // catch
     } // selectCountries
 
-    // select all faculties 
-    public function selectFaculties()
-    {
-        $stmt = '   SELECT 
-                        * 
-                    FROM 
-                        faculties    ';
-        try {
-            // prepare and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Faculties::class, ['id_faculties', 'id_postal_codes', 'name', 'address', 'email', 'telephone', 'dean']);
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-    } // selectFaculties
-
-    /*
-    *   select faculty offered programs 
-    *   @param int $id_faculties 
-    */
-    public function selectPrograms(int $id_faculties)
-    {
-        $stmt = '   SELECT 
-                        DISTINCT(programs.*) 
-                    FROM 
-                        programs    
-                        INNER JOIN faculties
-                        USING(id_faculties)
-                    WHERE 
-                        faculties.id_faculties = :id_faculties  ';
-        try {
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindParam(':id_faculties', $id_faculties, PDO::PARAM_INT);
-            $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Programs::class, ['id_programs', 'name', 'degree', 'duration', 'field']);
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-    } // selectPrograms
-
     /*
     *   insert student basics  
     *   @param int $id_postal_codes
@@ -862,6 +817,50 @@ class DBC extends PDO
             return 'Podatki o študentu ter znanstvenih dosežkih so uspešno izbrisani.';
         return 'Podatki o študentu ter znanstvenih dosežkih niso uspešno izbrisani.';
     } // deleteStudent
+
+    // select all faculties 
+    public function selectFaculties()
+    {
+        $stmt = '   SELECT 
+                        * 
+                    FROM 
+                        faculties    ';
+        try {
+            // prepare and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Faculties::class, ['id_faculties', 'id_postal_codes', 'name', 'address', 'email', 'telephone', 'dean']);
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // selectFaculties
+
+    /*
+    *   select faculty offered programs 
+    *   @param int $id_faculties 
+    */
+    public function selectPrograms(int $id_faculties)
+    {
+        $stmt = '   SELECT 
+                        DISTINCT(programs.*) 
+                    FROM 
+                        programs    
+                        INNER JOIN faculties
+                        USING(id_faculties)
+                    WHERE 
+                        faculties.id_faculties = :id_faculties  ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $prpStmt->bindParam(':id_faculties', $id_faculties, PDO::PARAM_INT);
+            $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Programs::class, ['id_programs', 'name', 'degree', 'duration', 'field']);
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // selectPrograms
 
     /* 
     *   select particulars of the program attendance by the student
