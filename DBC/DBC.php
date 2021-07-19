@@ -887,17 +887,17 @@ class DBC extends PDO
                         INNER JOIN programs 
                         USING(id_programs)
                     WHERE 
-                        id_attendances = :id_attendances    ';
+                        attendances.id_attendances = :id_attendances    ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_OBJ);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $prpStmt->fetch(PDO::FETCH_OBJ);
     } // selectProgAttnParticulars
 
     /*
@@ -913,7 +913,6 @@ class DBC extends PDO
         // insertion report
         $report = [
             'id_attendances' => 0,
-            'message' => ''
         ];
         $stmt = '   INSERT INTO 
                         attendances 
@@ -940,14 +939,14 @@ class DBC extends PDO
             $prpStmt->bindValue(':enrolled', $enrolled->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
             $prpStmt->execute();
+            // if attendance record was inserted
+            if ($prpStmt->rowCount() == 1)
+                $report['id_attendances'] = $this->lastInsertId('attendances_id_attendances_seq');
+            return $report;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            $report['id_attendances'] = $this->lastInsertId('attendances_id_attendances_seq');
-        return $report;
     } // insertAttendances
 
     /*
