@@ -1100,42 +1100,13 @@ class DBC extends PDO
                 echo "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.';
+        return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
     } // uploadGradCertificate
 
     /*
-    *   update date of graduation certificate defence 
-    *   @param int $id_certificates
-    *   @param DateTime $defended
-    */
-    public function updateGradDefDate(int $id_certificates, DateTime $defended)
-    {
-        $stmt = '   UPDATE 
-                        graduations 
-                    SET 
-                        defended = :defended
-                    WHERE 
-                        id_certificates = :id_certificates';
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindValue(':defended', $defended->format('d-m-Y'), PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
-            $prpStmt->execute();
-            // if date was updated
-            if ($prpStmt->rowCount() == 1)
-                return 'Datum zagovora diplome je uspešno spremenjen.';
-            return 'Datum zagovora diplome ni uspešno spremenjen.';
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka: {$e->getMessage()}.";
-        } // catch
-    } // updateGradDefDate
-
-    /*
-    *   delete graduation of a student 
+    *   delete graduation of the student 
     *   @param int $id_attendances
-    *   @param int $id_students
+    *   @param string $source
     */
     public function deleteGraduation(int $id_attendances, string $source)
     {
@@ -1166,11 +1137,40 @@ class DBC extends PDO
                 return 'Podatki o zaključku študija ter certifikat niso uspešno izbrisani.';
             } // try
             catch (PDOException $e) {
-                return "Napaka: {$e->getMessage()}.";
+                echo "Napaka: {$e->getMessage()}.";
             } // catch
         } // if
-        return 'Opozorilo: druga transakcija je v izvajanju.';
+        return 'Opozorilo: transkacija s podatkovno zbriko je v izvajanju.';
     } // deleteGraduation
+
+    /*
+    *   update date of graduation certificate defence 
+    *   @param int $id_certificates
+    *   @param DateTime $defended
+    */
+    public function updateGradDefDate(int $id_certificates, DateTime $defended)
+    {
+        $stmt = '   UPDATE 
+                        graduations 
+                    SET 
+                        defended = :defended
+                    WHERE 
+                        id_certificates = :id_certificates';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindValue(':defended', $defended->format('d-m-Y'), PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
+            $prpStmt->execute();
+            // if date was updated
+            if ($prpStmt->rowCount() == 1)
+                return 'Datum zagovora diplome je uspešno spremenjen.';
+            return 'Datum zagovora diplome ni uspešno spremenjen.';
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // updateGradDefDate
 
     /*
     *   select graduation certificate for given program attendance
