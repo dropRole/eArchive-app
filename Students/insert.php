@@ -38,7 +38,7 @@
                     echo 'Študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->program. '\' je uspešno evidentiran.' . PHP_EOL;
                     // if student graduated
                     if (isset($attendance['certificate'])) {
-                        $insrtGradRprt = $DBC->insertGraduation($insrtAttnRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
+                        $insrtGradRprt = $DBC->uploadGradCertificate($insrtAttnRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
                         echo $insrtGradRprt . PHP_EOL;
                     } // if
                 } // if 

@@ -23,5 +23,5 @@ if (isset($id_attendances, $certificate, $defended, $issued)) {
     // if certificate was uploaded
     if ($certificate !== NULL)
         // attempt a graduation certificate insertion
-        echo $DBC->insertGraduation($id_attendances, $certificate, (new DateTime($defended)), (new DateTime($issued)));
+        echo $DBC->uploadGradCertificate($id_attendances, $certificate, (new DateTime($defended)), (new DateTime($issued)));
 } // if
