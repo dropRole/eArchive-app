@@ -1104,11 +1104,11 @@ class DBC extends PDO
     } // uploadGradCertificate
 
     /*
-    *   update graduation defence data 
-    *   @param int $id_attendances
-    *   @param int $id_students
+    *   update date of graduation certificate defence 
+    *   @param int $id_certificates
+    *   @param DateTime $defended
     */
-    public function updateGraduationDefenceDate(int $id_certificates, DateTime $defended)
+    public function updateGradDefDate(int $id_certificates, DateTime $defended)
     {
         $stmt = '   UPDATE 
                         graduations 
@@ -1122,15 +1122,15 @@ class DBC extends PDO
             $prpStmt->bindValue(':defended', $defended->format('d-m-Y'), PDO::PARAM_INT);
             $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if date was updated
+            if ($prpStmt->rowCount() == 1)
+                return 'Datum zagovora diplome je uspešno spremenjen.';
+            return 'Datum zagovora diplome ni uspešno spremenjen.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return 'Datum zagovora diplome je uspešno spremenjen.';
-        return 'Datum zagovora diplome ni uspešno spremenjen.';
-    } // updateGraduationDefenceDate
+    } // updateGradDefDate
 
     /*
     *   delete graduation of a student 
