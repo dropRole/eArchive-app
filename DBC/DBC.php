@@ -1049,7 +1049,7 @@ class DBC extends PDO
     *   @param int $id_attendances
     *   @param DateTime $defended
     */
-    public function uploadGradCertificate(int $id_attendances, string $certificate, DateTime $defended, DateTime $issued)
+    public function uploadCertificate(int $id_attendances, string $certificate, DateTime $defended, DateTime $issued)
     {
         // insertion report
         $report = '';
@@ -1101,7 +1101,7 @@ class DBC extends PDO
             } // catch 
         } // if
         return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
-    } // uploadGradCertificate
+    } // uploadCertificate
 
     /*
     *   delete graduation of the student 
@@ -1173,10 +1173,10 @@ class DBC extends PDO
     } // updateGradDefDate
 
     /*
-    *   select graduation certificate for given program attendance
+    *   select graduation certificate for the given program attendance
     *   @param int $id_attendances
     */
-    public function selectCertificate($id_attendances)
+    public function selectCertificate(int $id_attendances)
     {
         $certificate = NULL;
         $stmt = '   SELECT 

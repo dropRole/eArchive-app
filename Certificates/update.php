@@ -22,5 +22,5 @@ if (isset($id_certificates, $defended, $issued)) {
     // update date of issuing 
     echo $DBC->updateGradCertIssuingDate($id_certificates, (new DateTime($issued))) . PHP_EOL;
     // update date of defenense
-    echo $DBC->updateGraduationDefenceDate($id_certificates, (new DateTime($defended)));
+    echo $DBC->updateGradDefDate($id_certificates, (new DateTime($defended)));
 } // if
