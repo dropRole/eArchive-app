@@ -974,14 +974,84 @@ class DBC extends PDO
         } // catch
     } // deleteAttendance
 
+    /* 
+    *   insert graduation certificate of the student
+    *   @param string $source
+    *   @param DateTime $issued
+    */
+    private function insertGradCertificate(string $source, DateTime $issued)
+    {
+        $stmt = '   INSERT INTO
+                        certificates
+                    (
+                        source,
+                        issued
+                    )
+                    VALUES(
+                        :source,
+                        :issued
+                    )   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
+            $prpStmt->bindValue(':issued', $issued->format('d-m-Y'), PDO::PARAM_STR);
+            $prpStmt->execute();
+            // if certificate record was inserted 
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // insertGradCertificate
+
+    /* 
+    *   insert graduation of the student
+    *   @param int $id_certificates
+    *   @param int $id_attendandes
+    *   @param DateTime defended
+    */
+    private function insertGraduation(int $id_certificates, int $id_attendances, DateTime $defended)
+    {
+        $stmt = '   INSERT INTO 
+                        graduations 
+                    (
+                        id_certificates,
+                        id_attendances,
+                        defended
+                    )
+                    VALUES(
+                        :id_certificates,
+                        :id_attendances,
+                        :defended
+                    )   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->bindValue(':defended', $defended->format('d-m-Y'), PDO::PARAM_STR);
+            $prpStmt->execute();
+            // if graduation record was inserted
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // insertGraduation
+
     /*
     *   insert graduation of a student
     *   @param int $id_attendances
     *   @param DateTime $defended
     */
-    public function insertGraduation(int $id_attendances, string $certificate, DateTime $defended, DateTime $issued)
+    public function uploadGradCertificate(int $id_attendances, string $certificate, DateTime $defended, DateTime $issued)
     {
-        // action report
+        // insertion report
         $report = '';
         // if not already running a transaction
         if (!$this->inTransaction()) {
@@ -995,54 +1065,21 @@ class DBC extends PDO
                         if ($_FILES['certificate']['error'][$indx] == UPLOAD_ERR_OK) {
                             $finfo = new finfo();
                             $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
-                            // if it's not a PDF document
-                            if (strpos($mimetype, 'pdf') == FALSE)
-                                return $report = "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno dodan saj ni tipa .pdf .";
+                            // if MIME type is not application/pdf
+                            if ($mimetype != 'application/pdf')
+                                return $report = "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
                             $upload = TRUE;
                             // if document meets the condition 
                             if ($upload) {
-                                // set destination of the uploded file
+                                // set destination of the uploaded certificate
                                 $dir = 'uploads/certificates/';
                                 $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['certificate']['name'][$indx]);
-                                $stmt = '   INSERT INTO
-                                                certificates
-                                            (
-                                                source,
-                                                issued
-                                            )
-                                            VALUES(
-                                                :source,
-                                                :issued
-                                            )   ';
-                                // prepare, bind params to and execute stmt
-                                $prpStmt = $this->prepare($stmt);
-                                $prpStmt->bindParam(':source', $destination, PDO::PARAM_STR);
-                                $prpStmt->bindValue(':issued', $issued->format('d-m-Y'), PDO::PARAM_STR);
-                                $prpStmt->execute();
                                 // if certificate was inserted into db and moved to a new destination  
-                                if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
+                                if ($this->insertGradCertificate($destination, $issued) && move_uploaded_file($tmp_name, "../{$destination}")) {
                                     $report = "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno naložen." . PHP_EOL;
                                     $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
-                                    $stmt = '   INSERT INTO
-                                                    graduations
-                                                (
-                                                    id_certificates,
-                                                    id_attendances,
-                                                    defended
-                                                )
-                                                VALUES(
-                                                    :id_certificates,
-                                                    :id_attendances,
-                                                    :defended
-                                                )   ';
-                                    // prepare, bind params to and execute stmt
-                                    $prpStmt = $this->prepare($stmt);
-                                    $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
-                                    $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
-                                    $prpStmt->bindValue(':defended', $defended->format('d-m-Y'), PDO::PARAM_STR);
-                                    $prpStmt->execute();
                                     // if single row is affected 
-                                    if ($prpStmt->rowCount() == 1) {
+                                    if ($this->insertGraduation($id_certificates, $id_attendances, $defended)) {
                                         $report .= 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
                                         // commit current transaction
                                         $this->commit();
@@ -1060,12 +1097,11 @@ class DBC extends PDO
             } // try
             catch (PDOException $e) {
                 // output error message 
-                return "Napaka: {$e->getMessage()}.";
+                echo "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        else
-            return 'Nakapa: druga transakcija s podatkovno zbirko je v izvajanju.';
-    } // insertGraduation
+        return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.';
+    } // uploadGradCertificate
 
     /*
     *   update graduation defence data 
