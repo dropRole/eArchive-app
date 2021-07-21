@@ -1202,13 +1202,13 @@ class DBC extends PDO
     } // selectCertificate
 
     /*
-    *   update date of issuing 
+    *   update date of certificate issuing 
     *   @param int $id_certificates
     *   @param DateTime $issued
     */
-    public function updateGradCertIssuingDate(int $id_certificates, DateTime $issued)
+    public function updateCertIssDate(int $id_certificates, DateTime $issued)
     {
-      $stmt = '   UPDATE
+        $stmt = '   UPDATE
                         certificates 
                     SET
                         issued = :issued    
@@ -1220,15 +1220,15 @@ class DBC extends PDO
             $prpStmt->bindValue(':issued', $issued->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if issuance date was updated
+            if ($prpStmt->rowCount() == 1)
+                return 'Datum izdajanja certifikata je uspešno spremenjen.';
+            return 'Datum izdajanja certifikata ni uspešno spremenjen.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return 'Datum izdajanja certifikata je uspešno spremenjen.';
-        return 'Datum izdajanja certifikata ni uspešno spremenjen.';
-    } // updateGradCertIssuingDate
+    } // updateCertIssDate
 
     /*
     *   delete particular certificate 
