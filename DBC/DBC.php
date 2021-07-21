@@ -1256,17 +1256,18 @@ class DBC extends PDO
     } // deleteCertificate
 
     /*
-    *   insert scientific paper particulars   
+    *   insert scientific paper    
+    *   @param int $id_attendances
     *   @param string $topic
-    *   @param DateTime $written
     *   @param string $type
+    *   @param DateTime $written
     */
     public function insertScientificPaper(int $id_attendances, string $topic, string $type, DateTime $written)
     {
-        // action report
+        // insertion report
         $report = [
             'id_scientific_papers' => 0,
-            'message' => ''
+            'mssg' => ''
         ];
         $stmt = '   INSERT INTO 
                         scientific_papers
@@ -1290,15 +1291,15 @@ class DBC extends PDO
             $prpStmt->bindParam(':type', $type, PDO::PARAM_STR);
             $prpStmt->bindValue(':written', $written->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->execute();
-            // if single row is affected
+            // if scientific paper record was inserted
             if ($prpStmt->rowCount() == 1) {
                 $report['id_scientific_papers'] = $this->lastInsertId('scientific_papers_id_scientific_papers_seq');
-                $report['message'] = "Delo '{$topic}' je uspešno evidentirano." . PHP_EOL;
+                $report['mssg'] = "Delo '{$topic}' je uspešno evidentirano." . PHP_EOL;
             } // if
         } // try
         catch (PDOException $e) {
             // output error message 
-            $report['message'] = "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
         return $report;
     } // insertScientificPaper
