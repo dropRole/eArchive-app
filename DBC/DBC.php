@@ -1231,7 +1231,7 @@ class DBC extends PDO
     } // updateCertIssDate
 
     /*
-    *   delete particular certificate 
+    *   delete certificate by its server location 
     *   @param string $source
     */
     public function deleteCertificate(string $source)
@@ -1240,13 +1240,19 @@ class DBC extends PDO
                         certificates 
                     WHERE 
                         source = :source  ';
-        $prpStmt = $this->prepare($stmt);
-        $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
-        $prpStmt->execute();
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return TRUE;
-        return FALSE;
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':source', $source);
+            $prpStmt->execute;
+            // if certificate was deleted 
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
     } // deleteCertificate
 
     /*
