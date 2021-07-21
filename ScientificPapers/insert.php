@@ -23,7 +23,7 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt an insert
     $report = $DBC->insertScientificPaper($id_attendances, $topic, $type, (new DateTime($written)));
-    echo $report['message'];
+    echo $report['mssg'];
     // if an attempt was successful 
     if ($report['id_scientific_papers']) {
         // if there were partakers in writting
