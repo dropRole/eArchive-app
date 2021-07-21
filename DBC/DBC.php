@@ -1350,7 +1350,7 @@ class DBC extends PDO
         $report = '';
         $report .= $this->deleteDocuments($id_scientific_papers);
         // select and delete every single partaker on a scientific paper
-        foreach ($this->selectSciPapPartakers($id_scientific_papers) as $partaker)
+        foreach ($this->selectPartakings($id_scientific_papers) as $partaker)
             $this->deletePartakerOfScientificPaper($partaker->getIdPartakings());
         // select and delete every single mentor of the scientific paper
         foreach ($this->selectSciPapMentors($id_scientific_papers) as $mentor)
@@ -1375,17 +1375,17 @@ class DBC extends PDO
     } // deleteScientificPaper
 
     /*
-    *   select partakers on a scientific paper
+    *   select partakings on a scientific paper
     *   @param int $id_scientific_papers
     */
-    public function selectSciPapPartakers(int $id_scientific_papers)
+    public function selectPartakings(int $id_scientific_papers)
     {
         $stmt = "   SELECT 
-                        id_attendances,
-                        id_partakings,
-                        (name || ' ' || surname) as fullname,
-                        part,
-                        index
+                        attendances.id_attendances,
+                        attendances.index,
+                        partakings.id_partakings,
+                        partakings.part
+                        (students.name || ' ' || students.surname) AS fullname
                     FROM 
                         partakings
                         INNER JOIN attendances
@@ -1393,18 +1393,18 @@ class DBC extends PDO
                         INNER JOIN students
                         USING(id_students) 
                     WHERE 
-                        id_scientific_papers = :id_scientific_papers    ";
+                        partakings.id_scientific_papers = :id_scientific_papers    ";
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Partakings::class, ['id_partakings', 'id_scientific_papers', 'id_attendances', 'part']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Partakings::class, ['id_partakings', 'id_scientific_papers', 'id_attendances', 'part']);
-    } // selectSciPapPartakers
+    } // selectPartakings
 
     /*
     *   delete partaker of a scientific papersf
