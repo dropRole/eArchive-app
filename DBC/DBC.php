@@ -1187,17 +1187,17 @@ class DBC extends PDO
                         INNER JOIN graduations
                         USING(id_certificates)
                     WHERE
-                        id_attendances = :id_attendances  ';
+                        graduations.id_attendances = :id_attendances  ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
+            $certificate = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        $certificate = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued']);
         return $certificate;
     } // selectCertificate
 
@@ -1208,7 +1208,7 @@ class DBC extends PDO
     */
     public function updateGradCertIssuingDate(int $id_certificates, DateTime $issued)
     {
-        $stmt = '   UPDATE
+      $stmt = '   UPDATE
                         certificates 
                     SET
                         issued = :issued    
