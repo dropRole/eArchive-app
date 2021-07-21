@@ -1305,16 +1305,15 @@ class DBC extends PDO
     } // insertScientificPaper
 
     /*
-    *   update scientific paper particulars
+    *   update scientific paper
     *   @param int $id_scientific_papers
     *   @param string $topic
-    *   @param DateTime $written
     *   @param string $type
+    *   @param DateTime $written
     */
     public function updateScientificPapers(int $id_scientific_papers, string $topic, string $type, DateTime $written)
     {
-        try {
-            $stmt = '   UPDATE  
+        $stmt = '   UPDATE  
                             scientific_papers
                         SET 
                             topic = :topic, 
@@ -1322,6 +1321,7 @@ class DBC extends PDO
                             written = :written 
                         WHERE 
                             id_scientific_papers = :id_scientific_papers    ';
+        try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':topic', $topic, PDO::PARAM_STR);
@@ -1329,15 +1329,15 @@ class DBC extends PDO
             $prpStmt->bindValue(':written', $written->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if scientific paper records was updated
+            if ($prpStmt->rowCount() == 1)
+                return 'Podatki znanstvenega dela so uspešno ažurirani.';
+            return 'Podatki znanstvenega dela niso uspešno ažurirani.';
         } // try
         catch (PDOException $e) {
             // output error message 
-            return "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return 'Podatki znanstvenega dela so uspešno ažurirani.';
-        return 'Podatki znanstvenega dela niso uspešno ažurirani.';
     } // updateScientificPapers
 
     /*
