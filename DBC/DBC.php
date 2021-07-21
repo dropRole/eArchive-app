@@ -1346,7 +1346,7 @@ class DBC extends PDO
     */
     public function deleteScientificPaper(int $id_scientific_papers)
     {
-        // action report
+        // deletion report
         $report = '';
         $report .= $this->deleteDocuments($id_scientific_papers);
         // select and delete every single partaker on a scientific paper
@@ -1839,26 +1839,28 @@ class DBC extends PDO
     */
     public function deleteDocuments(int $id_scientific_papers)
     {
-        // action report
+        // deletion report
         $report = '';
-        // belonging documents of a scientific paper
-        $documents = $this->selectDocuments($id_scientific_papers);
-        foreach ($documents as $document) {
+        // traverse through scientific paper documents
+        foreach ($this->selectDocuments($id_scientific_papers) as $doc) {
             $stmt = '   DELETE FROM 
                             documents
                         WHERE 
                             id_documents = :id_documents    ';
-            // prepare, bind param to and execute stmt 
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindValue(':id_documents', $document->getIdDocuments(), PDO::PARAM_INT);
-            $prpStmt->execute();
-            // if single row is affected and document deleted
-            if ($prpStmt->rowCount() == 1 && unlink("../{$document->getSource()}")) {
-                $report .= 'Dokument ' . basename($document->getSource()) . ' je uspešno izbrisan.' . PHP_EOL;
-                continue;
-            } // if
-            $report .= 'Dokument ' . basename($document->getSource()) . ' ni uspešno izbrisan.' . PHP_EOL;
-            continue;
+            try {
+                // prepare, bind param to and execute stmt 
+                $prpStmt = $this->prepare($stmt);
+                $prpStmt->bindValue(':id_documents', $doc->getIdDocuments(), PDO::PARAM_INT);
+                $prpStmt->execute();
+                // if document was logically and physically deleted
+                if ($prpStmt->rowCount() == 1 && unlink("../{$doc->getSource()}"))
+                    $report .= 'Dokument ' . basename($doc->getSource()) . ' je uspešno izbrisan.' . PHP_EOL;
+                else
+                    $report .= 'Dokument ' . basename($doc->getSource()) . ' ni uspešno izbrisan.' . PHP_EOL;
+            } // try
+            catch (PDOException $e) {
+                echo "Napaka: {$e->getMessage()}.";
+            } // catch
         } // foreach
         return $report;
     } // deleteDocuments          
