@@ -1351,7 +1351,7 @@ class DBC extends PDO
         $report .= $this->deleteDocuments($id_scientific_papers);
         // select and delete every single partaker on a scientific paper
         foreach ($this->selectPartakings($id_scientific_papers) as $partaker)
-            $this->deletePartakerOfScientificPaper($partaker->getIdPartakings());
+            $this->deletePartakings($partaker->getIdPartakings());
         // select and delete every single mentor of the scientific paper
         foreach ($this->selectSciPapMentors($id_scientific_papers) as $mentor)
             $this->deleteMentorOfScientificPaper($mentor->getIdMentorings());
@@ -1407,10 +1407,10 @@ class DBC extends PDO
     } // selectPartakings
 
     /*
-    *   delete partaker of a scientific papersf
+    *   delete partaking on the scientific paper
     *   @param int $id_partakings
     */
-    public function deletePartakerOfScientificPaper(int $id_partakings)
+    public function deletePartakings(int $id_partakings)
     {
         $stmt = '   DELETE FROM 
                         partakings
@@ -1421,15 +1421,15 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_partakings', $id_partakings, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if partakigns record was deleted
+            if ($prpStmt->rowCount() == 1)
+                return 'Soavtor je uspešno odstranjen.';
+            return 'Soavtor ni uspešno odstranjen.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return 'Soavtor je uspešno odstranjen.';
-        return 'Soavtor ni uspešno odstranjen.';
-    } // deletePartakerOfScientificPaper
+    } // deletePartakings
 
     /*
     *   insert partaking particulars 
