@@ -27,7 +27,7 @@ if (isset($id_scientific_papers)) {
             </thead>
             <tbody>
                 <?php
-                foreach ($DBC->selectSciPapPartakers($id_scientific_papers) as $partaker) {
+                foreach ($DBC->selectPartakings($id_scientific_papers) as $partaker) {
                 ?>
                     <tr>
                         <td>

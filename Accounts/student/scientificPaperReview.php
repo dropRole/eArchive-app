@@ -41,7 +41,7 @@ include_once '../../nav.php';
             </thead>
             <tbody>
                 <?php
-                foreach ($DBC->selectSciPapsOfStudt($_SESSION['index']) as $sciPap) {
+                foreach ($DBC->selectStudtSciPapers($_SESSION['index']) as $sciPap) {
                 ?>
                     <tr>
                         <td><?php echo $sciPap->getTopic(); ?></td>
@@ -50,7 +50,7 @@ include_once '../../nav.php';
                         <td>
                             <a class="par-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
                             <?php
-                            foreach ($DBC->selectSciPapPartakers($sciPap->getIdScientificPapers()) as $partaker) {
+                            foreach ($DBC->selectPartakings($sciPap->getIdScientificPapers()) as $partaker) {
                             ?>
                                 <ul class="list-inline">
                                     <li class="list-group-item">

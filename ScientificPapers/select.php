@@ -45,7 +45,7 @@ if (isset($_GET['id_attendances'])) {
                             </div>
                         </div>
                         <?php
-                        $partakers = $DBC->selectSciPapPartakers($scientificPaper->getIdScientificPapers());
+                        $partakers = $DBC->selectPartakings($scientificPaper->getIdScientificPapers());
                         // if paper had partakers
                         if (count($partakers))
                             foreach ($partakers as $partaker) {
