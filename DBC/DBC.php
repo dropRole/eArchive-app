@@ -1375,7 +1375,7 @@ class DBC extends PDO
     } // deleteScientificPaper
 
     /*
-    *   select partakings on a scientific paper
+    *   select partakings on the scientific paper
     *   @param int $id_scientific_papers
     */
     public function selectPartakings(int $id_scientific_papers)
@@ -1432,12 +1432,12 @@ class DBC extends PDO
     } // deletePartakings
 
     /*
-    *   insert partaking particulars 
-    *   @param int $id_students
+    *   insert partaking on a scientific paper 
     *   @param int $id_scientific_papers
+    *   @param int $id_attendances
     *   @param string $part
     */
-    public function insertPartakerOnScientificPaper(int $id_scientific_papers, int $id_attendances, string $part)
+    public function insertPartakings(int $id_scientific_papers, int $id_attendances, string $part)
     {
         $stmt = '   INSERT INTO 
                         partakings
@@ -1458,15 +1458,15 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->bindParam(':part', $part, PDO::PARAM_STR);
             $prpStmt->execute();
+            // if partaking was inserted 
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return TRUE;
-        return FALSE;
-    } // insertPartakerOnScientificPaper
+    } // insertPartakings
 
     /*
     *   update part in writing 
