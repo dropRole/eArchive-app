@@ -1364,14 +1364,14 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if scientific paper was deleted
+            if ($prpStmt->rowCount() == 1)
+                return $report .= 'Znanstveno delo je uspešno izbrisano.';
+            return $report .= 'Znanstevno delo ni uspešno izbrisano.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return $report .= 'Znanstveno delo je uspešno izbrisano.';
-        return $report .= 'Znanstevno delo ni uspešno izbrisano.';
     } // deleteScientificPaper
 
     /*
