@@ -1528,14 +1528,15 @@ class DBC extends PDO
     } // selectSciPapMentors
 
     /*
-    *   insert mentoring of scientific paper
+    *   insert mentoring of the scientific paper
     *   @param int $id_scientific_papers
     *   @param int $id_faculties
     *   @param string $mentor
+    *   @param string $taught
     *   @param string $email
     *   @param string $telephone
     */
-    public function insertMentorOfScientificPaper(int $id_scientific_papers, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
+    public function insertSciPapMentor(int $id_scientific_papers, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
     {
         $stmt = '   INSERT INTO 
                         mentorings
@@ -1565,15 +1566,15 @@ class DBC extends PDO
             $prpStmt->bindParam(':email', $email, PDO::PARAM_STR);
             $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $prpStmt->execute();
+            // if mentor record was inserted 
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return TRUE;
-        return FALSE;
-    } // insertMentorOfScientificPaper
+    } // insertSciPapMentor
 
     /*
     *   update mentoring of scientific paper
