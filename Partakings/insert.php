@@ -19,7 +19,7 @@ if (isset($id_scientific_papers, $partakers)) {
     // insert and upload each document
     foreach ($partakers as $partaker)
         // if partaker was determined
-        if ($DBC->insertPartakerOnScientificPaper($id_scientific_papers, $DBC->selectStudentsByIndex($partaker['index'])[0]->id_attendances, $partaker['part']))
+        if ($DBC->insertPartakings($id_scientific_papers, $DBC->selectStudentsByIndex($partaker['index'])[0]->id_attendances, $partaker['part']))
             echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} je uspešno dodeljen.";
         else
             echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} ni uspešno dodeljen.";
