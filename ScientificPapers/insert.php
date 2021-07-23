@@ -38,7 +38,7 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
         if (isset($_POST['mentors'])) {
             foreach ($_POST['mentors'] as $mentor)
                 // if mentor was succesfully inserted 
-                if ($DBC->insertMentorOfScientificPaper($report['id_scientific_papers'], $mentor['id_faculties'], $mentor['mentor'], $mentor['taught'], $mentor['email'], $mentor['telephone']))
+                if ($DBC->insertSciPapMentor($report['id_scientific_papers'], $mentor['id_faculties'], $mentor['mentor'], $mentor['taught'], $mentor['email'], $mentor['telephone']))
                     echo "Mentor {$mentor['mentor']} je uspešno določen." . PHP_EOL;
                 else
                     echo "Mentor {$mentor['mentor']} ni uspešno določen." . PHP_EOL;
