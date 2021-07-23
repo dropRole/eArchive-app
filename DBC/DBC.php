@@ -1354,7 +1354,7 @@ class DBC extends PDO
             $this->deletePartakings($partaker->getIdPartakings());
         // select and delete every single mentor of the scientific paper
         foreach ($this->selectSciPapMentors($id_scientific_papers) as $mentor)
-            $this->deleteMentorOfScientificPaper($mentor->getIdMentorings());
+            $this->deleteSciPapMentor($mentor->getIdMentorings());
         $stmt = '   DELETE FROM
                         scientific_papers 
                     WHERE 
@@ -1617,10 +1617,10 @@ class DBC extends PDO
     } // updateMentorOfScientificPaper
 
     /*
-    *   delete mentoring of scientific paper
+    *   delete mentoring of the scientific paper
     *   @param int $id_mentorings
     */
-    public function deleteMentorOfScientificPaper(int $id_mentorings)
+    public function deleteSciPapMentor(int $id_mentorings)
     {
         $stmt = '   DELETE FROM 
                         mentorings 
@@ -1631,16 +1631,16 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if mentoring was deleted
+            if ($prpStmt->rowCount() == 1)
+                return 'Podatki o mentorstvu so uspešno izbrisani.';
+            return 'Podatki o mentorstvu niso uspešno izbrisani.';
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return 'Podatki o mentorstvu so uspešno izbrisani.';
-        return 'Podatki o mentorstvu niso uspešno izbrisani.';
-    } // deleteMentorOfScientificPaper
+    } // deleteSciPapMentor
 
     /*
     *   select data concerning the given mentor of scientific paper 
