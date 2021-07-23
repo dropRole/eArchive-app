@@ -1469,11 +1469,11 @@ class DBC extends PDO
     } // insertPartakings
 
     /*
-    *   update part in writing 
+    *   update partakers role in writing of the scientific paper 
     *   @param int $id_partakings
     *   @param string $part
     */
-    public function updatePartInScientificPaper(int $id_partakings, string $part)
+    public function updatePartInWriting(int $id_partakings, string $part)
     {
         $stmt = '   UPDATE 
                         partakings 
@@ -1487,15 +1487,15 @@ class DBC extends PDO
             $prpStmt->bindParam(':part', $part, PDO::PARAM_STR);
             $prpStmt->bindParam(':id_partakings', $id_partakings, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if part was updated 
+            if ($prpStmt->rowCount() == 1)
+                return 'Vloga soavtorja študija je uspešno ažurirana.';
+            return 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return 'Vloga soavtorja študija je uspešno ažurirana.';
-        return 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
-    } // updatePartInScientificPaper
+    } // updatePartInWriting
 
     /*
     *   select mentors of the scientific paper
