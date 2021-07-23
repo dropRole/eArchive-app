@@ -1501,7 +1501,7 @@ class DBC extends PDO
     *   select mentors of the scientific paper
     *   @param int $id_scientific_papers
     */
-    public function selectSciPapMentors($id_scientific_papers)
+    public function selectSciPapMentors(int $id_scientific_papers)
     {
         $stmt = '   SELECT 
                         mentorings.id_mentorings,
@@ -1514,17 +1514,17 @@ class DBC extends PDO
                         INNER JOIN faculties
                         USING(id_faculties)
                     WHERE 
-                        id_scientific_papers = :id_scientific_papers    ';
+                        mentorings.id_scientific_papers = :id_scientific_papers    ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone']);;
     } // selectSciPapMentors
 
     /*
