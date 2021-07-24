@@ -33,7 +33,7 @@ if (isset($id_scientific_papers)) {
                         <td>
                             <?php
                             // if partaker student has an account 
-                            if ($DBC->checkStudtAcct($DBC->selectStudentsByIndex($partaker->index)[0]->id_attendances)) {
+                            if ($DBC->checkAcctAssignment($DBC->selectStudentsByIndex($partaker->index)[0]->id_attendances)) {
                                 // if partaker student has an account avatar
                                 if ($avatar = $DBC->hasAcctAvatar($partaker->index)) {
                             ?>

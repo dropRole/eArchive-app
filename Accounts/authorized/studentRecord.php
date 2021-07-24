@@ -72,7 +72,7 @@ include_once '../../nav.php';
                         <td>
                             <?php
                             // if student is assigned an account to  
-                            if ($DBC->checkStudtAcct($student->id_attendances)) {
+                            if ($DBC->checkAcctAssignment($student->id_attendances)) {
                             ?>
                                 Dodeljen: <span class="text-warning"><?php echo $DBC->getAccountParticulars($student->id_attendances); ?></span>
                                 <span class="acc-del-btn" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>">&#10007;</span>
