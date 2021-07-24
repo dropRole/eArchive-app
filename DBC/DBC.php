@@ -797,7 +797,7 @@ class DBC extends PDO
                 $this->deleteScientificPaper($scientificPaper->getIdScientificPapers());
             } // foreach
         // if account was granted to
-        if ($this->checkStudtAcct($id_attendances))
+        if ($this->checkAcctAssignment($id_attendances))
             $this->deleteStudtAcct($id_attendances, $index);
         $this->deleteAttendance($id_attendances);
         try {
@@ -1818,7 +1818,7 @@ class DBC extends PDO
     } // deleteDocument
 
     /*
-    *   delete all documents of scientific paper
+    *   delete all document records the given of scientific paper and remove them from the server
     *   @param int $id_scientific_papers
     */
     public function deleteDocuments(int $id_scientific_papers)
@@ -1850,10 +1850,10 @@ class DBC extends PDO
     } // deleteDocuments          
 
     /*
-    *   if the student has been assigned with an account
+    *   checkout whether the student has been assigned an account to
     *   @param int $id_attendances
     */
-    public function checkStudtAcct(int $id_attendances)
+    public function checkAcctAssignment(int $id_attendances)
     {
         $stmt = '   SELECT 
                         * 
@@ -1866,15 +1866,15 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if account has been assigned to
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return TRUE;
-        return FALSE;
-    } // checkStudtAcct
+    } // checkAcctAssignment
 
     /*
     *   check for account credentials
