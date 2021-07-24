@@ -20,5 +20,5 @@ if (isset($id_scientific_papers, $documents)) {
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // insert and upload each document
     foreach ($documents as $document)
-        echo $DBC->insertDocument($id_scientific_papers, $document['version'], $document['name']);
+        echo $DBC->uploadDocument($id_scientific_papers, $document['version'], $document['name']);
 } // if

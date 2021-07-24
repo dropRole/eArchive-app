@@ -44,6 +44,6 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
                     echo "Mentor {$mentor['mentor']} ni uspešno določen." . PHP_EOL;
         } // if
         foreach ($documents as $document)
-            echo $DBC->insertDocument($report['id_scientific_papers'], $document['version'], $document['name']);
+            echo $DBC->uploadDocument($report['id_scientific_papers'], $document['version'], $document['name']);
     } // if
 } // if  
