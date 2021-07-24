@@ -1793,8 +1793,8 @@ class DBC extends PDO
     } // uploadDocument
 
     /*
-    *   delete particular document of a scientific paper
-    *   @param int $id_documents
+    *   delete the record of the given scientific paper document and remove it from the server
+    *   @param string $source
     */
     public function deleteDocument(string $source)
     {
@@ -1807,14 +1807,14 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
             $prpStmt->execute();
+            // if document was logically and physically deleted
+            if ($prpStmt->rowCount() == 1 && unlink("../{$source}"))
+                return 'Dokument ' . basename($source) . ' je uspešno izbrisan.';
+            return 'Dokument ' . basename($source) . ' ni uspešno izbrisan.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected and document physically deleted
-        if ($prpStmt->rowCount() == 1 && unlink("../{$source}"))
-            return 'Dokument ' . basename($source) . ' je uspešno izbrisan.';
-        return 'Dokument ' . basename($source) . ' ni uspešno izbrisan.';
     } // deleteDocument
 
     /*
