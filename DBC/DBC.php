@@ -1666,7 +1666,7 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
             $prpStmt->execute();
-                return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone'])[0]);
+            return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone'])[0]);
         } // try
         catch (PDOException $e) {
             // output error message 
@@ -1698,11 +1698,54 @@ class DBC extends PDO
         } // catch
     } // selectDocuments
 
-    /*
-    *   insert document of scientific paper
+    /* 
+    *   insert scientific paper document record
     *   @param int $id_scientific_papers
+    *   @param string $source
+    *   @param DateTime $published
+    *   @param string $version
     */
-    public function insertDocument(int $id_scientific_papers, string $version, string $document)
+    private function insertDocument(int $id_scientific_papers, string $source, DateTime $published, string $version)
+    {
+        $stmt = '   INSERT INTO
+                        documents 
+                    (
+                        id_scientific_papers,
+                        source,
+                        published,
+                        version
+                    )
+                    VALUES(
+                        :id_scientific_papers,
+                        :source,
+                        :published,
+                        :version
+                    )   ';
+        try {
+            // prepare, bind params to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
+            $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
+            $prpStmt->bindValue(':published', $published->format('d-m-Y'), PDO::PARAM_STR);
+            $prpStmt->bindParam(':version', $version, PDO::PARAM_STR);
+            $prpStmt->execute();
+            // if document record was inserted
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // insertDocument
+
+    /*
+    *   uplaod document of the scientific paper to the server
+    *   @param int $id_scientific_papers
+    *   @param string $version
+    *   @param string $document
+    */
+    public function uploadDocument(int $id_scientific_papers, string $version, string $document)
     {
         // if not already running a transaction
         if (!$this->inTransaction()) {
@@ -1716,38 +1759,17 @@ class DBC extends PDO
                         if ($_FILES['document']['error'][$indx] == UPLOAD_ERR_OK) {
                             $finfo = new finfo();
                             $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
-                            // if it's not a PDF document
-                            if (strpos($mimetype, 'pdf') == FALSE)
-                                return "Napaka: dokument '{$_FILES['document']['name'][$indx]}' ni uspešno dodan saj ni tipa .pdf .";
+                            // if document is not of the application/pdf mimetype
+                            if (!$mimetype != 'application/pdf')
+                                return "Napaka: dokument '{$_FILES['document']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
                             $upload = TRUE;
                             // if document meets the condition 
                             if ($upload) {
                                 // set destination of the uploded file
                                 $dir = 'uploads/documents/';
                                 $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['document']['name'][$indx]);
-                                $stmt = '   INSERT INTO
-                                                documents
-                                            (
-                                                id_scientific_papers,
-                                                source,
-                                                published,
-                                                version
-                                            )
-                                            VALUES(
-                                                :id_scientific_papers,
-                                                :source,
-                                                :published,
-                                                :version
-                                            )   ';
-                                // prepare, bind params to and execute stmt
-                                $prpStmt = $this->prepare($stmt);
-                                $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
-                                $prpStmt->bindParam(':source', $destination, PDO::PARAM_STR);
-                                $prpStmt->bindValue(':published', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
-                                $prpStmt->bindValue(':version', $version, PDO::PARAM_STR);
-                                $prpStmt->execute();
-                                // if documnet was inserted into db and moved to a new destination  
-                                if ($prpStmt->rowCount() == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
+                                // if document was logically and physically interpolated
+                                if ($this->insertDocument($id_scientific_papers, $destination, new DateTime(), $version) == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
                                     // commit current transaction
                                     $this->commit();
                                     return "Dokument {$_FILES['document']['name'][$indx]} je uspešno naložen." . PHP_EOL;
@@ -1764,12 +1786,11 @@ class DBC extends PDO
             } // try
             catch (PDOException $e) {
                 // output error message 
-                return "Napaka: {$e->getMessage()}." . PHP_EOL;
+                echo "Napaka: {$e->getMessage()}." . PHP_EOL;
             } // catch 
         } // if
-        else
-            return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
-    } // insertDocument
+        return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
+    } // uploadDocument
 
     /*
     *   update version of a document
