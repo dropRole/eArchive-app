@@ -1644,15 +1644,15 @@ class DBC extends PDO
     } // deleteSciPapMentor
 
     /*
-    *   select data concerning the given mentor of scientific paper 
+    *   select mentoring of the scientific paper 
     *   @param int $id_mentorings
     */
-    public function selectMentorOfScientificPaper(int $id_mentorings)
+    public function selectMentoring(int $id_mentorings)
     {
         $stmt = '   SELECT 
-                        mentor,
-                        id_faculties,
-                        taught,
+                        mentorings.id_faculties,
+                        mentorings.mentor,
+                        mentorings.taught,
                         mentorings.email,
                         mentorings.telephone
                     FROM 
@@ -1660,22 +1660,19 @@ class DBC extends PDO
                         INNER JOIN faculties
                         USING(id_faculties) 
                     WHERE 
-                        id_mentorings = :id_mentorings  ';
+                        mentorings.id_mentorings = :id_mentorings  ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
             $prpStmt->execute();
+                return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone'])[0]);
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone'])[0]);
-        return [];
-    } // selectMentorOfScientificPaper
+    } // selectMentoring
 
     /*
     *   select scientific paper belonging document
