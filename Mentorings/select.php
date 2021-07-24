@@ -15,7 +15,7 @@ if (isset($_GET['id_mentorings'])) {
     // return a new PDO object instance that carries connection with the database server 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // select data of the specified mentor
-    echo $DBC->selectMentorOfScientificPaper($id_mentorings);
+    echo $DBC->selectMentoring($id_mentorings);
 } // if
 // if id of scientific paper record is successfully passed by URL query string
 else if (isset($_GET['id_scientific_papers'])) {
