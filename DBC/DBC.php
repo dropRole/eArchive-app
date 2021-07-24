@@ -1675,31 +1675,27 @@ class DBC extends PDO
     } // selectMentoring
 
     /*
-    *   select scientific paper belonging document
+    *   select the documents belonging to the scientific paper
     *   @param int id_scientific_papers
     */
-    public function selectDocuments($id_scientific_papers)
+    public function selectDocuments(int $id_scientific_papers)
     {
-        $resultSet = [];
-        $stmt = 'SELECT 
+        $stmt = '   SELECT 
                     *
-                FROM 
-                    documents
-                WHERE 
-                    id_scientific_papers = :id_scientific_papers    ';
+                    FROM 
+                        documents
+                    WHERE 
+                        id_scientific_papers = :id_scientific_papers    ';
         try {
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
+            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Documents::class, ['id_documents', 'source', 'published', 'version']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single or more rows are affected
-        if ($prpStmt->rowCount() >= 1)
-            $resultSet = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Documents::class, ['id_documents', 'source', 'published', 'version']);
-        return $resultSet;
     } // selectDocuments
 
     /*
