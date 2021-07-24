@@ -1793,37 +1793,6 @@ class DBC extends PDO
     } // uploadDocument
 
     /*
-    *   update version of a document
-    *   @param int $id_documents
-    *   @param string $version
-    */
-    public function updateDocument(int $id_documents, string $version)
-    {
-        try {
-            $stmt = '   UPDATE  
-                                documents
-                        SET 
-                            version = :version 
-                        WHERE 
-                            id_documents = :id_documents    ';
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':version', $version, PDO::PARAM_STR);
-            $prpStmt->bindParam(':id_documents', $id_documents, PDO::PARAM_INT);
-            $prpStmt->execute();
-            // if single one document is affected
-            if ($prpStmt->rowCount() == 1)
-                return 'Verzija dokumenta je uspešno ažurirana.';
-            else
-                return 'Napaka: Verzija dokumenta ni uspešno ažurirana.';
-        } // try
-        catch (PDOException $e) {
-            // output error message 
-            return "Napaka: {$e->getMessage()}.";
-        } // catch
-    } // updateDocuments
-
-    /*
     *   delete particular document of a scientific paper
     *   @param int $id_documents
     */
