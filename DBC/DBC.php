@@ -1577,15 +1577,15 @@ class DBC extends PDO
     } // insertSciPapMentor
 
     /*
-    *   update mentoring of scientific paper
+    *   update mentoring of the scientific paper
     *   @param int $id_mentorings
-    *   @param int $id_scientific_papers
     *   @param int $id_faculties
     *   @param string $mentor
+    *   @param string $taught
     *   @param string $email
     *   @param string $telephone
     */
-    public function updateMentorOfScientificPaper(int $id_mentorings, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
+    public function updateMentoring(int $id_mentorings, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
     {
         $stmt = '   UPDATE 
                         mentorings 
@@ -1607,15 +1607,15 @@ class DBC extends PDO
             $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if mentoring was updated 
+            if ($prpStmt->rowCount() == 1)
+                return 'Podatki o mentorju znanstvenega dela so uspešno ažurirani.';
+            return 'Napaka: podatki o mentorju znanstvenega dela niso uspešno ažurirani.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected 
-        if ($prpStmt->rowCount() == 1)
-            return 'Podatki o mentorju znanstvenega dela so uspešno ažurirani.';
-        return 'Napaka: podatki o mentorju znanstvenega dela niso uspešno ažurirani.';
-    } // updateMentorOfScientificPaper
+    } // updateMentoring
 
     /*
     *   delete mentoring of the scientific paper
