@@ -1877,16 +1877,16 @@ class DBC extends PDO
     } // checkAcctAssignment
 
     /*
-    *   check for account credentials
-    *   @param int $index
-    *   @param int $pass
+    *   check if account credentials are valid 
+    *   @param string $index
+    *   @param string $pass
     */
     public function checkAcctCredentials(string $index, string $pass)
     {
         // authentication report
         $report = [
             'logged' => FALSE,
-            'message' => ''
+            'mssg' => ''
         ];
         $stmt = '   SELECT 
                         pass 
@@ -1906,39 +1906,39 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':index', $index, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if single row is affected
+            // if account credentials are valid
             if ($prpStmt->rowCount() == 1) {
                 $hash = $prpStmt->fetch(PDO::FETCH_COLUMN);
-                // if hash is composed of given pass
+                // if hash is composed of the given password
                 if (password_verify($pass, $hash)) {
-                    // register vars and assign index
+                    // register session variables
                     $_SESSION['user'] = 'stu_' . $index;
                     // register var and assign pass
                     $_SESSION['pass'] = $pass;
                     $_SESSION['index'] = $index;
                     $report['logged'] = TRUE;
-                    $report['message'] = 'Prijava študenta je bila uspešna.';
+                    $report['mssg'] = 'Prijava študenta je bila uspešna.';
                 } // if
                 else
-                    $report['message'] = 'Geslo računa z dano indeks številko ni pravilno.';
+                    $report['mssg'] = 'Geslo računa z dano indeks številko ni pravilno.';
             } // if
-            // if passed credentials are for superuser 
+            // if superuser has attempted login 
             else if (strpos(self::SUPERUSER, $index) && self::PASS == $pass) {
-                // register vars and denote the authorized
+                // register session variables
                 $_SESSION['user'] = self::SUPERUSER;
                 // register var and assign pass
                 $_SESSION['pass'] = self::PASS;
                 $_SESSION['authorized'] = TRUE;
                 $report['logged'] = TRUE;
-                $report['message'] = 'Prijava pooblaščenega je bila uspešna.';
+                $report['mssg'] = 'Prijava pooblaščenega je bila uspešna.';
             } // else if
             else
-                $report['message'] = 'Račun z dano indeks številko ne obstaja.';
+                $report['mssg'] = 'Račun z dano indeks številko ne obstaja.';
         } // try
         catch (PDOException $e) {
-            $report['message'] = "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // return JSON value 
+        // return JSON  
         return json_encode($report);
     } // checkAcctCredentials
 
