@@ -59,7 +59,7 @@
                         }
                     )
                     rprt.classList = 'text-warning font-italic'
-                    rprt.textContent = response.message
+                    rprt.textContent = response.mssg
                     document.getElementById('lgnRprt').innerHTML = ''
                     document.getElementById('lgnRprt').appendChild(rprt)
                 })
