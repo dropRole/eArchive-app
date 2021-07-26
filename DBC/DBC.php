@@ -1944,11 +1944,11 @@ class DBC extends PDO
 
     /*
     *   !DML 
-    *   create database user in the cluster with student role privileges
+    *   create database user in the cluster with the student role privileges
     *   @param string $index
     *   @param string $hash
     */
-    private function createDBUser(string $index, string $hash)
+    private function createStudtUser(string $index, string $hash)
     {
         $stmt = "   CREATE USER 
                         stu_$index
@@ -1967,7 +1967,7 @@ class DBC extends PDO
         catch (PDOException $e) {
             return "Napaka: {$e->getMessage}.";
         } // catch
-    } // createDBUser
+    } // createStudtUser
 
     /*
     *   !DML 
@@ -2064,7 +2064,7 @@ class DBC extends PDO
             // establish a new transaction
             $this->beginTransaction();
             $hash = password_hash($pass, PASSWORD_BCRYPT);
-            if ($this->createDBUser($index, $hash)) {
+            if ($this->createStudtUser($index, $hash)) {
                 $stmt = '   INSERT INTO 
                                 accounts
                             (  
