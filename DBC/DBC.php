@@ -2049,7 +2049,7 @@ class DBC extends PDO
     } // dropStudtUser
 
     /*
-    *   create new database user and insert account credentials 
+    *   insert account record with credentials for database access and assign it to the student
     *   @param int $id_attendances
     *   @param string $index
     *   @param string $pass
@@ -2061,6 +2061,7 @@ class DBC extends PDO
             // establish a new transaction
             $this->beginTransaction();
             $hash = password_hash($pass, PASSWORD_BCRYPT);
+            // if database user with the student privileges has been created
             if ($this->createStudtUser($index, $hash)) {
                 $stmt = '   INSERT INTO 
                                 accounts
@@ -2083,7 +2084,7 @@ class DBC extends PDO
                     $prpStmt->bindValue(':pass', $hash, PDO::PARAM_STR);
                     $prpStmt->bindValue(':granted', (new DateTime())->format('d-m-Y'), PDO::PARAM_STR);
                     $prpStmt->execute();
-                    // if single row is affected 
+                    // if account records was inserted 
                     if ($prpStmt->rowCount() == 1) {
                         // commit the changes
                         $this->commit();
@@ -2095,7 +2096,7 @@ class DBC extends PDO
                 } // try
                 catch (PDOException $e) {
                     // output error message
-                    return "Napaka: {$e->getMessage()}.";
+                    echo "Napaka: {$e->getMessage()}.";
                 } // catch
             } // if
             // rollback the changes
