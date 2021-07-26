@@ -2028,10 +2028,10 @@ class DBC extends PDO
 
     /*
     *   !DML 
-    *   drop database user in the cluster with student role privileges
+    *   drop database user in the cluster with the student role privileges
     *   @param string $index
     */
-    private function dropDBUser(string $index)
+    private function dropStudtUser(string $index)
     {
         $stmt = "   DROP USER 
                         stu_$index  ";
@@ -2044,9 +2044,9 @@ class DBC extends PDO
             return FALSE;
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage}.";
+            echo "Napaka: {$e->getMessage}.";
         } // catch
-    } // dropDBUser
+    } // dropStudtUser
 
     /*
     *   create new database user and insert account credentials 
@@ -2175,7 +2175,7 @@ class DBC extends PDO
             // begin a new one
             $this->beginTransaction();
             // if the user was droped
-            if ($this->revokeStudtPrivileges($index) && $this->dropDBUser($index)) {
+            if ($this->revokeStudtPrivileges($index) && $this->dropStudtUser($index)) {
                 $stmt = '   DELETE FROM 
                                 accounts
                             WHERE 
