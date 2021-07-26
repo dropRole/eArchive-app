@@ -1971,10 +1971,10 @@ class DBC extends PDO
 
     /*
     *   !DML 
-    *   revoke privileges on database object for the given student role  
+    *   revoke privileges on database objects for the given student role  
     *   @param string $index
     */
-    private function revokeUserPrivileges(string $index)
+    private function revokeStudtPrivileges(string $index)
     {
         $stmt = "   REVOKE  
                         ALL PRIVILEGES 
@@ -2017,17 +2017,14 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt2 = $this->prepare($stmt2);
             // if stmts were successfully executed
-            if ($prpStmt->execute() && $prpStmt2->execute()) {
+            if ($prpStmt->execute() && $prpStmt2->execute())
                 return TRUE;
-            }
-            echo $prpStmt->errorInfo()[2];
-            echo $prpStmt2->errorInfo()[2];
             return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // revokeUserPrivileges
+    } // revokeStudtPrivileges
 
     /*
     *   !DML 
@@ -2178,7 +2175,7 @@ class DBC extends PDO
             // begin a new one
             $this->beginTransaction();
             // if the user was droped
-            if ($this->revokeUserPrivileges($index) && $this->dropDBUser($index)) {
+            if ($this->revokeStudtPrivileges($index) && $this->dropDBUser($index)) {
                 $stmt = '   DELETE FROM 
                                 accounts
                             WHERE 
