@@ -2155,7 +2155,7 @@ class DBC extends PDO
                     $prpStmt = $this->prepare($stmt);
                     $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
                     $prpStmt->execute();
-                    // if single row is affected
+                    // if account record was deleted
                     if ($prpStmt->rowCount() == 1) {
                         // commit the current transaction
                         $this->commit();
@@ -2163,7 +2163,7 @@ class DBC extends PDO
                     }
                     // rollback the current transaction
                     $this->rollback();
-                    return 'Račun ni uspešno izbrisan.';
+                    return 'Napaka: račun ni uspešno izbrisan.';
                 } // try
                 catch (PDOException $e) {
                     echo "Napaka: {$e->getMessage()}.";
@@ -2171,7 +2171,7 @@ class DBC extends PDO
             }
             // rollback the current transaction
             $this->rollback();
-            return 'Napaka: uporabniški račun ni uspešno izbrisan.';
+            return 'Napaka: račun ni uspešno izbrisan.';
         } // if
         return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
     } // deleteStudtAcct
