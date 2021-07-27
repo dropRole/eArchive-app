@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'archivoLight';
+    src: url('../font/static/Archivo/Archivo-Light.ttf') format('truetype');
+}
+
+body {
+    font-family: archivoLight;
+}
