@@ -2134,35 +2134,6 @@ class DBC extends PDO
     } // selectAcctGrantDate
 
     /*
-    *   update an account password
-    *   @param int $id_accounts
-    *   @param string $new
-    *   @param string $confirmation
-    */
-    public function updateAccountPass($id_accounts, $new, $confirmation)
-    {
-        // if passwords match 
-        if ($new == $confirmation) {
-            $stmt = '   UPDATE 
-                        accounts 
-                    SET
-                        pass = :pass    
-                    WHERE 
-                        id_account = :id_account    ';
-            // prepare, bind param to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindValue(':pass', password_hash($confirmation, PASSWORD_BCRYPT), PDO::PARAM_STR);
-            $prpStmt->bindParam(':id_account', $id_accounts, PDO::PARAM_INT);
-            $prpStmt->execute();
-            // if single row is affected
-            if ($prpStmt->rowCount() == 1)
-                return 'Geslo računa je uspešno spremenjeno.';
-            else
-                return 'Napaka: geslo računa ni uspešno spremenjeno.';
-        } // if
-    } // alterAccountPass
-
-    /*
     *   drop the subject user and delete account credentials
     *   @param int $id_attendances
     *   @param string $index
