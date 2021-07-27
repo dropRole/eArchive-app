@@ -14,7 +14,7 @@
                 if (isset($_SESSION['authorized'])) {
                 ?>
                     <li class="nav-item active">
-                        <a class="nav-link" href="/eArchive/Accounts/authorized/studentRecord.php">Evidenca študentov
+                        <a class="nav-link" href="/eArchive/Accounts/authorized/evidence.php">Evidenca študentov
                             <span class="sr-only">Evidenca študentov</span>
                         </a>
                     </li>
