@@ -15,13 +15,15 @@ include_once '../../nav.php';
 
 ?>
 <section class="container p-3">
-    <p class="h2">Evidenca študentov</p>
-    <div class="d-flex justify-content-starts w-25">
-        <input id="fltrInputEl" class="form-control" type="text" placeholder="Indeks">
-    </div>
-    <div class="d-flex justify-content-end">
-        <button id="studtInsrBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="
+    <p class="h2 my-3">Evidenca študentov</p>
+    <div class="d-flex flex-row justify-content-lg-between">
+        <div class="align-self-start">
+            <input id="fltrInputEl" class="form-control" type="text" placeholder="Indeks">
+        </div>
+        <div class="align-self-end">
+            <button id="studtInsrBtn" class="btn btn-primary" type="button" data-toggle="modal" data-target="
         #studtInsrMdl">Vstavi študenta</button>
+        </div>
         <button id="rprtMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#rprtMdl"></button>
     </div>
     <div class="table-responsive mt-3">
