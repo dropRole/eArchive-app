@@ -2107,10 +2107,10 @@ class DBC extends PDO
     } // insertStudtAcct
 
     /*
-    *   get particulars of the given account
+    *   select grant date of the given account
     *   @param int $id_attendances
     */
-    public function getAccountParticulars($id_attendances)
+    public function selectAcctGrantDate($id_attendances)
     {
         $stmt = '   SELECT
                         granted
@@ -2123,17 +2123,15 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
+            // if account was granted
+            if ($prpStmt->rowCount() == 1) 
+                return $prpStmt->fetch(PDO::FETCH_COLUMN)->format('d-m-Y');
+            return NULL;
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
-        // if single row is affected
-        if ($prpStmt->rowCount() == 1) {
-            $account = $prpStmt->fetch(PDO::FETCH_COLUMN);
-            return (new DateTime($account))->format('d-m-Y');
-        } // if
-        return NULL;
-    } // getAccountParticulars
+    } // selectAcctGrantDate
 
     /*
     *   update an account password
