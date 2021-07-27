@@ -2176,7 +2176,7 @@ class DBC extends PDO
             $prpStmt->execute();
             // if account was granted
             if ($prpStmt->rowCount() == 1)
-                return $prpStmt->fetch(PDO::FETCH_COLUMN)->format('d-m-Y');
+                return (new DateTime($prpStmt->fetch(PDO::FETCH_COLUMN)))->format('d-m-Y');
             return NULL;
         } // try
         catch (PDOException $e) {
