@@ -2058,12 +2058,13 @@ class DBC extends PDO
     {
         // check if not already in a transaction
         if (!$this->inTransaction()) {
-            // establish a new transaction
-            $this->beginTransaction();
-            $hash = password_hash($pass, PASSWORD_BCRYPT);
-            // if database user with the student privileges has been created
-            if ($this->createStudtUser($index, $hash)) {
-                $stmt = '   INSERT INTO 
+            try {
+                // establish a new transaction
+                $this->beginTransaction();
+                $hash = password_hash($pass, PASSWORD_BCRYPT);
+                // if database user with the student privileges has been created
+                if ($this->createStudtUser($index, $hash)) {
+                    $stmt = '   INSERT INTO 
                                 accounts
                             (  
                                 id_attendances,
@@ -2077,7 +2078,6 @@ class DBC extends PDO
                                 :granted,
                                 DEFAULT
                             )   ';
-                try {
                     // prepare, bind params to and execute stmt
                     $prpStmt = $this->prepare($stmt);
                     $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
@@ -2093,12 +2093,12 @@ class DBC extends PDO
                     // rollback the changes
                     $this->rollback();
                     return 'Račun ni uspešno ustvarjen.';
-                } // try
-                catch (PDOException $e) {
-                    // output error message
-                    echo "Napaka: {$e->getMessage()}.";
-                } // catch
-            } // if
+                } // if
+            } // try
+            catch (PDOException $e) {
+                // output error message
+                echo "Napaka: {$e->getMessage()}.";
+            } // catch
             // rollback the changes
             $this->rollback();
             return 'Napaka: uporabniški račun ni uspešno ustvarjen.';
@@ -2124,7 +2124,7 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
             // if account was granted
-            if ($prpStmt->rowCount() == 1) 
+            if ($prpStmt->rowCount() == 1)
                 return $prpStmt->fetch(PDO::FETCH_COLUMN)->format('d-m-Y');
             return NULL;
         } // try
@@ -2142,15 +2142,15 @@ class DBC extends PDO
     {
         // if not in a transation
         if (!$this->inTransaction()) {
-            // begin a new one
-            $this->beginTransaction();
-            // if the user was droped
-            if ($this->revokeStudtPrivileges($index) && $this->dropStudtUser($index)) {
-                $stmt = '   DELETE FROM 
+            try {
+                // begin a new one
+                $this->beginTransaction();
+                // if the user was droped
+                if ($this->revokeStudtPrivileges($index) && $this->dropStudtUser($index)) {
+                    $stmt = '   DELETE FROM 
                                 accounts
                             WHERE 
                                 id_attendances = :id_attendances    ';
-                try {
                     // prepare, bind param to and execute stmt
                     $prpStmt = $this->prepare($stmt);
                     $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
@@ -2160,15 +2160,15 @@ class DBC extends PDO
                         // commit the current transaction
                         $this->commit();
                         return 'Račun je uspešno izbrisan.';
-                    }
+                    } // if
                     // rollback the current transaction
                     $this->rollback();
                     return 'Napaka: račun ni uspešno izbrisan.';
-                } // try
-                catch (PDOException $e) {
-                    echo "Napaka: {$e->getMessage()}.";
-                } // catch
-            }
+                } // if
+            } // try
+            catch (PDOException $e) {
+                echo "Napaka: {$e->getMessage()}.";
+            } // catch
             // rollback the current transaction
             $this->rollback();
             return 'Napaka: račun ni uspešno izbrisan.';
