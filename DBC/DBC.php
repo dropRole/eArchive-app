@@ -2212,17 +2212,47 @@ class DBC extends PDO
     } // hasAcctAvatar
 
     /* 
+    *   update account avatar location on the server
+    *   @param int $id_attendances
+    *   @param string $avatar
+    */
+    private function updateAcctAvatar(int $id_attendances, string $avatar)
+    {
+        $stmt = '   UPDATE 
+                        accoutns
+                    SET 
+                        avatar = :avatar 
+                    WHERE 
+                        id_attendances = :id_attendances    ';
+        try {
+            // prepare, bind paramas to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->bindParam(':avatar', $avatar, PDO::PARAM_STR);
+            $prpStmt->execute();
+            // if avatar location was updated
+            if ($prpStmt->rowCount() == 1)
+                return TRUE;
+            return FALSE;
+        } // try
+        catch (PDOException $e) {
+            // output the excpetion error message
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+    } // updateAcctAvatar
+
+    /* 
     *   upload avatar for the given account 
     *   @param int $id_attendances
     */
-    public function uploadAcctAvtr(int $id_attendances)
+    public function uploadAcctAvatar(int $id_attendances)
     {
         // if not already running a transaction
         if (!$this->inTransaction()) {
             try {
                 // begin a new transaction
                 $this->beginTransaction();
-                // if document is uploaded successfully 
+                // if avatar was uploaded successfully 
                 if ($_FILES['avatar']['error'] == UPLOAD_ERR_OK) {
                     $finfo = new finfo();
                     $mimetype = $finfo->file($_FILES['avatar']['tmp_name'], FILEINFO_MIME_TYPE);
@@ -2235,26 +2265,15 @@ class DBC extends PDO
                         // set destination of the uploded file
                         $dir = 'uploads/avatars/';
                         $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['avatar']['name']);
-                        $stmt = '   UPDATE 
-                                        accounts
-                                    SET 
-                                        avatar = :avatar 
-                                    WHERE 
-                                        id_attendances = :id_attendances    ';
-                        // prepare, bind params to and execute stmt
-                        $prpStmt = $this->prepare($stmt);
-                        $prpStmt->bindParam(':avatar', $destination, PDO::PARAM_STR);
-                        $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
-                        $prpStmt->execute();
-                        // if data was inserted into the database and document moved to the server  
-                        if ($prpStmt->rowCount() == 1 && move_uploaded_file($_FILES['avatar']['tmp_name'], "../../{$destination}")) {
+                        // if account record was updated and avatar moved to the server
+                        if ($this->updateAcctAvatar($id_attendances, $destination) == 1 && move_uploaded_file($_FILES['avatar']['tmp_name'], "../../{$destination}")) {
                             // commit current transaction
                             $this->commit();
                             return "Avatar {$_FILES['avatar']['name']} je uspešno naložen." . PHP_EOL;
                         } // if
                         // rollback current transaction
                         $this->rollBack();
-                        return 'Napaka: podatki dokumenta niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.' . $prpStmt->errorInfo()[2] . PHP_EOL;
+                        return 'Napaka: lokacija ni uspešno spremenjena ali avatar ni uspešno naložen na strežnik.' . PHP_EOL;
                     } // if
                     return "Napaka: avatar {$_FILES['avatar']['name']} ni zadostil kriterij nalaganja." . PHP_EOL;
                 } // if
@@ -2262,10 +2281,10 @@ class DBC extends PDO
             } // try
             catch (PDOException $e) {
                 // output error message 
-                return "Napaka: {$e->getMessage()}." . PHP_EOL;
+                echo "Napaka: {$e->getMessage()}." . PHP_EOL;
             } // catch 
         } // if
-        return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
+        return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
     } // uploadAcctAvatar
 
     /* 
