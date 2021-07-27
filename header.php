@@ -18,6 +18,6 @@ require_once __DIR__ . './session.php';
     <!-- Core template CSS (includes Bootstrap) -->
     <link href='/eArchive/vendor/bootstrap/css/bootstrap.css' rel='stylesheet' />
     <!-- Custom CSS design -->
-    <!-- <link href='./custom/css/styles.css' rel='stylesheet' /> -->
+    <link href='/eArchive/custom/css/main.css' rel='stylesheet' />
 </head>
 <body>
