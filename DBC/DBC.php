@@ -2288,11 +2288,11 @@ class DBC extends PDO
     } // uploadAcctAvatar
 
     /* 
-    *   delete avatar for the given account 
-    *   @param string $id_attendances
+    *   delete the given account avatar from the server and nullify the location  
+    *   @param int $id_attendances
     *   @param string $avatar 
     */
-    public function deleteAcctAvatar(string $id_attendances, string $avatar)
+    public function deleteAcctAvatar(int $id_attendances, string $avatar)
     {
         // if not already running a transaction
         if (!$this->inTransaction()) {
@@ -2305,7 +2305,7 @@ class DBC extends PDO
                                 avatar = NULL 
                             WHERE 
                                 id_attendances = :id_attendances    ';
-                // prepare, bind params to and execute stmt
+                // prepare, bind param to and execute stmt
                 $prpStmt = $this->prepare($stmt);
                 $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
                 $prpStmt->execute();
@@ -2317,13 +2317,13 @@ class DBC extends PDO
                 } // if
                 // rollback current transaction
                 $this->rollBack();
-                return 'Napaka: lokacija avatarja ni uspešno logično ali fizično odstranjena.';
+                return 'Napaka: avatar ni uspešno logično ali fizično odstranjen.';
             } // try
             catch (PDOException $e) {
                 // output error message 
-                return "Napaka: {$e->getMessage()}." . PHP_EOL;
+                echo "Napaka: {$e->getMessage()}." . PHP_EOL;
             } // catch 
         } // if
-        return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
+        return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
     } // deleteAcctAvatar
 } // DBC
