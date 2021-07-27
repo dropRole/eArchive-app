@@ -27,10 +27,7 @@ class DBC extends PDO
 
     // SCIENTIFIC_PAPERS
 
-    /*
-    *   select all scientific papers
-    *   @param int $id_attendances
-    */
+    //   select all scientific papers to form scientific papers evidence table
     public function selectScientificPapers()
     {
         $stmt = "   SELECT 
@@ -63,7 +60,7 @@ class DBC extends PDO
     *   select all scientific papers written while student attended a specific program
     *   @param int $id_attendances
     */
-    public function selectSciPapsByProgAttendance($id_attendances)
+    public function selectSciPapsByProgAttendance(int $id_attendances)
     {
         $stmt = '   SELECT 
                         scientific_papers.*
@@ -120,7 +117,7 @@ class DBC extends PDO
     } // selectSciPapsByAuthor
 
     /*
-    *   select scientific papers mentored by the given mentor 
+    *   select scientific papers which mentor was 
     *   @param string $mentor
     */
     public function selectSciPapsByMentor(string $mentor)
@@ -236,7 +233,7 @@ class DBC extends PDO
 
     /*
     *   select all scientific papers according to the index number of the student attending the program
-    *   @param int $index
+    *   @param string $index
     */
     public function selectStudtSciPapers(string $index)
     {
@@ -264,7 +261,7 @@ class DBC extends PDO
     } // selectStudtSciPapers
 
     /*
-    *   select the given scientific paper record 
+    *   select the given scientific paper 
     *   @param int $id_scientific_papers
     */
     public function selectScientificPaper(int $id_scientific_papers)
@@ -447,7 +444,7 @@ class DBC extends PDO
 
     /*
     *   select students by index number 
-    *   @param int $index
+    *   @param string $index
     *   @param string $order
     */
     public function selectStudentsByIndex(string $index, string $order = 'ASC')
@@ -514,7 +511,6 @@ class DBC extends PDO
     /*
     *   insert student basics  
     *   @param int $id_postal_codes
-    *   @param int $id_accounts
     *   @param string $name
     *   @param string $surname
     *   @param string $email
@@ -572,7 +568,6 @@ class DBC extends PDO
     *   update student basics
     *   @param int $id_students
     *   @param int $id_postal_codes
-    *   @param int $id_accounts
     *   @param string $name
     *   @param string $surname
     *   @param string $email
@@ -1055,7 +1050,7 @@ class DBC extends PDO
     *   @param int $id_faculties
     *   @param int $id_programs
     *   @param DateTime $enrolled 
-    *   @param int $enrolled 
+    *   @param int $index 
     */
     public function insertAttendance(int $id_students, int $id_faculties, int $id_programs, DateTime $enrolled, string $index)
     {
@@ -1192,7 +1187,9 @@ class DBC extends PDO
     /*
     *   insert graduation of a student
     *   @param int $id_attendances
+    *   @param string $certificate
     *   @param DateTime $defended
+    *   @param DateTime $issued
     */
     public function uploadCertificate(int $id_attendances, string $certificate, DateTime $defended, DateTime $issued)
     {
@@ -2164,7 +2161,7 @@ class DBC extends PDO
     *   select grant date of the given account
     *   @param int $id_attendances
     */
-    public function selectAcctGrantDate($id_attendances)
+    public function selectAcctGrantDate(int $id_attendances)
     {
         $stmt = '   SELECT
                         granted
@@ -2382,5 +2379,5 @@ class DBC extends PDO
     } // deleteAcctAvatar
     
     // ACCOUNTS
-    
+
 } // DBC
