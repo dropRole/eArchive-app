@@ -127,7 +127,7 @@ include_once 'modals.php';
 
 ?>
 <!-- Custom core JavaScript -->
-<script src="/eArchive/custom/js/studentRecord.js"></script>
+<script src="/eArchive/custom/js/evidence.js"></script>
 <?php
 
 // script import declaration
