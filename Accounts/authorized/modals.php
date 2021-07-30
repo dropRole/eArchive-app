@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="studtInsrFrm">
-                <p class="h4 pt-2 px-3">Osnovni podatki</p>
+                <p class="h4 pt-4 px-3 pb-1">Osnovni podatki</p>
                 <div class="row px-3">
                     <div class="form-group col-6">
                         <label class="w-100">Ime
@@ -53,12 +53,12 @@
                         </label>
                     </div>
                     <div class="col-12">
-                        <p class="h5">Podatki o prebivališču</p>
+                        <p class="h5 ">Podatki o prebivališču</p>
                     </div>
                 </div>
                 <div id="residences" class="px-3">
+                    <p class="h6">Stalno prebivališče</p>
                     <div id="permanentResidence" class="row">
-                        <p class="col-12 h6">Stalno prebivališče</p>
                         <input type="hidden" name="residences[0][status]" value="STALNO">
                         <div class="form-group col-4">
                             <label class="w-100">Država
@@ -94,11 +94,11 @@
                     </div>
                     <p class="h6">Začasna bivališča</p>
                     <div class="d-flex justify-content-center col-12">
-                        <button id="addTempResBtn" class="btn btn-secondary" type="button">&plus;</button>
+                        <img id="addTempResBtn" src="/eArchive/custom/img/add.png" alt="Dodaj bivališče" title="Dodaj bivališče">
                     </div>
                 </div>
+                <p class="h4 pt-4 px-3 pb-1">Podatki o študiranju</p>
                 <div id="attendances" class="px-3 pb-3">
-                    <p class="h4 pt-2">Podatki o študiranju</p>
                     <p class="h6">Študijski programi</p>
                     <div class="row">
                         <div class="form-group col-6">
@@ -146,7 +146,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center col-12">
-                        <button id="addAttendanceBtn" class="btn btn-secondary" type="button">&plus;</button>
+                        <img id="addAttendanceBtn" src="/eArchive/custom/img/add.png" alt="Dodaj študij" title="Dodaj študij">
                     </div>
                 </div>
                 <input class="btn btn-warning offset-5 col-2 my-2" type="submit" value="Vstavi">
