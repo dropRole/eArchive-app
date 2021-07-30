@@ -16,11 +16,11 @@ include_once '../../nav.php';
 ?>
 <section class="container p-3">
     <p class="h2 my-3">Evidenca študentov</p>
-    <div class="d-flex flex-row justify-content-lg-between">
-        <div class="align-self-start">
+    <div class="d-lg-flex justify-content-lg-between">
+        <div>
             <input id="fltrInputEl" class="form-control" type="text" placeholder="Indeks">
         </div>
-        <div class="align-self-end">
+        <div>
             <button id="studtInsrBtn" class="btn btn-primary" type="button" data-toggle="modal" data-target="
         #studtInsrMdl">Vstavi študenta</button>
         </div>
