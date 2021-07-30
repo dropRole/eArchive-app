@@ -8,7 +8,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
+            <ul class="d-lg-flex align-items-lg-center navbar-nav ml-auto">
                 <?php
                 // if authorized has logged in
                 if (isset($_SESSION['authorized'])) {
