@@ -16,11 +16,11 @@ include_once '../../nav.php';
 ?>
 <section class="container p-3">
     <p class="h2">Evidenca znanstvenih del</p>
-    <div class="d-flex">
-        <div class="w-25">
+    <div class="d-lg-flex justify-content-between">
+        <div>
             <input id="fltrInputEl" class="form-control" type="text" placeholder="Predmet">
         </div>
-        <div class="w-25">
+        <div>
             <button id="sciPapInsrBtn" class="btn btn-primary" data-toggle="modal" data-target="
             #sciPapInsrMdl">Vstavi delo</button>
         </div>
@@ -108,6 +108,10 @@ include_once '../../nav.php';
         </table>
     </div>
 </section>
+
+<!-- Link with the custom CSS -->
+<link rel="stylesheet" href="/eArchive/custom/css/evidence.css">
+
 <?php
 
 // script import declaration
