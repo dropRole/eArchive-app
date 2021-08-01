@@ -1550,8 +1550,8 @@
     // attach event listeners to a scientific paper cards when rendered
     let listenSciPapCards = () => {
             // if anchor nodes for partaker insertion exist
-            if (document.querySelectorAll('.par-ins-a'))
-                document.querySelectorAll('.par-ins-a').forEach(anchor => {
+            if (document.querySelectorAll('.par-ins-img'))
+                document.querySelectorAll('.par-ins-img').forEach(anchor => {
                     // form will contain only control for partaker insertion
                     anchor.addEventListener('click', toPartakerInsrFrm)
                 }) // forEach
