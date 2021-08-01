@@ -40,8 +40,8 @@ if (isset($_GET['id_attendances'])) {
                             <p class="h6"><strong>Soavtorji</strong></p>
                         </div>
                         <div class="col-6">
-                            <a href="#sciPapInsrMdl" class="card-link par-ins-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal">
-                                <img src="/eArchive/custom/img/assignPartaker.png" data-toggle="tooltip" title="Dodeli">
+                            <a href="#sciPapInsrMdl" data-toggle="modal">
+                                <img class="par-ins-img" src="/eArchive/custom/img/assignPartaker.png" data-toggle="tooltip" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" title="Dodeli"> 
                             </a>
                         </div>
                     </div>
@@ -112,14 +112,11 @@ if (isset($_GET['id_attendances'])) {
                         if (count($documents))
                             foreach ($documents as $document) {
                         ?>
-                            <li class="list-group-item">
-                                Dokument
-                                <a href="<?php echo "../../{$document->getSource()}"; ?>" target="_blank">
-                                    <?php echo $document->getVersion(); ?>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <a class="text-info text-decoration-none" href="<?php echo "../../{$document->getSource()}"; ?>" target="_blank">
+                                    Dokument&nbsp;<?php echo $document->getVersion(); ?>
                                 </a>
-                                <span class="doc-del-spn ml-3" data-source="<?php echo $document->getSource(); ?>">
-                                    &#10007;
-                                </span>
+                                <img class="doc-del-spn" src="/eArchive/custom/img/deleteDocument.png" alt="Izbriši" data-toggle="tooltip" data-source="<?php echo $document->getSource(); ?>" title="Izbriši">
                             </li>
                         <?php
                             } // foreach
