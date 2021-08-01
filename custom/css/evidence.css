@@ -15,6 +15,7 @@ th {
 }
 
 img#addTempResBtn,
-img#addAttendanceBtn {
+img#addAttendanceBtn,
+img.doc-del-spn {
     cursor: pointer;
 }
