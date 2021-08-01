@@ -272,6 +272,10 @@
                     frag = response
                         // reflect fragments body     
                     document.querySelector('#sciPapViewMdl .modal-content').innerHTML = frag.body.innerHTML
+                        // enabling tooltips
+                    $(function() {
+                        $('[data-toggle="tooltip"]').tooltip()
+                    })
                 })
                 .then(() => listenSciPapCards())
                 .catch(error => alert(error)) // catch
@@ -1770,4 +1774,9 @@
         } // attachStudentTableListeners
 
     listenStudtEvidTbl()
+
+    // enabling tooltips
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    })()
 })()
