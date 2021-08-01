@@ -1423,7 +1423,7 @@ class DBC extends PDO
                         attendances.id_attendances,
                         attendances.index,
                         partakings.id_partakings,
-                        partakings.part
+                        partakings.part,
                         (students.name || ' ' || students.surname) AS fullname
                     FROM 
                         partakings
