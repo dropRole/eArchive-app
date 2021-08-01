@@ -1556,8 +1556,8 @@
                     anchor.addEventListener('click', toPartakerInsrFrm)
                 }) // forEach
                 // if spans for scientific paper partaker deletion exist
-            if (document.querySelectorAll('.par-del-spn'))
-                document.querySelectorAll('.par-del-spn').forEach(span => {
+            if (document.querySelectorAll('.par-del-img'))
+                document.querySelectorAll('.par-del-img').forEach(span => {
                     // attempt deletion of a partaker
                     span.addEventListener(
                             'click',
@@ -1567,32 +1567,26 @@
                         ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper partaker data update exist
-            if (document.querySelectorAll('.par-upd-a'))
-                document.querySelectorAll('.par-upd-a').forEach(anchor => {
-                    // attempt deletion of a partaker
-                    anchor.addEventListener('click', toPartakerUpdtFrm) // addEventListener
-                }) // forEach
-                // if anchors for scientific paper partaker data update exist
-            if (document.querySelectorAll('.par-upd-a'))
-                document.querySelectorAll('.par-upd-a').forEach(anchor => {
+            if (document.querySelectorAll('.par-upd-img'))
+                document.querySelectorAll('.par-upd-img').forEach(anchor => {
                     // attempt deletion of a partaker
                     anchor.addEventListener('click', toPartakerUpdtFrm) // addEventListener
                 }) // forEach
                 // if anchors for mentor insertion are rendered
-            if (document.querySelectorAll('.men-ins-a'))
-                document.querySelectorAll('.men-ins-a').forEach(anchor => {
+            if (document.querySelectorAll('.men-ins-img'))
+                document.querySelectorAll('.men-ins-img').forEach(anchor => {
                     // restructure form for document upload
                     anchor.addEventListener('click', toMentorInsrFrm)
                 }) // forEach
                 // if anchor elements for mentor data update exist
-            if (document.querySelectorAll('.men-upd-a'))
-                document.querySelectorAll('.men-upd-a').forEach(anchor => {
+            if (document.querySelectorAll('.men-ins-img'))
+                document.querySelectorAll('.men-ins-img').forEach(anchor => {
                     // restructure form for document upload
                     anchor.addEventListener('click', toMentorUpdtFrm)
                 }) // forEachF
                 // if span elements for mentor deletion are rendered
-            if (document.querySelectorAll('.men-del-spn'))
-                document.querySelectorAll('.men-del-spn').forEach(anchor => {
+            if (document.querySelectorAll('.men-del-img'))
+                document.querySelectorAll('.men-del-img').forEach(anchor => {
                     // restructure form for document upload
                     anchor.addEventListener(
                             'click',
@@ -1626,14 +1620,14 @@
                         ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper document upload exist
-            if (document.querySelectorAll('.doc-upl-a'))
-                document.querySelectorAll('.doc-upl-a').forEach(span => {
+            if (document.querySelectorAll('.doc-upl-img'))
+                document.querySelectorAll('.doc-upl-img').forEach(span => {
                     // delete particular document
                     span.addEventListener('click', toSciPapDocUpldFrm)
                 }) // forEach
                 // if anchors for scientific paper documentation deletion are rendered
-            if (document.querySelectorAll('.doc-del-spn'))
-                document.querySelectorAll('.doc-del-spn').forEach(span => {
+            if (document.querySelectorAll('.doc-del-img'))
+                document.querySelectorAll('.doc-del-img').forEach(span => {
                     // delete particular document
                     span.addEventListener(
                             'click',
