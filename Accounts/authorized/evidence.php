@@ -14,6 +14,10 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
 include_once '../../nav.php';
 
 ?>
+
+<!-- Custom core JavaScript -->
+<script defer src="/eArchive/custom/js/evidence.js"></script>
+
 <section class="container p-3">
     <p class="h2 my-3">Evidenca študentov</p>
     <div class="d-lg-flex justify-content-lg-between">
@@ -124,13 +128,6 @@ include_once '../../nav.php';
 // script import declaration
 
 include_once 'modals.php';
-
-?>
-<!-- Custom core JavaScript -->
-<script src="/eArchive/custom/js/evidence.js"></script>
-<?php
-
-// script import declaration
 
 include_once '../../footer.php';
 
