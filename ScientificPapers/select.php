@@ -32,18 +32,20 @@ if (isset($_GET['id_attendances'])) {
                 <div class="card-body">
                     <p class="card-title">
                         <span class="h5"><?php echo $scientificPaper->getTopic(); ?></span>
-                        <span class="float-right font-italic text-muted small">Napisano: <?php echo (new DateTime($scientificPaper->getWritten()))->format('d-m-y'); ?></span>
+                        <span class="font-italic text-muted small">Napisano: <?php echo (new DateTime($scientificPaper->getWritten()))->format('d-m-y'); ?></span>
                     </p>
                     <p class="card-subtitle mb-2 text-muted h6"><?php echo $scientificPaper->getType(); ?></p>
-                    <ul class="list-group">
-                        <div class="row">
-                            <div class="col-6">
-                                <p class="h6">Soavtorji</p>
-                            </div>
-                            <div class="col-6">
-                                <a href="#sciPapInsrMdl" class="card-link float-right par-ins-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal">Dodeli</a>
-                            </div>
+                    <div class="row mb-1">
+                        <div class="col-6">
+                            <p class="h6"><strong>Soavtorji</strong></p>
                         </div>
+                        <div class="col-6">
+                            <a href="#sciPapInsrMdl" class="card-link par-ins-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal">
+                                <img src="/eArchive/custom/img/assignPartaker.png" data-toggle="tooltip" title="Dodeli">
+                            </a>
+                        </div>
+                    </div>
+                    <ul class="list-group">
                         <?php
                         $partakers = $DBC->selectPartakings($scientificPaper->getIdScientificPapers());
                         // if paper had partakers
@@ -52,8 +54,10 @@ if (isset($_GET['id_attendances'])) {
                         ?>
                             <li class="list-group-item">
                                 <span><?php echo "{$partaker->fullname}({$partaker->getPart()})"; ?></span>
-                                <a class="par-upd-a" href="#sciPapInsrMdl" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>" data-toggle="modal">Uredi</a>
-                                <span class="par-del-spn ml-3" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>">&#10007;</span>
+                                <a class="par-upd-a text-decoration-none" href="#sciPapInsrMdl" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>" data-toggle="modal">
+                                    <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" data-toggle="tooltip" title="Uredi">
+                                </a>
+                                <img class="par-del-spn ml-3" src="/eArchive/custom/img/deleteRecord.png" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" alt="Izbriši soavtorja" data-toggle="tooltip" title="Izbriši soavtorja">
                             </li>
                         <?php
                             } // foreach
@@ -61,25 +65,29 @@ if (isset($_GET['id_attendances'])) {
                             echo 'Delo nima soavtorjev.';
                         ?>
                     </ul>
-                    <ul class="list-group">
-                        <div class="row">
-                            <div class="col-6">
-                                <p class="h6">Mentorji</p>
-                            </div>
-                            <div class="col-6">
-                                <a href="#sciPapInsrMdl" class="card-link float-right men-ins-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal">Določi</a>
-                            </div>
+                    <div class="row mt-3 mb-1">
+                        <div class="col-6">
+                            <p class="h6"><strong>Mentorji</strong></p>
                         </div>
+                        <div class="col-6">
+                            <a href="#sciPapInsrMdl" class="card-link float-right men-ins-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal">
+                                <img src="/eArchive/custom/img/assignMentor.png" alt="Dodeli" data-toggle="tooltip" title="Dodeli">
+                            </a>
+                        </div>
+                    </div>
+                    <ul class="list-group">
                         <?php
                         $mentors = $DBC->selectSciPapMentors($scientificPaper->getIdScientificPapers());
                         // if paper was mentored
                         if (count($mentors))
                             foreach ($mentors as $mentor) {
                         ?>
-                            <li class="list-group-item">
-                                <span><?php echo $mentor->getMentor(); ?> (</span><span><?php echo $mentor->name; ?>)</span>
-                                <a class="men-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
-                                <span class="men-del-spn ml-3" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">&#10007;</span>
+                            <li class="list-group-item d-flex">
+                                <?php echo $mentor->getMentor(); ?>
+                                <a class="men-upd-a text-decoration-none" href="#sciPapInsrMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">
+                                    <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" data-toggle="tooltip" title="Uredi">
+                                </a>
+                                <img class="men-del-spn" src="/eArchive/custom/img/deleteRecord.png" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>" alt="Izbriši" data-toggle="tooltip" title="Izbriši">
                             </li>
                         <?php
                             } // foreach
@@ -87,15 +95,17 @@ if (isset($_GET['id_attendances'])) {
                             echo 'Delo ni mentorirano.';
                         ?>
                     </ul>
-                    <ul class="list-group">
-                        <div class="row">
-                            <div class="col-6">
-                                <p class="h6">Dokumentacija</p>
-                            </div>
-                            <div class="col-6">
-                                <a href="#sciPapInsrMdl" class="card-link float-right doc-upl-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal" >Naloži</a>
-                            </div>
+                    <div class="row mt-3 mb-1">
+                        <div class="col-6">
+                            <p class="h6"><strong>Dokumentacija</strong></p>
                         </div>
+                        <div class="col-6">
+                            <a href="#sciPapInsrMdl" class="card-link doc-upl-a" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="modal">
+                                <img src="/eArchive/custom/img/upload.png" alt="Naloži" data-toggle="tooltip" title="Naloži">
+                            </a>
+                        </div>
+                    </div>
+                    <ul class="list-group">
                         <?php
                         $documents = $DBC->selectDocuments($scientificPaper->getIdScientificPapers());
                         // if there's evidence of the documentation
@@ -138,3 +148,5 @@ if (isset($_GET['id_scientific_papers'])) {
     if (isset($scientificPaper))
         echo json_encode($scientificPaper);
 } // if
+
+?>
