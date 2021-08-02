@@ -226,7 +226,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="sciPapDocs">
+                    <div id="sciPapDocs" class="mb-3">
                         <p class="h6">Dokumentacija</p>
                         <div class="row">
                             <div class="form-group col-6">
@@ -242,10 +242,10 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-center col-12">
-                            <button id="addDocBtn" class="btn btn-secondary" type="button">&plus;</button>
+                            <button id="addDocBtn" type="button" data-toggle="tooltip" title="Dodaj"></button>
                         </div>
                     </div>
-                    <input class="btn btn-secondary float-right" type="submit" value="Dodaj">
+                        <input class="btn btn-warning offset-5 col-2" type="submit" value="Dodaj">
                 </form>
             </div>
         </div>
