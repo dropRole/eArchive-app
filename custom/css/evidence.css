@@ -20,3 +20,19 @@ img.par-del-img,
 img.doc-del-img {
     cursor: pointer;
 }
+
+button#addPartakerBtn,
+button#addMentorBtn {
+    width: 24px;
+    height: 24px;
+    background-image: url('../img/add.png');
+    background-color: hsl(360, 0%, 100%);
+    border: none;
+}
+
+button#addPartakerBtn:focus,
+button#addPartakerBtn:focus-visible,
+button#addMentorBtn:focus,
+button#addMento:focus-visible {
+    outline: none;
+}
