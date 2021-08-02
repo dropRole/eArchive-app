@@ -2,82 +2,55 @@
 <div id="studtInsrMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="studtInsrFrm">
-                <p class="h4 pt-4 px-3 pb-1">Osnovni podatki</p>
-                <div class="row px-3">
-                    <div class="form-group col-6">
-                        <label class="w-100">Ime
-                            <input id="nameInptEl" class="form-control" type="text" name="name" required>
-                        </label>
-                    </div>
-                    <div class="form-group col-6">
-                        <label class="w-100">Priimek
-                            <input id="surnameInptEl" class="form-control" type="text" name="surname" required>
-                        </label>
-                    </div>
-                    <div class="form-group col-6">
-                        <label class="w-100">E-naslov
-                            <input id="emailInptEl" class="form-control" type="email" name="email">
-                        </label>
-                    </div>
-                    <div class="form-group col-6">
-                        <label class="w-100">Telefon
-                            <input id="telInptEl" class="form-control" type="text" name="telephone">
-                        </label>
-                    </div>
-                    <p class="h6 col-12">Rojen</p>
-                    <div class="form-group col-6">
-                        <label class="w-100">Država
-                            <select id="birthCtrySelEl" class="form-control">
-                                <?php
-                                foreach ($DBC->selectCountries() as $country) {
-                                ?>
-                                    <option value="<?php echo $country->getIdCountries(); ?>"><?php echo "{$country->getName()}({$country->getISO3Code()})"; ?></option>
-                                <?php
-                                } // foreach
-                                ?>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="form-group col-6">
-                        <label class="w-100">Kraj
-                            <select id="birthPostCodeSelEl" class="form-control" name="id_postal_codes" required>
-                                <?php
-                                foreach ($DBC->selectCountries()[0]->getIdCountries() as $postalCode) {
-                                ?>
-                                    <option value="<?php echo $postalCode->getIdPostalCodes(); ?>"><?php echo "{$postalCode->getMunicipality()}({$postalCode->getCode()})"; ?></option>
-                                <?php
-                                } // foreach
-                                ?>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="col-12">
-                        <p class="h5 ">Podatki o prebivališču</p>
-                    </div>
-                </div>
-                <div id="residences" class="px-3">
-                    <p class="h6">Stalno prebivališče</p>
-                    <div id="permanentResidence" class="row">
-                        <input type="hidden" name="residences[0][status]" value="STALNO">
-                        <div class="form-group col-4">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLongTitle">Vstavljanje študenta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="studtInsrFrm">
+                    <p class="h5 px-3 pb-1">Osnovni podatki</p>
+                    <div class="row px-3">
+                        <div class="form-group col-6">
+                            <label class="w-100">Ime
+                                <input id="nameInptEl" class="form-control" type="text" name="name" required>
+                            </label>
+                        </div>
+                        <div class="form-group col-6">
+                            <label class="w-100">Priimek
+                                <input id="surnameInptEl" class="form-control" type="text" name="surname" required>
+                            </label>
+                        </div>
+                        <div class="form-group col-6">
+                            <label class="w-100">E-naslov
+                                <input id="emailInptEl" class="form-control" type="email" name="email">
+                            </label>
+                        </div>
+                        <div class="form-group col-6">
+                            <label class="w-100">Telefon
+                                <input id="telInptEl" class="form-control" type="text" name="telephone">
+                            </label>
+                        </div>
+                        <p class="h6 col-12">Rojen</p>
+                        <div class="form-group col-6">
                             <label class="w-100">Država
-                                <select id="permResCtrySelEl" class="form-control" data-target="permResPostCodeSelEl">
+                                <select id="birthCtrySelEl" class="form-control">
                                     <?php
-                                    foreach ($DBC->selectCountries() as $id_countries) {
+                                    foreach ($DBC->selectCountries() as $country) {
                                     ?>
-                                        <option value="<?php echo $id_countries->getIdCountries(); ?>"><?php echo "{$id_countries->getName()}({$id_countries->getISO3Code()})"; ?></option>
+                                        <option value="<?php echo $country->getIdCountries(); ?>"><?php echo "{$country->getName()}({$country->getISO3Code()})"; ?></option>
                                     <?php
                                     } // foreach
                                     ?>
                                 </select>
                             </label>
                         </div>
-                        <div class="form-group col-4">
+                        <div class="form-group col-6">
                             <label class="w-100">Kraj
-                                <select id="permResPostCodeSelEl" class="form-control" name="residences[0][id_postal_codes]" required>
+                                <select id="birthPostCodeSelEl" class="form-control" name="id_postal_codes" required>
                                     <?php
-                                    foreach ($DBC->selectPostalCodes($DBC->selectCountries()[0]->getIdCountries()) as $postalCode) {
+                                    foreach ($DBC->selectCountries()[0]->getIdCountries() as $postalCode) {
                                     ?>
                                         <option value="<?php echo $postalCode->getIdPostalCodes(); ?>"><?php echo "{$postalCode->getMunicipality()}({$postalCode->getCode()})"; ?></option>
                                     <?php
@@ -86,71 +59,106 @@
                                 </select>
                             </label>
                         </div>
-                        <div class="form-group col-4">
-                            <label class="w-100">Naslov
-                                <input id="permResAddressInptEl" class="form-control" type="text" name="residences[0][address]" required>
-                            </label>
+                        <div class="col-12">
+                            <p class="h5 ">Podatki o prebivališču</p>
                         </div>
                     </div>
-                    <p class="h6">Začasna bivališča</p>
-                    <div class="d-flex justify-content-center col-12">
-                        <img id="addTempResBtn" src="/eArchive/custom/img/add.png" alt="Dodaj bivališče" title="Dodaj bivališče">
-                    </div>
-                </div>
-                <p class="h4 pt-4 px-3 pb-1">Podatki o študiranju</p>
-                <div id="attendances" class="px-3 pb-3">
-                    <p class="h6">Študijski programi</p>
-                    <div class="row">
-                        <div class="form-group col-6">
-                            <label class="w-100">
-                                Fakulteta
-                                <select id="facSelEl" class="form-control" name="attendances[0][id_faculties]" required>
-                                    <?php
-                                    foreach ($faculties = $DBC->selectFaculties() as $faculty) {
-                                    ?>
-                                        <option value="<?php echo $faculty->getIdFaculties(); ?>"><?php echo $faculty->getName(); ?></option>
-                                    <?php
-                                    } // foreach
-                                    ?>
-                                </select>
-                            </label>
+                    <div id="residences" class="px-3">
+                        <p class="h6">Stalno prebivališče</p>
+                        <div id="permanentResidence" class="row">
+                            <input type="hidden" name="residences[0][status]" value="STALNO">
+                            <div class="form-group col-4">
+                                <label class="w-100">Država
+                                    <select id="permResCtrySelEl" class="form-control" data-target="permResPostCodeSelEl">
+                                        <?php
+                                        foreach ($DBC->selectCountries() as $id_countries) {
+                                        ?>
+                                            <option value="<?php echo $id_countries->getIdCountries(); ?>"><?php echo "{$id_countries->getName()}({$id_countries->getISO3Code()})"; ?></option>
+                                        <?php
+                                        } // foreach
+                                        ?>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="w-100">Kraj
+                                    <select id="permResPostCodeSelEl" class="form-control" name="residences[0][id_postal_codes]" required>
+                                        <?php
+                                        foreach ($DBC->selectPostalCodes($DBC->selectCountries()[0]->getIdCountries()) as $postalCode) {
+                                        ?>
+                                            <option value="<?php echo $postalCode->getIdPostalCodes(); ?>"><?php echo "{$postalCode->getMunicipality()}({$postalCode->getCode()})"; ?></option>
+                                        <?php
+                                        } // foreach
+                                        ?>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="w-100">Naslov
+                                    <input id="permResAddressInptEl" class="form-control" type="text" name="residences[0][address]" required>
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-group col-6">
-                            <label class="w-100">Program(polje, stopnja, trajanje)
-                                <select id="progSelEl" class="form-control" name="attendances[0][id_programs]" required>
-                                    <?php
-                                    foreach ($DBC->selectPrograms($DBC->selectFaculties()[0]->getIdFaculties()) as $program) {
-                                    ?>
-                                        <option value="<?php echo $program->getIdPrograms(); ?>"><?php echo "{$program->getName()}({$program->getField()}, {$program->getDegree()}, {$program->getDuration()})"; ?></option>
-                                    <?php
-                                    } // foreach
-                                    ?>
-                                </select>
-                            </label>
-                        </div>
-                        <div class="form-group col-4">
-                            <label class="w-100">Vpisan
-                                <input id="enrlInptEl" class="form-control" type="date" name="attendances[0][enrolled]" required>
-                            </label>
-                        </div>
-                        <div class="form-group col-4">
-                            <label class="w-100">Indeks
-                                <input id="indexInptEl" class="form-control" type="text" name="attendances[0][index]" required>
-                            </label>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-center form-group col-4">
-                            <label class="mt-2">
-                                <input id="gradCheckBox" class="mr-2" type="checkbox" data-indx="0" data-lbl-num="0">
-                                Diplomiral
-                            </label>
+                        <p class="h6">Začasna bivališča</p>
+                        <div class="d-flex justify-content-center col-12">
+                            <img id="addTempResBtn" src="/eArchive/custom/img/add.png" alt="Dodaj bivališče" title="Dodaj bivališče">
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center col-12">
-                        <img id="addAttendanceBtn" src="/eArchive/custom/img/add.png" alt="Dodaj študij" title="Dodaj študij">
+                    <p class="h4 pt-4 px-3 pb-1">Podatki o študiranju</p>
+                    <div id="attendances" class="px-3 pb-3">
+                        <p class="h6">Študijski programi</p>
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label class="w-100">
+                                    Fakulteta
+                                    <select id="facSelEl" class="form-control" name="attendances[0][id_faculties]" required>
+                                        <?php
+                                        foreach ($faculties = $DBC->selectFaculties() as $faculty) {
+                                        ?>
+                                            <option value="<?php echo $faculty->getIdFaculties(); ?>"><?php echo $faculty->getName(); ?></option>
+                                        <?php
+                                        } // foreach
+                                        ?>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="form-group col-6">
+                                <label class="w-100">Program(polje, stopnja, trajanje)
+                                    <select id="progSelEl" class="form-control" name="attendances[0][id_programs]" required>
+                                        <?php
+                                        foreach ($DBC->selectPrograms($DBC->selectFaculties()[0]->getIdFaculties()) as $program) {
+                                        ?>
+                                            <option value="<?php echo $program->getIdPrograms(); ?>"><?php echo "{$program->getName()}({$program->getField()}, {$program->getDegree()}, {$program->getDuration()})"; ?></option>
+                                        <?php
+                                        } // foreach
+                                        ?>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="w-100">Vpisan
+                                    <input id="enrlInptEl" class="form-control" type="date" name="attendances[0][enrolled]" required>
+                                </label>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="w-100">Indeks
+                                    <input id="indexInptEl" class="form-control" type="text" name="attendances[0][index]" required>
+                                </label>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-center form-group col-4">
+                                <label class="mt-2">
+                                    <input id="gradCheckBox" class="mr-2" type="checkbox" data-indx="0" data-lbl-num="0">
+                                    Diplomiral
+                                </label>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center col-12">
+                            <img id="addAttendanceBtn" src="/eArchive/custom/img/add.png" alt="Dodaj študij" title="Dodaj študij">
+                        </div>
                     </div>
-                </div>
-                <input class="btn btn-warning offset-5 col-2 my-2" type="submit" value="Vstavi">
-            </form>
+                    <input class="btn btn-warning offset-5 col-2 my-2" type="submit" value="Vstavi">
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -165,7 +173,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Vstavljanje znanstvenega dela</h5>
+                <h4 class="modal-title" id="exampleModalLongTitle">Vstavljanje znanstvenega dela</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
