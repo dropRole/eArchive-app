@@ -1398,7 +1398,8 @@
                 // replace form element node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-
+                // enable tooltips
+            $('[data-toggle="tooltip"]').tooltip()
             listenSciPapInsrFrm()
             cloneFrm.addEventListener(
                     'submit',
