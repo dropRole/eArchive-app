@@ -273,9 +273,7 @@
                         // reflect fragments body     
                     document.querySelector('#sciPapViewMdl .modal-content').innerHTML = frag.body.innerHTML
                         // enabling tooltips
-                    $(function() {
-                        $('[data-toggle="tooltip"]').tooltip()
-                    })
+                    $('[data-toggle="tooltip"]').tooltip()
                 })
                 .then(() => listenSciPapCards())
                 .catch(error => alert(error)) // catch
@@ -1393,13 +1391,14 @@
      *   @param Event e
      */
     let toSciPapInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Vstavljanje znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true)
             cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
                 // replace form element node with its clone
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
+
             listenSciPapInsrFrm()
             cloneFrm.addEventListener(
                     'submit',
@@ -1447,9 +1446,10 @@
             let cloneFrm = studtInsrFrm.cloneNode(true)
                 // replace form element node with its clone
             document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
-            listenStudtInsrFrm()
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-                // exchange callbacks
+                // enabling tooltips
+            $('[data-toggle="tooltip"]').tooltip()
+            listenStudtInsrFrm()
             cloneFrm.addEventListener('submit', e => insertStudt(e, cloneFrm))
         } // toStudtInsrFrm
 
@@ -1770,7 +1770,5 @@
     listenStudtEvidTbl()
 
     // enabling tooltips
-    $(function() {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+    $('[data-toggle="tooltip"]').tooltip()
 })()
