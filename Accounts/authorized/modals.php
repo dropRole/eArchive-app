@@ -4,14 +4,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="exampleModalLongTitle">Vstavljanje študenta</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
             </div>
             <div class="modal-body">
                 <form id="studtInsrFrm">
                     <p class="h5 px-3 pb-1">Osnovni podatki</p>
-                    <div class="row px-3">
+                    <div id="studentBasics" class="row px-3">
                         <div class="form-group col-6">
                             <label class="w-100">Ime
                                 <input id="nameInptEl" class="form-control" type="text" name="name" required>
@@ -59,10 +59,8 @@
                                 </select>
                             </label>
                         </div>
-                        <div class="col-12">
-                            <p class="h5 ">Podatki o prebivališču</p>
-                        </div>
                     </div>
+                    <p class="h5 ">Podatki o prebivališču</p>
                     <div id="residences" class="px-3">
                         <p class="h6">Stalno prebivališče</p>
                         <div id="permanentResidence" class="row">
@@ -101,7 +99,7 @@
                         </div>
                         <p class="h6">Začasna bivališča</p>
                         <div class="d-flex justify-content-center col-12">
-                            <img id="addTempResBtn" src="/eArchive/custom/img/add.png" alt="Dodaj bivališče" title="Dodaj bivališče">
+                            <img id="addTempResBtn" src="/eArchive/custom/img/add.png" alt="Dodaj bivališče" data-toggle="tooltip" title="Dodaj">
                         </div>
                     </div>
                     <p class="h4 pt-4 px-3 pb-1">Podatki o študiranju</p>
@@ -153,7 +151,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-center col-12">
-                            <img id="addAttendanceBtn" src="/eArchive/custom/img/add.png" alt="Dodaj študij" title="Dodaj študij">
+                            <img id="addAttendanceBtn" src="/eArchive/custom/img/add.png" alt="Dodaj študij" data-toggle="tooltip" title="Dodaj">
                         </div>
                     </div>
                     <input class="btn btn-warning offset-5 col-2 my-2" type="submit" value="Vstavi">
@@ -174,9 +172,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="exampleModalLongTitle">Vstavljanje znanstvenega dela</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
             </div>
             <div class="modal-body">
                 <form id="sciPapInsrFrm">
@@ -206,9 +204,9 @@
                     </div>
                     <div class="row">
                         <div id="sciPapPartakers" class="col-6">
-                            <p class="h6">Soavtorji</p>
+                            <p class="h6"><strong>Soavtorji</strong></p>
                             <div class="d-flex justify-content-center col-12">
-                                <button id="addPartakerBtn" class="btn btn-secondary" type="button">&plus;</button>
+                                <button id="addPartakerBtn" type="button" data-toggle="tooltip" title="Dodeli"></button>
                             </div>
                             <datalist id="students">
                                 <?php
@@ -222,9 +220,9 @@
                             </datalist>
                         </div>
                         <div id="sciPapMentors" class="col-6">
-                            <p class="h6">Mentorji</p>
+                            <p class="h6"><strong>Mentorji</strong></p>
                             <div class="d-flex justify-content-center col-12">
-                                <button id="addMentorBtn" class="btn btn-secondary" type="button">&plus;</button>
+                                <button id="addMentorBtn" type="button" data-toggle="tooltip" title="Dodeli"></button>
                             </div>
                         </div>
                     </div>
