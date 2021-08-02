@@ -22,7 +22,8 @@ img.doc-del-img {
 }
 
 button#addPartakerBtn,
-button#addMentorBtn {
+button#addMentorBtn,
+button#addDocBtn {
     width: 24px;
     height: 24px;
     background-image: url('../img/add.png');
@@ -33,6 +34,8 @@ button#addMentorBtn {
 button#addPartakerBtn:focus,
 button#addPartakerBtn:focus-visible,
 button#addMentorBtn:focus,
-button#addMento:focus-visible {
+button#addMentorBtn:focus-visible,
+button#addDocBtn:focus,
+button#addDocBtn:focus-visible {
     outline: none;
 }
