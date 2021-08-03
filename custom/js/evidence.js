@@ -630,8 +630,11 @@
                     defendedFrmGrp.className = 'form-group col-4'
                     issuedFrmGrp.className = 'form-group col-4'
                     gradCertLbl.textContent = 'Certifikat'
+                    gradCertLbl.className = 'w-100 file-label'
                     defendedLbl.textContent = 'Zagovorjen'
+                    defendedLbl.className = 'w-100'
                     issuedLbl.textContent = 'Izdan'
+                    issuedLbl.className = 'w-100'
                     issuedInptEl.textContent = 'Izdan'
                     certInptEl.type = 'file'
                     certInptEl.setAttribute('name', 'certificate[]')
