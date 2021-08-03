@@ -273,7 +273,7 @@
                     <div class="row">
                         <div class="form-group col-12">
                             <input type="hidden" name="certificate" value="">
-                            <label class="w-100">Certifikat
+                            <label class="w-100 file-label">Certifikat
                                 <input id="certInptEl" type="file" name="certificate[]" required>
                             </label>
                         </div>
