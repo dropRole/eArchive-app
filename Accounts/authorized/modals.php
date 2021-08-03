@@ -236,7 +236,7 @@
                             </div>
                             <div class="form-group col-6">
                                 <input id="docNameInptEl" type="hidden" name="documents[0][name]" value="">
-                                <label class="w-100">Dokument
+                                <label class="w-100 file-label">Dokument
                                     <input id="docInptEl" type="file" name="document[]" accept=".pdf" required>
                                 </label>
                             </div>
