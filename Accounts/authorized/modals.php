@@ -10,14 +10,14 @@
             </div>
             <div class="modal-body">
                 <form id="studtInsrFrm">
-                    <p class="h5 px-3 pb-1">Osnovni podatki</p>
-                    <div id="studentBasics" class="row px-3">
-                        <div class="form-group col-6">
+                    <p class="h5 px-lg-3 px-sm-1 pb-1">Osnovni podatki</p>
+                    <div id="studentBasics" class="row px-lg-3 px-sm-1">
+                        <div class="form-group col-lg-6 col-12">
                             <label class="w-100">Ime
                                 <input id="nameInptEl" class="form-control" type="text" name="name" required>
                             </label>
                         </div>
-                        <div class="form-group col-6">
+                        <div class="form-group col-lg-6 col-12">
                             <label class="w-100">Priimek
                                 <input id="surnameInptEl" class="form-control" type="text" name="surname" required>
                             </label>
@@ -33,7 +33,7 @@
                             </label>
                         </div>
                         <p class="h6 col-12">Rojen</p>
-                        <div class="form-group col-6">
+                        <div class="form-group col-lg-6 col-12">
                             <label class="w-100">Država
                                 <select id="birthCtrySelEl" class="form-control">
                                     <?php
@@ -46,7 +46,7 @@
                                 </select>
                             </label>
                         </div>
-                        <div class="form-group col-6">
+                        <div class="form-group col-lg-6 col-12">
                             <label class="w-100">Kraj
                                 <select id="birthPostCodeSelEl" class="form-control" name="id_postal_codes" required>
                                     <?php
@@ -61,11 +61,11 @@
                         </div>
                     </div>
                     <p class="h5 ">Podatki o prebivališču</p>
-                    <div id="residences" class="px-3 pb-3">
+                    <div id="residences" class="px-lg-3 px-sm-2 pb-3">
                         <p class="h6"><strong>Stalno prebivališče</strong></p>
                         <div id="permanentResidence" class="row">
                             <input type="hidden" name="residences[0][status]" value="STALNO">
-                            <div class="form-group col-4">
+                            <div class="form-group col-lg-4 col-12">
                                 <label class="w-100">Država
                                     <select id="permResCtrySelEl" class="form-control" data-target="permResPostCodeSelEl">
                                         <?php
@@ -78,7 +78,7 @@
                                     </select>
                                 </label>
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-lg-4 col-12">
                                 <label class="w-100">Kraj
                                     <select id="permResPostCodeSelEl" class="form-control" name="residences[0][id_postal_codes]" required>
                                         <?php
@@ -91,7 +91,7 @@
                                     </select>
                                 </label>
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-lg-4 col-12">
                                 <label class="w-100">Naslov
                                     <input id="permResAddressInptEl" class="form-control" type="text" name="residences[0][address]" required>
                                 </label>
@@ -102,11 +102,11 @@
                             <img id="addTempResBtn" src="/eArchive/custom/img/add.png" alt="Dodaj bivališče" data-toggle="tooltip" title="Dodaj">
                         </div>
                     </div>
-                    <div id="attendances" class="px-3 pb-3">
+                    <div id="attendances" class="px-lg-3 px-sm-2 pb-3">
                         <p class="h5 pt-4">Podatki o študiranju</p>
                         <p class="h6"><strong>Študijski programi</strong></p>
                         <div class="row">
-                            <div class="form-group col-6">
+                            <div class="form-group col-lg-6 col-12">
                                 <label class="w-100">
                                     Fakulteta
                                     <select id="facSelEl" class="form-control" name="attendances[0][id_faculties]" required>
@@ -120,7 +120,7 @@
                                     </select>
                                 </label>
                             </div>
-                            <div class="form-group col-6">
+                            <div class="form-group col-lg-6 col-12">
                                 <label class="w-100">Program(polje, stopnja, trajanje)
                                     <select id="progSelEl" class="form-control" name="attendances[0][id_programs]" required>
                                         <?php
@@ -133,17 +133,17 @@
                                     </select>
                                 </label>
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-lg-4 col-6">
                                 <label class="w-100">Vpisan
                                     <input id="enrlInptEl" class="form-control" type="date" name="attendances[0][enrolled]" required>
                                 </label>
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-lg-4 col-6">
                                 <label class="w-100">Indeks
                                     <input id="indexInptEl" class="form-control" type="text" name="attendances[0][index]" required>
                                 </label>
                             </div>
-                            <div class="d-flex align-items-center justify-content-center form-group col-4">
+                            <div class="d-flex align-items-center justify-content-center form-group col-lg-4 col-12">
                                 <label class="mt-2">
                                     <input id="gradCheckBox" class="mr-2" type="checkbox" data-indx="0" data-lbl-num="0">
                                     Diplomiral
@@ -154,7 +154,7 @@
                             <img id="addAttendanceBtn" src="/eArchive/custom/img/add.png" alt="Dodaj študij" data-toggle="tooltip" title="Dodaj">
                         </div>
                     </div>
-                    <input class="btn btn-warning offset-5 col-2 my-2" type="submit" value="Vstavi">
+                    <input class="btn btn-warning offset-lg-5 offset-3 col-lg-2 col-6 my-2" type="submit" value="Vstavi">
                 </form>
             </div>
         </div>
