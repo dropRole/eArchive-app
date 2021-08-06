@@ -4,7 +4,7 @@ namespace DBC;
 
 // namespace and class import declaration
 
-use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Certificates\Certificates, Documents\Documents, Partakings\Partakings, Mentorings\Mentorings, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
+use PDO, PDOException, finfo, DateTime, ScientificPapers\ScientificPapers, Students\Students, Certificates\Certificates, Documents\Documents, Partakings\Partakings, Mentorings\Mentorings, Faculties\Faculties, Programs\Programs, Countries\Countries, PostalCodes\PostalCodes;
 
 // extend intergrated PDO interface
 class DBC extends PDO
@@ -664,14 +664,14 @@ class DBC extends PDO
         // permanent and temporary residences
         $residences = [
             'permResidence' => NULL,
-            'tempResidence' => []
+            'tempResidences' => []
         ];
         $stmt = '  SELECT 
                         residences.id_residences,
                         residences.id_postal_codes,
                         residences.address,
-                        residences.status
-                        postal_codes.id_countries,
+                        residences.status,
+                        postal_codes.id_countries
                     FROM
                         residences
                         INNER JOIN postal_codes
@@ -690,7 +690,7 @@ class DBC extends PDO
                 if ($residence['status'] == 'STALNO')
                     $residences['permResidence'] = $residence;
                 else
-                    array_push($residences['tempResidence'], $residence);
+                    array_push($residences['tempResidences'], $residence);
             } // foreach
         } // try
         catch (PDOException $e) {
@@ -2377,7 +2377,7 @@ class DBC extends PDO
         } // if
         return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
     } // deleteAcctAvatar
-    
+
     // ACCOUNTS
 
 } // DBC
