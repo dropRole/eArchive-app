@@ -86,6 +86,8 @@
                     frag = response
                         // reflect fragments body  
                     document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
+                        // enabling tooltips
+                    $('[data-toggle="tooltip"]').tooltip()
                 })
                 .then(() => listenStudtEvidTbl())
                 .catch(error => alert(error)) // catch
