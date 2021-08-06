@@ -103,7 +103,7 @@
                         </div>
                     </div>
                     <div id="attendances" class="px-lg-3 px-sm-2 pb-3">
-                        <p class="h5 pt-4">Podatki o študiranju</p>
+                        <p class="h5">Podatki o študiranju</p>
                         <p class="h6"><strong>Študijski programi</strong></p>
                         <div class="row">
                             <div class="form-group col-lg-6 col-12">
