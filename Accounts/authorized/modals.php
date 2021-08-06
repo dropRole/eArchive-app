@@ -61,8 +61,8 @@
                         </div>
                     </div>
                     <p class="h5 ">Podatki o prebivališču</p>
-                    <div id="residences" class="px-3">
-                        <p class="h6">Stalno prebivališče</p>
+                    <div id="residences" class="px-3 pb-3">
+                        <p class="h6"><strong>Stalno prebivališče</strong></p>
                         <div id="permanentResidence" class="row">
                             <input type="hidden" name="residences[0][status]" value="STALNO">
                             <div class="form-group col-4">
@@ -97,14 +97,14 @@
                                 </label>
                             </div>
                         </div>
-                        <p class="h6">Začasna bivališča</p>
+                        <p class="h6"><strong>Začasna bivališča</strong></p>
                         <div class="d-flex justify-content-center col-12">
                             <img id="addTempResBtn" src="/eArchive/custom/img/add.png" alt="Dodaj bivališče" data-toggle="tooltip" title="Dodaj">
                         </div>
                     </div>
-                    <p class="h4 pt-4 px-3 pb-1">Podatki o študiranju</p>
                     <div id="attendances" class="px-3 pb-3">
-                        <p class="h6">Študijski programi</p>
+                        <p class="h5 pt-4">Podatki o študiranju</p>
+                        <p class="h6"><strong>Študijski programi</strong></p>
                         <div class="row">
                             <div class="form-group col-6">
                                 <label class="w-100">
@@ -245,7 +245,7 @@
                             <button id="addDocBtn" type="button" data-toggle="tooltip" title="Dodaj"></button>
                         </div>
                     </div>
-                        <input class="btn btn-warning offset-5 col-2" type="submit" value="Dodaj">
+                    <input class="btn btn-warning offset-5 col-2" type="submit" value="Dodaj">
                 </form>
             </div>
         </div>
