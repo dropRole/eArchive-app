@@ -42,17 +42,32 @@
         } // request
 
     /*
-     *   asynchronous script execution for selection of student particulars and scientific achievements    
+     *   asynchronous script execution for selection of student particulars, residences and scientific          achievements    
      *   @param Event e
      *   @param Number idStudents
      */
     let selectStudt = (e, idStudents) => {
+            let student = {
+                particulars: null,
+                permResidence: null,
+                tempResidences: null
+            }
             request(
                     `/eArchive/Students/select.php?id_students=${idStudents}`,
                     'GET',
                     'json'
                 )
-                .then(response => toStudtUpdtFrm(e, response))
+                .then(response => student.particulars = response)
+                .then(() => request(
+                    `/eArchive/Residences/select.php?id_students=${idStudents}`,
+                    'GET',
+                    'json'
+                ))
+                .then(response => {
+                    student.permResidence = response.permResidence
+                    student.tempResidences = response.tempResidences
+                })
+                .then(() => toStudtUpdtFrm(e, student))
                 .catch(error => alert(error)) // catch
         } // selectStudt
 
@@ -1141,16 +1156,18 @@
             idStudentsInptEl.value = e.target.getAttribute('data-id-students')
                 // replace node with its clone
             document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
+            document.querySelector('div#studtInsrMdl div.modal-header > h4.modal-title').textContent = 'Posodabljanje podatkov študenta'
             listenStudtInsrFrm()
             cloneFrm.prepend(idStudentsInptEl)
-                // fill out input fields with student particulars
+
+            // fill out input fields with student particulars
             cloneFrm.querySelector('input[name=name]').value = student.particulars.name
             cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
             cloneFrm.querySelector('input[name=email]').value = student.particulars.email
             cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
             setBirthplaceOfStudt(student.particulars.id_countries, student.particulars.id_postal_codes)
             setPermResOfStudt(student.permResidence)
-            student.tempResidence.length ? setTempResOfStudt() : null
+            student.tempResidences.length ? setTempResOfStudt() : null
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
             cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
             cloneFrm.addEventListener(
@@ -1450,6 +1467,7 @@
             let cloneFrm = studtInsrFrm.cloneNode(true)
                 // replace form element node with its clone
             document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
+            document.querySelector('div#studtInsrMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje študenta'
             cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
                 // enabling tooltips
             $('[data-toggle="tooltip"]').tooltip()
