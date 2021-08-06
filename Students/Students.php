@@ -2,8 +2,10 @@
 
 namespace Students;
 
-// table students class definition
-class Students
+use JsonSerializable;
+
+// class definition of students table with custom JSON representation 
+class Students implements JsonSerializable
 {
 
     // encapsulation
@@ -35,6 +37,12 @@ class Students
         $this->email = $email;
         $this->telephone = $telephone;
     } // __construct
+
+    // redefine implemented function 
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    } // jsonSerialize
 
     /*
     *   set id of a student
