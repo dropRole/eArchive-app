@@ -560,9 +560,9 @@
                                 document.getElementById('residences').removeChild(ctr)
                             }
                         ) // addEventListener
-                    ctryFrmGrp.className = 'form-group col-4'
-                    postCodeFrmGrp.className = 'form-group col-4'
-                    addressFrmGrp.className = 'form-group col-4'
+                    ctryFrmGrp.className = 'form-group col-lg-4 col-12'
+                    postCodeFrmGrp.className = 'form-group col-lg-4 col-12'
+                    addressFrmGrp.className = 'form-group col-lg-4 col-12'
                     ctryLbl.textContent = 'Država'
                     ctryLbl.classList = 'w-100'
                     postCodeLbl.textContent = 'Kraj'
@@ -643,9 +643,9 @@
                             childList: true,
                             subtree: false
                         })
-                    gradCertFrmGrp.className = 'form-group col-4'
-                    defendedFrmGrp.className = 'form-group col-4'
-                    issuedFrmGrp.className = 'form-group col-4'
+                    gradCertFrmGrp.className = 'form-group col-lg-4 col-12'
+                    defendedFrmGrp.className = 'form-group col-lg-4 col-12'
+                    issuedFrmGrp.className = 'form-group col-lg-4 col-12'
                     gradCertLbl.textContent = 'Certifikat'
                     gradCertLbl.className = 'w-100 file-label'
                     defendedLbl.textContent = 'Zagovorjen'
@@ -738,15 +738,19 @@
                     }
                 ) // addEventListener
             ctr.className = 'row'
-            facFrmGrp.className = 'form-group col-6'
-            progFrmGrp.className = 'form-group col-6'
-            enrlFrmGrp.className = 'form-group col-4'
-            indexFrmGrp.className = 'form-group col-4'
-            gradFrmGrp.className = 'd-flex align-items-center justify-content-center form-group col-4'
+            facFrmGrp.className = 'form-group col-lg-6 col-12'
+            progFrmGrp.className = 'form-group col-lg-6 col-12'
+            enrlFrmGrp.className = 'form-group col-lg-4 col-6'
+            indexFrmGrp.className = 'form-group col-lg-4 col-6'
+            gradFrmGrp.className = 'd-flex align-items-center justify-content-center form-group col-lg-4 col-12'
             facLbl.textContent = 'Fakulteta'
+            facLbl.className = 'w-100'
             progLbl.textContent = 'Program'
+            progLbl.className = 'w-100'
             enrlLbl.textContent = 'Vpisan'
+            enrlLbl.className = 'w-100'
             indexLbl.textContent = 'Indeks'
+            indexLbl.className = 'w-100'
             gradLbl.className = 'mt-2'
             facSelEl.className = 'form-control'
             facSelEl.name = `attendances[${index}][id_faculties]`
