@@ -28,7 +28,7 @@ if (isset($_GET['id_attendances'])) {
     if (count($scientificPapers) > 0) {
         foreach ($scientificPapers as $scientificPaper) {
         ?>
-            <div class="card m-3 col-6">
+            <div class="card m-lg-3 col-lg-6 col-12">
                 <div class="card-body">
                     <p class="card-title d-flex justify-content-between">
                         <span class="h5"><?php echo $scientificPaper->getTopic(); ?></span>
@@ -52,13 +52,14 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="w-75 m-0">
                                     <?php echo "{$partaker->fullname}({$partaker->getPart()})"; ?>
                                 </p>
-                                <div class="w-25">
+                                <div class="w-25 d-flex justify-content-between">
                                     <a class="mr-3 text-decoration-none" href="#sciPapInsrMdl" data-toggle="modal">
                                         <img class="par-upd-img" src="/eArchive/custom/img/updateRecord.png" alt="Uredi" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>" data-toggle="tooltip" title="Uredi">
                                     </a>
-                                    <img class="par-del-img" src="/eArchive/custom/img/deleteRecord.png" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" alt="Izbriši" data-toggle="tooltip" title="Izbriši">
+                                    <a>
+                                        <img class="par-del-img" src="/eArchive/custom/img/deleteRecord.png" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" alt="Izbriši" data-toggle="tooltip" title="Izbriši">
+                                    </a>
                                 </div>
-
                             </li>
                         <?php
                             } // foreach
@@ -83,7 +84,7 @@ if (isset($_GET['id_attendances'])) {
                                 <p class="w-75 m-0">
                                     <?php echo $mentor->getMentor(); ?>
                                 </p>
-                                <div class="w-25">
+                                <div class="w-25 d-flex justify-content-between">
                                     <a class="mr-3 text-decoration-none" href="#sciPapInsrMdl" data-toggle="modal">
                                         <img class="men-upd-img" src="/eArchive/custom/img/updateRecord.png" alt="Uredi" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>" data-toggle="tooltip" title="Uredi">
                                     </a>
