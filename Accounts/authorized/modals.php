@@ -245,7 +245,7 @@
                             <button id="addDocBtn" type="button" data-toggle="tooltip" title="Dodaj"></button>
                         </div>
                     </div>
-                    <input class="btn btn-warning offset-5 col-2" type="submit" value="Dodaj">
+                    <input class="btn btn-warning offset-lg-5 offset-3 col-lg-2 col-6" type="submit" value="Dodaj">
                 </form>
             </div>
         </div>
