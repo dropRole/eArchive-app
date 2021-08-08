@@ -844,8 +844,8 @@
                                 document.getElementById('sciPapPartakers').removeChild(ctr)
                             }
                         ) // addEventListener
-                    partakerFrmGrp.classList = 'form-group col-6'
-                    partFrmGrp.classList = 'form-group col-6'
+                    partakerFrmGrp.classList = 'form-group col-lg-6 col-12'
+                    partFrmGrp.classList = 'form-group col-lg-6 col-12'
                     partakerLbl.textContent = 'Sodelovalec'
                     partakerLbl.classList = 'w-100'
                     partLbl.textContent = 'Vloga'
@@ -1189,7 +1189,7 @@
      *  @param Event e
      */
     let toPartakerInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInptEl = document.createElement('input')
@@ -1225,7 +1225,7 @@
      *  @param Event e
      */
     let toPartakerUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idPartakingsInptEl = document.createElement('input')
