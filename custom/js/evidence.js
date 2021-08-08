@@ -1347,7 +1347,7 @@
      *   @param Event e
      */
     let toSciPapDocUpldFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersIntpEl = document.createElement('input')
@@ -1358,15 +1358,13 @@
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScientificPapersIntpEl)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
+            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12 mb-3'
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
             listenSciPapInsrFrm()
-                .then(() => {
-                    // remove nodes except those matching given selector expression 
-                    cloneFrm.querySelectorAll('div#particulars, p, div.row:nth-child(4)').forEach(node => {
-                            node.parentElement.removeChild(node)
-                        }) // forEach
-                })
+                // remove nodes except those matching given selector expression 
+            cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapMentors').forEach(node => {
+                    node.parentElement.removeChild(node)
+                }) // forEach
             cloneFrm.addEventListener(
                     'submit',
                     e => {
