@@ -986,8 +986,8 @@
                             }
                         ) // addEventListener
                     mentorFrmGrp.classList = 'form-group col-12'
-                    facFrmGrp.classList = 'form-group col-6'
-                    taughtFrmGrp.classList = 'form-group col-6'
+                    facFrmGrp.classList = 'form-group col-lg-6 col-12'
+                    taughtFrmGrp.classList = 'form-group col-lg-6 col-12'
                     emailFrmGrp.classList = 'form-group col-6'
                     telFrmGrp.classList = 'form-group col-6'
                     facLbl.textContent = 'Fakulteta'
