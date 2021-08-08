@@ -1264,7 +1264,7 @@
      *  @param Event e
      */
     let toMentorInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInptEl = document.createElement('input')
@@ -1300,7 +1300,7 @@
      *  @param Event e
      */
     let toMentorUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idMentoringsInptEl = document.createElement('input')
             idMentoringsInptEl.type = 'hidden'
@@ -1607,8 +1607,8 @@
                     anchor.addEventListener('click', toMentorInsrFrm)
                 }) // forEach
                 // if anchor elements for mentor data update exist
-            if (document.querySelectorAll('.men-ins-img'))
-                document.querySelectorAll('.men-ins-img').forEach(anchor => {
+            if (document.querySelectorAll('.men-upd-img'))
+                document.querySelectorAll('.men-upd-img').forEach(anchor => {
                     // restructure form for document upload
                     anchor.addEventListener('click', toMentorUpdtFrm)
                 }) // forEachF
