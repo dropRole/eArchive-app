@@ -89,12 +89,12 @@ include_once '../../nav.php';
                             // if student is assigned an account to  
                             if ($DBC->checkAcctAssignment($student->id_attendances)) {
                             ?>
-                                <img class="acc-del-btn" src="/eArchive/custom/img/unassignAccount.png" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" data-html="true" title="<p>Odvzemi<br><?php echo "(Dodeljen: {$DBC->selectAcctGrantDate($student->id_attendances)})"; ?></p>">
+                                <img class="acc-del-img" src="/eArchive/custom/img/unassignAccount.png" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" data-html="true" title="<p>Odvzemi<br><?php echo "(Dodeljen: {$DBC->selectAcctGrantDate($student->id_attendances)})"; ?></p>">
                             <?php
                             } // if
                             else {
                             ?>
-                                <a class="acc-ins-btn" href="#acctAssignMdl" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="modal">
+                                <a class="acc-ins-a" href="#acctAssignMdl" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="modal">
                                     <img src="/eArchive/custom/img/assignAccount.png" alt="Dodeli" data-toggle="tooltip" title="Dodeli">
                                 </a>
                             <?php
