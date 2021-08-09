@@ -202,8 +202,8 @@
                             </label>
                         </div>
                     </div>
-                    <div class="row">
-                        <div id="sciPapPartakers" class="col-6">
+                    <div class="row">   
+                        <div id="sciPapPartakers" class="col-lg-6 col-12">
                             <p class="h6"><strong>Soavtorji</strong></p>
                             <div class="d-flex justify-content-center col-12">
                                 <button id="addPartakerBtn" type="button" data-toggle="tooltip" title="Dodeli"></button>
@@ -219,7 +219,7 @@
                                 ?>
                             </datalist>
                         </div>
-                        <div id="sciPapMentors" class="col-6">
+                        <div id="sciPapMentors" class="col-lg-6 col-12">
                             <p class="h6"><strong>Mentorji</strong></p>
                             <div class="d-flex justify-content-center col-12">
                                 <button id="addMentorBtn" type="button" data-toggle="tooltip" title="Dodeli"></button>
@@ -227,7 +227,7 @@
                         </div>
                     </div>
                     <div id="sciPapDocs" class="mb-3">
-                        <p class="h6">Dokumentacija</p>
+                        <p class="h6"><strong>Dokumentacija</strong></p>
                         <div class="row">
                             <div class="form-group col-6">
                                 <label class="w-100">Verzija
