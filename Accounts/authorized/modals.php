@@ -203,7 +203,7 @@
                         </div>
                     </div>
                     <div class="row">   
-                        <div id="sciPapPartakers" class="col-lg-6 col-12">
+                        <div id="sciPapPartakers" class="col-lg-6 col-12 mb-3">
                             <p class="h6"><strong>Soavtorji</strong></p>
                             <div class="d-flex justify-content-center col-12">
                                 <button id="addPartakerBtn" type="button" data-toggle="tooltip" title="Dodeli"></button>
@@ -219,7 +219,7 @@
                                 ?>
                             </datalist>
                         </div>
-                        <div id="sciPapMentors" class="col-lg-6 col-12">
+                        <div id="sciPapMentors" class="col-lg-6 col-12 mb-3">
                             <p class="h6"><strong>Mentorji</strong></p>
                             <div class="d-flex justify-content-center col-12">
                                 <button id="addMentorBtn" type="button" data-toggle="tooltip" title="Dodeli"></button>
