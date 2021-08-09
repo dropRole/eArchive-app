@@ -549,7 +549,7 @@
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
                     cross.style.cursor = 'pointer'
-                    cross.innerHTML = '&#10007;'
+                    cross.innerHTML = '&times;;'
                     cross.setAttribute('data-id-residences', !residences ? '' : residences[0].id_residences)
                     cross.addEventListener(
                             'click',
@@ -729,7 +729,7 @@
             cross.style.float = 'right'
             cross.style.transform = 'scale(1.2)'
             cross.style.cursor = 'pointer'
-            cross.innerHTML = '&#10007'
+            cross.innerHTML = '&times;'
                 // remove selected attendance section
             cross.addEventListener(
                     'click',
@@ -836,7 +836,7 @@
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
                     cross.style.cursor = 'pointer'
-                    cross.innerHTML = '&#10007'
+                    cross.innerHTML = '&times;'
                         // remove selected attendance section
                     cross.addEventListener(
                             'click',
@@ -928,7 +928,7 @@
                     cross.style.right = '10px'
                     cross.style.zIndex = 1
                     cross.style.cursor = 'pointer'
-                    cross.innerHTML = '&#10007;'
+                    cross.innerHTML = '&times;;'
                     versionLbl.appendChild(versionInptEl)
                     versionFrmGrp.appendChild(versionLbl)
                     docLbl.appendChild(docInptEl)
@@ -977,7 +977,7 @@
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
                     cross.style.cursor = 'pointer'
-                    cross.innerHTML = '&#10007'
+                    cross.innerHTML = '&times;'
                         // remove selected attendance section
                     cross.addEventListener(
                             'click',
