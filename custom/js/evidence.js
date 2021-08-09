@@ -913,7 +913,7 @@
                     versionLbl.textContent = 'Verzija'
                     versionLbl.classList = 'w-100'
                     docLbl.textContent = 'Dokument'
-                    docLbl.classList = 'w-100'
+                    docLbl.classList = 'w-100 file-label'
                     versionInptEl.classList = 'form-control'
                     versionInptEl.type = 'text'
                     versionInptEl.name = `documents[${index}][version]`
