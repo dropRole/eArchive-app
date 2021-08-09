@@ -1710,8 +1710,8 @@
                 sciPapInsrLst = document.querySelectorAll('.sp-ins-a'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
                 gradCertInsrLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
                 gradCertViewLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
-                acctInsrLst = document.querySelectorAll('.acc-ins-btn'), // array of buttons for exposing form for assigning an account to student
-                acctDelLst = document.querySelectorAll('.acc-del-btn'), // array of buttons for deletion of a particular student account 
+                acctInsrLst = document.querySelectorAll('.acc-ins-a'), // array of buttons for exposing form for assigning an account to student
+                acctDelLst = document.querySelectorAll('.acc-del-img'), // array of buttons for deletion of a particular student account 
                 studtUpdLst = document.querySelectorAll('.stu-upd-a'), // array of anchors for exposing form for updating fundamental data of the student
                 studtDelLst = document.querySelectorAll('.stu-del-a') // array of anchors for exposing form for deletion of fundamental data of the student
             studtInsrBtn.addEventListener(
