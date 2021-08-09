@@ -288,7 +288,7 @@
                             </label>
                         </div>
                     </div>
-                    <input class="btn btn-warning offset-5 col-2" type="submit" value="Vstavi">
+                    <input class="btn btn-warning offset-lg-5 offset-3 col-lg-2 col-6" type="submit" value="Vstavi">
                 </form>
             </div>
         </div>
@@ -313,7 +313,7 @@
                             <input id="passInptEl" class="form-control" name="pass" required>
                         </label>
                     </div>
-                    <input class="btn btn-warning offset-5 col-2" type="submit" value="Ustvari">
+                    <input class="btn btn-warning offset-lg-5 offset-3 col-lg-2 col-6" type="submit" value="Ustvari">
                 </form>
             </div>
         </div>
