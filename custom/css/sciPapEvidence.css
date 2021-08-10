@@ -1,0 +1,25 @@
+@media only screen and (max-width:576px) {
+    section>p {
+        text-align: center;
+    }
+    div.d-lg-flex>div {
+        margin: 5px 0px;
+    }
+    button#studtInsrBtn {
+        width: 100%;
+    }
+}
+
+th {
+    min-width: 150px;
+}
+
+button#addPartakerBtn,
+button#addMentorBtn,
+button#addDocBtn {
+    width: 24px;
+    height: 24px;
+    background-image: url('../img/add.png');
+    background-color: hsl(360, 0%, 100%);
+    border: none;
+}
