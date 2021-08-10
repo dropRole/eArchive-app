@@ -561,7 +561,7 @@
      *   @param Event e
      */
     let toSciPapInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Vstavljanje znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true)
                 // replace form element node with its clone
