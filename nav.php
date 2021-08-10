@@ -24,7 +24,7 @@
                 if (isset($_SESSION['index'])) {
                 ?>
                     <li class="nav-item active">
-                        <a class="nav-link" href="/eArchive/Accounts/student/scientificPaperReview.php">Znanstvena dela
+                        <a class="nav-link" href="/eArchive/Accounts/student/evidence.php">Znanstvena dela
                             <span class="sr-only">Znanstvena dela</span>
                         </a>
                     </li>
