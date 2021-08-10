@@ -23,3 +23,12 @@ button#addDocBtn {
     background-color: hsl(360, 0%, 100%);
     border: none;
 }
+
+button#addPartakerBtn:focus,
+button#addPartakerBtn:focus-visible,
+button#addMentorBtn:focus,
+button#addMentorBtn:focus-visible,
+button#addDocBtn:focus-visible,
+button#addDocBtn:focus-visible {
+    outline: none;
+}
