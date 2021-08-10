@@ -970,7 +970,11 @@
             if (document.getElementById('acctAvtrRmvIcon'))
                 document.getElementById('acctAvtrRmvIcon').addEventListener('click', deleteAcctAvatar)
         } // listenAcctRmvIcon
+
     listenAcctRmvIcon()
 
     sciPapInsrBtn.addEventListener('click', toSciPapInsrFrm)
+
+    // enabling tooltips 
+    $('[data-toggle="tooltip"]').tooltip()
 })()
