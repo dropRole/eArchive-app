@@ -89,7 +89,7 @@ include_once '../../nav.php';
                         </td>
                         <td>
                             <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
-                            <img src="/eArchive/custom/img/upload.png" alt="Naloži" class="doc-ins-img" data-toggle="tooltip" title="Naloži">
+                                <img src="/eArchive/custom/img/upload.png" alt="Naloži" class="doc-ins-img" data-toggle="tooltip" title="Naloži">
                             </a>
                             <?php
                             foreach ($DBC->selectDocuments($sciPap->getIdScientificPapers()) as $doc) {
@@ -105,10 +105,14 @@ include_once '../../nav.php';
                             ?>
                         </td>
                         <td>
-                            <a class="sp-upd-а" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Uredi</a>
+                            <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
+                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="sp-upd-img" data-toggle="tooltip" title="Uredi">
+                            </a>
                         </td>
                         <td>
-                            <a class="sp-del-a" href="#" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Izbriši</a>
+                            <a href="#" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
+                                <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" class="sp-del-img" data-toggle="tooltip" title="Izbriši">
+                            </a>
                         </td>
                     </tr>
                 <?php
