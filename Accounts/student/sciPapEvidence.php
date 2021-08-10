@@ -110,7 +110,7 @@ include_once '../../nav.php';
 </section>
 
 <!-- Link with the custom CSS -->
-<link rel="stylesheet" href="/eArchive/custom/css/evidence.css">
+<link rel="stylesheet" href="/eArchive/custom/css/sciPapEvidence.css">
 
 <?php
 
@@ -120,7 +120,7 @@ include_once 'modals.php';
 
 ?>
 <!-- Custom core JavaScript -->
-<script src="../../custom/js/scientificPaperReview.js"></script>
+<script src="../../custom/js/sciPapEvidence.js"></script>
 <?php
 
 // script import declaration
