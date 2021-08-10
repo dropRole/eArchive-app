@@ -14,6 +14,10 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
 include_once '../../nav.php';
 
 ?>
+
+<!-- Custom core JavaScript -->
+<script defer src="../../custom/js/sciPapEvidence.js"></script>
+
 <section class="container p-3">
     <p class="h2">Evidenca znanstvenih del</p>
     <div class="d-lg-flex justify-content-between">
@@ -48,7 +52,9 @@ include_once '../../nav.php';
                         <td><?php echo $sciPap->getType(); ?></td>
                         <td><?php echo (new DateTime($sciPap->getWritten()))->format('d-m-Y'); ?></td>
                         <td>
-                            <a class="par-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
+                            <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
+                                <img class="par-ins-img" src="/eArchive/custom/img/assignPartaker.png" alt="Dodeli" data-toggle="tooltip" title="Dodeli">
+                            </a>
                             <?php
                             foreach ($DBC->selectPartakings($sciPap->getIdScientificPapers()) as $partaker) {
                             ?>
@@ -64,7 +70,9 @@ include_once '../../nav.php';
                             ?>
                         </td>
                         <td>
-                            <a class="men-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
+                            <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
+                                <img src="/eArchive/custom/img/assignMentor.png" alt="Dodeli" class="men-ins-img" data-toggle="tooltip" title="Dodeli">
+                            </a>
                             <?php
                             foreach ($DBC->selectSciPapMentors($sciPap->getIdScientificPapers()) as $mentor) {
                             ?>
@@ -80,7 +88,9 @@ include_once '../../nav.php';
                             ?>
                         </td>
                         <td>
-                            <a class="doc-upl-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Naloži</a>
+                            <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
+                            <img src="/eArchive/custom/img/upload.png" alt="Naloži" class="doc-ins-img" data-toggle="tooltip" title="Naloži">
+                            </a>
                             <?php
                             foreach ($DBC->selectDocuments($sciPap->getIdScientificPapers()) as $doc) {
                             ?>
@@ -117,13 +127,6 @@ include_once '../../nav.php';
 // script import declaration
 
 include_once 'modals.php';
-
-?>
-<!-- Custom core JavaScript -->
-<script src="../../custom/js/sciPapEvidence.js"></script>
-<?php
-
-// script import declaration
 
 include_once '../../footer.php';
 
