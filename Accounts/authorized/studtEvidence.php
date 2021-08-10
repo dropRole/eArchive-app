@@ -121,7 +121,7 @@ include_once '../../nav.php';
 </section>
 
 <!-- Link to the cutsom CSS -->
-<link rel="stylesheet" href="/eArchive/custom/css/evidence.css">
+<link rel="stylesheet" href="/eArchive/custom/css/studtEvidence.css">
 
 <?php
 
