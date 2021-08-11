@@ -1781,13 +1781,13 @@
                             }
                         ) //addEventListener
                 }) // forEach
-            acctInsrLst.forEach(btn => {
+            acctInsrLst.forEach(a => {
                     // pass an id and index of an attendance through forms hidden input types 
-                    btn.addEventListener(
+                    a.addEventListener(
                             'click',
                             () => {
-                                acctAssignFrm.querySelector('input[name=id_attendances]').value = btn.value
-                                acctAssignFrm.querySelector('input[name=index]').value = btn.getAttribute('data-index')
+                                acctAssignFrm.querySelector('input[name=id_attendances]').value = a.dataset.idAttendances
+                                acctAssignFrm.querySelector('input[name=index]').value = a.getAttribute('data-index')
                             }
                         ) // addEventListener
                 }) // forEach
