@@ -22,6 +22,10 @@ td {
     position: relative;
 }
 
+img.sp-del-img {
+    cursor: pointer;
+}
+
 button#addPartakerBtn,
 button#addMentorBtn,
 button#addDocBtn {
