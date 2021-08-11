@@ -60,9 +60,14 @@ include_once '../../nav.php';
                             ?>
                                 <ul class="list-inline">
                                     <li class="list-group-item">
-                                        <?php echo "{$partaker->fullname} -> Indeks {$partaker->index}"; ?>
-                                        <a class="par-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>">Uredi</a>
-                                        <a class="par-del-a" href="#sciPapInsrMdl" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>">Izbriši</a>
+                                        <p class="d-flex justify-content-between">
+                                            <span class="w-100 text-center"><?php echo $partaker->fullname; ?></span>
+                                            <span class="w-100 text-center"><?php echo $partaker->getPart(); ?></span>
+                                        </p>
+                                        <p class="d-flex justify-content-around">
+                                            <a class="par-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>">Uredi</a>
+                                            <a class="par-del-a" href="#sciPapInsrMdl" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>">Izbriši</a>
+                                        </p>
                                     </li>
                                 </ul>
                             <?php
@@ -78,9 +83,14 @@ include_once '../../nav.php';
                             ?>
                                 <ul class="list-inline">
                                     <li class="list-group-item">
-                                        <?php echo "{$mentor->getMentor()} -> Fakulteta {$mentor->faculty}"; ?>
-                                        <a class="men-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
-                                        <a class="men-del-a" href="#sciPapInsrMdl" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Izbriši</a>
+                                        <p class="d-flex justify-content-between">
+                                            <span class="w-100 text-center"><?php echo $mentor->getMentor(); ?></span>
+                                            <span class="w-100 text-center"><?php echo $mentor->faculty; ?></span>
+                                        </p>
+                                        <p class="d-flex justify-content-around">
+                                            <a class="men-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
+                                            <a class="men-del-a" href="#sciPapInsrMdl" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Izbriši</a>
+                                        </p>
                                     </li>
                                 </ul>
                             <?php
