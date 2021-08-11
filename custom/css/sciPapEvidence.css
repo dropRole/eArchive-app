@@ -22,14 +22,6 @@ td {
     position: relative;
 }
 
-img.par-ins-img,
-img.men-ins-img,
-img.doc-ins-img {
-    position: absolute;
-    right: 0;
-    z-index: 1;
-}
-
 button#addPartakerBtn,
 button#addMentorBtn,
 button#addDocBtn {
