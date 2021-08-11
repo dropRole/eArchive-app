@@ -39,7 +39,7 @@
     // load student evidence table upon latterly data amendment 
     let loadSciPapEvidTbl = () => {
             request(
-                    '/eArchive/Accounts/student/scientificPaperReview.php',
+                    '/eArchive/Accounts/student/sciPapEvidence.php',
                     'GET',
                     'document'
                 )
