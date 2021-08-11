@@ -14,7 +14,7 @@
                 if (isset($_SESSION['authorized'])) {
                 ?>
                     <li class="nav-item active">
-                        <a class="nav-link" href="/eArchive/Accounts/authorized/evidence.php">Evidenca študentov
+                        <a class="nav-link" href="/eArchive/Accounts/authorized/studtEvidence.php">Evidenca študentov
                             <span class="sr-only">Evidenca študentov</span>
                         </a>
                     </li>
@@ -24,7 +24,7 @@
                 if (isset($_SESSION['index'])) {
                 ?>
                     <li class="nav-item active">
-                        <a class="nav-link" href="/eArchive/Accounts/student/evidence.php">Znanstvena dela
+                        <a class="nav-link" href="/eArchive/Accounts/student/sciPapEvidence.php">Znanstvena dela
                             <span class="sr-only">Znanstvena dela</span>
                         </a>
                     </li>
