@@ -1173,7 +1173,7 @@
             cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
             setBirthplaceOfStudt(student.particulars.id_countries, student.particulars.id_postal_codes)
             setPermResOfStudt(student.permResidence)
-            student.tempResidences.length ? setTempResOfStudt() : null
+            student.tempResidences.length ? setTempResOfStudt(student.tempResidences) : null
             cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
             cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
             cloneFrm.addEventListener(
