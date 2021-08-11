@@ -60,8 +60,8 @@ include_once '../../nav.php';
                             <a class="sp-vw-a text-decoration-none mr-3" href="#sciPapViewMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
                                 <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" data-toggle="tooltip" title="Pregled">
                             </a>
-                            <a class="sp-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
-                                <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" data-toggle="tooltip" title="Vstavljanje">
+                            <a href="#sciPapInsrMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" class="sp-ins-img" data-toggle="tooltip" title="Vstavljanje" data-id-attendances="<?php echo $student->id_attendances; ?>">
                             </a>
                         </td>
                         <td>
