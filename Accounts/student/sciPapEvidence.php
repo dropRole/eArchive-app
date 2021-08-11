@@ -112,8 +112,8 @@ include_once '../../nav.php';
                                 <?php
                                 foreach ($DBC->selectDocuments($sciPap->getIdScientificPapers()) as $doc) {
                                 ?>
-                                    <li class="list-group-item">
-                                        <?php echo "{$doc->getVersion()} -> Objavljen {$doc->getPublished()}"; ?>
+                                    <li class="list-group-item d-flex justify-content-around">
+                                        <a href="<?php echo "/eArchive/{$doc->getSource()}"; ?>" target="_blank"><?php echo $doc->getVersion(); ?></a>
                                         <a class="doc-del-a" href="#sciPapInsrMdl" data-source="<?php echo $doc->getSource(); ?>">Izbriši</a>
                                     </li>
                                 <?php
