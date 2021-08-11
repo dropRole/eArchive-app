@@ -35,11 +35,11 @@ if (isset($index)) {
         <tbody>
             <?php
             // for each student in the record
-            foreach ($DBC->selectStudents() as $student) {
+            foreach ($DBC->selectStudentsByIndex($index) as $student) {
             ?>
                 <tr>
+                    <td><?php echo $student->fullname; ?></td>
                     <td><span class="bg-warning"><?php echo $index; ?></span><?php echo substr($student->index, strlen($index)); ?></td>
-                    <td><?php echo $student->index; ?></td>
                     <td><?php echo $student->program; ?></td>
                     <td><?php echo $student->degree; ?></td>
                     <td><?php echo $student->faculty; ?></td>
