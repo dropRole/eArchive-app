@@ -1808,7 +1808,7 @@ class DBC extends PDO
                             $finfo = new finfo();
                             $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
                             // if document is not of the application/pdf mimetype
-                            if (!$mimetype != 'application/pdf')
+                            if ($mimetype != 'application/pdf')
                                 return "Napaka: dokument '{$_FILES['document']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
                             $upload = TRUE;
                             // if document meets the condition 
