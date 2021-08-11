@@ -555,7 +555,8 @@ class DBC extends PDO
                 // form a report
                 $report['id_students'] = $id_students;
                 $report['mssg'] = 'Osnovni podatki študenta so uspešno evidentirani.' . PHP_EOL;
-                return $report['mssg'] .= $this->insertStudtResidences($id_students, $residences);
+                $report['mssg'] .= $this->insertStudtResidences($id_students, $residences);
+                return $report;
             } // if
             return $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
         } // try
@@ -1288,7 +1289,7 @@ class DBC extends PDO
             // prepare, bind param to and execute stmt
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':source', $source);
-            $prpStmt->execute;
+            $prpStmt->execute();
             // if certificate was deleted 
             if ($prpStmt->rowCount() == 1)
                 return TRUE;
