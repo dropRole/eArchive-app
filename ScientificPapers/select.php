@@ -21,7 +21,7 @@ if (isset($_GET['id_attendances'])) {
     // if there're no papers at all
     if (count($scientificPapers) == 0) {
 ?>
-        <p class="p-2">Opomba: znanstvenih del ni v evidenci.</p>
+        <p class="m-0 p-3 font-italic">Opomba: znanstvenih del ni v evidenci.</p>
         <?php
     } // if
     // if papares exist in evidence
