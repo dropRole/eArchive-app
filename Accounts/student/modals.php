@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <form id="sciPapInsrFrm">
-                    <input type="hidden" name="id_attendances" value="">
+                    <input type="hidden" name="id_attendances" value="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>">
                     <div id="particulars" class="row">
                         <div class="form-group col-12">
                             <label class="w-100">Predmet
