@@ -426,7 +426,7 @@
     let loadStudtEvidTbl = () => {
             request
                 (
-                    '/eArchive/Students/selectAll.php',
+                    '/eArchive/Accounts/authorized/studtEvidence.php',
                     'GET',
                     'document'
                 )
@@ -434,7 +434,7 @@
                     // compose node tree structure
                     frag = response
                         // reflect fragments body  
-                    document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
+                    document.querySelector('div.table-responsive').innerHTML = frag.body.querySelector('div.table-responsive').innerHTML
                 })
                 .then(() => listenStudtEvidTbl())
                 .catch(error => alert(error)) // catch
