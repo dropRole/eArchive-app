@@ -549,7 +549,7 @@
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
                     cross.style.cursor = 'pointer'
-                    cross.innerHTML = '&times;;'
+                    cross.innerHTML = '&times;'
                     cross.setAttribute('data-id-residences', !residences ? '' : residences[0].id_residences)
                     cross.addEventListener(
                             'click',
@@ -928,7 +928,7 @@
                     cross.style.right = '10px'
                     cross.style.zIndex = 1
                     cross.style.cursor = 'pointer'
-                    cross.innerHTML = '&times;;'
+                    cross.innerHTML = '&times;'
                     versionLbl.appendChild(versionInptEl)
                     versionFrmGrp.appendChild(versionLbl)
                     docLbl.appendChild(docInptEl)

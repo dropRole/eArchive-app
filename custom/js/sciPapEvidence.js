@@ -346,7 +346,7 @@
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
                     cross.style.cursor = 'pointer'
-                    cross.innerHTML = '&times'
+                    cross.innerHTML = '&times;'
                         // remove selected attendance section
                     cross.addEventListener(
                             'click',
@@ -416,7 +416,7 @@
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
                     cross.style.cursor = 'pointer'
-                    cross.innerHTML = '&times'
+                    cross.innerHTML = '&times;'
                         // remove selected attendance section
                     cross.addEventListener(
                             'click',
