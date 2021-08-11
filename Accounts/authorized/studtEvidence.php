@@ -16,7 +16,7 @@ include_once '../../nav.php';
 ?>
 
 <!-- Custom core JavaScript -->
-<script defer src="/eArchive/custom/js/evidence.js"></script>
+<script defer src="/eArchive/custom/js/studtEvidence.js"></script>
 
 <section class="container p-3">
     <p class="h2 my-3">Evidenca študentov</p>
