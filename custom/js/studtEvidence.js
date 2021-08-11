@@ -1707,7 +1707,7 @@
     let listenStudtEvidTbl = () => {
             let studtInsrBtn = document.getElementById('studtInsrBtn'), // button for exposing form for student scientific achievements insertion
                 sciPapViewLst = document.querySelectorAll('.sp-vw-a'), // array of anchors for exposing scientific papers of the student
-                sciPapInsrLst = document.querySelectorAll('.sp-ins-a'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
+                sciPapInsrLst = document.querySelectorAll('.sp-ins-img'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
                 gradCertInsrLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
                 gradCertViewLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
                 acctInsrLst = document.querySelectorAll('.acc-ins-a'), // array of buttons for exposing form for assigning an account to student
