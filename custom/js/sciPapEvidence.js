@@ -905,8 +905,8 @@
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper deletion are rendered
-            if (document.querySelectorAll('.sp-del-a'))
-                document.querySelectorAll('.sp-del-a').forEach(anchor => {
+            if (document.querySelectorAll('.sp-del-img'))
+                document.querySelectorAll('.sp-del-img').forEach(anchor => {
                     anchor.addEventListener(
                             'click',
                             () => {
