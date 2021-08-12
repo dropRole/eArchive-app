@@ -18,9 +18,9 @@ include_once '../../nav.php';
 <!-- Custom core JavaScript -->
 <script defer src="../../custom/js/sciPapEvidence.js"></script>
 
-<section class="container p-3">
-    <p class="h2">Evidenca znanstvenih del</p>
-    <div class="d-lg-flex justify-content-between">
+<section class="container my-3 p-3">
+    <p class="h2 my-3">Evidenca znanstvenih del</p>
+    <div class="d-lg-flex justify-content-lg-between">
         <div>
             <input id="fltrInputEl" class="form-control" type="text" placeholder="Predmet">
         </div>
