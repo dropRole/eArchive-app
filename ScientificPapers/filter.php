@@ -35,65 +35,90 @@ if (isset($_GET['topic'])) {
             foreach ($DBC->selectSciPapsByTopic($topic) as $sciPap) {
             ?>
                 <tr>
-                    <td><span class="bg-warning"><?php echo $topic; ?></span><?php echo substr($sciPap->getTopic(), strlen($topic)); ?></td>
+                    <td><span class="bg-warning"><?php echo substr($sciPap->getTopic(), 0, strlen($topic)); ?></span><?php echo substr($sciPap->getTopic(), strlen($topic)); ?></td>
                     <td><?php echo $sciPap->getType(); ?></td>
                     <td><?php echo (new DateTime($sciPap->getWritten()))->format('d-m-Y'); ?></td>
                     <td>
-                        <a class="par-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
-                        <?php
-                        foreach ($DBC->selectPartakings($sciPap->getIdScientificPapers()) as $partaker) {
-                        ?>
-                            <ul class="list-inline">
+                        <ul class="list-inline">
+                            <li class="list-group-item text-center">
+                                <a href="#sciPapInsrMdl" data-toggle="modal">
+                                    <img class="par-ins-img" src="/eArchive/custom/img/assignPartaker.png" alt="Dodeli" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Dodeli">
+                                </a>
+                            </li>
+                            <?php
+                            foreach ($DBC->selectPartakings($sciPap->getIdScientificPapers()) as $partaker) {
+                            ?>
                                 <li class="list-group-item">
-                                    <?php echo "{$partaker->fullname} -> Indeks {$partaker->index}"; ?>
-                                    <a class="par-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>">Uredi</a>
-                                    <a class="par-del-a" href="#sciPapInsrMdl" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>">Izbriši</a>
+                                    <p class="d-flex justify-content-between">
+                                        <span class="w-100 text-center"><?php echo $partaker->fullname; ?></span>
+                                        <span class="w-100 text-center"><?php echo $partaker->getPart(); ?></span>
+                                    </p>
+                                    <p class="d-flex justify-content-around">
+                                        <a class="par-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>">Uredi</a>
+                                        <a class="par-del-a" href="#sciPapInsrMdl" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>">Izbriši</a>
+                                    </p>
                                 </li>
-                            </ul>
-                        <?php
-                        } // forach
-                        ?>
+                            <?php
+                            } // forach
+                            ?>
+                        </ul>
                     </td>
                     <td>
-                        <a class="men-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Dodeli</a>
-                        <?php
-                        foreach ($DBC->selectSciPapMentors($sciPap->getIdScientificPapers()) as $mentor) {
-                        ?>
-                            <ul class="list-inline">
+                        <ul class="list-inline">
+                            <li class="list-group-item text-center">
+                                <a href="#sciPapInsrMdl" data-toggle="modal">
+                                    <img src="/eArchive/custom/img/assignMentor.png" alt="Dodeli" class="men-ins-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Dodeli">
+                                </a>
+                            </li>
+                            <?php
+                            foreach ($DBC->selectSciPapMentors($sciPap->getIdScientificPapers()) as $mentor) {
+                            ?>
                                 <li class="list-group-item">
-                                    <?php echo "{$mentor->getMentor()} -> Fakulteta {$mentor->name}"; ?>
-                                    <a class="men-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
-                                    <a class="men-del-a" href="#sciPapInsrMdl" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Izbriši</a>
+                                    <p class="d-flex justify-content-between">
+                                        <span class="w-100 text-center"><?php echo $mentor->getMentor(); ?></span>
+                                        <span class="w-100 text-center"><?php echo $mentor->faculty; ?></span>
+                                    </p>
+                                    <p class="d-flex justify-content-around">
+                                        <a class="men-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
+                                        <a class="men-del-a" href="#sciPapInsrMdl" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Izbriši</a>
+                                    </p>
                                 </li>
-                            </ul>
-                        <?php
-                        } // forach
-                        ?>
+
+                            <?php
+                            } // forach
+                            ?>
+                        </ul>
                     </td>
                     <td>
-                        <a class="doc-upl-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Naloži</a>
-                        <?php
-                        foreach ($DBC->selectDocuments($sciPap->getIdScientificPapers()) as $doc) {
-                        ?>
-                            <ul class="list-inline">
-                                <li class="list-group-item">
-                                    <?php echo "{$doc->getVersion()} -> Objavljen {$doc->getPublished()}"; ?>
+                        <ul class="list-inline">
+                            <li class="list-group-item text-center">
+                                <a href="#sciPapInsrMdl" data-toggle="modal">
+                                    <img src="/eArchive/custom/img/upload.png" alt="Naloži" class="doc-upl-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Naloži">
+                                </a>
+                            </li>
+                            <?php
+                            foreach ($DBC->selectDocuments($sciPap->getIdScientificPapers()) as $doc) {
+                            ?>
+                                <li class="list-group-item d-flex justify-content-around">
+                                    <a href="<?php echo "/eArchive/{$doc->getSource()}"; ?>" target="_blank"><?php echo $doc->getVersion(); ?></a>
                                     <a class="doc-del-a" href="#sciPapInsrMdl" data-source="<?php echo $doc->getSource(); ?>">Izbriši</a>
                                 </li>
-                            </ul>
-                        <?php
-                        } // forach
-                        ?>
+                            <?php
+                            } // forach
+                            ?>
+                        </ul>
                     </td>
                     <td>
-                        <a class="sp-upd-а" href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Uredi</a>
+                        <a href="#sciPapInsrMdl" data-toggle="modal">
+                            <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="sp-upd-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Uredi">
+                        </a>
                     </td>
                     <td>
-                        <a class="sp-del-a" href="#" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Izbriši</a>
+                        <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" class="sp-del-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Izbriši">
                     </td>
                 </tr>
             <?php
-            } // foreach
+            }  // foreach
             ?>
         </tbody>
     </table>
