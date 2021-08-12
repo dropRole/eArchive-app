@@ -579,7 +579,7 @@
      *   @param Object sciPap
      */
     let toSciPapUpdtFrm = sciPap => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInptEl = document.createElement('input')
@@ -613,7 +613,7 @@
      *  @param Event e
      */
     let toPartakerInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInptEl = document.createElement('input')
@@ -688,7 +688,7 @@
      *  @param Event e
      */
     let toMentorInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersInptEl = document.createElement('input')
@@ -774,7 +774,7 @@
      *   @param Event e
      */
     let toSciPapDocUpldFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idScientificPapersIntpEl = document.createElement('input')
@@ -839,8 +839,8 @@
     // attach event listeners to a scientific paper cards when rendered
     let listenSciPapEvidTbl = () => {
             // if anchor nodes for partaker insertion exist
-            if (document.querySelectorAll('.par-ins-a'))
-                document.querySelectorAll('.par-ins-a').forEach(anchor => {
+            if (document.querySelectorAll('.par-ins-img'))
+                document.querySelectorAll('.par-ins-img').forEach(anchor => {
                     // form will contain only control for partaker insertion
                     anchor.addEventListener('click', toPartakerInsrFrm)
                 }) // forEach
@@ -868,8 +868,8 @@
                     anchor.addEventListener('click', toPartakerUpdtFrm) // addEventListener
                 }) // forEach
                 // if anchors for mentor insertion are rendered
-            if (document.querySelectorAll('.men-ins-a'))
-                document.querySelectorAll('.men-ins-a').forEach(anchor => {
+            if (document.querySelectorAll('.men-ins-img'))
+                document.querySelectorAll('.men-ins-img').forEach(anchor => {
                     // restructure form for document upload
                     anchor.addEventListener('click', toMentorInsrFrm)
                 }) // forEach
@@ -891,8 +891,8 @@
                         ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper update are rendered
-            if (document.querySelectorAll('.sp-upd-а'))
-                document.querySelectorAll('.sp-upd-а').forEach(anchor => {
+            if (document.querySelectorAll('.sp-upd-img'))
+                document.querySelectorAll('.sp-upd-img').forEach(anchor => {
                     // fill form fields and modify the form
                     anchor.addEventListener('click', e => {
                             request(
@@ -915,8 +915,8 @@
                         ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper document upload exist
-            if (document.querySelectorAll('.doc-upl-a'))
-                document.querySelectorAll('.doc-upl-a').forEach(span => {
+            if (document.querySelectorAll('.doc-upl-img'))
+                document.querySelectorAll('.doc-upl-img').forEach(span => {
                     // delete particular document
                     span.addEventListener('click', toSciPapDocUpldFrm)
                 }) // forEach
