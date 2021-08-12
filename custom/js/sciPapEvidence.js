@@ -787,7 +787,7 @@
             document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idScientificPapersIntpEl)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12'
+            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12 mb-3'
             cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
             listenSciPapInsrFrm()
                 // remove nodes except those matching given selector expression 
