@@ -211,7 +211,7 @@
                     (new FormData(frm))
                 )
                 .then(response => rprtOnAction(response))
-                .then(() => $('#sicPapMdl').modal('hide'))
+                .then(() => $('#sciPapMdl').modal('hide'))
                 .then(() => loadSciPapEvidTbl())
                 .catch(error => alert(error)) // catch
         } // uploadDocsOfSciPap
@@ -649,7 +649,7 @@
      *  @param Event e
      */
     let toPartakerUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idPartakingsInptEl = document.createElement('input')
@@ -724,7 +724,7 @@
      *  @param Event e
      */
     let toMentorUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneFrm = sciPapInsrFrm.cloneNode(true),
                 idMentoringsInptEl = document.createElement('input')
             idMentoringsInptEl.type = 'hidden'
