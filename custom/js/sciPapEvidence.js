@@ -499,7 +499,7 @@
                         versionInptEl = document.createElement('input'), // version input
                         docInptEl = document.createElement('input'), // document input 
                         docNameInptEl = document.createElement('input'), // document hidden input 
-                        index = document.querySelectorAll('div#documents > div.row').length // the following index for an array of data on documents of scientific paper  
+                        index = document.querySelectorAll('div#sciPapDocs > div.row').length // the following index for an array of data on documents of scientific paper  
                         // set observation criterion
                     observer.observe(document.getElementById('sciPapDocs'), {
                         attributes: false,
