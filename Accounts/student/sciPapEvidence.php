@@ -122,8 +122,8 @@ include_once '../../nav.php';
                             </ul>
                         </td>
                         <td>
-                            <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
-                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="sp-upd-img" data-toggle="tooltip" title="Uredi">
+                            <a href="#sciPapInsrMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="sp-upd-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Uredi">
                             </a>
                         </td>
                         <td>
