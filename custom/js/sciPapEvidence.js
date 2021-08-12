@@ -48,6 +48,8 @@
                     frag = response
                         // reflect fragments body  
                     document.body.querySelector('div.table-responsive').replaceWith(frag.body.querySelector('div.table-responsive'))
+                        // enabling tooltips 
+                    $('[data-toggle="tooltip"]').tooltip()
                 })
                 .then(() => listenSciPapEvidTbl())
                 .catch(error => alert(error)) // catch
