@@ -54,8 +54,8 @@ include_once '../../nav.php';
                         <td>
                             <ul class="list-inline">
                                 <li class="list-group-item text-center">
-                                    <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
-                                        <img class="par-ins-img" src="/eArchive/custom/img/assignPartaker.png" alt="Dodeli" data-toggle="tooltip" title="Dodeli">
+                                    <a href="#sciPapInsrMdl" data-toggle="modal">
+                                        <img class="par-ins-img" src="/eArchive/custom/img/assignPartaker.png" alt="Dodeli" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Dodeli">
                                     </a>
                                 </li>
                                 <?php
@@ -79,8 +79,8 @@ include_once '../../nav.php';
                         <td>
                             <ul class="list-inline">
                                 <li class="list-group-item text-center">
-                                    <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
-                                        <img src="/eArchive/custom/img/assignMentor.png" alt="Dodeli" class="men-ins-img" data-toggle="tooltip" title="Dodeli">
+                                    <a href="#sciPapInsrMdl" data-toggle="modal">
+                                        <img src="/eArchive/custom/img/assignMentor.png" alt="Dodeli" class="men-ins-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Dodeli">
                                     </a>
                                 </li>
                                 <?php
@@ -105,8 +105,8 @@ include_once '../../nav.php';
                         <td>
                             <ul class="list-inline">
                                 <li class="list-group-item text-center">
-                                    <a href="#sciPapInsrMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">
-                                        <img src="/eArchive/custom/img/upload.png" alt="Naloži" class="doc-ins-img" data-toggle="tooltip" title="Naloži">
+                                    <a href="#sciPapInsrMdl" data-toggle="modal">
+                                        <img src="/eArchive/custom/img/upload.png" alt="Naloži" class="doc-upl-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Naloži">
                                     </a>
                                 </li>
                                 <?php
