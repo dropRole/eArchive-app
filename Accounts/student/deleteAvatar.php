@@ -8,6 +8,10 @@ use DBC\DBC;
 
 require_once '../../autoload.php';
 
+// proceed with the current session
+
+session_start();
+
 $id_attendances = $_GET['id_attendances'];
 $avatar = $_GET['avatar'];
 
