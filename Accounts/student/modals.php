@@ -91,12 +91,12 @@
                 <img src="<?php echo $DBC->hasAcctAvatar($_SESSION['index']) ? "/eArchive/{$DBC->hasAcctAvatar($_SESSION['index'])}"  : '/eArchive/custom/img/defaultAvatar.png'; ?>">
             </div>
             <form id="acctAvtrUpldFrm">
-                <div class="form-group">
+                <div class="form-group d-flex flex-column align-items-center">
                     <input type="hidden" name="id_attendances" value="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>">
-                    <label>Avatar
+                    <label class="file-label w-50">Avatar
                         <input type="file" name="avatar" accept=".jpg" required>
                     </label>
-                    <input class="btn btn-warning" type="submit" value="Naloži">
+                    <input class="btn btn-warning w-50" type="submit" value="Naloži">
                 </div>
             </form>
             <div class="modal-body"></div>
