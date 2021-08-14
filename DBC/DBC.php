@@ -2271,7 +2271,7 @@ class DBC extends PDO
     private function updateAcctAvatar(int $id_attendances, string $avatar)
     {
         $stmt = '   UPDATE 
-                        accoutns
+                        accounts
                     SET 
                         avatar = :avatar 
                     WHERE 
@@ -2279,8 +2279,8 @@ class DBC extends PDO
         try {
             // prepare, bind paramas to and execute stmt
             $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->bindParam(':avatar', $avatar, PDO::PARAM_STR);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
             // if avatar location was updated
             if ($prpStmt->rowCount() == 1)
