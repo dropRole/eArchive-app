@@ -644,7 +644,7 @@ class DBC extends PDO
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
         if ($prpStmt->rowCount() == 1)
