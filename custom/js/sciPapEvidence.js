@@ -278,7 +278,7 @@
                 .then(response => rprtOnAction(response))
                 .then(() => $('#acctAvtrUpldMdl').modal('hide'))
                 .then(() => request(
-                    '/eArchive/Accounts/student/ScientificPaperReview.php',
+                    '/eArchive/Accounts/student/sciPapEvidence.php',
                     'GET',
                     'document'
                 ))
