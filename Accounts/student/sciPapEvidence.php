@@ -127,7 +127,7 @@ include_once '../../nav.php';
                             </a>
                         </td>
                         <td>
-                            <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" class="sp-del-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Izbriši">
+                            <img src="/eArchive/custom/img/deleteDocument.png" alt="Izbriši" class="sp-del-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Izbriši">
                         </td>
                     </tr>
                 <?php
