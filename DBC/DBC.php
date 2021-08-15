@@ -2199,10 +2199,13 @@ class DBC extends PDO
                 $this->beginTransaction();
                 // if the user was droped
                 if ($this->revokeStudtPrivileges($index) && $this->dropStudtUser($index)) {
+                    // if student had account avatar 
+                    if ($avatar = $this->hasAcctAvatar($index))
+                        unlink("../../{$avatar}");
                     $stmt = '   DELETE FROM 
-                                accounts
-                            WHERE 
-                                id_attendances = :id_attendances    ';
+                                    accounts
+                                WHERE 
+                                    id_attendances = :id_attendances    ';
                     // prepare, bind param to and execute stmt
                     $prpStmt = $this->prepare($stmt);
                     $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
