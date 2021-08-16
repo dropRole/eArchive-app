@@ -25,7 +25,13 @@ div.container>div.h2>div.heading-border-bottom-right {
     border-right: 2px solid hsl(210, 11%, 15%);
 }
 
+div.partaker-card {
+    border: 1px solid hsl(0, 0%, 0%, .2);
+    border-radius: 3px;
+}
+
 img.acct-avtr-big,
+img.acct-avtr-md,
 img.acct-avtr-small {
     object-fit: cover;
     border-radius: 50%;
@@ -34,6 +40,11 @@ img.acct-avtr-small {
 img.acct-avtr-big {
     width: 150px;
     height: 150px;
+}
+
+img.acct-avtr-md {
+    width: 100px;
+    height: 100px;
 }
 
 img.acct-avtr-small {
