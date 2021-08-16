@@ -54,9 +54,9 @@
                             ) // addEventListener
                     }) // from
                 // if anchor elements for document view exist
-            if (tbl.getElementsByClassName('doc-vw-a'))
+            if (tbl.getElementsByClassName('doc-vw-img'))
                 Array.from(
-                    tbl.getElementsByClassName('doc-vw-a'),
+                    tbl.getElementsByClassName('doc-vw-img'),
                     anchor => {
                         anchor.addEventListener(
                             'click',
@@ -70,9 +70,9 @@
                         )
                     }) // from
                 // if anchor elements for graduation certificate insight exist
-            if (tbl.getElementsByClassName('cert-vw-a'))
+            if (tbl.getElementsByClassName('cert-vw-img'))
                 Array.from(
-                    tbl.getElementsByClassName('cert-vw-a'),
+                    tbl.getElementsByClassName('cert-vw-img'),
                     anchor => {
                         anchor.addEventListener(
                             'click',
@@ -166,4 +166,7 @@
                 // replace nodes of the active with the passive document nodes 
             modal.querySelector('div.modal-body').innerHTML = frag.body.innerHTML
         } // exposeResp
+
+    // enable tooltip toggle on elements
+    $('[data-toggle="tooltip"]').tooltip()
 })()
