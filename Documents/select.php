@@ -15,32 +15,23 @@ if (isset($id_scientific_papers)) {
     // retrieve an instance of PDO holding database server connection
     $DBC = new DBC();
 ?>
-    <div class="table-responsive">
-        <table class="table">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Objavljen</th>
-                    <th>Verzija</th>
-                    <th>Lokacija</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // select documents of the givne scientific paper
-                foreach ($DBC->selectDocuments($id_scientific_papers) as $doc) {
-                ?>
-                    <tr>
-                        <td><?php echo (new DateTime($doc->getPublished()))->format('d-m-Y'); ?></td>
-                        <td><?php echo $doc->getVersion(); ?></td>
-                        <td>
-                            <a href="<?php echo "/eArchive/{$doc->getSource()}"; ?>" target="_blank"><?php echo basename($doc->getSource()); ?></a>
-                        </td>
-                    </tr>
-                <?php
-                } // foreach
-                ?>
-            </tbody>
-        </table>
+    <div class="row p-2">
+        <?php
+        // select documents of the givne scientific paper
+        foreach ($DBC->selectDocuments($id_scientific_papers) as $doc) {
+        ?>
+            <div class="card p-0 col-lg-6 col-12">
+                <div class="card-header">
+                    Verzija <?php echo $doc->getVersion(); ?>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Dokument je objavljen <span class="font-italic"><?php echo $doc->getPublished(); ?></span>.</p>
+                    <a href="<?php echo "/eArchive/{$doc->getSource()}"; ?>" class="btn btn-primary" target="_blank">Pregled</a>
+                </div>
+            </div>
+        <?php
+        } // foreach
+        ?>
     </div>
 <?php
 } // if
