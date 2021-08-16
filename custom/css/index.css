@@ -40,3 +40,11 @@ img.acct-avtr-small {
     width: 50px;
     height: 50px;
 }
+
+table.stu-par-tbl td {
+    width: 50%;
+}
+
+table.stu-par-tbl td:nth-child(2) {
+    text-align: right;
+}
