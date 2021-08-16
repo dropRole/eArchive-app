@@ -16,9 +16,10 @@ if (isset($id_attendances)) {
     $DBC = new DBC();
     // select program attendance particulars
     $particulars = $DBC->selectProgAttnParticulars($id_attendances);
+
 ?>
-    <div class="d-flex flex-column justify-content-start">
-        <div class="align-self-center">
+    <div class="container">
+        <div class="d-flex flex-column align-items-center">
             <?php
             // if the subject student has been assigned with an account 
             if ($DBC->checkAcctAssignment($id_attendances))
@@ -26,7 +27,11 @@ if (isset($id_attendances)) {
                 if ($avatar = $DBC->hasAcctAvatar($particulars->index)) {
             ?>
 
-                <img class="acct-avtr-big" src="<?php echo "/eArchive/{$avatar}"; ?>" alt="Avatar">
+                <img class="acct-avtr-big mb-1" src="<?php echo "/eArchive/{$avatar}"; ?>" alt="Avatar">
+            <?php
+                } else {
+            ?>
+                <img class="acct-avtr-small mb-1" src="/eArchive/custom/img/defaultAvatar.png" alt="Avatar">
             <?php
                 }
             ?>
@@ -34,8 +39,8 @@ if (isset($id_attendances)) {
                 <span class="text-info"><?php echo $particulars->email; ?></span><br>
             </p>
         </div>
-        <div class="align-self-start table-responsive">
-            <table class="table table-borderless">
+        <div class="table-responsive">
+            <table class="table table-borderless stu-par-tbl">
                 <tbody>
                     <tr>
                         <td scope="row" class="text-info">Indeks</td>
