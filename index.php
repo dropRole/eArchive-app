@@ -14,9 +14,12 @@ $DBC = new DBC();
 include_once './nav.php';
 
 ?>
-<h2 class="text-center">Digitalna arhiva znanstvenih dosežkov</h2>
-
-<div class="container">
+<div class="container my-5">
+    <div class="h2 mb-4 p-4 text-center">
+        Digitalna arhiva<br>znanstvenih dosežkov
+        <div class="heading-border-top-left"></div>
+        <div class="heading-border-bottom-right"></div>
+    </div>
     <div class="input-group">
         <input id="searchInptEl" type="text" class="form-control" data-criterion="author" placeholder="Ime in priimek avtorja dela" aria-label="Text input with segmented dropdown button">
         <div class="input-group-append">
