@@ -1038,7 +1038,7 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_OBJ);
+            return $prpStmt->fetchAll(PDO::FETCH_OBJ)[0];
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
