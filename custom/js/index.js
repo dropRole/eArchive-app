@@ -17,6 +17,8 @@
                 frag = response
                     // replace nodes of the active with the passive document nodes 
                 document.body.querySelector('table > tbody').replaceWith(frag.body.querySelector('table > tbody'))
+                    // enable tooltips on images
+                $('[data-toggle="tooltip"]').tooltip()
             })
             .then(() => listenSciPapEvidTbl(document.querySelector('table')))
             .catch(error => alert(error))
