@@ -960,7 +960,9 @@
                         // compose documents node tree structure
                         frag = response
                             // replace passive with the active node structures
-                        document.querySelector('table').replaceWith(frag.body.querySelector('table'))
+                        document.querySelector('table>tbody').replaceWith(frag.body.querySelector('table>tbody'))
+                            // enable tooltips on table images
+                        $('[data-toggle="tooltip"]').tooltip()
                     })
                     .then(() => listenSciPapEvidTbl())
                     .catch(error => alert(error))
