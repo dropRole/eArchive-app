@@ -23,32 +23,24 @@ else if (isset($_GET['id_scientific_papers'])) {
     // return a new PDO object instance that carries connection with the database server 
     $DBC = new DBC();
 ?>
-    <div class="table-responsive">
-        <table class="table table-borderless">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Mentor</th>
-                    <th>Učil</th>
-                    <th>Fakulteta</th>
-                    <th>E-naslov</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // select data regarding mentors of the scientific paper 
-                foreach ($DBC->selectSciPapMentors($id_scientific_papers) as $mentor) {
-                ?>
-                    <tr>
-                        <td><?php echo $mentor->getMentor(); ?></td>
-                        <td><?php echo $mentor->getTaught(); ?></td>
-                        <td><?php echo $mentor->faculty; ?></td>
-                        <td><?php echo $mentor->getEmail(); ?></td>
-                    </tr>
-                <?php
-                } // foreach
-                ?>
-            </tbody>
-        </table>
+    <div class="row p-3">
+        <?php
+        // select data regarding mentors of the scientific paper 
+        foreach ($DBC->selectSciPapMentors($id_scientific_papers) as $mentor) {
+        ?>
+            <div class="card p-0 col-12">
+                <div class="card-header d-flex justify-content-between">
+                    <span><strong><?php echo $mentor->getMentor(); ?></strong></span>
+                    <span><?php echo $mentor->getEmail(); ?></span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Predmet:</strong>&nbsp;<?php echo $mentor->getTaught(); ?></li>
+                    <li class="list-group-item"><strong>Fakulteta:</strong>&nbsp;<?php echo $mentor->faculty; ?></li>
+                </ul>
+            </div>
+        <?php
+        } // foreach
+        ?>
     </div>
 <?php
 } // else if 
