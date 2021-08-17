@@ -159,7 +159,7 @@ class DBC extends PDO
     *   select scientific papers written at the given year 
     *   @param string $year
     */
-    public function selectScientificPapersByYear(string $year)
+    public function selectSciPapsByYear(string $year)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
