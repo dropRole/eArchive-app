@@ -146,7 +146,7 @@ if (!empty($_GET)) {
                             if ($sciPap->id_certificates != NULL) {
                             ?>
                                 <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal">
-                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-vw-img" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>" data-toggle="tooltips" title="Pregled">
+                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-vw-img" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
                                 </a>
                             <?php
                             } // if
