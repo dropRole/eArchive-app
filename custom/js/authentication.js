@@ -58,7 +58,7 @@
                             subtree: false
                         }
                     )
-                    rprt.classList = 'text-warning font-italic'
+                    rprt.classList = 'text-info font-italic'
                     rprt.textContent = response.mssg
                     document.getElementById('lgnRprt').innerHTML = ''
                     document.getElementById('lgnRprt').appendChild(rprt)
