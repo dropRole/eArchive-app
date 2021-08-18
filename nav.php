@@ -41,7 +41,7 @@
                                 // if student has account avatar
                                 if ($avatar = $DBC->hasAcctAvatar($_SESSION['index'])) {
                             ?>
-                                    <img id="acctAvtrRmvIcon" src="/eArchive/custom/img/removeAvatar.png" data-id-attendances="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>" data-avatar="<?php echo $avatar; ?>">
+                                    <img id="avtrRmvSign" src="/eArchive/custom/img/removeAvatar.png" data-id-attendances="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>" data-avatar="<?php echo $avatar; ?>">
                                     <img id="usrAvtr" src="<?php echo "/eArchive/{$DBC->hasAcctAvatar($_SESSION['index'])}"; ?>">
                                 <?php
                                 } else {
