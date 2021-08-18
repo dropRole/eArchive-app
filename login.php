@@ -8,6 +8,9 @@ include_once './nav.php';
 
 ?>
 
+<!-- User authentication script -->
+<script defer src="/eArchive/custom/js/authentication.js"></script>
+
 <section id="login">
     <div class="d-flex justify-content-center">
         <form id="lgnFrm" method="POST" action="./Accounts/authentication.php" class="my-3">
@@ -27,9 +30,6 @@ include_once './nav.php';
         </form>
     </div>
 </section>
-
-<!-- Custom core JavaScript -->
-<script src="/eArchive/custom/js/authentication.js"></script>
 
 <?php
 
