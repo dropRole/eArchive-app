@@ -75,7 +75,8 @@
                 else {
                 ?>
                     <li class="nav-item active">
-                        <a class="nav-link" href="./login.php">Prijava
+                        <a class="nav-link" href="./login.php">
+                        <img src="/eArchive/custom/img/login.png" alt="Prijava" class="login mr-1">Prijava
                             <span class="sr-only">Prijava</span>
                         </a>
                     </li>
@@ -86,5 +87,3 @@
         </div>
     </div>
 </nav>
-<!-- Custom stylesheet for navigation bar -->
-<link rel="stylesheet" href="/eArchive/custom/css/nav.css">
