@@ -11,10 +11,10 @@ include_once './nav.php';
 <!-- User authentication script -->
 <script defer src="/eArchive/custom/js/authentication.js"></script>
 
-<section id="login">
-    <div class="d-flex justify-content-center">
-        <form id="lgnFrm" method="POST" action="./Accounts/authentication.php" class="my-3">
-            <p class="h2 mb-3">Prijava</p>
+<section>
+    <div class="d-flex justify-content-center my-4">
+        <form id="lgnFrm" method="POST" action="./Accounts/authentication.php" class="p-3">
+            <p class="h2">Prijava</p>
             <div class="form-group">
                 <label>Indeks
                     <input id="indexInptEl" class="form-control" type="text" name="index" autocomplete="on" required>
@@ -26,10 +26,13 @@ include_once './nav.php';
                 </label>
             </div>
             <div id="lgnRprt"></div>
-            <input id="lgnBtn" class="btn btn-dark" type="submit" value="Potrdi">
+            <input id="lgnBtn" class="btn btn-dark w-25" type="submit" value="Potrdi">
         </form>
     </div>
 </section>
+
+<!-- Login form stylesheet -->
+<link href="/eArchive/custom/css/login.css" rel="stylesheet" />
 
 <?php
 
