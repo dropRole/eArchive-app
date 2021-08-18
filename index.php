@@ -32,9 +32,9 @@ include_once './nav.php';
                 <span class="sr-only">Toggle Dropdown</span>
             </button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="#" data-criterion="author" data-placeholder="Ime in priimek avtorja dela">Po avtrojih</a>
-                <a class="dropdown-item" href="#" data-criterion="mentor" data-placeholder="Ime in priimek mentorja dela">Po mentorjih</a>
-                <a class="dropdown-item" href="#" data-criterion="written" data-placeholder="Leto pisanja dela">Po letu pisanja</a>
+                <a class="dropdown-item" href="#div.dropdown-menu" data-criterion="author" data-placeholder="Ime in priimek avtorja dela">Po avtrojih</a>
+                <a class="dropdown-item" href="#div.dropdown-menu" data-criterion="mentor" data-placeholder="Ime in priimek mentorja dela">Po mentorjih</a>
+                <a class="dropdown-item" href="#div.dropdown-menu" data-criterion="written" data-placeholder="Leto pisanja dela">Po letu pisanja</a>
             </div>
         </div>
     </div>
