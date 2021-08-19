@@ -639,7 +639,7 @@
                         certInptEl = document.createElement('input'),
                         defendedInptEl = document.createElement('input'),
                         issuedInptEl = document.createElement('input'),
-                        index = e.target.getAttribute('data-indx'), // get next index position for attendances array 
+                        index = e.target.getAttribute('data-index'), // get next index position for attendances array 
                         observer.observe(document.getElementById('attendances'), {
                             attributes: false,
                             childList: true,
@@ -712,7 +712,7 @@
                 indexInputEl = document.createElement('input'),
                 gradCheckBox = document.createElement('input'),
                 gradTxt = document.createTextNode('Diplomiral')
-            index = document.querySelectorAll('div#attendances > div.row').length - 1 // the following index for an array od data on program attendance       
+            index = document.querySelectorAll('div#attendances > div.row').length // the following index for an array od data on program attendance       
             gradCheckBox.addEventListener(
                     'input',
                     e => {
