@@ -26,7 +26,7 @@ include_once './nav.php';
                 </label>
             </div>
             <div id="lgnRprt"></div>
-            <input id="lgnBtn" class="btn btn-dark w-25" type="submit" value="Potrdi">
+            <input id="lgnBtn" class="btn btn-dark" type="submit" value="Potrdi">
         </form>
     </div>
 </section>
