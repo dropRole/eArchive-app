@@ -18,32 +18,28 @@
     $residences = $_POST['residences'];
     $attendances = $_POST['attendances'];
 
-    // if mandatory data is passed
+    // if mandatory data was passed
     if (isset($name, $surname, $id_postal_codes, $residences, $attendances)) {
-        // create a new instance
+        // create a new instance of PDO retrieving database connection 
         $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
         // insertion report
-        $insrtStudtRprt = $DBC->insertStudent($id_postal_codes, $name, $surname, $email, $telephone, $residences);
-        echo $insrtStudtRprt['mssg'] . PHP_EOL;
+        $studtRprt = $DBC->insertStudent($id_postal_codes, $name, $surname, $email, $telephone, $residences);
+        echo $studtRprt['mssg'];
         // if insertion is successful
-        if ($insrtStudtRprt['id_students']) {
-            // insert every student attendance
+        if ($studtRprt['id_students']) {
+            // insert every program attendance of the student
             foreach ($attendances as $attendance) {
-                $insrtAttnRprt = $DBC->insertAttendance($insrtStudtRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
-                // if insretion isn't successful
-                if (!$insrtAttnRprt['id_attendances'])
-                    echo 'Napaka: študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->program . '\' ni uspešno evidentiran.' . PHP_EOL;
-                // if insertion is successful
-                if ($insrtAttnRprt['id_attendances']) {
-                    echo 'Študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->program. '\' je uspešno evidentiran.' . PHP_EOL;
+                $attnRprt = $DBC->insertAttendance($studtRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
+                // if insertion was successful
+                if ($attnRprt['id_attendances']) {
+                    echo 'Študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->program . '\' je uspešno evidentiran.' . PHP_EOL;
                     // if student graduated
                     if (isset($attendance['certificate'])) {
-                        $insrtGradRprt = $DBC->uploadCertificate($insrtAttnRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
-                        echo $insrtGradRprt . PHP_EOL;
+                        $certRprt = $DBC->uploadCertificate($attnRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
+                        echo $certRprt . PHP_EOL;
                     } // if
                 } // if 
             } // foreach
         } // if
     } // if 
-
     ?>
