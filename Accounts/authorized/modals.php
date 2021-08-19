@@ -145,7 +145,7 @@
                             </div>
                             <div class="d-flex align-items-center justify-content-center form-group col-lg-4 col-12">
                                 <label class="mt-2">
-                                    <input id="gradCheckBox" class="mr-2" type="checkbox" data-indx="0" data-lbl-num="0">
+                                    <input id="gradCheckBox" class="mr-2" type="checkbox" data-index="0" data-lbl-num="0">
                                     Diplomiral
                                 </label>
                             </div>
