@@ -1194,7 +1194,7 @@ class DBC extends PDO
     */
     public function uploadCertificate(int $id_attendances, string $certificate, DateTime $defended, DateTime $issued)
     {
-        // insertion report
+        // upload report
         $report = '';
         // if not already running a transaction
         if (!$this->inTransaction()) {
