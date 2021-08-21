@@ -1,6 +1,6 @@
 ﻿/*
 Created: 20/02/2021
-Modified: 14/04/2021
+Modified: 21/08/2021
 Project: studentAchievements
 Model: PostgreSQL 10
 Company: /
@@ -9,10 +9,204 @@ Version: 1
 Database: PostgreSQL 10
 */
 
+
+-- Create roles section -------------------------------------------------
+
+CREATE ROLE 
+    authorized 
+WITH
+    SUPERUSER
+    INHERIT
+    LOGIN
+    CONNECTION LIMIT 1;
+
+GRANT 
+    SELECT, 
+    INSERT, 
+    UPDATE, 
+    DELETE, 
+    REFERENCES
+ON TABLE 
+    students, 
+    scientific_papers, 
+    attendances, 
+    graduations, 
+    partakings, 
+    certificates, 
+    mentorings, 
+    documents, 
+    residences, 
+    accounts
+TO 
+    authorized WITH GRANT OPTION;
+
+GRANT 
+    SELECT, 
+    REFERENCES 
+ON TABLE 
+    faculties, 
+    programs, 
+    postal_codes, 
+    countries 
+TO 
+    authorized;
+
+GRANT 
+    ALL PRIVELEGES 
+ON SEQUENCE 
+    students_id_students_seq, 
+    scientific_papers_id_scientific_papers_seq,
+    attendances_id_attendances_seq, 
+    certificates_id_certificates_seq,
+    graduations_id_graduations_seq,
+    partakings_id_partakings_seq,
+    mentorings_id_mentorings_seq,
+    documents_id_documents_seq,
+    residences_id_residences_seq,
+    accounts_id_accounts_seq
+TO 
+    authorized;
+
+GRANT 
+    SELECT
+ON SEQUENCE 
+    faculties_id_faculties_seq, 
+    programs_id_programs_seq, 
+    postal_codes_id_postal_codes_seq, 
+    countries_id_countries_seq
+TO 
+    authorized;
+;
+
+CREATE ROLE 
+    student 
+WITH 
+    LOGIN;
+    
+GRANT 
+    SELECT, 
+    REFERENCES 
+ON TABLE 
+    faculties, 
+    programs, 
+    postal_codes, 
+    countries 
+TO 
+    student;
+
+GRANT 
+    SELECT, 
+    INSERT, 
+    UPDATE, 
+    DELETE, 
+    REFERENCES 
+ON TABLE 
+    scientific_papers, 
+    partakings, 
+    mentorings, 
+    documents, 
+    residences
+TO  
+    student;
+
+GRANT 
+    SELECT 
+ON TABLE 
+    attendances, 
+    graduations, 
+    certificates
+TO 
+    student;
+
+GRANT 
+    SELECT, 
+    UPDATE
+ON TABLE 
+    students,
+    accounts
+TO 
+    student;
+
+GRANT 
+    ALL PRIVILEGES 
+ON SEQUENCE 
+    students_id_students_seq
+    scientific_papers_id_scientific_papers_seq,
+    partakings_id_partakings_seq, 
+    mentorings_id_mentorings_seq, 
+    documents_id_documents_seq, 
+    residences_id_residences_seq
+TO 
+    student;
+
+GRANT 
+    USAGE 
+ON SEQUENCE 
+    faculties_id_faculties_seq, 
+    programs_id_programs_seq, 
+    postal_codes_id_postal_codes_seq, 
+    countries_id_countries_seq,
+    attendances_id_attendances_seq,  
+    certificates_id_certificates_seq 
+TO 
+    student;
+;
+
+CREATE ROLE 
+    visitor;
+
+GRANT 
+    SELECT, 
+    REFERENCES 
+ON TABLE 
+    students, 
+    scientific_papers, 
+    attendances, 
+    graduations, 
+    certificates, 
+    partakings, 
+    mentorings, 
+    documents, 
+    faculties, 
+    programs, 
+    postal_codes, 
+    countries 
+TO 
+    visitor;
+    
+GRANT 
+    USAGE 
+ON SEQUENCE 
+    students_id_students_seq, 
+    scientific_papers_id_scientific_papers_seq, 
+    attendances_id_attendances_seq,  
+    certificates_id_certificates_seq, 
+    partakings_id_partakings_seq, 
+    mentorings_id_mentorings_seq, 
+    documents_id_documents_seq, 
+    faculties_id_faculties_seq, 
+    programs_id_programs_seq, 
+    postal_codes_id_postal_codes_seq, 
+    countries_id_countries_seq 
+TO 
+    visitor;
+;
+
+CREATE USER 
+    auth_69141238         
+WITH 
+    PASSWORD '$2a$06$KfAPVfdakTSzQVeKYeIiruMUOa2yKNuaATqYvgi/.msBVoZwqo.7a'
+    IN ROLE authorized    
+    VALID UNTIL 'infinity';
+;
+
+-- Create tables section -------------------------------------------------
+
 -- Table students
 
 CREATE TABLE "students"(
  "id_students" Serial NOT NULL,
+ "id_postal_codes" Integer,
  "name" Character varying(20) NOT NULL,
  "surname" Character varying(40) NOT NULL,
  "email" Character varying(40),
@@ -20,6 +214,11 @@ CREATE TABLE "students"(
 )
 WITH (
  autovacuum_enabled=true)
+;
+
+-- Create indexes for table students
+
+CREATE INDEX "IX_students_id_postal_codes" ON "students" ("id_postal_codes")
 ;
 
 -- Add keys for table students
@@ -184,7 +383,7 @@ ALTER TABLE "countries" ADD CONSTRAINT "iso_3_code" UNIQUE ("iso_3_code")
 -- Table accounts
 
 CREATE TABLE "accounts"(
- "id_accounts" Serial NOT NULL,
+ "id_attendances" Integer NOT NULL,
  "pass" Character varying(60) NOT NULL,
  "granted" Date NOT NULL,
  "avatar" Text DEFAULT NULL
@@ -195,7 +394,7 @@ WITH (
 
 -- Add keys for table accounts
 
-ALTER TABLE "accounts" ADD CONSTRAINT "PK_accounts" PRIMARY KEY ("id_accounts")
+ALTER TABLE "accounts" ADD CONSTRAINT "PK_accounts" PRIMARY KEY ("id_attendances")
 ;
 
 -- Table attendances
@@ -205,9 +404,8 @@ CREATE TABLE "attendances"(
  "id_students" Integer NOT NULL,
  "id_faculties" Integer NOT NULL,
  "id_programs" Integer NOT NULL,
- "id_accounts" Integer NOT NULL,
  "enrolled" Date NOT NULL,
- "index" Integer NOT NULL
+ "index" Character varying(11) NOT NULL
 )
 WITH (
  autovacuum_enabled=true)
@@ -222,9 +420,6 @@ CREATE INDEX "IX_attendances_id_faculties" ON "attendances" ("id_faculties")
 ;
 
 CREATE INDEX "IX_attendances_id_programs" ON "attendances" ("id_programs")
-;
-
-CREATE INDEX "IX_attendances_id_accounts" ON "attendances" ("id_accounts")
 ;
 
 -- Add keys for table attendances
@@ -371,76 +566,19 @@ ALTER TABLE "graduations" ADD CONSTRAINT "attendances_graduations" FOREIGN KEY (
 ALTER TABLE "programs" ADD CONSTRAINT "faculties_programs" FOREIGN KEY ("id_faculties") REFERENCES "faculties" ("id_faculties") ON DELETE NO ACTION ON UPDATE NO ACTION
 ;
 
-ALTER TABLE "attendances" ADD CONSTRAINT "accounts_attendances" FOREIGN KEY ("id_accounts") REFERENCES "accounts" ("id_accounts") ON DELETE NO ACTION ON UPDATE NO ACTION
-;
-
 ALTER TABLE "scientific_papers" ADD CONSTRAINT "attendances_scientific_papers" FOREIGN KEY ("id_attendances") REFERENCES "attendances" ("id_attendances") ON DELETE NO ACTION ON UPDATE NO ACTION
 ;
 
 ALTER TABLE "partakings" ADD CONSTRAINT "attendances_partakings" FOREIGN KEY ("id_attendances") REFERENCES "attendances" ("id_attendances") ON DELETE NO ACTION ON UPDATE NO ACTION
 ;
 
--- Create roles section -------------------------------------------------
-
-CREATE ROLE 
-    authorized 
-WITH
-    SUPERUSER
-    INHERIT
-    LOGIN
-    CONNECTION LIMIT 1;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES
-ON TABLE students, scientific_papers, attendances, graduations, partakings, 
-certificates, mentorings, documents, residences, accounts
-TO authorized WITH GRANT OPTION;
-
-GRANT SELECT, REFERENCES 
-ON TABLE faculties, programs, postal_codes, countries 
-TO authorized;
+ALTER TABLE "students" ADD CONSTRAINT "postal_codes_students" FOREIGN KEY ("id_postal_codes") REFERENCES "postal_codes" ("id_postal_codes") ON DELETE NO ACTION ON UPDATE NO ACTION
 ;
 
-CREATE ROLE 
-    student 
-WITH 
-    LOGIN;
-    
-GRANT SELECT, REFERENCES 
-ON TABLE faculties, programs, postal_codes, countries 
-TO student;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES 
-ON TABLE scientific_papers, partakings, mentorings, documents, residences
-TO student;
-
-GRANT SELECT 
-ON TABLE attendances, graduations, certificates
-TO student;
-
-GRANT UPDATE
-ON TABLE students
-TO student;
+ALTER TABLE "accounts" ADD CONSTRAINT "attendances_accounts" FOREIGN KEY ("id_attendances") REFERENCES "attendances" ("id_attendances") ON DELETE NO ACTION ON UPDATE NO ACTION
 ;
 
-CREATE ROLE 
-    visitor;
 
-GRANT SELECT, REFERENCES 
-ON TABLE students, scientific_papers, attendances, graduations, certificates, 
-partakings, mentorings, documents, faculties, programs, postal_codes, countries 
-TO visitor;
-    
-;
-
-CREATE USER 
-    auth_69141238         
-WITH 
-    PASSWORD '$2a$06$KfAPVfdakTSzQVeKYeIiruMUOa2yKNuaATqYvgi/.msBVoZwqo.7a'
-    IN ROLE authorized    
-    VALID UNTIL 'infinity';
-;
-
--- Create tables section ------------------------------------------------
 
 -- Grant permissions section -------------------------------------------------
 
