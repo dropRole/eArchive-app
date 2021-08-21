@@ -519,11 +519,6 @@ class DBC extends PDO
     */
     public function insertStudent(int $id_postal_codes, string $name, string $surname, string $email = NULL, string $telephone = NULL, $residences = [])
     {
-        // insertion report
-        $report = [
-            'id_students' => 0,
-            'mssg' => ''
-        ];
         $stmt = '   INSERT INTO 
                         students 
                     (
@@ -551,14 +546,14 @@ class DBC extends PDO
             $prpStmt->execute();
             // if student record was inserted
             if ($prpStmt->rowCount() == 1) {
+                // form a report 
+                echo 'Osnovni podatki študenta so uspešno evidentirani.';
                 $id_students = $this->lastInsertId('students_id_students_seq');
-                // form a report
-                $report['id_students'] = $id_students;
-                $report['mssg'] = 'Osnovni podatki študenta so uspešno evidentirani.' . PHP_EOL;
-                $report['mssg'] .= $this->insertStudtResidences($id_students, $residences);
-                return $report;
+                $this->insertStudtResidences($id_students, $residences);
+                return $id_students;
             } // if
-            return $report['message'] = 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno vstavljeni.';
+            echo 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno evidentirani.';
+            return FALSE;
         } // try
         catch (PDOException $e) {
             echo  "Napaka: {$e->getMessage()}.";
@@ -707,8 +702,6 @@ class DBC extends PDO
     */
     private function insertStudtResidences(int $id_students, array $residences)
     {
-        // insert report
-        $report = '';
         $stmt = '   INSERT INTO 
                         residences 
                     (
@@ -734,15 +727,14 @@ class DBC extends PDO
                 $prpStmt->execute();
                 // if single row is affected
                 if ($prpStmt->rowCount() == 1)
-                    $report .= "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}." . PHP_EOL;
+                    echo "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}." . PHP_EOL;
                 else
-                    $report .= "Bivališče na naslovu '{$residence['address']}' ni evidentirano." . PHP_EOL;
+                    echo "Bivališče na naslovu '{$residence['address']}' ni evidentirano." . PHP_EOL;
             } // try
             catch (PDOException $e) {
                 echo "Napaka: {$e->getMessage()}.";
             } // catch 
         } // foreach
-        return $report;
     } // insertStudtResidences
 
     /*
@@ -1055,10 +1047,6 @@ class DBC extends PDO
     */
     public function insertAttendance(int $id_students, int $id_faculties, int $id_programs, DateTime $enrolled, string $index)
     {
-        // insertion report
-        $report = [
-            'id_attendances' => 0,
-        ];
         $stmt = '   INSERT INTO 
                         attendances 
                     (
@@ -1085,9 +1073,14 @@ class DBC extends PDO
             $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
             $prpStmt->execute();
             // if attendance record was inserted
-            if ($prpStmt->rowCount() == 1)
-                $report['id_attendances'] = $this->lastInsertId('attendances_id_attendances_seq');
-            return $report;
+            if ($prpStmt->rowCount() == 1) {
+                // form a report 
+                echo 'Študijski program ' . $this->selectStudentsByIndex($index)[0]->program . ' je uspešno evidentiran.';
+                return $this->lastInsertId('attendances_id_attendances_seq');
+            } // if
+            // form a report
+            echo 'Študijski program ' . $this->selectStudentsByIndex($index)[0]->program . ' ni uspešno evidentiran.';
+            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
@@ -1194,8 +1187,6 @@ class DBC extends PDO
     */
     public function uploadCertificate(int $id_attendances, string $certificate, DateTime $defended, DateTime $issued)
     {
-        // upload report
-        $report = '';
         // if not already running a transaction
         if (!$this->inTransaction()) {
             try {
@@ -1210,31 +1201,26 @@ class DBC extends PDO
                             $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
                             // if MIME type is not application/pdf
                             if ($mimetype != 'application/pdf')
-                                return $report = "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
-                            $upload = TRUE;
-                            // if document meets the condition 
-                            if ($upload) {
-                                // set destination of the uploaded certificate
-                                $dir = 'uploads/certificates/';
-                                $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['certificate']['name'][$indx]);
-                                // if certificate was inserted into db and moved to a new destination  
-                                if ($this->insertCertficate($destination, $issued) && move_uploaded_file($tmp_name, "../{$destination}")) {
-                                    $report = "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno naložen." . PHP_EOL;
-                                    $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
-                                    // if single row is affected 
-                                    if ($this->insertGraduation($id_certificates, $id_attendances, $defended)) {
-                                        $report .= 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
-                                        // commit current transaction
-                                        $this->commit();
-                                        return $report;
-                                    } // if
+                                return "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
+                            // set destination of the uploaded certificate
+                            $dir = 'uploads/certificates/';
+                            $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['certificate']['name'][$indx]);
+                            // if certificate was inserted into db and moved to a new destination  
+                            if ($this->insertCertficate($destination, $issued) && move_uploaded_file($tmp_name, "../{$destination}")) {
+                                echo "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno naložen." . PHP_EOL;
+                                $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
+                                // if single row is affected 
+                                if ($this->insertGraduation($id_certificates, $id_attendances, $defended)) {
+                                    return 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
+                                    // commit current transaction
+                                    $this->commit();
                                 } // if
-                                // rollback current transaction
-                                $this->rollBack();
-                                return $report = 'Napaka: postopek nalaganja certifikata in določanja datuma zagovora ter izdajanja je bil neuspešen.';
                             } // if
+                            // rollback current transaction
+                            $this->rollBack();
+                            return 'Napaka: postopek nalaganja certifikata in določanja datuma zagovora ter izdajanja je bil neuspešen.';
                         } // if
-                        return $report = "Napaka: certifikat {$_FILES['certificate']['name'][$indx]} ni uspešno naložen.";
+                        return "Napaka: certifikat {$_FILES['certificate']['name'][$indx]} ni uspešno naložen.";
                     } // if
                 } // foreach
             } // try
