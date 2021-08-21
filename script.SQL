@@ -10,196 +10,6 @@ Database: PostgreSQL 10
 */
 
 
--- Create roles section -------------------------------------------------
-
-CREATE ROLE 
-    authorized 
-WITH
-    SUPERUSER
-    INHERIT
-    LOGIN
-    CONNECTION LIMIT 1;
-
-GRANT 
-    SELECT, 
-    INSERT, 
-    UPDATE, 
-    DELETE, 
-    REFERENCES
-ON TABLE 
-    students, 
-    scientific_papers, 
-    attendances, 
-    graduations, 
-    partakings, 
-    certificates, 
-    mentorings, 
-    documents, 
-    residences, 
-    accounts
-TO 
-    authorized WITH GRANT OPTION;
-
-GRANT 
-    SELECT, 
-    REFERENCES 
-ON TABLE 
-    faculties, 
-    programs, 
-    postal_codes, 
-    countries 
-TO 
-    authorized;
-
-GRANT 
-    ALL PRIVELEGES 
-ON SEQUENCE 
-    students_id_students_seq, 
-    scientific_papers_id_scientific_papers_seq,
-    attendances_id_attendances_seq, 
-    certificates_id_certificates_seq,
-    graduations_id_graduations_seq,
-    partakings_id_partakings_seq,
-    mentorings_id_mentorings_seq,
-    documents_id_documents_seq,
-    residences_id_residences_seq,
-    accounts_id_accounts_seq
-TO 
-    authorized;
-
-GRANT 
-    SELECT
-ON SEQUENCE 
-    faculties_id_faculties_seq, 
-    programs_id_programs_seq, 
-    postal_codes_id_postal_codes_seq, 
-    countries_id_countries_seq
-TO 
-    authorized;
-;
-
-CREATE ROLE 
-    student 
-WITH 
-    LOGIN;
-    
-GRANT 
-    SELECT, 
-    REFERENCES 
-ON TABLE 
-    faculties, 
-    programs, 
-    postal_codes, 
-    countries 
-TO 
-    student;
-
-GRANT 
-    SELECT, 
-    INSERT, 
-    UPDATE, 
-    DELETE, 
-    REFERENCES 
-ON TABLE 
-    scientific_papers, 
-    partakings, 
-    mentorings, 
-    documents, 
-    residences
-TO  
-    student;
-
-GRANT 
-    SELECT 
-ON TABLE 
-    attendances, 
-    graduations, 
-    certificates
-TO 
-    student;
-
-GRANT 
-    SELECT, 
-    UPDATE
-ON TABLE 
-    students,
-    accounts
-TO 
-    student;
-
-GRANT 
-    ALL PRIVILEGES 
-ON SEQUENCE 
-    students_id_students_seq
-    scientific_papers_id_scientific_papers_seq,
-    partakings_id_partakings_seq, 
-    mentorings_id_mentorings_seq, 
-    documents_id_documents_seq, 
-    residences_id_residences_seq
-TO 
-    student;
-
-GRANT 
-    USAGE 
-ON SEQUENCE 
-    faculties_id_faculties_seq, 
-    programs_id_programs_seq, 
-    postal_codes_id_postal_codes_seq, 
-    countries_id_countries_seq,
-    attendances_id_attendances_seq,  
-    certificates_id_certificates_seq 
-TO 
-    student;
-;
-
-CREATE ROLE 
-    visitor;
-
-GRANT 
-    SELECT, 
-    REFERENCES 
-ON TABLE 
-    students, 
-    scientific_papers, 
-    attendances, 
-    graduations, 
-    certificates, 
-    partakings, 
-    mentorings, 
-    documents, 
-    faculties, 
-    programs, 
-    postal_codes, 
-    countries 
-TO 
-    visitor;
-    
-GRANT 
-    USAGE 
-ON SEQUENCE 
-    students_id_students_seq, 
-    scientific_papers_id_scientific_papers_seq, 
-    attendances_id_attendances_seq,  
-    certificates_id_certificates_seq, 
-    partakings_id_partakings_seq, 
-    mentorings_id_mentorings_seq, 
-    documents_id_documents_seq, 
-    faculties_id_faculties_seq, 
-    programs_id_programs_seq, 
-    postal_codes_id_postal_codes_seq, 
-    countries_id_countries_seq 
-TO 
-    visitor;
-;
-
-CREATE USER 
-    auth_69141238         
-WITH 
-    PASSWORD '$2a$06$KfAPVfdakTSzQVeKYeIiruMUOa2yKNuaATqYvgi/.msBVoZwqo.7a'
-    IN ROLE authorized    
-    VALID UNTIL 'infinity';
-;
-
 -- Create tables section -------------------------------------------------
 
 -- Table students
@@ -522,7 +332,7 @@ CREATE INDEX "IX_mentorings_id_scientific_papers" ON "mentorings" ("id_scientifi
 
 ALTER TABLE "mentorings" ADD CONSTRAINT "PK_mentorings" PRIMARY KEY ("id_mentorings")
 ;
--- Create foreign keys (relationships) section ------------------------------------------------- 
+-- Create foreign keys (relationships) section -------------------------------------------------
 
 ALTER TABLE "attendances" ADD CONSTRAINT "students_attendances" FOREIGN KEY ("id_students") REFERENCES "students" ("id_students") ON DELETE NO ACTION ON UPDATE NO ACTION
 ;
@@ -578,7 +388,192 @@ ALTER TABLE "students" ADD CONSTRAINT "postal_codes_students" FOREIGN KEY ("id_p
 ALTER TABLE "accounts" ADD CONSTRAINT "attendances_accounts" FOREIGN KEY ("id_attendances") REFERENCES "attendances" ("id_attendances") ON DELETE NO ACTION ON UPDATE NO ACTION
 ;
 
+-- Create roles section -------------------------------------------------
 
+CREATE ROLE
+    authorized
+WITH
+    SUPERUSER
+    INHERIT
+    LOGIN
+    CONNECTION LIMIT 1;
+
+GRANT
+    SELECT,
+    INSERT,
+    UPDATE,
+    DELETE,
+    REFERENCES
+ON TABLE
+    students,
+    scientific_papers,
+    attendances,
+    graduations,
+    partakings,
+    certificates,
+    mentorings,
+    documents,
+    residences,
+    accounts
+TO
+    authorized WITH GRANT OPTION;
+
+GRANT
+    SELECT,
+    REFERENCES
+ON TABLE
+    faculties,
+    programs,
+    postal_codes,
+    countries
+TO
+    authorized;
+
+GRANT
+    ALL PRIVILEGES
+ON SEQUENCE
+    students_id_students_seq,
+    scientific_papers_id_scientific_papers_seq,
+    attendances_id_attendances_seq,
+    certificates_id_certificates_seq,
+    partakings_id_partakings_seq,
+    mentorings_id_mentorings_seq,
+    documents_id_documents_seq,
+    residences_id_residences_seq
+TO
+    authorized;
+
+GRANT
+    SELECT
+ON SEQUENCE
+    faculties_id_faculties_seq,
+    programs_id_programs_seq,
+    postal_codes_id_postal_codes_seq,
+    countries_id_countries_seq
+TO
+    authorized;
+;
+
+CREATE ROLE
+    student
+WITH
+    LOGIN;
+
+GRANT
+    SELECT,
+    REFERENCES
+ON TABLE
+    faculties,
+    programs,
+    postal_codes,
+    countries
+TO
+    student;
+
+GRANT
+    SELECT,
+    INSERT,
+    UPDATE,
+    DELETE,
+    REFERENCES
+ON TABLE
+    scientific_papers,
+    partakings,
+    mentorings,
+    documents,
+    residences
+TO
+    student;
+
+GRANT
+    SELECT
+ON TABLE
+    attendances,
+    graduations,
+    certificates
+TO
+    student;
+
+GRANT
+    SELECT,
+    UPDATE
+ON TABLE
+    students,
+    accounts
+TO
+    student;
+
+GRANT
+    ALL PRIVILEGES
+ON SEQUENCE
+    students_id_students_seq,
+    scientific_papers_id_scientific_papers_seq,
+    partakings_id_partakings_seq,
+    mentorings_id_mentorings_seq,
+    documents_id_documents_seq,
+    residences_id_residences_seq
+TO
+    student;
+
+GRANT
+    USAGE
+ON SEQUENCE
+    faculties_id_faculties_seq,
+    programs_id_programs_seq,
+    postal_codes_id_postal_codes_seq,
+    countries_id_countries_seq,
+    attendances_id_attendances_seq,
+    certificates_id_certificates_seq
+TO
+    student;
+;
+
+CREATE ROLE
+    visitor;
+
+GRANT
+    SELECT,
+    REFERENCES
+ON TABLE
+    students,
+    scientific_papers,
+    attendances,
+    graduations,
+    certificates,
+    partakings,
+    mentorings,
+    documents,
+    faculties,
+    programs,
+    postal_codes,
+    countries
+TO
+    visitor;
+
+GRANT
+    USAGE
+ON SEQUENCE
+    students_id_students_seq,
+    scientific_papers_id_scientific_papers_seq,
+    attendances_id_attendances_seq,
+    certificates_id_certificates_seq,
+    partakings_id_partakings_seq,
+    mentorings_id_mentorings_seq,
+    documents_id_documents_seq,
+    faculties_id_faculties_seq,
+    programs_id_programs_seq,
+    postal_codes_id_postal_codes_seq,
+    countries_id_countries_seq
+TO
+    visitor;
+
+CREATE USER
+    auth_69141238
+WITH
+    PASSWORD '$2a$06$KfAPVfdakTSzQVeKYeIiruMUOa2yKNuaATqYvgi/.msBVoZwqo.7a'
+    IN ROLE authorized
+    VALID UNTIL 'infinity';
+;
 
 -- Grant permissions section -------------------------------------------------
 
@@ -588,9 +583,9 @@ GRANT "authorized" TO "auth_69141238"
 
 -- COUNTRIES
 INSERT INTO
-    countries 
+    countries
 (
-    name, 
+    name,
     iso_3_code
 )
 VALUES(
@@ -767,8 +762,8 @@ VALUES(
 );
 
 -- POSTAL CODES
-INSERT INTO 
-    postal_codes 
+INSERT INTO
+    postal_codes
 (
     id_countries,
     municipality,
@@ -776,23 +771,23 @@ INSERT INTO
 )
 VALUES(
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Ajdovščina',
     '5270'
-), 
+),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Artiče',
@@ -800,11 +795,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Bled',
@@ -812,11 +807,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Brežice',
@@ -824,11 +819,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Celje',
@@ -836,11 +831,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Cerknica',
@@ -848,11 +843,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Črnomelj',
@@ -860,11 +855,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Čatež ob Savi',
@@ -872,11 +867,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Dravograd',
@@ -884,11 +879,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Domžale',
@@ -896,11 +891,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Franklovo',
@@ -908,11 +903,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Gabrovka',
@@ -920,11 +915,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Gradac',
@@ -932,11 +927,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Hrastnik',
@@ -944,11 +939,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Hoče',
@@ -956,11 +951,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Idrija',
@@ -968,11 +963,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Izola',
@@ -980,11 +975,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Jesenice',
@@ -992,11 +987,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Kranj',
@@ -1004,11 +999,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Koper',
@@ -1016,11 +1011,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Krško',
@@ -1028,11 +1023,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Ljubljana',
@@ -1040,11 +1035,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Laško',
@@ -1052,11 +1047,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Maribor',
@@ -1064,11 +1059,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Murska Sobota',
@@ -1076,11 +1071,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Nova Gorica',
@@ -1088,11 +1083,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Novo Mesto',
@@ -1100,11 +1095,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Ormož',
@@ -1112,11 +1107,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Piran',
@@ -1124,11 +1119,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Polzela',
@@ -1136,11 +1131,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Rogaška Slatina',
@@ -1148,11 +1143,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Rogatec',
@@ -1160,11 +1155,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Slovenj Gradec',
@@ -1172,11 +1167,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Slovenske Konjice',
@@ -1184,11 +1179,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Šentjur',
@@ -1196,11 +1191,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Škofja Loka',
@@ -1208,11 +1203,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Trbovlje',
@@ -1220,11 +1215,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Tolmin',
@@ -1232,11 +1227,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Velenje',
@@ -1244,11 +1239,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Vojnik',
@@ -1256,11 +1251,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Zidani Most',
@@ -1268,22 +1263,22 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Zreče',
     '3214'
 ),(
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Žalec',
@@ -1291,19 +1286,19 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SLO'
     ),
     'Žabnica',
     '4209'
 );
 
-INSERT INTO 
-    postal_codes 
+INSERT INTO
+    postal_codes
 (
     id_countries,
     municipality,
@@ -1311,23 +1306,23 @@ INSERT INTO
 )
 VALUES(
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Aleksandrovac',
     '37230'
-), 
+),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Apatin',
@@ -1335,11 +1330,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Beograd',
@@ -1347,11 +1342,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Bačka Palanka',
@@ -1359,11 +1354,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Valjevo',
@@ -1371,11 +1366,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Vranje',
@@ -1383,11 +1378,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Gračanica',
@@ -1395,11 +1390,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Gajdobra',
@@ -1407,11 +1402,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Despotovac',
@@ -1419,11 +1414,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Dimitrovgrad',
@@ -1431,11 +1426,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Đurđevo',
@@ -1443,11 +1438,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Ečka',
@@ -1455,11 +1450,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Žitište',
@@ -1467,11 +1462,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Žiča',
@@ -1479,11 +1474,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Zaječar',
@@ -1491,11 +1486,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Zlatibor',
@@ -1503,11 +1498,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Ivanjica',
@@ -1515,11 +1510,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Inđija',
@@ -1527,11 +1522,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Jagodina',
@@ -1539,11 +1534,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Jelašnica',
@@ -1551,11 +1546,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Kraljevo',
@@ -1563,11 +1558,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Kragujevac',
@@ -1575,11 +1570,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Leskovac',
@@ -1587,11 +1582,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Loznica',
@@ -1599,11 +1594,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Ljig',
@@ -1611,11 +1606,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Maglić',
@@ -1623,11 +1618,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Mokra Gora',
@@ -1635,11 +1630,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Niš',
@@ -1647,11 +1642,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Negotin',
@@ -1659,11 +1654,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Obrež',
@@ -1671,11 +1666,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Orašac',
@@ -1683,11 +1678,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Paraćin',
@@ -1695,11 +1690,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Pančevo',
@@ -1707,11 +1702,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Raška',
@@ -1719,11 +1714,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Rudnik',
@@ -1731,11 +1726,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Senta',
@@ -1743,11 +1738,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Smederevo',
@@ -1755,11 +1750,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Takovo',
@@ -1767,11 +1762,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Temerin',
@@ -1779,11 +1774,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Ćuprija',
@@ -1791,11 +1786,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Užice',
@@ -1803,11 +1798,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Futog',
@@ -1815,11 +1810,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Hajdučica',
@@ -1827,11 +1822,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Crvenka',
@@ -1839,11 +1834,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Čačak',
@@ -1851,11 +1846,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Čenej',
@@ -1863,11 +1858,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Šabac',
@@ -1875,11 +1870,11 @@ VALUES(
 ),
 (
     (
-        SELECT 
+        SELECT
             id_countries
-        FROM 
-            countries 
-        WHERE 
+        FROM
+            countries
+        WHERE
             iso_3_code = 'SRB'
     ),
     'Šajkaš',
@@ -1888,7 +1883,7 @@ VALUES(
 
 -- FACULTIES
 
-INSERT INTO 
+INSERT INTO
     faculties
 (
     id_postal_codes,
@@ -2014,7 +2009,7 @@ VALUES(
     ),
     'Fakulteta za naravoslovje in matematiko',
     'Koroška cesta 160',
-    'dekanat.fnm@um.si', 
+    'dekanat.fnm@um.si',
     '+386 2 22 93 844',
     'Mitja Slavinec'
 ),
@@ -2153,11 +2148,11 @@ VALUES(
     '+386 2 2504 200',
     'Vesna Rijavec'
 );
-    
+
 -- PROGRAMS
 
 INSERT INTO
-    programs 
+    programs
 (
     id_faculties,
     name,
@@ -2167,9 +2162,9 @@ INSERT INTO
 )
 VALUES(
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%EKONOMSKO-POSLOVNA FAKULTETA%'
@@ -2181,9 +2176,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%EKONOMSKO-POSLOVNA FAKULTETA%'
@@ -2195,9 +2190,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%EKONOMSKO-POSLOVNA FAKULTETA%'
@@ -2209,9 +2204,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%EKONOMSKO-POSLOVNA FAKULTETA%'
@@ -2223,9 +2218,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%EKONOMSKO-POSLOVNA FAKULTETA%'
@@ -2237,9 +2232,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%EKONOMSKO-POSLOVNA FAKULTETA%'
@@ -2251,9 +2246,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%EKONOMSKO-POSLOVNA FAKULTETA%'
@@ -2265,9 +2260,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2279,9 +2274,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2293,9 +2288,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2307,9 +2302,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2321,9 +2316,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2335,9 +2330,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2349,9 +2344,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2363,9 +2358,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2377,9 +2372,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2391,9 +2386,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2405,9 +2400,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2419,9 +2414,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2433,9 +2428,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2447,9 +2442,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2461,9 +2456,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2475,9 +2470,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2489,9 +2484,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ELEKTROTEHNIKO, RAČUNALNIŠTVO IN INFORMATIKO%'
@@ -2503,9 +2498,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ENERGETIKO%'
@@ -2517,9 +2512,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ENERGETIKO%'
@@ -2531,9 +2526,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ENERGETIKO%'
@@ -2545,9 +2540,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2559,9 +2554,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2573,9 +2568,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2587,9 +2582,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2601,9 +2596,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2615,9 +2610,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2629,9 +2624,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2643,9 +2638,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2657,9 +2652,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2671,9 +2666,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2685,9 +2680,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA GRADBENIŠTVO, PROMETNO INŽENIRSTVO IN ARHITEKTURO%'
@@ -2699,9 +2694,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KEMIJO IN KEMIJSKO TEHNOLOGIJO%'
@@ -2713,9 +2708,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KEMIJO IN KEMIJSKO TEHNOLOGIJO%'
@@ -2727,9 +2722,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KEMIJO IN KEMIJSKO TEHNOLOGIJO%'
@@ -2741,9 +2736,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KEMIJO IN KEMIJSKO TEHNOLOGIJO%'
@@ -2755,9 +2750,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KEMIJO IN KEMIJSKO TEHNOLOGIJO%'
@@ -2769,9 +2764,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KEMIJO IN KEMIJSKO TEHNOLOGIJO%'
@@ -2783,9 +2778,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2797,9 +2792,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2811,9 +2806,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2825,9 +2820,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2839,9 +2834,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2853,9 +2848,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2867,9 +2862,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2881,9 +2876,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2895,9 +2890,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2909,9 +2904,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2923,9 +2918,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2937,9 +2932,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA KMETIJSTVO IN BIOSISTEMSKE VEDE%'
@@ -2951,9 +2946,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA LOGISTIKO%'
@@ -2965,9 +2960,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA LOGISTIKO%'
@@ -2979,9 +2974,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA LOGISTIKO%'
@@ -2993,9 +2988,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA LOGISTIKO%'
@@ -3007,9 +3002,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3021,9 +3016,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3035,9 +3030,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3049,9 +3044,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3063,9 +3058,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3077,9 +3072,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3091,9 +3086,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3105,9 +3100,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3119,9 +3114,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3133,9 +3128,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3147,9 +3142,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3161,9 +3156,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3175,9 +3170,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3189,9 +3184,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA NARAVOSLOVJE IN MATEMATIKO%'
@@ -3203,9 +3198,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3217,9 +3212,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3231,9 +3226,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3245,9 +3240,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3259,9 +3254,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3273,9 +3268,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3287,9 +3282,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3301,9 +3296,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3315,9 +3310,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3329,9 +3324,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3343,9 +3338,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ORGANIZACIJSKE VEDE%'
@@ -3357,9 +3352,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3371,9 +3366,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3385,9 +3380,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3399,9 +3394,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3413,9 +3408,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3427,9 +3422,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3441,9 +3436,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3455,9 +3450,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3469,9 +3464,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3483,9 +3478,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3497,9 +3492,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3511,9 +3506,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3525,9 +3520,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3539,9 +3534,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3553,9 +3548,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3567,9 +3562,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA STROJNIŠTVO%'
@@ -3581,9 +3576,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA TURIZEM%'
@@ -3595,9 +3590,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA TURIZEM%'
@@ -3609,9 +3604,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA TURIZEM%'
@@ -3623,9 +3618,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA VARNOSTNE VEDE%'
@@ -3637,9 +3632,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA VARNOSTNE VEDE%'
@@ -3651,9 +3646,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA VARNOSTNE VEDE%'
@@ -3665,9 +3660,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA VARNOSTNE VEDE%'
@@ -3679,9 +3674,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA VARNOSTNE VEDE%'
@@ -3693,9 +3688,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ZDRAVSTVENE VEDE%'
@@ -3707,9 +3702,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ZDRAVSTVENE VEDE%'
@@ -3721,9 +3716,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ZDRAVSTVENE VEDE%'
@@ -3735,9 +3730,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ZDRAVSTVENE VEDE%'
@@ -3749,9 +3744,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FAKULTETA ZA ZDRAVSTVENE VEDE%'
@@ -3763,9 +3758,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3777,9 +3772,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3791,9 +3786,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3805,9 +3800,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3819,9 +3814,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3833,9 +3828,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3847,9 +3842,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3861,9 +3856,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3875,9 +3870,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3889,9 +3884,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3902,9 +3897,9 @@ VALUES(
     'Družbene vede, novinarstvo in informacijska znanost'
 ),(
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3916,9 +3911,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3930,9 +3925,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3944,9 +3939,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3958,9 +3953,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3972,9 +3967,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -3986,9 +3981,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4000,9 +3995,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4014,9 +4009,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4028,9 +4023,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4042,9 +4037,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4056,9 +4051,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4070,9 +4065,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4084,9 +4079,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4098,9 +4093,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4112,9 +4107,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4126,9 +4121,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4140,9 +4135,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4154,9 +4149,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4168,9 +4163,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4182,9 +4177,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4196,9 +4191,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4210,9 +4205,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4224,9 +4219,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4238,9 +4233,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4252,9 +4247,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4266,9 +4261,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4280,9 +4275,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4294,9 +4289,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4308,9 +4303,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4322,9 +4317,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4336,9 +4331,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4350,9 +4345,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4364,9 +4359,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%FILOZOFSKA FAKULTETA%'
@@ -4378,9 +4373,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%MEDICINSKA FAKULTETA%'
@@ -4392,9 +4387,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%MEDICINSKA FAKULTETA%'
@@ -4406,9 +4401,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%MEDICINSKA FAKULTETA%'
@@ -4420,9 +4415,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4434,9 +4429,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4448,9 +4443,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4462,9 +4457,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4476,9 +4471,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4490,9 +4485,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4504,9 +4499,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4518,9 +4513,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4532,9 +4527,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4546,9 +4541,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4560,9 +4555,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PEDAGOŠKA FAKULTETA%'
@@ -4574,9 +4569,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PRAVNA FAKULTETA%'
@@ -4588,9 +4583,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PRAVNA FAKULTETA%'
@@ -4602,9 +4597,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PRAVNA FAKULTETA%'
@@ -4616,9 +4611,9 @@ VALUES(
 ),
 (
     (
-        SELECT    
+        SELECT
             id_faculties
-        FROM    
+        FROM
             faculties
         WHERE
             UPPER(name) LIKE '%PRAVNA FAKULTETA%'
