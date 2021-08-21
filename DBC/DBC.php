@@ -1211,9 +1211,9 @@ class DBC extends PDO
                                 $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
                                 // if single row is affected 
                                 if ($this->insertGraduation($id_certificates, $id_attendances, $defended)) {
-                                    return 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
                                     // commit current transaction
                                     $this->commit();
+                                    return 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
                                 } // if
                             } // if
                             // rollback current transaction
