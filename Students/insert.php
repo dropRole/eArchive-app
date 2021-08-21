@@ -22,21 +22,17 @@
     if (isset($name, $surname, $id_postal_codes, $residences, $attendances)) {
         // create a new instance of PDO retrieving database connection 
         $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
-        // insertion report
-        $studtRprt = $DBC->insertStudent($id_postal_codes, $name, $surname, $email, $telephone, $residences);
-        echo $studtRprt['mssg'];
-        // if insertion is successful
-        if ($studtRprt['id_students']) {
+        $id_students = $DBC->insertStudent($id_postal_codes, $name, $surname, $email, $telephone, $residences);
+        // if student data was sucessfully inserted 
+        if ($id_students) {
             // insert every program attendance of the student
             foreach ($attendances as $attendance) {
-                $attnRprt = $DBC->insertAttendance($studtRprt['id_students'], $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
-                // if insertion was successful
-                if ($attnRprt['id_attendances']) {
-                    echo 'Študijski program \'' . $DBC->selectStudentsByIndex($attendance['index'])[0]->program . '\' je uspešno evidentiran.' . PHP_EOL;
+                $id_attendances = $DBC->insertAttendance($id_students, $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
+                // if student program attendance data was prosperously inserted 
+                if ($id_attendances) {
                     // if student graduated
                     if (isset($attendance['certificate'])) {
-                        $certRprt = $DBC->uploadCertificate($attnRprt['id_attendances'], $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
-                        echo $certRprt . PHP_EOL;
+                        echo $DBC->uploadCertificate($id_attendances, $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued']))) . PHP_EOL;
                     } // if
                 } // if 
             } // foreach
