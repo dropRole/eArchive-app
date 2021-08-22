@@ -102,8 +102,8 @@ include_once '../../nav.php';
                             ?>
                         </td>
                         <td>
-                            <a class="stu-upd-a" href="#studtInsrMdl" data-toggle="modal" data-id-students="<?php echo $student->id_students; ?>">
-                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" data-toggle="tooltip" title="Uredi">
+                            <a href="#studtInsrMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="stu-upd-img" data-id-students="<?php echo $student->id_students; ?>"data-toggle="tooltip" title="Uredi">
                             </a>
                         </td>
                         <td>
