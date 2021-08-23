@@ -1394,15 +1394,13 @@
             document.getElementById('gradCertUpldFrm').replaceWith(cloneFrm)
             cloneFrm.prepend(idCertificatesIntpEL)
             listenGradCertCard()
-                .then(() => {
-                    // remove certificate file input 
-                    cloneFrm.querySelector('div.row > div.form-group').remove()
-                        // fill out form fileds with carried data
-                    cloneFrm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
-                    cloneFrm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
-                        // change submit buttons value
-                    cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-                })
+                // remove certificate file input 
+            cloneFrm.querySelector('div.row > div.form-group').remove()
+                // fill out form fileds with carried data
+            cloneFrm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
+            cloneFrm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
+                // change submit buttons value
+            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
             cloneFrm.addEventListener(
                     'submit',
                     e => {
