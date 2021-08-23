@@ -23,18 +23,28 @@ if (isset($id_attendances)) {
 ?>
         <div class="card col-12">
             <div class="card-body">
-                <h5 class="card-title">Certifikat</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Zagovorjen: <?php echo $certificate->defended; ?></h6>
-                <h6 class="card-subtitle mb-2 text-muted">Izdan: <?php echo $certificate->getIssued(); ?></h6>
-                <p class="card-text">
-                    <a href="<?php echo "/eArchive/{$certificate->getSource()}"; ?>" target="_blank"><?php echo basename($certificate->getSource()); ?></a>
-                </p>
+                <h5 class="card-title text-center">Certifikat</h5>
+                <ul class="list-group-flush p-0">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span class="font-italic"><strong>Zagovorjen</strong></span>
+                        <span><?php echo $certificate->defended; ?></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span class="font-italic"><strong>Izdan</strong></span>
+                        <span><?php echo $certificate->getIssued(); ?></span>
+                    </li>
+                    <li class="list-group-item text-center">
+                        <a href="<?php echo "/eArchive/{$certificate->getSource()}"; ?>" target="_blank" class="btn btn-primary">Pregled</a>
+                    </li>
+                </ul>
                 <?php
                 // if the authorized is logged in
                 if (isset($_SESSION['authorized'])) {
                 ?>
-                    <a href="#gradCertUpldMdl" class="card-link cert-upd-a" data-id-certificates="<?php echo $certificate->getIdCertificates(); ?>" data-defended="<?php echo $certificate->defended; ?>" data-issued="<?php echo $certificate->getIssued(); ?>" data-toggle="modal">Uredi</a>
-                    <a href="#" class="card-link cert-del-a" data-id-attendances="<?php echo $id_attendances; ?>" data-source="<?php echo $certificate->getSource(); ?>">Izbriši</a>
+                    <div class="d-flex justify-content-around">
+                        <a href="#gradCertUpldMdl" class="card-link cert-upd-a" data-id-certificates="<?php echo $certificate->getIdCertificates(); ?>" data-defended="<?php echo $certificate->defended; ?>" data-issued="<?php echo $certificate->getIssued(); ?>" data-toggle="modal">Uredi</a>
+                        <a href="#" class="card-link cert-del-a" data-id-attendances="<?php echo $id_attendances; ?>" data-source="<?php echo $certificate->getSource(); ?>">Izbriši</a>
+                    </div>
                 <?php
                 } // if
                 ?>
