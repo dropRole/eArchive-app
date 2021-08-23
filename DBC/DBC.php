@@ -766,9 +766,9 @@ class DBC extends PDO
                     $prpStmt->execute();
                     // if residence record was updated
                     if ($prpStmt->rowCount() == 1)
-                        $report .= "Podatki o bivališču na naslovu {$residence['address']} evidentirano kot {$residence['status']} so uspešno posodobljeni." . PHP_EOL;
+                        $report .= "Bivališče na naslovu {$residence['address']} evidentirano kot {$residence['status']}." . PHP_EOL;
                     else
-                        $report .= "Podatki o bivališču na naslovu {$residence['address']} evidentirano kot {$residence['status']} niso uspešno posodobljeni." . PHP_EOL;
+                        $report .= "Bivališče na naslovu {$residence['address']} ni evidentirano kot {$residence['status']}." . PHP_EOL;
                 } // try
                 catch (PDOException $e) {
                     echo "Napaka: {$e->getMessage()}.";
