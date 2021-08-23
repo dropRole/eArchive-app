@@ -18,7 +18,8 @@ img#addTempResBtn,
 img#addAttendanceBtn,
 img.par-del-img,
 img.doc-del-img,
-img.acc-del-img {
+img.acc-del-img,
+img.men-del-img {
     cursor: pointer;
 }
 
