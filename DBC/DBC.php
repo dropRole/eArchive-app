@@ -2128,18 +2128,15 @@ class DBC extends PDO
                         $this->commit();
                         return 'Račun je uspešno ustvarjen.';
                     } // if 
-                    // rollback the changes
-                    $this->rollback();
-                    return 'Račun ni uspešno ustvarjen.';
                 } // if
+                // rollback the changes
+                $this->rollback();
+                return 'Račun ni uspešno ustvarjen.';
             } // try
             catch (PDOException $e) {
                 // output error message
                 echo "Napaka: {$e->getMessage()}.";
             } // catch
-            // rollback the changes
-            $this->rollback();
-            return 'Napaka: uporabniški račun ni uspešno ustvarjen.';
         } // if
         return 'Opozorilo: transkacija s podatkovno zbirko je v izvajanju.';
     } // insertStudtAcct
