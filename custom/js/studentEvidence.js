@@ -1707,7 +1707,7 @@
     // attach listeners to student evidence table appropriate anchors and buttons   
     let listenStudtEvidTbl = () => {
             let studtInsrBtn = document.getElementById('studtInsrBtn'), // button for exposing form for student scientific achievements insertion
-                sciPapViewLst = document.querySelectorAll('.sp-vw-a'), // array of anchors for exposing scientific papers of the student
+                sciPapViewLst = document.querySelectorAll('.sp-sel-img'), // array of images for exposing scientific papers of the student
                 sciPapInsrLst = document.querySelectorAll('.sp-ins-img'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
                 gradCertInsrLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
                 gradCertViewLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
