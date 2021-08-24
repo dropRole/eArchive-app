@@ -31,6 +31,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     </div>
     <div class="table-responsive mt-3">
         <table class="table">
+            <caption>Zapisi študentov na univerzi </caption>
             <thead>
                 <tr>
                     <th>Ime in priimek</th>
@@ -56,10 +57,10 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         <td><?php echo $student->degree; ?></td>
                         <td><?php echo $student->faculty; ?></td>
                         <td>
-                            <a class="sp-vw-a text-decoration-none mr-3" href="#sciPapViewMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
-                                <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" data-toggle="tooltip" title="Pregled">
+                            <a class="text-decoration-none mr-3" href="#sciPapSelMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" class="sp-sel-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Pregled">
                             </a>
-                            <a href="#sciPapInsrMdl" data-toggle="modal">
+                            <a href="#sciPapInsMdl" data-toggle="modal">
                                 <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" class="sp-ins-img" data-toggle="tooltip" title="Vstavljanje" data-id-attendances="<?php echo $student->id_attendances; ?>">
                             </a>
                         </td>
