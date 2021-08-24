@@ -22,7 +22,7 @@ if (isset($id_scientific_papers)) {
         <div class="d-flex flex-column partaker-card my-2 p-3">
             <?php
             // if partaker student has an account 
-            if ($DBC->checkAcctAssignment($DBC->selectStudentsByIndex($partaker->index)[0]->id_attendances)) {
+            if ($DBC->assignedWithAccount($DBC->selectStudentsByIndex($partaker->index)[0]->id_attendances)) {
                 // if partaker student has an account avatar
                 if ($avatar = $DBC->hasAcctAvatar($partaker->index)) {
             ?>

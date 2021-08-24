@@ -626,7 +626,7 @@ class DBC extends PDO
                 $this->deleteScientificPaper($scientificPaper->getIdScientificPapers());
             } // foreach
         // if account was granted to
-        if ($this->checkAcctAssignment($id_attendances))
+        if ($this->assignedWithAccount($id_attendances))
             $this->deleteStudentAccount($id_attendances, $index);
         $this->deleteAttendance($id_attendances);
         try {
@@ -1891,7 +1891,7 @@ class DBC extends PDO
     *   checkout whether the student has been assigned an account to
     *   @param int $id_attendances
     */
-    public function checkAcctAssignment(int $id_attendances)
+    public function assignedWithAccount(int $id_attendances)
     {
         $stmt = '   SELECT 
                         * 
@@ -1912,7 +1912,7 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // checkAcctAssignment
+    } // assignedWithAccount
 
     /*
     *   check if account credentials are valid 

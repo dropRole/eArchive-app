@@ -22,7 +22,7 @@ if (isset($id_attendances)) {
         <div class="d-flex flex-column align-items-center">
             <?php
             // if the subject student has been assigned with an account 
-            if ($DBC->checkAcctAssignment($id_attendances))
+            if ($DBC->assignedWithAccount($id_attendances))
                 // if student has an account avatar
                 if ($avatar = $DBC->hasAcctAvatar($particulars->index)) {
             ?>
