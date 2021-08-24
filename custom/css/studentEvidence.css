@@ -1,8 +1,5 @@
 @media only screen and (max-width:576px) {
-    section>p {
-        text-align: center;
-    }
-    div.d-lg-flex>div {
+    div.d-flex>div {
         margin: 5px 0px;
     }
     button#studtInsrBtn {
