@@ -69,19 +69,18 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             // if student possesses a certificate
                             if ($DBC->selectCertificate($student->id_attendances) != NULL) {
                             ?>
-                                <a class="cert-vw-a" href="#gradCertSelMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
-                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" data-toggle="tooltip" title="Pregled">
+                                <a href="#gradCertSelMdl" data-toggle="modal">
+                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-sel-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Pregled">
                                 </a>
                             <?php
                             } // if
-                            // if student doesn't  possess a certificate
-                            if ($DBC->selectCertificate($student->id_attendances) == NULL) {
+                            else{
                             ?>
-                                <a class="cert-ins-a" href="#gradCertUplMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
-                                    <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" data-toggle="tooltip" title="Vstavljanje">
+                                <a href="#gradCertUplMdl" data-toggle="modal">
+                                    <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" class="cert-ins-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Vstavljanje">
                                 </a>
                             <?php
-                            } // if
+                            } // else
                             ?>
                         </td>
                         <td>
@@ -103,7 +102,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         </td>
                         <td>
                             <a href="#stuInsMdl" data-toggle="modal">
-                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="stu-upd-img" data-id-students="<?php echo $student->id_students; ?>"data-toggle="tooltip" title="Uredi">
+                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="stu-upd-img" data-id-students="<?php echo $student->id_students; ?>" data-toggle="tooltip" title="Uredi">
                             </a>
                         </td>
                         <td>
