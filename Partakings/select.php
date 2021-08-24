@@ -19,7 +19,7 @@ if (isset($id_scientific_papers)) {
     <?php
     foreach ($DBC->selectPartakings($id_scientific_papers) as $partaker) {
     ?>
-        <div class="d-flex flex-column partaker-card p-3">
+        <div class="d-flex flex-column partaker-card my-2 p-3">
             <?php
             // if partaker student has an account 
             if ($DBC->checkAcctAssignment($DBC->selectStudentsByIndex($partaker->index)[0]->id_attendances)) {
@@ -28,21 +28,23 @@ if (isset($id_scientific_papers)) {
             ?>
                     <div class="text-center">
                         <img class="acct-avtr-md" src="<?php echo "/eArchive/{$avatar}"; ?>" alt="Avatar">
-                        <div><?php echo $partaker->fullname; ?></div>
                     </div>
             <?php
                 } // if
             }
             ?>
+            <div class="text-center">
+                <strong><?php echo $partaker->fullname; ?></strong>
+            </div>
             <div class="d-flex justify-content-around text-center mt-2">
                 <div>
-                    <span class="font-italic"><strong>Indeks</strong></span><br>
+                    <span class="font-italic text-muted">Indeks</span><br>
                     <?php echo $partaker->index; ?>
                 </div>
                 <div>
-                    <span class="font-italic"><strong>Vloga</strong></span><br>
+                    <span class="font-italic text-muted">Vloga</span><br>
                     <?php echo $partaker->getPart(); ?>
-            </div>
+                </div>
             </div>
         </div>
     <?php
