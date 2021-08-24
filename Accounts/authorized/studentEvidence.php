@@ -8,19 +8,18 @@ use DBC\DBC;
 
 require_once '../../autoload.php';
 include_once '../../header.php';
+include_once '../../nav.php';
 
 $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
-
-include_once '../../nav.php';
 
 ?>
 
 <!-- Custom core JavaScript -->
-<script defer src="/eArchive/custom/js/studtEvidence.js"></script>
+<script defer src="/eArchive/custom/js/studentEvidence.js"></script>
 
 <section class="container my-3 p-3">
-    <p class="h2 my-3">Evidenca študentov</p>
-    <div class="d-lg-flex justify-content-lg-between">
+    <p class="h2 my-3 text-center">Evidenca študentov</p>
+    <div class="d-flex flex-lg-row flex-column justify-content-lg-between">
         <div>
             <input id="fltrInputEl" class="form-control" type="text" placeholder="Indeks">
         </div>
@@ -121,7 +120,7 @@ include_once '../../nav.php';
 </section>
 
 <!-- Link to the cutsom CSS -->
-<link rel="stylesheet" href="/eArchive/custom/css/studtEvidence.css">
+<link rel="stylesheet" href="/eArchive/custom/css/studentEvidence.css">
 
 <?php
 
