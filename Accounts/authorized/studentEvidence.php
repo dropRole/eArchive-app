@@ -74,7 +74,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                                 </a>
                             <?php
                             } // if
-                            else{
+                            else {
                             ?>
                                 <a href="#gradCertUplMdl" data-toggle="modal">
                                     <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" class="cert-ins-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Vstavljanje">
@@ -94,7 +94,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             else {
                             ?>
                                 <a href="#acctInsMdl" data-toggle="modal">
-                                    <img src="/eArchive/custom/img/assignAccount.png" alt="Dodeli" class="acc-ins-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>"data-toggle="tooltip" title="Dodeli">
+                                    <img src="/eArchive/custom/img/assignAccount.png" alt="Dodeli" class="acc-ins-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" title="Dodeli">
                                 </a>
                             <?php
                             } // else
@@ -106,9 +106,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             </a>
                         </td>
                         <td>
-                            <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>">
-                                <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" data-toggle="tooltip" title="Izbriši">
-                            </a>
+                            <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" class="stu-del-a" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" title="Izbriši">
                         </td>
                     </tr>
                 <?php
