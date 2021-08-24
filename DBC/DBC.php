@@ -627,7 +627,7 @@ class DBC extends PDO
             } // foreach
         // if account was granted to
         if ($this->checkAcctAssignment($id_attendances))
-            $this->deleteStudtAcct($id_attendances, $index);
+            $this->deleteStudentAccount($id_attendances, $index);
         $this->deleteAttendance($id_attendances);
         try {
             $stmt = '   DELETE FROM
@@ -2092,7 +2092,7 @@ class DBC extends PDO
     *   @param string $index
     *   @param string $pass
     */
-    public function insertStudtAcct(int $id_attendances, string $index, string $pass)
+    public function insertStudentAccount(int $id_attendances, string $index, string $pass)
     {
         // check if not already in a transaction
         if (!$this->inTransaction()) {
@@ -2139,7 +2139,7 @@ class DBC extends PDO
             } // catch
         } // if
         return 'Opozorilo: transkacija s podatkovno zbirko je v izvajanju.';
-    } // insertStudtAcct
+    } // insertStudentAccount
 
     /*
     *   select grant date of the given account
@@ -2173,7 +2173,7 @@ class DBC extends PDO
     *   @param int $id_attendances
     *   @param string $index
     */
-    public function deleteStudtAcct(int $id_attendances, string $index)
+    public function deleteStudentAccount(int $id_attendances, string $index)
     {
         // if not in a transation
         if (!$this->inTransaction()) {
@@ -2212,7 +2212,7 @@ class DBC extends PDO
             return 'Napaka: račun ni uspešno izbrisan.';
         } // if
         return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
-    } // deleteStudtAcct
+    } // deleteStudentAccount
 
     /*
     *   if student has an account avatar
