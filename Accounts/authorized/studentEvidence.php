@@ -14,6 +14,9 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
 
 ?>
 
+<!-- Link to the cutsom CSS -->
+<link rel="stylesheet" href="/eArchive/custom/css/studentEvidence.css">
+
 <!-- Custom core JavaScript -->
 <script defer src="/eArchive/custom/js/studentEvidence.js"></script>
 
@@ -116,9 +119,6 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
         </table>
     </div>
 </section>
-
-<!-- Link to the cutsom CSS -->
-<link rel="stylesheet" href="/eArchive/custom/css/studentEvidence.css">
 
 <?php
 
