@@ -1,5 +1,5 @@
 <!-- Modal for inserting data about the student and its attendance of faculty programs  -->
-<div id="studtInsrMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="stuInsMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -252,13 +252,13 @@
     </div>
 </div>
 <!-- Modal for viewing graduation certificate obtained attending the program  -->
-<div id="gradCertViewMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="gradCertSelMdl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content"></div>
     </div>
 </div>
 <!-- Modal for uploading graduation certificate and inserting data regarding its issuance and defence dates  -->
-<div class="modal fade" id="gradCertUpldMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModlaLabel" aria-hidden="true">
+<div class="modal fade" id="gradCertUplMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModlaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -295,7 +295,7 @@
     </div>
 </div>
 <!-- Modal for assigning account credentials to a student -->
-<div class="modal fade" id="acctAssignMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="acctInsMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -320,7 +320,7 @@
     </div>
 </div>
 <!-- Modal for reporting on performed operations -->
-<div class="modal fade" id="rprtMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
+<div class="modal fade" id="repMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
