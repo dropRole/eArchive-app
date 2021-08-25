@@ -9,7 +9,7 @@
                     </button>
             </div>
             <div class="modal-body">
-                <form id="studtInsrFrm">
+                <form id="stuInsFrm">
                     <p class="h5 px-lg-3 px-sm-1 pb-1">Osnovni podatki</p>
                     <div id="studentBasics" class="row px-lg-3 px-sm-1">
                         <div class="form-group col-lg-6 col-12">
@@ -177,7 +177,7 @@
                     </button>
             </div>
             <div class="modal-body">
-                <form id="sciPapInsrFrm">
+                <form id="sciPapInsFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div id="particulars" class="row">
                         <div class="form-group col-12">
@@ -268,7 +268,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="gradCertUpldFrm">
+                <form id="gradCertUplFrm">
                     <input type="hidden" name="id_attendances" value="">
                     <div class="row">
                         <div class="form-group col-12">
@@ -305,7 +305,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="acctAssignFrm">
+                <form id="acctInsFrm">
                     <input type="hidden" name="id_attendances">
                     <input type="hidden" name="index">
                     <div class="form-group">
