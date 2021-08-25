@@ -24,7 +24,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     <p class="h2 my-3 text-center">Evidenca študentov</p>
     <div class="d-flex flex-lg-row flex-column justify-content-lg-between">
         <div>
-            <input id="fltrInputEl" class="form-control" type="text" placeholder="Indeks">
+            <input id="fltInpEl" class="form-control" type="text" placeholder="Indeks">
         </div>
         <div>
             <button id="studtInsrBtn" class="btn btn-primary" type="button" data-toggle="modal" data-target="
