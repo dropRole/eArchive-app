@@ -230,6 +230,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // updateMentor
