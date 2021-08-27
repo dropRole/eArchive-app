@@ -151,7 +151,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-center col-12">
-                            <img id="addAttendance" src="/eArchive/custom/img/add.png" alt="Dodaj študij" data-toggle="tooltip" title="Dodaj">
+                            <img id="addProgAtten" src="/eArchive/custom/img/add.png" alt="Dodaj študij" data-toggle="tooltip" title="Dodaj">
                         </div>
                     </div>
                     <input class="btn btn-warning offset-lg-5 offset-3 col-lg-2 col-6 my-2" type="submit" value="Vstavi">
@@ -167,7 +167,7 @@
     </div>
 </div>
 <!-- Modal for inserting data concerning scientific paper and uploading its documents -->
-<div class="modal fade" id="sicPapInsMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="sciPapInsMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
