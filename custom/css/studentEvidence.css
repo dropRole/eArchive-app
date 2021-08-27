@@ -31,7 +31,7 @@ button#addDocument {
     border: none;
 }
 
-button#addPartake:focus,
+button#addPartaker:focus,
 button#addPartaker:focus-visible,
 button#addMentor:focus,
 button#addMentor:focus-visible,
