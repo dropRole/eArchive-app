@@ -1,56 +1,56 @@
 // IIFE
 (() => {
     // global scope variable declaration
-    var frag = new DocumentFragment(), // minimal document object structure
-        studtInsrFrm = document.getElementById('studtInsrFrm'), // form for inserting and updating data regarding the student
-        sciPapInsrFrm = document.getElementById('sciPapInsrFrm'), // form for inserting, updating and deleting data regarding the scientific paper 
-        acctAssignFrm = document.getElementById('acctAssignFrm'), // form for assigning student account and its credentials
-        gradCertUpldFrm = document.getElementById('gradCertUpldFrm'), // form for uploading graduation certificates
-        rprtMdl = document.getElementById('rprtMdl'), // modal for reporting about performed operations 
-        rprtMdlBtn = document.getElementById('rprtMdlBtn'), // report modal toggler
-        fltrInptEl = document.getElementById('fltrInputEl') // input for filtering students by their index numbers
+    var fragment = new DocumentFragment(), // minimal document object structure
+        stuInsFrm = document.getElementById('stuInsFrm'), // form for student data manipulation
+        sciPapInsFrm = document.getElementById('sciPapInsFrm'), // form for scientific paper data manipulation 
+        acctInsFrm = document.getElementById('acctInsFrm'), // form for student account assignment
+        certUplFrm = document.getElementById('certUplFrm'), // form for graduation certificate upload
+        reportModal = document.getElementById('reportModal'), // modal for data manipulation report exposition 
+        repMdlBtn = document.getElementById('repMdlBtn'), // report modal toggler
+        fltInpEl = document.getElementById('fltInpEl') // input for filtering student records by index numbers
 
     /*
-     *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
+     *   instantiate an XHR interface object an asynchronously perform the script   
      *   @param String script
      *   @param String method
      *   @param String responseType 
-     *   @param FormData frmData 
+     *   @param FormData formData 
      */
-    let request = (script, method, resType = '', frmData = null) => {
+    let request = (script, method, responseType = '', formData = null) => {
             return new Promise((resolve, reject) => {
                 // instanitate an XHR object
                 let xmlhttp = new XMLHttpRequest()
                 xmlhttp.addEventListener(
                         'load',
                         () => {
-                            // resolve the promise if transaction was successful
+                            // if transaction was successful
                             resolve(xmlhttp.response)
                         }
                     ) // addEventListener
                 xmlhttp.addEventListener(
                         'error',
                         () => {
-                            // reject the promise if transaction encountered an error
-                            reject('Prišlo je do napake na strežniku!')
+                            // if transaction encountered an error
+                            reject('Prišlo je do napake na strežniku pri obdelavi zahteve!')
                         }
                     ) // addEventListener
                 xmlhttp.open(method, script, true)
-                xmlhttp.responseType = resType
-                xmlhttp.send(frmData)
+                xmlhttp.responseType = responseType
+                xmlhttp.send(formData)
             })
         } // request
 
     /*
-     *   asynchronous script execution for selection of student particulars, residences and scientific          achievements    
+     *   select particulars, permanent and temportary residences of the given student     
      *   @param Event e
      *   @param Number idStudents
      */
-    let selectStudt = (e, idStudents) => {
+    let selectStudent = (e, idStudents) => {
             let student = {
                 particulars: null,
-                permResidence: null,
-                tempResidences: null
+                permanentResidence: null,
+                temporaryResidence: null
             }
             request(
                     `/eArchive/Students/select.php?id_students=${idStudents}`,
@@ -64,18 +64,18 @@
                     'json'
                 ))
                 .then(response => {
-                    student.permResidence = response.permResidence
-                    student.tempResidences = response.tempResidences
+                    student.permanentResidence = response.permResidence
+                    student.temporaryResidence = response.tempResidences
                 })
-                .then(() => toStudtUpdtFrm(e, student))
+                .then(() => toStudentUpdateForm(e, student))
                 .catch(error => alert(error)) // catch
-        } // selectStudt
+        } // selectStudent
 
     /*
-     *   asynchronous script execution for filtered student selection by index      
-     *   @param Number index
+     *   select all student records filtered by the passed index number      
+     *   @param String index
      */
-    let selectStudtsByIndx = index => {
+    let selectStudentsByIndex = index => {
             request(
                     `/eArchive/Students/filterByIndex.php?index=${index}`,
                     'GET',
@@ -83,202 +83,209 @@
                 )
                 .then(response => {
                     // compose node passive tree structure
-                    frag = response
+                    fragment = response
                         // reflect fragments body  
-                    document.querySelector('div.table-responsive').innerHTML = frag.body.innerHTML
+                    document.querySelector('div.table-responsive').innerHTML = fragment.body.innerHTML
                         // enabling tooltips
                     $('[data-toggle="tooltip"]').tooltip()
                 })
-                .then(() => listenStudtEvidTbl())
+                .then(() => listenStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
-        } // selectStudtsByIndx
+        } // selectStudentsByIndex
 
     /*
-     *  asynchronous script execution for insretion of student particulars and scientific achievements
+     *  insert students particulars, program attendance and scientific achievement per program attendance 
      *  @param Event e
      *  @param HTMLFormElement form
      */
-    let insertStudt = (e, frm) => {
+    let insertStudent = (e, form) => {
             // prevent default action of submitting student data through a form
             e.preventDefault()
             request(
                     '/eArchive/Students/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
-                .then(() => emptyFrmInptFields(studtInsrFrm))
-                .then(() => document.getElementById('studtInsrBtn').click())
-                .then(() => interpolateStudtDatalst())
+                .then(response => reportOnAction(response))
+                .then(() => loadStudentEvidenceTable())
+                .then(() => emptyInputFields(stuInsFrm))
+                .then(() => document.getElementById('stuInsBtn').click())
+                .then(() => interpolateDatalist())
                 .catch(error => alert(error)) // catch
-        } // insertStudt
+        } // insertStudent
 
     /*
-     *  asynchronous script execution for updating of student particulars
+     *  update particulars of the given student
      *  Event e
+     *  HTMLFormElement
      */
-    let updateStudt = (e, frm) => {
+    let updateStudent = (e, form) => {
             // prevent default action of submitting updated student data through a form
             e.preventDefault()
             request(
                     '/eArchive/Students/update.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => emptyFrmInptFields(studtInsrFrm))
-                .then(() => loadStudtEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => emptyInputFields(stuInsFrm))
+                .then(() => loadStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
-        } // updateStudt
+        } // updateStudent
 
     /*
-     *   asynchronous script execution for deletion of all records regarding the student   
+     *   delete all records in a relationship with the given student record
      *   @param Number idAttendances 
      *   @param Number idStudents
      *   @param String index 
      */
-    let deleteStudt = (idAttendances, idStudents, index) => {
+    let deleteStudent = (idAttendances, idStudents, index) => {
             request(
                     `/eArchive/Students/delete.php?id_students=${idStudents}&id_attendances=${idAttendances}&index=${index}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => loadStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
-        } // deleteStudt
+        } // deleteStudent
 
-    // asynchronous script execution for insertion of a scientific paper partaker    
-    let insertPartakerOfSciPap = frm => {
+    /* 
+     *   insert record of the scientific paper partaker     
+     *   @param HTMLFormElement form
+     */
+    let insertPartaker = form => {
             request(
                     '/eArchive/Partakings/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // insertPartakerOfSciPap
+        } // insertPartaker
 
     /*
-     *  asynchronous script execution for updating data of the scientific paper partaker    
-     *  @param HTMLFormElement frm
+     *  update record of the given scientific paper partaker
+     *  @param HTMLFormElement form
      */
-    let updatePartakerOfSciPap = frm => {
+    let updatePartaker = form => {
             request(
                     '/eArchive/Partakings/update.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // updatePartakerOfSciPap
+        } // updatePartaker
 
     /*
-     *  asynchronous script execution for deletion of the scientific paper partaker    
+     *  delete record of the given scientific paper partker    
      *  @param Number idPartakings
      */
-    let deletePartakerOfSciPap = idPartakings => {
+    let deletePartaker = idPartakings => {
             request(
                     `/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // deletePartakerOfSciPap
+        } // deletePartaker
 
     /*
-     *  asynchronous script execution for inserting submitted mentor data     
-     *  @param HTMLFormElement frm
+     *  insert record of the scientific paper mentor 
+     *  @param HTMLFormElement form
      */
-    let insertMentorOfSciPap = frm => {
+    let insertMentor = form => {
             request(
                     '/eArchive/Mentorings/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // insertMentorOfSciPap
+        } // insertMentor
 
-    // asynchronously script run for updating data regarding mentor of the scientific paper       
-    let updateMentorOfSciPap = frm => {
+    /* 
+     *   update record of scientific paper mentor       
+     *   HTMLFormElement form
+     */
+    let updateMentor = form => {
             request(
                     '/eArchive/Mentorings/update.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // updateMentorOfSciPap
+        } // updateMentor
 
     /*
-     *  asynchronously script run for deletion of data concerning scientific paper mentor       
+     *  delete record of the given scientific paper mentor       
      *  @param Number idMentorings
      */
-    let deleteMentorOfSciPap = idMentorings => {
+    let deleteMentor = idMentorings => {
             request(
                     `/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // deleteMentorOfSciPap
+        } // deleteMentor
 
     /*  
-     *   asynchronous script execution for scientific paper documents upload    
-     *   @param HTMLFormElement frm
+     *   upload documents testifying the scientific achievement 
+     *   @param HTMLFormElement form
      */
-    let uploadDocsOfSciPap = frm => {
+    let uploadDocuments = form => {
             request(
                     '/eArchive/Documents/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
+                .then(response => reportOnAction(response))
                 .then(() => $('#sicPapMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances').value))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances').value))
                 .catch(error => alert(error)) // catch
-        } // uploadDocsOfSciPap
+        } // uploadDocuments
 
     /*
-     *  asynchronous script execution for scientific paper documents deletion    
+     *  physically and logically delete documents testifying the scientific achievement 
      *  @param String source  
      */
-    let deleteDocsOfSciPap = source => {
+    let deleteDocument = source => {
             request(
                     `/eArchive/Documents/delete.php?source=${source}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // deleteDocsOfSciPap
+        } // deleteDocument
 
     /*
-     *   asynchronous script execution for selection of scientific papers per student program attendance 
+     *   select all records of scientific papers with regards to the program attendance id 
      *   @param Number idAttendances
      */
-    let selectSciPaps = idAttendances => {
+    let selectScientificPapers = idAttendances => {
             // fetch resources
             request(
                     `/eArchive/ScientificPapers/select.php?id_attendances=${idAttendances}`,
@@ -287,93 +294,93 @@
                 )
                 .then(response => {
                     // compose node tree structure
-                    frag = response
+                    fragment = response
                         // reflect fragments body     
-                    document.querySelector('#sciPapViewMdl .modal-content').innerHTML = frag.body.innerHTML
+                    document.querySelector('#sciPapSelMdl .modal-content').innerHTML = fragment.body.innerHTML
                         // enabling tooltips
                     $('[data-toggle="tooltip"]').tooltip()
                 })
-                .then(() => listenSciPapCards())
+                .then(() => listenScientificPaperCards())
                 .catch(error => alert(error)) // catch
-        } // selectSciPaps
+        } // selectScientificPapers
 
     /*
-     *   asynchronous script execution for insertion data regarding scientific paper and its documents upload 
+     *   insert records of the scientific paper and its uploaded documents
      *   @param Event e
-     *   @param HTMLFormElement frm
+     *   @param HTMLFormElement form
      */
-    let insertSciPap = (e, frm) => {
+    let insertScientificPaper = (e, form) => {
             // prevent default action of submitting scientific paper data    
             e.preventDefault()
             request(
                     '/eArchive/ScientificPapers/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
+                .then(response => reportOnAction(response))
+                .then(() => $('#sciPapInsMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
-        } // insertSciPap
+        } // insertScientificPaper
 
     /*
-     *   asynchronous script execution for scientific paper data alteration 
-     *   @param HTMLFormElement frm
+     *   update record of the scientific paper
+     *   @param HTMLFormElement form
      */
-    let updateSciPap = frm => {
+    let updateScientificPaper = form => {
             request(
                     '/eArchive/ScientificPapers/update.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => selectSciPaps(frm.querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // updateSciPap
+        } // updateScientificPaper
 
     /*
-     *  asynchronous script execution for scientific paper deletion with its belonging documents     
+     *  delete record of the given scientific paper
      *  @param Number idScientificPapers
      */
-    let deleteSciPap = idScientificPapers => {
+    let deleteScientificPaper = idScientificPapers => {
             request(
                     `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => selectSciPaps(document.getElementById('sciPapInsrFrm').querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // deleteScientificPaper
 
     /*
-     *   asynchronous script execution for graduation certificate upload     
+     *   upload graduation certificate document
      *   @param Event e
      */
-    let uploadGradCert = e => {
+    let uploadGraduationCertificate = e => {
             // prevent default action of submitting certificate upload form
             e.preventDefault()
             request(
                     '/eArchive/Certificates/insert.php',
                     'POST',
                     'text',
-                    (new FormData(gradCertUpldFrm))
+                    (new FormData(certUplFrm))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
-                .then(() => $('#gradCertUpldMdl').modal('hide'))
+                .then(response => reportOnAction(response))
+                .then(() => loadStudentEvidenceTable())
+                .then(() => $('#certUplMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
-        } // uploadGradCert
+        } // uploadGraduationCertificate
 
-    gradCertUpldFrm.addEventListener('submit', uploadGradCert)
+    certUplFrm.addEventListener('submit', uploadGraduationCertificate)
 
     /*
-     *  asynchronous script execution for graduation certificate selection    
+     *  select the graduation certificate issued while attending the given program
      *  @param Number idAttendances
      */
-    let selectGradCert = idAttendances => {
+    let selectGraduationCertificate = idAttendances => {
             request(
                     `/eArchive/Certificates/select.php?id_attendances=${idAttendances}`,
                     'GET',
@@ -381,67 +388,67 @@
                 )
                 .then(response => {
                     // compose node tree structure
-                    frag = response
+                    fragment = response
                         // reflect fragments body     
-                    document.querySelector('div#gradCertViewMdl > div.modal-dialog > .modal-content').innerHTML = frag.body.innerHTML
+                    document.querySelector('div#certSelMdl > div.modal-dialog > .modal-content').innerHTML = fragment.body.innerHTML
                 })
-                .then(() => listenGradCertCard())
+                .then(() => listenCertificateCard())
                 .catch(error => alert(error)) // catch
-        } // selectGradCert
+        } // selectGraduationCertificate
 
     /*
-     *  asynchronously script run for graduation certificate data update     
-     *  @param HTMLFormElement frm
+     *  update defence and issuance dates of the graduation certificate
+     *  @param HTMLFormElement form
      */
-    let updateGradCert = frm => {
+    let updateGraduationCertificate = form => {
             request(
                     '/eArchive/Certificates/update.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#gradCertUpldMdl').modal('hide'))
-                .then(() => selectGradCert(frm.querySelector('input[name=id_attendances]').value))
+                .then(response => reportOnAction(response))
+                .then(() => $('#certUplMdl').modal('hide'))
+                .then(() => selectGraduationCertificate(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // updateGradCert
+        } // updateGraduationCertificate
 
     /*
-     *  asynchronous script execution for graduation certificate deletion    
+     *  physically and logically delete the record on the graduation by the given program attendance id      
      *  @param Number idAttendance
      *  @param String source
      */
-    let deleteGradCert = (idAttendances, source) => {
+    let deleteGraduationCertificate = (idAttendances, source) => {
             request(
                     `/eArchive/Graduations/delete.php?id_attendances=${idAttendances}&source=${source}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
-                .then(() => $('#gradCertViewMdl').modal('hide'))
+                .then(response => reportOnAction(response))
+                .then(() => loadStudentEvidenceTable())
+                .then(() => $('#certSelMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
-        } // deleteGradCert
+        } // deleteGraduationCertificate
 
-    // load student evidence table upon latterly data amendment 
-    let loadStudtEvidTbl = () => {
+    // load student evidence table upon latterly record amendment 
+    let loadStudentEvidenceTable = () => {
             request
                 (
-                    '/eArchive/Accounts/authorized/studtEvidence.php',
+                    '/eArchive/Accounts/authorized/studentEvidece.php',
                     'GET',
                     'document'
                 )
                 .then(response => {
                     // compose node tree structure
-                    frag = response
+                    fragment = response
                         // reflect fragments body  
-                    document.querySelector('div.table-responsive').innerHTML = frag.body.querySelector('div.table-responsive').innerHTML
+                    document.querySelector('div.table-responsive').innerHTML = fragment.body.querySelector('div.table-responsive').innerHTML
                         // enabling tooltips
                     $('[data-toggle="tooltip"]').tooltip()
                 })
-                .then(() => listenStudtEvidTbl())
+                .then(() => listenStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
-        } // loadStudtEvidTbl
+        } // loadStuEvidTbl
 
     /*
      *   propagate passed select element with options from the requested resource 
@@ -449,19 +456,19 @@
      *   @param String script
      *   @param Number id
      */
-    let propagateSelEl = async(select, script, id = 0) => {
+    let propagateSelectElement = async(select, script, id = 0) => {
             try {
                 const response = await request(
                     script,
                     'GET',
                     'document'
                 )
-                frag = response
+                fragment = response
                     // remove previously disposable options
                 while (select.options.length)
                     select.remove(0)
                     // traverse through nodes 
-                frag.body.querySelectorAll('option').forEach(option => {
+                fragment.body.querySelectorAll('option').forEach(option => {
                         select.add(option)
                             // if id matches options value
                         if (option.value == id)
@@ -470,74 +477,74 @@
                     }) // forEach
             } catch (error) {
                 alert(error)
-            }
+            } // catch
         } // propagateSelEl
 
     /*
      *  clear input field values of a form 
-     *  @param HTMLFormElement frm
+     *  @param HTMLFormElement form
      */
-    let emptyFrmInptFields = frm => {
-            frm.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
+    let emptyInputFields = form => {
+            form.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
                     input.value = ''
                 }) // forEach
-        } // emptyFrmInptFields
+        } // emptyInputFields
 
     /*  
-     *   interpolate datalist with name, surname and index number of the inserted student
+     *   interpolate datalist with name, surname and index number of the momentarily inserted student
      *   @param String fullname
-     *   @param Number index
+     *   @param String index
      */
-    let interpolateStudtDatalst = (fullname, index) => {
+    let interpolateDatalist = (fullname, index) => {
             let option = document.createElement('option')
             option.value = index
             option.textContent = fullname
-            document.getElementById('sciPapInsrMdl').querySelector('datalist').appendChild(option)
-        } // interpolateStudtDatalst
+            document.querySelector('form#sciPapInsMdl datalist').appendChild(option)
+        } // interpolateDatalist
 
     /*  
      *   report to the user on the performed action
-     *   @param String mssg
+     *   @param String message
      */
-    let rprtOnAction = mssg => {
-            rprtMdl.querySelector('.modal-body').textContent = mssg
-            rprtMdlBtn.click()
-        } // rprtOnAction
+    let reportOnAction = message => {
+            reportModal.querySelector('.modal-body').textContent = message
+            repMdlBtn.click()
+        } // reportOnAction
 
     /*
      *  !recursive 
-     *  create and subsequently append form controls for new temporal residence section 
+     *  create and subsequently append form controls for new temporary residence section 
      *  @param Array residences
      */
-    let addTempResSect = (residences = null) => {
+    let addTemporaryResidenceSection = (residences = null) => {
             return new Promise((resolve) => {
                     // instantiate a MutationObserver object
                     let observer = new MutationObserver(() => {
-                            // if updating recorded temporal residence data 
+                            // if updating recorded temporary residence data 
                             if (residences) {
                                 residences.shift()
                                     // if there's more records
                                 if (residences.length)
-                                    resolve(addTempResSect(residences))
+                                    resolve(addTemporaryResidenceSection(residences))
                             } // if
                             else
                                 resolve()
                         }), // MutationObserver
                         // form controls
-                        ctr = document.createElement('div'),
+                        container = document.createElement('div'),
                         headline = document.createElement('p'),
                         cross = document.createElement('span'),
                         ctryFrmGrp = document.createElement('div'),
                         postCodeFrmGrp = document.createElement('div'),
-                        addressFrmGrp = document.createElement('div'),
-                        ctryLbl = document.createElement('label'),
+                        addrFrmGrp = document.createElement('div'),
+                        countryLabel = document.createElement('label'),
                         postCodeLbl = document.createElement('label'),
-                        addressLbl = document.createElement('label'),
-                        statusInptEl = document.createElement('input'),
-                        ctrySelEl = document.createElement('select'),
-                        postCodeSelEl = document.createElement('select'),
-                        addressInptEl = document.createElement('input'),
-                        index = document.querySelectorAll('div#residences > div.row').length // the following index for an array of data on student temporal residences 
+                        addressLabel = document.createElement('label'),
+                        statusInput = document.createElement('input'),
+                        countrySelect = document.createElement('select'),
+                        postCodeSlct = document.createElement('select'),
+                        addressInput = document.createElement('input'),
+                        index = document.querySelectorAll('div#residences > div.row').length // the following index for an array of data on student temporary residences 
                         // set the target and options of observation
                     observer.observe(
                             document.getElementById('residences'), {
@@ -546,8 +553,8 @@
                                 subtree: false
                             }
                         ) // observe
-                    ctr.className = 'row temporal-residence'
-                    ctr.style.position = 'relative'
+                    container.className = 'row temporary-residence'
+                    container.style.position = 'relative'
                     headline.classList = 'col-12 h6'
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
@@ -559,172 +566,172 @@
                             () => {
                                 // if data attributes value isn't empty 
                                 if (cross.getAttribute('data-id-residences') !== '')
-                                    deleteTempResOfStudt(cross.getAttribute('data-id-residences'))
-                                document.getElementById('residences').removeChild(ctr)
+                                    deleteTemporaryResidence(cross.getAttribute('data-id-residences'))
+                                container.remove()
                             }
                         ) // addEventListener
                     ctryFrmGrp.className = 'form-group col-lg-4 col-12'
                     postCodeFrmGrp.className = 'form-group col-lg-4 col-12'
-                    addressFrmGrp.className = 'form-group col-lg-4 col-12'
-                    ctryLbl.textContent = 'Država'
-                    ctryLbl.classList = 'w-100'
+                    addrFrmGrp.className = 'form-group col-lg-4 col-12'
+                    countryLabel.textContent = 'Država'
+                    countryLabel.classList = 'w-100'
                     postCodeLbl.textContent = 'Kraj'
                     postCodeLbl.classList = 'w-100'
-                    addressLbl.textContent = 'Naslov'
-                    addressLbl.classList = 'w-100'
-                    statusInptEl.type = 'hidden'
-                    statusInptEl.name = `residences[${index}][status]`
-                    statusInptEl.value = 'ZAČASNO'
-                    ctrySelEl.classList = 'form-control country-select'
-                    ctrySelEl.addEventListener(
+                    addressLabel.textContent = 'Naslov'
+                    addressLabel.classList = 'w-100'
+                    statusInput.type = 'hidden'
+                    statusInput.name = `residences[${index}][status]`
+                    statusInput.value = 'ZAČASNO'
+                    countrySelect.classList = 'form-control country-select'
+                    countrySelect.addEventListener(
                             'input',
                             () => {
-                                propagateSelEl(
-                                    postCodeSelEl,
-                                    `/eArchive/postalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`
+                                propagateSelectElement(
+                                    postCodeSlct,
+                                    `/eArchive/postalCodes/select.php?id_countries=${countrySelect.selectedOptions[0].value}`
                                 )
                             }
                         ) // addEventListener
-                    postCodeSelEl.classList = 'form-control'
-                    postCodeSelEl.name = `residences[${index}][id_postal_codes]`
-                    postCodeSelEl.required = true
-                    addressInptEl.classList = 'form-control'
-                    addressInptEl.type = 'text'
-                    addressInptEl.name = `residences[${index}][address]`
-                    addressInptEl.required = true
+                    postCodeSlct.classList = 'form-control'
+                    postCodeSlct.name = `residences[${index}][id_postal_codes]`
+                    postCodeSlct.required = true
+                    addressInput.classList = 'form-control'
+                    addressInput.type = 'text'
+                    addressInput.name = `residences[${index}][address]`
+                    addressInput.required = true
                     headline.appendChild(cross)
-                    ctryLbl.appendChild(ctrySelEl)
-                    ctryFrmGrp.appendChild(ctryLbl)
-                    postCodeLbl.appendChild(postCodeSelEl)
+                    countryLabel.appendChild(countrySelect)
+                    ctryFrmGrp.appendChild(countryLabel)
+                    postCodeLbl.appendChild(postCodeSlct)
                     postCodeFrmGrp.appendChild(postCodeLbl)
-                    addressLbl.appendChild(addressInptEl)
-                    addressFrmGrp.appendChild(addressLbl)
-                    ctr.appendChild(headline)
-                    ctr.appendChild(statusInptEl)
-                    ctr.appendChild(ctryFrmGrp)
-                    ctr.appendChild(postCodeFrmGrp)
-                    ctr.appendChild(addressFrmGrp)
-                    propagateSelEl(
-                            ctrySelEl,
+                    addressLabel.appendChild(addressInput)
+                    addrFrmGrp.appendChild(addressLabel)
+                    container.appendChild(headline)
+                    container.appendChild(statusInput)
+                    container.appendChild(ctryFrmGrp)
+                    container.appendChild(postCodeFrmGrp)
+                    container.appendChild(addrFrmGrp)
+                    propagateSelectElement(
+                            countrySelect,
                             '/eArchive/Countries/select.php', !residences ? null : residences[0].id_countries
                         )
                         .then(() => {
-                            propagateSelEl(
-                                postCodeSelEl,
-                                `/eArchive/PostalCodes/select.php?id_countries=${ctrySelEl.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
+                            propagateSelectElement(
+                                postCodeSlct,
+                                `/eArchive/PostalCodes/select.php?id_countries=${countrySelect.selectedOptions[0].value}`, !residences ? null : residences[0].id_postal_codes
                             )
                         }).then(() => {
-                            addressInptEl.value = !residences ? '' : residences[0].address
-                        }).then(() => document.getElementById('residences').appendChild(ctr))
+                            addressInput.value = !residences ? '' : residences[0].address
+                        }).then(() => document.getElementById('residences').appendChild(container))
                         .catch((error) => {
                             alert(error)
                         }) // catch
                 }) // Promise
-        } // addTempResSect
+        } // addTemporaryResidenceSection
 
     /*
      *  create and subsequently append graduation section for a student attending particular program 
      *  @param Event e
      */
-    let addProgGradSect = e => {
+    let addProgramGraduationSection = e => {
             return new Promise((resolve) => {
-                    let observer = new MutationObserver(() => resolve())
+                    let observer = new MutationObserver(() => resolve()),
                         // create form controls 
-                    gradCertFrmGrp = document.createElement('div'),
-                        defendedFrmGrp = document.createElement('div'),
-                        issuedFrmGrp = document.createElement('div'),
-                        gradCertLbl = document.createElement('label'),
-                        defendedLbl = document.createElement('label'),
-                        issuedLbl = document.createElement('label'),
-                        certNameInptEl = document.createElement('input'),
-                        certInptEl = document.createElement('input'),
-                        defendedInptEl = document.createElement('input'),
-                        issuedInptEl = document.createElement('input'),
-                        index = e.target.getAttribute('data-index'), // get next index position for attendances array 
-                        observer.observe(document.getElementById('attendances'), {
-                            attributes: false,
-                            childList: true,
-                            subtree: false
-                        })
-                    gradCertFrmGrp.className = 'form-group col-lg-4 col-12'
-                    defendedFrmGrp.className = 'form-group col-lg-4 col-12'
-                    issuedFrmGrp.className = 'form-group col-lg-4 col-12'
-                    gradCertLbl.textContent = 'Certifikat'
-                    gradCertLbl.className = 'w-100 file-label'
-                    defendedLbl.textContent = 'Zagovorjen'
-                    defendedLbl.className = 'w-100'
-                    issuedLbl.textContent = 'Izdan'
-                    issuedLbl.className = 'w-100'
-                    issuedInptEl.textContent = 'Izdan'
-                    certInptEl.type = 'file'
-                    certInptEl.setAttribute('name', 'certificate[]')
-                    certInptEl.accept = '.pdf'
-                    certInptEl.required = true
+                        certFrmGrp = document.createElement('div'),
+                        defFrmGrp = document.createElement('div'),
+                        issFrmGrp = document.createElement('div'),
+                        certificateLabel = document.createElement('label'),
+                        defendedLabel = document.createElement('label'),
+                        issuedLabel = document.createElement('label'),
+                        filenameInput = document.createElement('input'),
+                        certificateInput = document.createElement('input'),
+                        defendedInput = document.createElement('input'),
+                        issuedInput = document.createElement('input'),
+                        index = e.target.getAttribute('data-index') // get next index position for attendances array 
+                    observer.observe(document.getElementById('attendances'), {
+                        attributes: false,
+                        childList: true,
+                        subtree: false
+                    })
+                    certFrmGrp.className = 'form-group col-lg-4 col-12'
+                    defFrmGrp.className = 'form-group col-lg-4 col-12'
+                    issFrmGrp.className = 'form-group col-lg-4 col-12'
+                    certificateLabel.textContent = 'Certifikat'
+                    certificateLabel.className = 'w-100 file-label'
+                    defendedLabel.textContent = 'Zagovorjen'
+                    defendedLabel.className = 'w-100'
+                    issuedLabel.textContent = 'Izdan'
+                    issuedLabel.className = 'w-100'
+                    issuedInput.textContent = 'Izdan'
+                    certificateInput.type = 'file'
+                    certificateInput.setAttribute('name', 'certificate[]')
+                    certificateInput.accept = '.pdf'
+                    certificateInput.required = true
                         // determine hidden input type value if graduated
-                    certInptEl.addEventListener(
+                    certificateInput.addEventListener(
                             'input',
                             e => {
-                                certNameInptEl.value = e.target.files[0].name
+                                filenameInput.value = e.target.files[0].name
                             }
                         ) // addEventListener
-                    certNameInptEl.type = 'hidden'
-                    certNameInptEl.name = `attendances[${index}][certificate]`
-                    defendedInptEl.className = 'form-control'
-                    defendedInptEl.type = 'date'
-                    defendedInptEl.required = true
-                    defendedInptEl.name = `attendances[${index}][defended]`
-                    issuedInptEl.className = 'form-control'
-                    issuedInptEl.type = 'date'
-                    issuedInptEl.name = `attendances[${index}][issued]`
-                    issuedInptEl.required = true
+                    filenameInput.type = 'hidden'
+                    filenameInput.name = `attendances[${index}][certificate]`
+                    defendedInput.className = 'form-control'
+                    defendedInput.type = 'date'
+                    defendedInput.required = true
+                    defendedInput.name = `attendances[${index}][defended]`
+                    issuedInput.className = 'form-control'
+                    issuedInput.type = 'date'
+                    issuedInput.name = `attendances[${index}][issued]`
+                    issuedInput.required = true
                         // append graduation form controls to a particular attendance section
-                    gradCertLbl.appendChild(certInptEl)
-                    gradCertFrmGrp.appendChild(gradCertLbl)
-                    defendedLbl.appendChild(defendedInptEl)
-                    defendedFrmGrp.appendChild(defendedLbl)
-                    issuedLbl.appendChild(issuedInptEl)
-                    issuedFrmGrp.appendChild(issuedLbl)
-                    e.target.closest('.row').appendChild(certNameInptEl)
-                    e.target.closest('.row').appendChild(gradCertFrmGrp)
-                    e.target.closest('.row').appendChild(defendedFrmGrp)
-                    e.target.closest('.row').appendChild(issuedFrmGrp)
+                    certificateLabel.appendChild(certificateInput)
+                    certFrmGrp.appendChild(certificateLabel)
+                    defendedLabel.appendChild(defendedInput)
+                    defFrmGrp.appendChild(defendedLabel)
+                    issuedLabel.appendChild(issuedInput)
+                    issFrmGrp.appendChild(issuedLabel)
+                    e.target.closest('.row').appendChild(filenameInput)
+                    e.target.closest('.row').appendChild(certFrmGrp)
+                    e.target.closest('.row').appendChild(defFrmGrp)
+                    e.target.closest('.row').appendChild(issFrmGrp)
                 }) // Promise
-        } // addProgGradSect
+        } // addProgramGraduationSection
 
     // subsequently create and append attendance section of the student insertion form 
-    let addProgAttendanceSect = () => {
+    let addProgramAttendanceSection = () => {
             // create form controls
-            let ctr = document.createElement('div'),
+            let container = document.createElement('div'),
                 headline = document.createElement('p'),
                 cross = document.createElement('span'),
                 facFrmGrp = document.createElement('div'),
                 progFrmGrp = document.createElement('div'),
-                enrlFrmGrp = document.createElement('div'),
+                enrollFrmGrp = document.createElement('div'),
                 indexFrmGrp = document.createElement('div'),
                 gradFrmGrp = document.createElement('div'),
-                facLbl = document.createElement('label'),
-                progLbl = document.createElement('label'),
-                enrlLbl = document.createElement('label'),
-                gradLbl = document.createElement('label'),
-                indexLbl = document.createElement('label'),
-                facSelEl = document.createElement('select'),
-                progSelEl = document.createElement('select'),
-                enrlInputEl = document.createElement('input'),
-                indexInputEl = document.createElement('input'),
-                gradCheckBox = document.createElement('input'),
-                gradTxt = document.createTextNode('Diplomiral')
+                facultyLabel = document.createElement('label'),
+                programLabel = document.createElement('label'),
+                enrolledLabel = document.createElement('label'),
+                graduationLabel = document.createElement('label'),
+                indexLabel = document.createElement('label'),
+                facultySelect = document.createElement('select'),
+                programSelect = document.createElement('select'),
+                enrolledInput = document.createElement('input'),
+                indexInput = document.createElement('input'),
+                gradCB = document.createElement('input'),
+                graduationText = document.createTextNode('Diplomiral')
             index = document.querySelectorAll('div#attendances > div.row').length // the following index for an array od data on program attendance       
-            gradCheckBox.addEventListener(
+            gradCB.addEventListener(
                     'input',
                     e => {
                         // append or remove graduation section depending on the condition
                         // if it's checked
-                        if (gradCheckBox.checked)
-                            addProgGradSect(e)
+                        if (gradCB.checked)
+                            addProgramGraduationSection(e)
                         else {
-                            ctr.removeChild(ctr.lastChild)
-                            ctr.removeChild(ctr.lastChild)
-                            ctr.removeChild(ctr.lastChild)
+                            container.removeChild(container.lastChild)
+                            container.removeChild(container.lastChild)
+                            container.removeChild(container.lastChild)
                         } // else
                     }
                 ) // addEventListener
@@ -737,96 +744,96 @@
             cross.addEventListener(
                     'click',
                     () => {
-                        document.getElementById('attendances').removeChild(ctr)
+                        container.remove()
                     }
                 ) // addEventListener
-            ctr.className = 'row'
+            container.className = 'row'
             facFrmGrp.className = 'form-group col-lg-6 col-12'
             progFrmGrp.className = 'form-group col-lg-6 col-12'
-            enrlFrmGrp.className = 'form-group col-lg-4 col-6'
+            enrollFrmGrp.className = 'form-group col-lg-4 col-6'
             indexFrmGrp.className = 'form-group col-lg-4 col-6'
             gradFrmGrp.className = 'd-flex align-items-center justify-content-center form-group col-lg-4 col-12'
-            facLbl.textContent = 'Fakulteta'
-            facLbl.className = 'w-100'
-            progLbl.textContent = 'Program'
-            progLbl.className = 'w-100'
-            enrlLbl.textContent = 'Vpisan'
-            enrlLbl.className = 'w-100'
-            indexLbl.textContent = 'Indeks'
-            indexLbl.className = 'w-100'
-            gradLbl.className = 'mt-2'
-            facSelEl.className = 'form-control'
-            facSelEl.name = `attendances[${index}][id_faculties]`
-            facSelEl.required = true
-            facSelEl.addEventListener(
+            facultyLabel.textContent = 'Fakulteta'
+            facultyLabel.className = 'w-100'
+            programLabel.textContent = 'Program'
+            programLabel.className = 'w-100'
+            enrolledLabel.textContent = 'Vpisan'
+            enrolledLabel.className = 'w-100'
+            indexLabel.textContent = 'Indeks'
+            indexLabel.className = 'w-100'
+            graduationLabel.className = 'mt-2'
+            facultySelect.className = 'form-control'
+            facultySelect.name = `attendances[${index}][id_faculties]`
+            facultySelect.required = true
+            facultySelect.addEventListener(
                     'input',
                     e => {
                         // propagate programs by faculty selection
-                        propagateSelEl(
-                            progSelEl,
+                        propagateSelectElement(
+                            programSelect,
                             `/eArchive/Programs/select.php?id_faculties=${e.target.selectedOptions[0].value}`
                         )
                     }
                 ) // addEventListener
-            progSelEl.className = 'form-control'
-            progSelEl.name = `attendances[${index}][id_programs]`
-            progSelEl.required = true
-            enrlInputEl.className = 'form-control'
-            enrlInputEl.type = 'date'
-            enrlInputEl.name = `attendances[${index}][enrolled]`
-            enrlInputEl.required = true
-            indexInputEl.className = 'form-control'
-            indexInputEl.type = 'text'
-            indexInputEl.name = `attendances[${index}][index]`
-            indexInputEl.required = true
-            gradCheckBox.type = 'checkbox'
-            gradCheckBox.classList = 'mr-2'
-            gradCheckBox.setAttribute('data-index', index)
+            programSelect.className = 'form-control'
+            programSelect.name = `attendances[${index}][id_programs]`
+            programSelect.required = true
+            enrolledInput.className = 'form-control'
+            enrolledInput.type = 'date'
+            enrolledInput.name = `attendances[${index}][enrolled]`
+            enrolledInput.required = true
+            indexInput.className = 'form-control'
+            indexInput.type = 'text'
+            indexInput.name = `attendances[${index}][index]`
+            indexInput.required = true
+            gradCB.type = 'checkbox'
+            gradCB.classList = 'mr-2'
+            gradCB.setAttribute('data-index', index)
                 // append controls to a form attendances section
-            facLbl.appendChild(facSelEl)
-            facFrmGrp.appendChild(facLbl)
-            progLbl.appendChild(progSelEl)
-            progFrmGrp.appendChild(progLbl)
-            enrlLbl.appendChild(enrlInputEl)
-            enrlFrmGrp.appendChild(enrlLbl)
-            indexLbl.appendChild(indexInputEl)
-            indexFrmGrp.appendChild(indexLbl)
-            gradLbl.appendChild(gradCheckBox)
-            gradLbl.appendChild(gradTxt)
-            gradFrmGrp.appendChild(gradLbl)
+            facultyLabel.appendChild(facultySelect)
+            facFrmGrp.appendChild(facultyLabel)
+            programLabel.appendChild(programSelect)
+            progFrmGrp.appendChild(programLabel)
+            enrolledLabel.appendChild(enrolledInput)
+            enrollFrmGrp.appendChild(enrolledLabel)
+            indexLabel.appendChild(indexInput)
+            indexFrmGrp.appendChild(indexLabel)
+            graduationLabel.appendChild(gradCB)
+            graduationLabel.appendChild(graduationText)
+            gradFrmGrp.appendChild(graduationLabel)
             headline.appendChild(cross)
-            ctr.appendChild(headline)
-            ctr.appendChild(facFrmGrp)
-            ctr.appendChild(progFrmGrp)
-            ctr.appendChild(enrlFrmGrp)
-            ctr.appendChild(indexFrmGrp)
-            ctr.appendChild(gradFrmGrp)
+            container.appendChild(headline)
+            container.appendChild(facFrmGrp)
+            container.appendChild(progFrmGrp)
+            container.appendChild(enrollFrmGrp)
+            container.appendChild(indexFrmGrp)
+            container.appendChild(gradFrmGrp)
                 // initial propagation
-            propagateSelEl(
-                    facSelEl,
+            propagateSelectElement(
+                    facultySelect,
                     '/eArchive/Faculties/select.php'
                 )
-                .then(() => propagateSelEl(
-                    progSelEl,
-                    `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`))
-                .then(() => document.getElementById('attendances').appendChild(ctr))
+                .then(() => propagateSelectElement(
+                    programSelect,
+                    `/eArchive/Programs/select.php?id_faculties=${facultySelect.selectedOptions[0].value}`))
+                .then(() => document.getElementById('attendances').appendChild(container))
                 .catch(error => alert(error)) // catch
-        } // addProgAttendanceSect 
+        } // addProgramAttendanceSection 
 
     // create and subsequently append partaker section of the scientific paper insertion form 
-    let addPartakerSect = () => {
+    let addPartakerSection = () => {
             return new Promise((resolve) => {
                     let observer = new MutationObserver(() => resolve()),
                         // create form controls 
-                        ctr = document.createElement('div'),
+                        container = document.createElement('div'),
                         headline = document.createElement('p'),
                         cross = document.createElement('span'),
                         partakerFrmGrp = document.createElement('div'),
                         partFrmGrp = document.createElement('div'),
-                        partakerLbl = document.createElement('label'),
-                        partLbl = document.createElement('label'),
-                        partakerInptEl = document.createElement('input'),
-                        partInptEl = document.createElement('input'),
+                        partakerLabel = document.createElement('label'),
+                        partLabel = document.createElement('label'),
+                        partakerInput = document.createElement('input'),
+                        partInput = document.createElement('input'),
                         index = document.querySelectorAll('div#sciPapPartakers > div.row').length // the following index for an array of data on a partaker  
                         // set observation criterion
                     observer.observe(document.getElementById('sciPapPartakers'), {
@@ -834,7 +841,7 @@
                         childList: true,
                         subtree: false
                     })
-                    ctr.classList = 'row'
+                    container.classList = 'row'
                     headline.classList = 'h6 col-12'
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
@@ -844,50 +851,50 @@
                     cross.addEventListener(
                             'click',
                             () => {
-                                document.getElementById('sciPapPartakers').removeChild(ctr)
+                                container.remove()
                             }
                         ) // addEventListener
                     partakerFrmGrp.classList = 'form-group col-lg-6 col-12'
                     partFrmGrp.classList = 'form-group col-lg-6 col-12'
-                    partakerLbl.textContent = 'Sodelovalec'
-                    partakerLbl.classList = 'w-100'
-                    partLbl.textContent = 'Vloga'
-                    partLbl.classList = 'w-100'
-                    partakerInptEl.classList = 'form-control'
-                    partakerInptEl.setAttribute('list', 'students')
-                    partakerInptEl.name = `partakers[${index}][index]`
-                    partakerInptEl.required = true
-                    partInptEl.classList = 'form-control'
-                    partInptEl.type = 'text'
-                    partInptEl.name = `partakers[${index}][part]`
-                    partInptEl.required = true
+                    partakerLabel.textContent = 'Sodelovalec'
+                    partakerLabel.classList = 'w-100'
+                    partLabel.textContent = 'Vloga'
+                    partLabel.classList = 'w-100'
+                    partakerInput.classList = 'form-control'
+                    partakerInput.setAttribute('list', 'students')
+                    partakerInput.name = `partakers[${index}][index]`
+                    partakerInput.required = true
+                    partInput.classList = 'form-control'
+                    partInput.type = 'text'
+                    partInput.name = `partakers[${index}][part]`
+                    partInput.required = true
                         // compose a node hierarchy by appending them to active tree structure 
                     headline.appendChild(cross)
-                    partakerLbl.appendChild(partakerInptEl)
-                    partakerFrmGrp.appendChild(partakerLbl)
-                    partLbl.appendChild(partInptEl)
-                    partFrmGrp.appendChild(partLbl)
-                    ctr.appendChild(headline)
-                    ctr.appendChild(partakerFrmGrp)
-                    ctr.appendChild(partFrmGrp)
-                    document.getElementById('sciPapPartakers').appendChild(ctr)
+                    partakerLabel.appendChild(partakerInput)
+                    partakerFrmGrp.appendChild(partakerLabel)
+                    partLabel.appendChild(partInput)
+                    partFrmGrp.appendChild(partLabel)
+                    container.appendChild(headline)
+                    container.appendChild(partakerFrmGrp)
+                    container.appendChild(partFrmGrp)
+                    document.getElementById('sciPapPartakers').appendChild(container)
                 }) // Promise
-        } // addPartakerSect
+        } // addPartakerSection
 
     //  create and append additional form controls for uploading document of the scientific paper
-    let addDocUpldSect = () => {
+    let addDocumentUploadSection = () => {
             return new Promise((resolve) => {
                     let observer = new MutationObserver(() => resolve()),
                         // form controls 
-                        ctr = document.createElement('div'), // row
+                        container = document.createElement('div'), // row
                         cross = document.createElement('span'), // removal sign
-                        versionFrmGrp = document.createElement('div'), // form group
+                        verFrmGrp = document.createElement('div'), // form group
                         docFrmGrp = document.createElement('div'), // form group
-                        versionLbl = document.createElement('label'), // version label
-                        docLbl = document.createElement('label'), // document label
-                        versionInptEl = document.createElement('input'), // version input
-                        docInptEl = document.createElement('input'), // document input 
-                        docNameInptEl = document.createElement('input'), // document hidden input 
+                        versionLabel = document.createElement('label'), // version label
+                        documentLabel = document.createElement('label'), // document label
+                        versionInput = document.createElement('input'), // version input
+                        documentInput = document.createElement('input'), // document input 
+                        filenameInput = document.createElement('input'), // document hidden input 
                         index = document.querySelectorAll('div#documents > div.row').length // the following index for an array of data on documents of scientific paper  
                         // set observation criterion
                     observer.observe(document.getElementById('sciPapDocs'), {
@@ -895,79 +902,79 @@
                         childList: true,
                         subtree: false
                     })
-                    docInptEl.addEventListener(
+                    documentInput.addEventListener(
                             'input',
                             e => {
                                 // assign chosen document name as a value to the docNameInputElement
-                                docNameInptEl.value = e.target.files[0].name
+                                filenameInput.value = e.target.files[0].name
                             }
                         ) // addEventListener
                     cross.addEventListener(
                             'click',
                             () => {
                                 // remove appended controls
-                                document.getElementById('sciPapDocs').removeChild(ctr)
+                                container.remove()
                             }
                         ) // addEventListener
-                    ctr.classList = 'row mt-2'
-                    ctr.style.position = 'relative'
-                    versionFrmGrp.classList = 'form-group col-6'
+                    container.classList = 'row mt-2'
+                    container.style.position = 'relative'
+                    verFrmGrp.classList = 'form-group col-6'
                     docFrmGrp.classList = 'form-group col-6'
-                    versionLbl.textContent = 'Verzija'
-                    versionLbl.classList = 'w-100'
-                    docLbl.textContent = 'Dokument'
-                    docLbl.classList = 'w-100 file-label'
-                    versionInptEl.classList = 'form-control'
-                    versionInptEl.type = 'text'
-                    versionInptEl.name = `documents[${index}][version]`
-                    docInptEl.type = 'file'
-                    docInptEl.accept = '.pdf'
-                    docInptEl.name = 'document[]'
-                    docInptEl.required = true
-                    docNameInptEl.type = 'hidden'
-                    docNameInptEl.name = `documents[${index}][name]`
+                    versionLabel.textContent = 'Verzija'
+                    versionLabel.classList = 'w-100'
+                    documentLabel.textContent = 'Dokument'
+                    documentLabel.classList = 'w-100 file-label'
+                    versionInput.classList = 'form-control'
+                    versionInput.type = 'text'
+                    versionInput.name = `documents[${index}][version]`
+                    documentInput.type = 'file'
+                    documentInput.accept = '.pdf'
+                    documentInput.name = 'document[]'
+                    documentInput.required = true
+                    filenameInput.type = 'hidden'
+                    filenameInput.name = `documents[${index}][name]`
                     cross.style.position = 'absolute'
                     cross.style.top = 0
                     cross.style.right = '10px'
                     cross.style.zIndex = 1
                     cross.style.cursor = 'pointer'
                     cross.innerHTML = '&times;'
-                    versionLbl.appendChild(versionInptEl)
-                    versionFrmGrp.appendChild(versionLbl)
-                    docLbl.appendChild(docInptEl)
-                    docFrmGrp.appendChild(docNameInptEl)
-                    docFrmGrp.appendChild(docLbl)
-                    ctr.appendChild(cross)
-                    ctr.appendChild(versionFrmGrp)
-                    ctr.appendChild(docFrmGrp)
+                    versionLabel.appendChild(versionInput)
+                    verFrmGrp.appendChild(versionLabel)
+                    documentLabel.appendChild(documentInput)
+                    docFrmGrp.appendChild(filenameInput)
+                    docFrmGrp.appendChild(documentLabel)
+                    container.appendChild(cross)
+                    container.appendChild(verFrmGrp)
+                    container.appendChild(docFrmGrp)
                         // append controls to scientific paper insert form
-                    document.getElementById('sciPapDocs').appendChild(ctr)
+                    document.getElementById('sciPapDocs').appendChild(container)
                 }) // Promise
-        } // addDocUpldSect
+        } // addDocumentUploadSection
 
     //  create and append additional form controls for providing data on mentors 
-    let addMentorSect = () => {
+    let addMentorSection = () => {
             return new Promise((resolve) => {
-                    let ctr = document.createElement('div'), // row
+                    let container = document.createElement('div'), // row
                         observer = new MutationObserver(() => resolve()),
                         // create form controls 
                         headline = document.createElement('p'),
                         cross = document.createElement('span'), // removal sign 
-                        mentorFrmGrp = document.createElement('div'), // form group
+                        menFrmGrp = document.createElement('div'), // form group
                         facFrmGrp = document.createElement('div'), // form group
-                        taughtFrmGrp = document.createElement('div'), // form group
+                        tghtFrmGrp = document.createElement('div'), // form group
                         emailFrmGrp = document.createElement('div'), // form group
                         telFrmGrp = document.createElement('div'), // form group
-                        mentorLbl = document.createElement('label'), // mentor label
-                        facLbl = document.createElement('label'), // faculty label
-                        taughtLbl = document.createElement('label'), // subject label
-                        emailLbl = document.createElement('label'), // email label
-                        telLbl = document.createElement('label'), // telephone label
-                        facSelEl = document.createElement('select'), // faculty input
-                        mentorSelEl = document.createElement('input'), // mentor input
-                        taughtInptEl = document.createElement('input'), // subject input
-                        emailInptEl = document.createElement('input'), // email input
-                        telInptEl = document.createElement('input'), // telephone input
+                        mentorLabel = document.createElement('label'), // mentor label
+                        facultyLabel = document.createElement('label'), // faculty label
+                        taughtLabel = document.createElement('label'), // subject label
+                        emailLabel = document.createElement('label'), // email label
+                        telephoneLabel = document.createElement('label'), // telephone label
+                        facultySelect = document.createElement('select'), // faculty input
+                        mentorSelect = document.createElement('input'), // mentor input
+                        taughtInput = document.createElement('input'), // subject input
+                        emailInput = document.createElement('input'), // email input
+                        telephoneInput = document.createElement('input'), // telephone input
                         index = document.querySelectorAll('div#sciPapMentors > div.row').length // the following index for an array of data on documents of scientific paper  
                         // set observation criterion
                     observer.observe(document.getElementById('sciPapMentors'), {
@@ -975,7 +982,7 @@
                         childList: true,
                         subtree: false
                     })
-                    ctr.classList = 'row'
+                    container.classList = 'row'
                     headline.classList = 'col-12 h6'
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
@@ -985,640 +992,638 @@
                     cross.addEventListener(
                             'click',
                             () => {
-                                document.getElementById('sciPapMentors').removeChild(ctr)
+                                container.remove()
                             }
                         ) // addEventListener
-                    mentorFrmGrp.classList = 'form-group col-12'
+                    menFrmGrp.classList = 'form-group col-12'
                     facFrmGrp.classList = 'form-group col-lg-6 col-12'
-                    taughtFrmGrp.classList = 'form-group col-lg-6 col-12'
+                    tghtFrmGrp.classList = 'form-group col-lg-6 col-12'
                     emailFrmGrp.classList = 'form-group col-6'
                     telFrmGrp.classList = 'form-group col-6'
-                    facLbl.textContent = 'Fakulteta'
-                    facLbl.classList = 'w-100'
-                    mentorLbl.textContent = 'Mentor'
-                    mentorLbl.classList = 'w-100'
-                    taughtLbl.textContent = 'Poučeval'
-                    taughtLbl.classList = 'w-100'
-                    emailLbl.textContent = 'E-naslov'
-                    emailLbl.classList = 'w-100'
-                    telLbl.textContent = 'Telefon'
-                    telLbl.classList = 'w-100'
-                    facSelEl.classList = 'form-control'
-                    facSelEl.name = `mentors[${index}][id_faculties]`
-                    facSelEl.required = true
-                    mentorSelEl.classList = 'form-control'
-                    mentorSelEl.type = 'text'
-                    mentorSelEl.name = `mentors[${index}][mentor]`
-                    mentorSelEl.required = true
-                    taughtInptEl.classList = 'form-control'
-                    taughtInptEl.type = 'text'
-                    taughtInptEl.name = `mentors[${index}][taught]`
-                    taughtInptEl.required = true
-                    emailInptEl.classList = 'form-control'
-                    emailInptEl.type = 'email'
-                    emailInptEl.name = `mentors[${index}][email]`
-                    emailInptEl.required = true
-                    telInptEl.classList = 'form-control'
-                    telInptEl.type = 'telephone'
-                    telInptEl.name = `mentors[${index}][telephone]`
-                    telInptEl.required = true
+                    facultyLabel.textContent = 'Fakulteta'
+                    facultyLabel.classList = 'w-100'
+                    mentorLabel.textContent = 'Mentor'
+                    mentorLabel.classList = 'w-100'
+                    taughtLabel.textContent = 'Poučeval'
+                    taughtLabel.classList = 'w-100'
+                    emailLabel.textContent = 'E-naslov'
+                    emailLabel.classList = 'w-100'
+                    telephoneLabel.textContent = 'Telefon'
+                    telephoneLabel.classList = 'w-100'
+                    facultySelect.classList = 'form-control'
+                    facultySelect.name = `mentors[${index}][id_faculties]`
+                    facultySelect.required = true
+                    mentorSelect.classList = 'form-control'
+                    mentorSelect.type = 'text'
+                    mentorSelect.name = `mentors[${index}][mentor]`
+                    mentorSelect.required = true
+                    taughtInput.classList = 'form-control'
+                    taughtInput.type = 'text'
+                    taughtInput.name = `mentors[${index}][taught]`
+                    taughtInput.required = true
+                    emailInput.classList = 'form-control'
+                    emailInput.type = 'email'
+                    emailInput.name = `mentors[${index}][email]`
+                    emailInput.required = true
+                    telephoneInput.classList = 'form-control'
+                    telephoneInput.type = 'telephone'
+                    telephoneInput.name = `mentors[${index}][telephone]`
+                    telephoneInput.required = true
                     headline.appendChild(cross)
-                    mentorLbl.appendChild(mentorSelEl)
-                    mentorFrmGrp.appendChild(mentorLbl)
-                    facLbl.appendChild(facSelEl)
-                    facFrmGrp.appendChild(facLbl)
-                    taughtLbl.appendChild(taughtInptEl)
-                    taughtFrmGrp.appendChild(taughtLbl)
-                    emailLbl.appendChild(emailInptEl)
-                    emailFrmGrp.appendChild(emailLbl)
-                    telLbl.appendChild(telInptEl)
-                    telFrmGrp.appendChild(telLbl)
-                    ctr.appendChild(headline)
-                    ctr.appendChild(mentorFrmGrp)
-                    ctr.appendChild(facFrmGrp)
-                    ctr.appendChild(taughtFrmGrp)
-                    ctr.appendChild(emailFrmGrp)
-                    ctr.appendChild(telFrmGrp)
+                    mentorLabel.appendChild(mentorSelect)
+                    menFrmGrp.appendChild(mentorLabel)
+                    facultyLabel.appendChild(facultySelect)
+                    facFrmGrp.appendChild(facultyLabel)
+                    taughtLabel.appendChild(taughtInput)
+                    tghtFrmGrp.appendChild(taughtLabel)
+                    emailLabel.appendChild(emailInput)
+                    emailFrmGrp.appendChild(emailLabel)
+                    telephoneLabel.appendChild(telephoneInput)
+                    telFrmGrp.appendChild(telephoneLabel)
+                    container.appendChild(headline)
+                    container.appendChild(menFrmGrp)
+                    container.appendChild(facFrmGrp)
+                    container.appendChild(tghtFrmGrp)
+                    container.appendChild(emailFrmGrp)
+                    container.appendChild(telFrmGrp)
                         // populate HTMLSelectElement with the data regarding faculties 
-                    propagateSelEl(
-                            facSelEl,
+                    propagateSelectElement(
+                            facultySelect,
                             '/eArchive/Faculties/select.php'
                         )
-                        .then(() => document.getElementById('sciPapMentors').appendChild(ctr))
+                        .then(() => document.getElementById('sciPapMentors').appendChild(container))
                         .catch(error => alert(error))
                 }) // Promise
-        } // addMentorSect
+        } // addMentorSection
 
     /*
      *  fill out form fields with student birthplace particulars
-     *  @param Number idpostalCode
+     *  @param Number idPostalCodes
      *  @param Number idCountries
      */
-    let setBirthplaceOfStudt = (idCountries, idPostalCodes) => {
+    let setBirthplace = (idCountries, idPostalCodes) => {
             // propagate target select element with postal codes of the chosen country
-            propagateSelEl(
+            propagateSelectElement(
                     document.querySelector('#birthCtrySelEl'),
                     '/eArchive/Countries/select.php',
                     idCountries
                 )
-                .then(() => propagateSelEl(
+                .then(() => propagateSelectElement(
                     document.querySelector('#birthPostCodeSelEl'),
                     `/eArchive/PostalCodes/select.php?id_countries=${idCountries}`,
                     idPostalCodes
                 ))
-        } // determineStudenBirthplace
+        } // setBirthplace
 
     /*
      *  fill out form fields with student permanent residence particulars
      *  @param Array residence
      */
-    let setPermResOfStudt = (residence) => {
+    let setPermanentResidence = (residence) => {
             // create hidden input type that stores record if of the residence  
-            let idResidenceInptEl = document.createElement('input')
-            idResidenceInptEl.type = 'hidden'
-            idResidenceInptEl.name = 'residences[0][id_residences]'
-            idResidenceInptEl.value = residence.id_residences
-            document.querySelector('select#permResCtrySelEl').parentElement.prepend(idResidenceInptEl)
+            let idResInpt = document.createElement('input')
+            idResInpt.type = 'hidden'
+            idResInpt.name = 'residences[0][id_residences]'
+            idResInpt.value = residence.id_residences
+            document.querySelector('select#permResCtrySelEl').parentElement.prepend(idResInpt)
                 // propagate target select element with postal codes of the chosen country
-            propagateSelEl(
+            propagateSelectElement(
                     document.querySelector('#permResCtrySelEl'),
                     '/eArchive/Countries/select.php',
                     residence.id_countries
                 )
-                .then(() => propagateSelEl(
+                .then(() => propagateSelectElement(
                     document.querySelector('#permResPostCodeSelEl'),
                     `/eArchive/PostalCodes/select.php?id_countries=${residence.id_countries}`,
                     residence.id_postal_codes
                 )).then(() => {
                     document.querySelector('#permResAddressInptEl').value = residence.address
                 })
-        } // setPermResOfStudt
+        } // setPermanentResidence
 
     /*
-     *  fill out form fields with student temporal residence particulars
+     *  fill out form fields with student temporary residence particulars
      *  @param Array residences
      */
-    let setTempResOfStudt = residences =>
-        addTempResSect(residences)
+    let setTemporaryResidence = residences =>
+        addTemporaryResidenceSection(residences)
 
     /*
-     *   asynchronous script run for deletion of temporal residence record
-     *   @param idResidences
+     *   delete student permanent residence record by the given id 
+     *   @param Number idResidences
      */
-    let deleteTempResOfStudt = idResidences => {
+    let deleteTemporaryResidence = idResidences => {
             request(
                     `/eArchive/Residences/delete.php?id_residences=${idResidences}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
+                .then(response => reportOnAction(response))
                 .catch(error => alert(error)) // catch
-        } // deleteTempResOfStudt
+        } // deleteTemporaryResidence
 
     /*
-     *   asynchronous script run for assigning an account credentials to the student 
+     *   insert an account record  
      *   @param Event e
      */
-    let assignAcctCred = e => {
+    let insertAccount = e => {
             // prevent default action of submutting the form containing account credentials
             e.preventDefault()
             request(
                     '/eArchive/Accounts/authorized/insert.php',
                     'POST',
                     'text',
-                    (new FormData(acctAssignFrm))
+                    (new FormData(acctInsFrm))
                 )
-                .then(response => rprtOnAction(response))
+                .then(response => reportOnAction(response))
                 .then(() => $('#acctAssignMdl').modal('hide'))
-                .then(() => loadStudtEvidTbl())
+                .then(() => loadStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
-        } // assignAcctCred
+        } // insertAccount
 
     /*
-     *   asynchronous script execution for deletion of the given account 
+     *   delete the account record with a unique ID and index number indicating program attendance
      *   @param Number idAttendances
      *   @param String index
      */
-    let deleteAcctCred = (idAttendances, index) => {
+    let deleteAccount = (idAttendances, index) => {
             request(
                     `/eArchive/Accounts/authorized/delete.php?id_attendances=${idAttendances}&index=${index}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => loadStudtEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => loadStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
-        } // deleteAcctCred
-
+        } // deleteAccount
 
     /*
      *   rearrange form when updating data related to the student
      *   @param Event e
      *   @param Object student
      */
-    let toStudtUpdtFrm = (e, student) => {
+    let toStudentUpdateForm = (e, student) => {
             let // clone from the existing form node
-                cloneFrm = studtInsrFrm.cloneNode(true),
-                idStudentsInptEl = document.createElement('input')
-            idStudentsInptEl.type = 'hidden'
-            idStudentsInptEl.name = 'id_students'
-            idStudentsInptEl.value = e.target.getAttribute('data-id-students')
+                cloneForm = stuInsFrm.cloneNode(true),
+                idStuInpt = document.createElement('input')
+            idStuInpt.type = 'hidden'
+            idStuInpt.name = 'id_students'
+            idStuInpt.value = e.target.getAttribute('data-id-students')
                 // replace node with its clone
-            document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
-            document.querySelector('div#studtInsrMdl div.modal-header > h4.modal-title').textContent = 'Posodabljanje podatkov študenta'
-            listenStudtInsrFrm()
-            cloneFrm.prepend(idStudentsInptEl)
-
-            // fill out input fields with student particulars
-            cloneFrm.querySelector('input[name=name]').value = student.particulars.name
-            cloneFrm.querySelector('input[name=surname]').value = student.particulars.surname
-            cloneFrm.querySelector('input[name=email]').value = student.particulars.email
-            cloneFrm.querySelector('input[name=telephone]').value = student.particulars.telephone
-            setBirthplaceOfStudt(student.particulars.id_countries, student.particulars.id_postal_codes)
-            setPermResOfStudt(student.permResidence)
-            student.tempResidences.length ? setTempResOfStudt(student.tempResidences) : null
-            cloneFrm.removeChild(cloneFrm.querySelector('#attendances'))
-            cloneFrm.querySelector('input[type=submit]').value = 'Posodobi'
-            cloneFrm.addEventListener(
+            document.getElementById('stuInsFrm').replaceWith(cloneForm)
+            document.querySelector('div#stuInsMdl div.modal-header > h4.modal-title').textContent = 'Posodabljanje podatkov študenta'
+            listenStudentInsertForm()
+            cloneForm.prepend(idStuInpt)
+                // fill out input fields with student particulars
+            cloneForm.querySelector('input[name=name]').value = student.particulars.name
+            cloneForm.querySelector('input[name=surname]').value = student.particulars.surname
+            cloneForm.querySelector('input[name=email]').value = student.particulars.email
+            cloneForm.querySelector('input[name=telephone]').value = student.particulars.telephone
+            setBirthplace(student.particulars.id_countries, student.particulars.id_postal_codes)
+            setPermanentResidence(student.permResidence)
+            student.tempResidences.length ? setTemporaryResidence(student.tempResidences) : null
+            cloneForm.removeChild(cloneForm.querySelector('#attendances'))
+            cloneForm.querySelector('input[type=submit]').value = 'Posodobi'
+            cloneForm.addEventListener(
                     'submit',
                     e => {
-                        updateStudt(e, cloneFrm)
+                        updateStudent(e, cloneForm)
                     }
                 ) // addEventListener
-        } // toStudtUpdtFrm
+        } // toStudentUpdateForm
 
     /*
      *  rearrange form when inserting data of the scientific paper partaker   
      *  @param Event e
      */
-    let toPartakerInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+    let toPartakerInsertForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInptEl = document.createElement('input')
-            idScientificPapersInptEl.type = 'hidden'
-            idScientificPapersInptEl.name = 'id_scientific_papers'
-            idScientificPapersInptEl.value = e.target.getAttribute('data-id-scientific-papers')
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idSciPapInpt = document.createElement('input')
+            idSciPapInpt.type = 'hidden'
+            idSciPapInpt.name = 'id_scientific_papers'
+            idSciPapInpt.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInptEl)
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idSciPapInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
-            cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
-            listenSciPapInsrFrm()
-            addPartakerSect()
+            cloneForm.querySelector('#sciPapPartakers').classList = 'col-12'
+            cloneForm.querySelector('input[type=submit]').value = 'Dodeli'
+            listenScientificPaperInsertForm()
+            addPartakerSection()
                 .then(() => {
                     // remove nodes except those matching given selector expression 
-                    cloneFrm.querySelectorAll('div.row:nth-child(3), div#sciPapDocs, p, button').forEach(node => {
-                            node.parentElement.removeChild(node)
+                    cloneForm.querySelectorAll('div.row:nth-child(3), div#sciPapDocs, p, button').forEach(node => {
+                            node.remove()
                         }) // forEach
                 })
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // cancel submitting partaker data by default
                         e.preventDefault()
-                        insertPartakerOfSciPap(cloneFrm)
+                        insertPartaker(cloneForm)
                     }
                 ) // addEventListener
-        } // toPartakerInsrFrm
+        } // toPartakerInsertForm
 
     /*
      *  rearrange form when updating data with regard to partaker of the scientific paper 
      *  @param Event e
      */
-    let toPartakerUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+    let toPartakerUpdateForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idPartakingsInptEl = document.createElement('input')
-            idPartakingsInptEl.type = 'hidden'
-            idPartakingsInptEl.name = 'id_partakings'
-            idPartakingsInptEl.value = e.target.getAttribute('data-id-partakings')
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idPartInpt = document.createElement('input')
+            idPartInpt.type = 'hidden'
+            idPartInpt.name = 'id_partakings'
+            idPartInpt.value = e.target.getAttribute('data-id-partakings')
                 // replace form node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idPartakingsInptEl)
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idPartInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
-            listenSciPapInsrFrm()
-            addPartakerSect()
+            cloneForm.querySelector('#sciPapPartakers').classList = 'col-12'
+            listenScientificPaperInsertForm()
+            addPartakerSection()
                 .then(() => {
                     // remove nodes except those matching given selector expression 
-                    cloneFrm.querySelectorAll('div#particulars, div#sciPapMentors, div#sciPapDocs, p, div.d-flex, button').forEach(node => {
+                    cloneForm.querySelectorAll('div#particulars, div#sciPapMentors, div#sciPapDocs, p, div.d-flex, button').forEach(node => {
                             node.parentElement.removeChild(node)
                         }) // forEach
                         // populate form fields concerning data of the partaker
-                    cloneFrm.querySelector('input[name="partakers[0][index]"]').value = e.target.getAttribute('data-index')
-                    cloneFrm.querySelector('input[name="partakers[0][part]"]').value = e.target.getAttribute('data-part')
-                    cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+                    cloneForm.querySelector('input[name="partakers[0][index]"]').value = e.target.getAttribute('data-index')
+                    cloneForm.querySelector('input[name="partakers[0][part]"]').value = e.target.getAttribute('data-part')
+                    cloneForm.querySelector('input[type=submit]').value = 'Uredi'
                 })
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // cancel submitting partaker data by default
                         e.preventDefault()
-                        updatePartakerOfSciPap(cloneFrm)
+                        updatePartaker(cloneForm)
                     }
                 ) // addEventListener
-        } // toPartakerUpdtFrm
+        } // toPartakerUpdateForm
 
     /*
      *  rearrange form when inserting data regarding mentor of the scientific paper 
      *  @param Event e
      */
-    let toMentorInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+    let toMentorInsertForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInptEl = document.createElement('input')
-            idScientificPapersInptEl.type = 'hidden'
-            idScientificPapersInptEl.name = 'id_scientific_papers'
-            idScientificPapersInptEl.value = e.target.getAttribute('data-id-scientific-papers')
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idSciPapInpt = document.createElement('input')
+            idSciPapInpt.type = 'hidden'
+            idSciPapInpt.name = 'id_scientific_papers'
+            idSciPapInpt.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInptEl)
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idSciPapInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
-            cloneFrm.querySelector('input[type=submit]').value = 'Določi'
-            listenSciPapInsrFrm()
-            addMentorSect()
+            cloneForm.querySelector('#sciPapMentors').classList = 'col-12'
+            cloneForm.querySelector('input[type=submit]').value = 'Določi'
+            listenScientificPaperInsertForm()
+            addMentorSection()
                 .then(() => {
                     // remove nodes except those matching given selector expression 
-                    cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
-                            node.parentElement.removeChild(node)
+                    cloneForm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
+                            node.remove()
                         }) // forEach
                 })
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // cancel submitting mentor data by default
                         e.preventDefault()
-                        insertMentorOfSciPap(cloneFrm)
+                        insertMentor(cloneForm)
                     }
                 ) // addEventListener
-        } // toMentorInsrFrm
+        } // toMentorInsertForm
 
     /*
      *  rearrange form when updating data with regard to mentor of the scientific paper  
      *  @param Event e
      */
-    let toMentorUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idMentoringsInptEl = document.createElement('input')
-            idMentoringsInptEl.type = 'hidden'
-            idMentoringsInptEl.name = 'id_mentorings'
-            idMentoringsInptEl.value = e.target.getAttribute('data-id-mentorings')
+    let toMentorUpdateFrm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idMentInpt = document.createElement('input')
+            idMentInpt.type = 'hidden'
+            idMentInpt.name = 'id_mentorings'
+            idMentInpt.value = e.target.getAttribute('data-id-mentorings')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idMentoringsInptEl)
-            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-            listenSciPapInsrFrm()
-            addMentorSect()
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idMentInpt)
+            cloneForm.querySelector('input[type=submit]').value = 'Uredi'
+            listenScientificPaperInsertForm()
+            addMentorSection()
                 .then(() => {
                     // remove DIV nodes except matching given selector expression 
-                    cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
-                            node.parentElement.removeChild(node)
+                    cloneForm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
+                            node.remove()
                         }) // forEach
                         // widen form group across the whole grid
-                    cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
+                    cloneForm.querySelector('#sciPapMentors').classList = 'col-12'
                 }).then(() => request(
                     `/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`,
                     'GET',
                     'json'
                 )).then(response => {
                     // populate form fields with selected mentor data
-                    cloneFrm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id-mentorings')
-                    cloneFrm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
-                    cloneFrm.querySelector('select[name="mentors[0][id_faculties]"]').value = response.id_faculties
-                    cloneFrm.querySelector('input[name="mentors[0][taught]"]').value = response.taught
-                    cloneFrm.querySelector('input[name="mentors[0][email]"]').value = response.email
-                    cloneFrm.querySelector('input[name="mentors[0][telephone]"]').value = response.telephone
+                    cloneForm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id-mentorings')
+                    cloneForm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
+                    cloneForm.querySelector('select[name="mentors[0][id_faculties]"]').value = response.id_faculties
+                    cloneForm.querySelector('input[name="mentors[0][taught]"]').value = response.taught
+                    cloneForm.querySelector('input[name="mentors[0][email]"]').value = response.email
+                    cloneForm.querySelector('input[name="mentors[0][telephone]"]').value = response.telephone
                 }).catch(error => alert(error)) // catch
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // prevent form from submitting updated mentor data 
                         e.preventDefault();
-                        updateMentorOfSciPap(cloneFrm)
+                        updateMentor(cloneForm)
                     }
                 ) // addEventListener
-        } // toMentorUpdtFrm
+        } // toMentorInsertForm
 
     /*
      *   rearrange form for uploading document of the subject scientific paper
      *   @param Event e
      */
-    let toSciPapDocUpldFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+    let toScientificPaperUploadForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersIntpEl = document.createElement('input')
-            idScientificPapersIntpEl.type = 'hidden'
-            idScientificPapersIntpEl.name = 'id_scientific_papers'
-            idScientificPapersIntpEl.value = e.target.getAttribute('data-id-scientific-papers')
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idSciPapInpt = document.createElement('input')
+            idSciPapInpt.type = 'hidden'
+            idSciPapInpt.name = 'id_scientific_papers'
+            idSciPapInpt.value = e.target.getAttribute('data-id-scientific-papers')
                 // replace form node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersIntpEl)
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idSciPapInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12 mb-3'
-            cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
-            listenSciPapInsrFrm()
+            cloneForm.querySelector('#sciPapDocs').classList = 'col-12 mb-3'
+            cloneForm.querySelector('input[type=submit]').value = 'Naloži'
+            listenScientificPaperInsertForm()
                 // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapMentors').forEach(node => {
-                    node.parentElement.removeChild(node)
+            cloneForm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapMentors').forEach(node => {
+                    node.remove()
                 }) // forEach
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // prevent upload of scientific paper documents
                         e.preventDefault()
-                        uploadDocsOfSciPap(cloneFrm)
+                        uploadDocuments(cloneForm)
                     }
                 ) // addEventListener
-        } // toSciPapDocUpldFrm
+        } // toScientificPaperUploadForm
 
     /*
      *  rearrange form when updating data regarding students graduation certificate  
      *  @param Event e
      */
-    let toGradCertUpdtFrm = e => {
-            document.querySelector('div#gradCertUpldMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov certifikata'
+    let toCertificateUpdateForm = e => {
+            document.querySelector('div#certUplMdl div.modal-header > h5.modal-title').textContent = 'Urejanje podatkov certifikata'
                 // clone from the existing form node
-            let cloneFrm = gradCertUpldFrm.cloneNode(true),
-                idCertificatesIntpEL = document.createElement('input')
-            idCertificatesIntpEL.type = 'hidden'
-            idCertificatesIntpEL.name = 'id_certificates'
-            idCertificatesIntpEL.value = e.target.getAttribute('data-id-certificates')
+            let cloneForm = certUplFrm.cloneNode(true),
+                idCertInpt = document.createElement('input')
+            idCertInpt.type = 'hidden'
+            idCertInpt.name = 'id_certificates'
+            idCertInpt.value = e.target.getAttribute('data-id-certificates')
                 // replace form element node with its clone
-            document.getElementById('gradCertUpldFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idCertificatesIntpEL)
-            listenGradCertCard()
+            document.getElementById('certUplFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idCertInpt)
+            listenCertificateCard()
                 // remove certificate file input 
-            cloneFrm.querySelector('div.row > div.form-group').remove()
+            cloneForm.querySelector('div.row > div.form-group').remove()
                 // fill out form fileds with carried data
-            cloneFrm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
-            cloneFrm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
+            cloneForm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
+            cloneForm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
                 // change submit buttons value
-            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-            cloneFrm.addEventListener(
+            cloneForm.querySelector('input[type=submit]').value = 'Uredi'
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // cancel submitting updated certificate data by default
                         e.preventDefault()
-                        updateGradCert(cloneFrm)
+                        updateGraduationCertificate(cloneForm)
                     }
                 ) // addEventListener
-        } // toGradCertUpdtFrm
+        } // toCertificateUpdateForm
 
     /*
      *   rearrange form when interpolating data regarding scientific paper and uploading its documents    
      *   @param Event e
      */
-    let toSciPapInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje znanstvenega dela'
+    let toScientificPaperInsertForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true)
-            cloneFrm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
+            let cloneForm = sciPapInsFrm.cloneNode(true)
+            cloneForm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.querySelector('input[type=submit]').value = 'Vstavi'
                 // enable tooltips
             $('[data-toggle="tooltip"]').tooltip()
-            listenSciPapInsrFrm()
-            cloneFrm.addEventListener(
+            listenScientificPaperInsertForm()
+            cloneForm.addEventListener(
                     'submit',
-                    e => { insertSciPap(e, cloneFrm) }
+                    e => { insertScientificPaper(e, cloneForm) }
                 ) // addEventListner
-        } // toSciPapInsrFrm
+        } // toScientificPaperForm
 
     /*
      *   rearrange form and fill out form fields when updating student data
      *   @param Object sciPap
      */
-    let toSciPapUpdtFrm = sciPap => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+    let toScientificPaperUpdateForm = sciPap => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInptEl = document.createElement('input')
-            idScientificPapersInptEl.type = 'hidden'
-            idScientificPapersInptEl.name = 'id_scientific_papers'
-            idScientificPapersInptEl.value = sciPap.id_scientific_papers
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idSciPapInpt = document.createElement('input')
+            idSciPapInpt.type = 'hidden'
+            idSciPapInpt.name = 'id_scientific_papers'
+            idSciPapInpt.value = sciPap.id_scientific_papers
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInptEl)
-            listenSciPapInsrFrm()
-            cloneFrm.querySelector('input[name="topic"]').value = sciPap.topic
-            cloneFrm.querySelector('select[name="type"]').value = sciPap.type
-            cloneFrm.querySelector('input[name="written"]').value = sciPap.written
-            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idSciPapInpt)
+            listenScientificPaperInsertForm()
+            cloneForm.querySelector('input[name="topic"]').value = sciPap.topic
+            cloneForm.querySelector('select[name="type"]').value = sciPap.type
+            cloneForm.querySelector('input[name="written"]').value = sciPap.written
+            cloneForm.querySelector('input[type=submit]').value = 'Uredi'
                 // remove determined element nodes 
-            cloneFrm.querySelectorAll('div.row:nth-child(4), div#sciPapDocs').forEach(node => {
-                    node.parentElement.removeChild(node)
+            cloneForm.querySelectorAll('div.row:nth-child(4), div#sciPapDocs').forEach(node => {
+                    node.remove()
                 }) // forEach
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // prevent default action of submitting scientific paper data    
                         e.preventDefault()
-                        updateSciPap(cloneFrm)
+                        updateScientificPaper(cloneForm)
                     }
                 ) // addEventListener
-        } // toSciPapUpdtFrm
+        } // toScientificPaperUpdateForm
 
     // rearrange form when inserting a student record  
-    let toStudtInsrFrm = () => {
+    let toStudentInsertForm = () => {
             // clone from the existing form node
-            let cloneFrm = studtInsrFrm.cloneNode(true)
+            let cloneForm = stuInsFrm.cloneNode(true)
                 // replace form element node with its clone
-            document.getElementById('studtInsrFrm').replaceWith(cloneFrm)
-            document.querySelector('div#studtInsrMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje študenta'
-            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
+            document.getElementById('stuInsFrm').replaceWith(cloneForm)
+            document.querySelector('div#stuInsMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje študenta'
+            cloneForm.querySelector('input[type=submit]').value = 'Vstavi'
                 // enabling tooltips
             $('[data-toggle="tooltip"]').tooltip()
-            listenStudtInsrFrm()
-            cloneFrm.addEventListener('submit', e => insertStudt(e, cloneFrm))
-        } // toStudtInsrFrm
+            listenStudentInsertForm()
+            cloneForm.addEventListener('submit', e => insertStudent(e, cloneForm))
+        } // toStudentInsertForm
 
     // attach event listeners to corresponding input element 
-    let listenSciPapInsrFrm = () => {
+    let listenScientificPaperInsertForm = () => {
             // get the form 
-            let frm = document.getElementById('sciPapInsrFrm')
+            let form = document.getElementById('sciPapInsFrm')
                 // if button for subsequent partaker section additon exists
-            if (frm.querySelector('#addPartakerBtn'))
-                frm.querySelector('#addPartakerBtn').addEventListener(
+            if (form.querySelector('#addPartBtn'))
+                form.querySelector('#addPartBtn').addEventListener(
                     'click',
-                    addPartakerSect
+                    addPartakerSection
                 )
                 // if file input is rendered 
-            if (frm.querySelector('input[name="document[]"]'))
-                frm.querySelector('input[name="document[]"]').addEventListener(
+            if (form.querySelector('input[name="document[]"]'))
+                form.querySelector('input[name="document[]"]').addEventListener(
                     'input',
                     e => {
                         // assign the filename of the uploaded document to the hidden input type
-                        frm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
+                        form.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
                     }
                 ) // addEventListener
                 // if button for subsequent mentor section additon exists 
-            if (frm.querySelector('#addMentorBtn'))
-                frm.querySelector('#addMentorBtn').addEventListener(
+            if (form.querySelector('#addMentBtn'))
+                form.querySelector('#addMentBtn').addEventListener(
                     'click',
-                    addMentorSect
+                    addMentorSection
                 )
                 // if button for subsequent document section additon exists
-            if (frm.querySelector('#addDocBtn'))
+            if (form.querySelector('#addDocBtn'))
             // append controls for additional scientific paper document upload
-                frm.querySelector('#addDocBtn').addEventListener(
+                form.querySelector('#addDocBtn').addEventListener(
                 'click',
-                addDocUpldSect
+                addDocumentUploadSection
             )
-        } // listenSciPapInsrFrm
+        } // listenScientificPaperInsertForm
 
     // attach event listeners to corresponding input and selecet elements
-    let listenStudtInsrFrm = () => {
-            let addTempResBtn = document.getElementById('addTempResBtn'), // button for appending addiational temporal residence section 
-                addAttendanceBtn = document.getElementById('addAttendanceBtn'), // button for apppending additional program attendance section
-                birthCtrySelEl = document.getElementById('birthCtrySelEl'),
-                permResCtrySelEl = document.getElementById('permResCtrySelEl'),
-                facSelEl = document.getElementById('facSelEl'), // faculty select element
-                gradCheckBox = document.getElementById('gradCheckBox') // checkbox for denoting graduation
-            addTempResBtn.addEventListener(
+    let listenStudentInsertForm = () => {
+            let addTempRes = document.getElementById('addTempResBtn'), // button for appending addiational temporary residence section 
+                addAttendance = document.getElementById('addAttendBtn'), // button for apppending additional program attendance section
+                birthCtrySlct = document.getElementById('birthCtrySlct'),
+                permResCtrySlct = document.getElementById('permResCtrySlct'),
+                facultySelect = document.getElementById('facSlct'), // faculty select element
+                gradCB = document.getElementById('gradCB') // checkbox for denoting graduation
+            addTempRes.addEventListener(
                     'click',
                     () => {
-                        addTempResSect()
+                        addTemporaryResidenceSection()
                     }
                 ) // addEventListener
-            addAttendanceBtn.addEventListener(
+            addAttendance.addEventListener(
                 'click',
-                addProgAttendanceSect
+                addProgramAttendanceSection
             )
-            birthCtrySelEl.addEventListener(
+            birthCtrySlct.addEventListener(
                     // propagate postal codes by selected country 
                     'input',
-                    () => propagateSelEl(
-                        document.getElementById('birthPostCodeSelEl'),
-                        `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySelEl.selectedOptions[0].value}`
+                    () => propagateSelectElement(
+                        document.getElementById('birthPostCodeSlct'),
+                        `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySlct.selectedOptions[0].value}`
                     )
                 ) // addEventListener
-            permResCtrySelEl.addEventListener(
+            permResCtrySlct.addEventListener(
                     // propagate postal codes by selected country 
                     'input',
-                    () => propagateSelEl(
-                        document.getElementById('permResPostCodeSelEl'),
-                        `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySelEl.selectedOptions[0].value}`
+                    () => propagateSelectElement(
+                        document.getElementById('permResPostCodeSlct'),
+                        `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySlct.selectedOptions[0].value}`
                     )
                 ) // addEventListener
-            facSelEl.addEventListener(
+            facultySelect.addEventListener(
                     'input',
                     () => {
                         // propagate programs by faculty selection
-                        propagateSelEl(
-                            document.getElementById('progSelEl'),
-                            `/eArchive/Programs/select.php?id_faculties=${facSelEl.selectedOptions[0].value}`
+                        propagateSelectElement(
+                            document.getElementById('progSlct'),
+                            `/eArchive/Programs/select.php?id_faculties=${facultySelect.selectedOptions[0].value}`
                         )
                     }) // addEventListener
-            gradCheckBox.addEventListener(
+            gradCB.addEventListener(
                     'input',
                     e => {
                         // if it's checked
-                        if (gradCheckBox.checked)
+                        if (gradCB.checked)
                         // append graduation section if graduated
-                            addProgGradSect(e)
+                            addProgramGraduationSection(e)
                         else {
                             // remove selected graduation section
-                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
-                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
-                            gradCheckBox.closest('.row').removeChild(gradCheckBox.closest('.row').lastElementChild)
+                            gradCB.closest('.row').removeChild(gradCB.closest('.row').lastElementChild)
+                            gradCB.closest('.row').removeChild(gradCB.closest('.row').lastElementChild)
+                            gradCB.closest('.row').removeChild(gradCB.closest('.row').lastElementChild)
                         } // else
                     }
                 ) // addEventListener
-        } // listenStudtInsrFrm
+        } // listenStudentInsertForm
 
     // attach event listeners to a scientific paper cards when rendered
-    let listenSciPapCards = () => {
+    let listenScientificPaperCards = () => {
             // if anchor nodes for partaker insertion exist
             if (document.querySelectorAll('.par-ins-img'))
-                document.querySelectorAll('.par-ins-img').forEach(anchor => {
+                document.querySelectorAll('.par-ins-img').forEach(image => {
                     // form will contain only control for partaker insertion
-                    anchor.addEventListener('click', toPartakerInsrFrm)
+                    image.addEventListener('click', toPartakerInsertForm)
                 }) // forEach
                 // if spans for scientific paper partaker deletion exist
             if (document.querySelectorAll('.par-del-img'))
-                document.querySelectorAll('.par-del-img').forEach(span => {
+                document.querySelectorAll('.par-del-img').forEach(image => {
                     // attempt deletion of a partaker
-                    span.addEventListener(
+                    image.addEventListener(
                             'click',
                             () => {
-                                deletePartakerOfSciPap(span.getAttribute('data-id-partakings'))
+                                deletePartaker(image.getAttribute('data-id-partakings'))
                             }
                         ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper partaker data update exist
             if (document.querySelectorAll('.par-upd-img'))
-                document.querySelectorAll('.par-upd-img').forEach(anchor => {
+                document.querySelectorAll('.par-upd-img').forEach(image => {
                     // attempt deletion of a partaker
-                    anchor.addEventListener('click', toPartakerUpdtFrm) // addEventListener
+                    image.addEventListener('click', toPartakerUpdateForm) // addEventListener
                 }) // forEach
                 // if anchors for mentor insertion are rendered
             if (document.querySelectorAll('.men-ins-img'))
-                document.querySelectorAll('.men-ins-img').forEach(anchor => {
+                document.querySelectorAll('.men-ins-img').forEach(image => {
                     // restructure form for document upload
-                    anchor.addEventListener('click', toMentorInsrFrm)
+                    image.addEventListener('click', toMentorInsertForm)
                 }) // forEach
                 // if anchor elements for mentor data update exist
             if (document.querySelectorAll('.men-upd-img'))
-                document.querySelectorAll('.men-upd-img').forEach(anchor => {
+                document.querySelectorAll('.men-upd-img').forEach(image => {
                     // restructure form for document upload
-                    anchor.addEventListener('click', toMentorUpdtFrm)
+                    image.addEventListener('click', toMentorUpdateFrm)
                 }) // forEachF
                 // if span elements for mentor deletion are rendered
             if (document.querySelectorAll('.men-del-img'))
-                document.querySelectorAll('.men-del-img').forEach(anchor => {
+                document.querySelectorAll('.men-del-img').forEach(image => {
                     // restructure form for document upload
-                    anchor.addEventListener(
+                    image.addEventListener(
                             'click',
                             () => {
-                                deleteMentorOfSciPap(anchor.getAttribute('data-id-mentorings'))
+                                deleteMentor(image.getAttribute('data-id-mentorings'))
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1632,7 +1637,7 @@
                                     'GET',
                                     'json'
                                 )
-                                .then(response => toSciPapUpdtFrm(response))
+                                .then(response => toScientificPaperUpdateForm(response))
                                 .catch(error => alert(error)) // catch
                         }) // addEventListener
                 }) // forEach
@@ -1642,159 +1647,159 @@
                     anchor.addEventListener(
                             'click',
                             () => {
-                                deleteSciPap(anchor.getAttribute('data-id-scientific-papers'))
+                                deleteScientificPaper(anchor.getAttribute('data-id-scientific-papers'))
                             }
                         ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper document upload exist
             if (document.querySelectorAll('.doc-upl-img'))
-                document.querySelectorAll('.doc-upl-img').forEach(span => {
+                document.querySelectorAll('.doc-upl-img').forEach(image => {
                     // delete particular document
-                    span.addEventListener('click', toSciPapDocUpldFrm)
+                    image.addEventListener('click', toScientificPaperUploadForm)
                 }) // forEach
                 // if anchors for scientific paper documentation deletion are rendered
             if (document.querySelectorAll('.doc-del-img'))
-                document.querySelectorAll('.doc-del-img').forEach(span => {
+                document.querySelectorAll('.doc-del-img').forEach(image => {
                     // delete particular document
-                    span.addEventListener(
+                    image.addEventListener(
                             'click',
                             () => {
-                                deleteDocsOfSciPap(span.getAttribute('data-source'))
+                                deleteDocument(image.getAttribute('data-source'))
                             }
                         ) // addEventListener
                 }) // forEach
-        } // listenSciPapCards
+        } // listenScientificPaperCards
 
     // attach listeners to certificate card when selected
-    let listenGradCertCard = () => {
+    let listenCertificateCard = () => {
             // get modal for graduation certificate review
-            let mdl = document.getElementById('gradCertViewMdl')
+            let modal = document.getElementById('certSelMdl')
                 // if anchor element for update of certificate connected data exist
-            if (mdl.querySelector('.modal-content .cert-upd-a'))
-                mdl.querySelector('.modal-content .cert-upd-a').addEventListener('click', toGradCertUpdtFrm)
+            if (modal.querySelector('.modal-content .cert-upd-a'))
+                modal.querySelector('.modal-content .cert-upd-a').addEventListener('click', toCertificateUpdateForm)
                 // if anchor element for certificate deletion is contained
-            if (mdl.querySelector('.modal-content .cert-del-a'))
-                mdl.querySelector('.modal-content .cert-del-a').addEventListener(
+            if (modal.querySelector('.modal-content .cert-del-a'))
+                modal.querySelector('.modal-content .cert-del-a').addEventListener(
                     'click',
                     e => {
-                        deleteGradCert(e.target.getAttribute('data-id-attendances'), e.target.getAttribute('data-source'))
+                        deleteGraduationCertificate(e.target.getAttribute('data-id-attendances'), e.target.getAttribute('data-source'))
                     }
                 ) // addEventListner
-        } // attachCertificateCardListeners
+        } // listenCertificateCard
 
-    gradCertUpldFrm.querySelector('input[type=file]').addEventListener(
+    certUplFrm.querySelector('input[type=file]').addEventListener(
             'input',
             () => {
                 // assign the name of the uploaded certificate to hidden input type
-                gradCertUpldFrm.querySelector('input[name=certificate]').value = gradCertUpldFrm.querySelector('input[type=file]').files[0].name
+                certUplFrm.querySelector('input[name=certificate]').value = certUplFrm.querySelector('input[type=file]').files[0].name
             }
         ) // addEventListener
 
-    acctAssignFrm.addEventListener(
+    acctInsFrm.addEventListener(
             'submit',
             e => {
                 // prevent form from submitting account details  
                 e.preventDefault()
-                assignAcctCred(e)
+                insertAccount(e)
             }
         ) // addEventListener
 
-    fltrInptEl.addEventListener('input', () => {
+    fltInpEl.addEventListener('input', () => {
             // filter students by their index numbers 
-            selectStudtsByIndx(fltrInptEl.value)
+            selectStudentsByIndex(fltInpEl.value)
         }) // addEventListener
 
     // attach listeners to student evidence table appropriate anchors and buttons   
-    let listenStudtEvidTbl = () => {
-            let studtInsrBtn = document.getElementById('studtInsrBtn'), // button for exposing form for student scientific achievements insertion
-                sciPapViewLst = document.querySelectorAll('.sp-sel-img'), // array of images for exposing scientific papers of the student
-                sciPapInsrLst = document.querySelectorAll('.sp-ins-img'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
-                gradCertInsrLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
-                gradCertViewLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
-                acctInsrLst = document.querySelectorAll('.acc-ins-a'), // array of buttons for exposing form for assigning an account to student
+    let listenStudentEvidenceTable = () => {
+            let stuInsBtn = document.getElementById('stuInsBtn'), // button for exposing form for student scientific achievements insertion
+                sciPapSelLst = document.querySelectorAll('.sp-sel-img'), // array of images for exposing scientific papers of the student
+                sciPapInsLst = document.querySelectorAll('.sp-ins-img'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
+                certInsLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
+                certSelLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
+                acctInsLst = document.querySelectorAll('.acc-ins-a'), // array of buttons for exposing form for assigning an account to student
                 acctDelLst = document.querySelectorAll('.acc-del-img'), // array of buttons for deletion of a particular student account 
-                studtUpdLst = document.querySelectorAll('.stu-upd-img'), // array of anchors for exposing form for updating fundamental data of the student
-                studtDelLst = document.querySelectorAll('.stu-del-a') // array of anchors for exposing form for deletion of fundamental data of the student
-            studtInsrBtn.addEventListener(
+                stuUpdLst = document.querySelectorAll('.stu-upd-img'), // array of anchors for exposing form for updating fundamental data of the student
+                stuDelLst = document.querySelectorAll('.stu-del-a') // array of anchors for exposing form for deletion of fundamental data of the student
+            stuInsBtn.addEventListener(
                     'click',
-                    toStudtInsrFrm
+                    toStudentInsertForm
                 ) // addEventListener
-            sciPapViewLst.forEach(anchor => {
+            sciPapSelLst.forEach(image => {
                     // preview scientific papers   
-                    anchor.addEventListener(
+                    image.addEventListener(
                             'click',
                             () => {
-                                selectSciPaps(anchor.getAttribute('data-id-attendances'))
-                                sciPapInsrFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                                selectScientificPapers(image.getAttribute('data-id-attendances'))
+                                sciPapInsFrm.querySelector('input[name=id_attendances]').value = image.getAttribute('data-id-attendances')
                             }
                         ) //addEventListener
                 }) // forEach
-            sciPapInsrLst.forEach(anchor => {
+            sciPapInsLst.forEach(image => {
                     // modify form for scientific paper insertion
-                    anchor.addEventListener('click', toSciPapInsrFrm)
+                    image.addEventListener('click', toScientificPaperInsertForm)
                 }) // forEach
-            gradCertInsrLst.forEach(anchor => {
+            certInsLst.forEach(anchor => {
                     // assign an attendance id value to an upload forms hidden input type 
                     anchor.addEventListener(
                             'click',
                             () => {
-                                gradCertUpldFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
+                                certUplFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
                             }
                         ) //addEventListener
                 }) // forEach
-            gradCertViewLst.forEach(anchor => {
+            certSelLst.forEach(anchor => {
                     // view certificate particulars in a form of a card in the modal
                     anchor.addEventListener(
                             'click',
                             () => {
-                                selectGradCert(anchor.getAttribute('data-id-attendances'))
+                                selectGraduationCertificate(anchor.getAttribute('data-id-attendances'))
                                     // set value of id to the hidden input of the form
-                                gradCertUpldFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                                certUplFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
                             }
                         ) // addEventListener
                 }) // forEach
-            studtUpdLst.forEach(anchor => {
+            acctInsLst.forEach(a => {
+                    // pass an id and index of an attendance through forms hidden input types 
+                    a.addEventListener(
+                            'click',
+                            () => {
+                                acctInsFrm.querySelector('input[name=id_attendances]').value = a.dataset.idAttendances
+                                acctInsFrm.querySelector('input[name=index]').value = a.getAttribute('data-index')
+                            }
+                        ) // addEventListener
+                }) // forEach
+            acctDelLst.forEach(image => {
+                    // delete particular account 
+                    image.addEventListener(
+                            'click',
+                            () => {
+                                deleteAccount(image.getAttribute('data-id-attendances'), image.getAttribute('data-index'))
+                            }
+                        ) //addEventListener
+                }) // forEach
+            stuUpdLst.forEach(image => {
                     // propagate update form with student particulars
-                    anchor.addEventListener(
+                    image.addEventListener(
                             'click',
                             e => {
-                                selectStudt(e, anchor.getAttribute('data-id-students'))
+                                selectStudent(e, image.getAttribute('data-id-students'))
                             }
                         ) // addEventListener
                 }) // forEach
-            studtDelLst.forEach(anchor => {
+            stuDelLst.forEach(anchor => {
                     // delete student from the student evidence table
                     anchor.addEventListener(
                             'click',
                             () => {
                                 // if record deletion was confirmed
                                 if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
-                                    deleteStudt(anchor.getAttribute('data-id-attendances'), anchor.getAttribute('data-id-students'), anchor.getAttribute('data-index'))
-                            }
-                        ) // addEventListener
-                }) // forEach
-            acctDelLst.forEach(btn => {
-                    // delete particular account 
-                    btn.addEventListener(
-                            'click',
-                            () => {
-                                deleteAcctCred(btn.getAttribute('data-id-attendances'), btn.getAttribute('data-index'))
-                            }
-                        ) //addEventListener
-                }) // forEach
-            acctInsrLst.forEach(a => {
-                    // pass an id and index of an attendance through forms hidden input types 
-                    a.addEventListener(
-                            'click',
-                            () => {
-                                acctAssignFrm.querySelector('input[name=id_attendances]').value = a.dataset.idAttendances
-                                acctAssignFrm.querySelector('input[name=index]').value = a.getAttribute('data-index')
+                                    deleteStudent(anchor.getAttribute('data-id-attendances'), anchor.getAttribute('data-id-students'), anchor.getAttribute('data-index'))
                             }
                         ) // addEventListener
                 }) // forEach
         } // attachStudentTableListeners
 
-    listenStudtEvidTbl()
+    listenStudentEvidenceTable()
 
     // enabling tooltips
     $('[data-toggle="tooltip"]').tooltip()
