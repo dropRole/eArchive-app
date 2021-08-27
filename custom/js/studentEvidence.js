@@ -50,7 +50,7 @@
             let student = {
                 particulars: null,
                 permanentResidence: null,
-                temporaryResidence: null
+                temporaryResidences: null
             }
             request(
                     `/eArchive/Students/select.php?id_students=${idStudents}`,
@@ -64,8 +64,8 @@
                     'json'
                 ))
                 .then(response => {
-                    student.permanentResidence = response.permResidence
-                    student.temporaryResidence = response.tempResidences
+                    student.permanentResidence = response.permanentResidence
+                    student.temporaryResidences = response.temporaryResidences
                 })
                 .then(() => toStudentUpdateForm(e, student))
                 .catch(error => alert(error)) // catch
@@ -390,7 +390,7 @@
                     // compose node tree structure
                     fragment = response
                         // reflect fragments body     
-                    document.querySelector('div#certSelMdl > div.modal-dialog > .modal-content').innerHTML = fragment.body.innerHTML
+                    document.querySelector('div#certSelMdl > div.modal-dialog > div.modal-content').innerHTML = fragment.body.innerHTML
                 })
                 .then(() => listenCertificateCard())
                 .catch(error => alert(error)) // catch
@@ -1064,12 +1064,12 @@
     let setBirthplace = (idCountries, idPostalCodes) => {
             // propagate target select element with postal codes of the chosen country
             propagateSelectElement(
-                    document.querySelector('#birthCtrySelEl'),
+                    document.querySelector('#birthCountry'),
                     '/eArchive/Countries/select.php',
                     idCountries
                 )
                 .then(() => propagateSelectElement(
-                    document.querySelector('#birthPostCodeSelEl'),
+                    document.querySelector('#birthPostCode'),
                     `/eArchive/PostalCodes/select.php?id_countries=${idCountries}`,
                     idPostalCodes
                 ))
@@ -1085,19 +1085,19 @@
             idResInpt.type = 'hidden'
             idResInpt.name = 'residences[0][id_residences]'
             idResInpt.value = residence.id_residences
-            document.querySelector('select#permResCtrySelEl').parentElement.prepend(idResInpt)
+            document.querySelector('select#permResCtry').parentElement.prepend(idResInpt)
                 // propagate target select element with postal codes of the chosen country
             propagateSelectElement(
-                    document.querySelector('#permResCtrySelEl'),
+                    document.querySelector('#permResCtry'),
                     '/eArchive/Countries/select.php',
                     residence.id_countries
                 )
                 .then(() => propagateSelectElement(
-                    document.querySelector('#permResPostCodeSelEl'),
+                    document.querySelector('#permResPostCode'),
                     `/eArchive/PostalCodes/select.php?id_countries=${residence.id_countries}`,
                     residence.id_postal_codes
                 )).then(() => {
-                    document.querySelector('#permResAddressInptEl').value = residence.address
+                    document.querySelector('#permResAddr').value = residence.address
                 })
         } // setPermanentResidence
 
@@ -1105,7 +1105,7 @@
      *  fill out form fields with student temporary residence particulars
      *  @param Array residences
      */
-    let setTemporaryResidence = residences =>
+    let setTemporaryResidences = residences =>
         addTemporaryResidenceSection(residences)
 
     /*
@@ -1180,8 +1180,8 @@
             cloneForm.querySelector('input[name=email]').value = student.particulars.email
             cloneForm.querySelector('input[name=telephone]').value = student.particulars.telephone
             setBirthplace(student.particulars.id_countries, student.particulars.id_postal_codes)
-            setPermanentResidence(student.permResidence)
-            student.tempResidences.length ? setTemporaryResidence(student.tempResidences) : null
+            setPermanentResidence(student.permanentResidence)
+            student.temporaryResidences.length ? setTemporaryResidences(student.temporaryResidences) : null
             cloneForm.removeChild(cloneForm.querySelector('#attendances'))
             cloneForm.querySelector('input[type=submit]').value = 'Posodobi'
             cloneForm.addEventListener(
@@ -1521,12 +1521,12 @@
 
     // attach event listeners to corresponding input and selecet elements
     let listenStudentInsertForm = () => {
-            let addTempRes = document.getElementById('addTempResBtn'), // button for appending addiational temporary residence section 
-                addAttendance = document.getElementById('addAttendBtn'), // button for apppending additional program attendance section
-                birthCtrySlct = document.getElementById('birthCtrySlct'),
-                permResCtrySlct = document.getElementById('permResCtrySlct'),
-                facultySelect = document.getElementById('facSlct'), // faculty select element
-                gradCB = document.getElementById('gradCB') // checkbox for denoting graduation
+            let addTempRes = document.getElementById('addTempRes'), // button for appending addiational temporary residence section 
+                addAttendance = document.getElementById('addProgAtten'), // button for apppending additional program attendance section
+                birthCtrySlct = document.getElementById('birthCountry'),
+                permResCtrySlct = document.getElementById('permResCtry'),
+                facultySelect = document.getElementById('faculty'), // faculty select element
+                gradCB = document.getElementById('graduation') // checkbox for denoting graduation
             addTempRes.addEventListener(
                     'click',
                     () => {
@@ -1541,7 +1541,7 @@
                     // propagate postal codes by selected country 
                     'input',
                     () => propagateSelectElement(
-                        document.getElementById('birthPostCodeSlct'),
+                        document.getElementById('birthPostCode'),
                         `/eArchive/PostalCodes/select.php?id_countries=${birthCtrySlct.selectedOptions[0].value}`
                     )
                 ) // addEventListener
@@ -1549,7 +1549,7 @@
                     // propagate postal codes by selected country 
                     'input',
                     () => propagateSelectElement(
-                        document.getElementById('permResPostCodeSlct'),
+                        document.getElementById('permResPostCode'),
                         `/eArchive/PostalCodes/select.php?id_countries=${permResCtrySlct.selectedOptions[0].value}`
                     )
                 ) // addEventListener
@@ -1558,7 +1558,7 @@
                     () => {
                         // propagate programs by faculty selection
                         propagateSelectElement(
-                            document.getElementById('progSlct'),
+                            document.getElementById('program'),
                             `/eArchive/Programs/select.php?id_faculties=${facultySelect.selectedOptions[0].value}`
                         )
                     }) // addEventListener
@@ -1714,12 +1714,12 @@
             let stuInsBtn = document.getElementById('stuInsBtn'), // button for exposing form for student scientific achievements insertion
                 sciPapSelLst = document.querySelectorAll('.sp-sel-img'), // array of images for exposing scientific papers of the student
                 sciPapInsLst = document.querySelectorAll('.sp-ins-img'), // array of anchors for exposing form for insertion of the scientific papers and belonging documents
-                certInsLst = document.querySelectorAll('.cert-ins-a'), // array of anchors for exposing form for uploading students graduation certificate
-                certSelLst = document.querySelectorAll('.cert-vw-a'), // array of anchors for exposing graduation certificate of the student
-                acctInsLst = document.querySelectorAll('.acc-ins-a'), // array of buttons for exposing form for assigning an account to student
+                certInsLst = document.querySelectorAll('.cert-ins-img'), // array of anchors for exposing form for uploading students graduation certificate
+                certSelLst = document.querySelectorAll('.cert-sel-img'), // array of anchors for exposing graduation certificate of the student
+                acctInsLst = document.querySelectorAll('.acc-ins-img'), // array of buttons for exposing form for assigning an account to student
                 acctDelLst = document.querySelectorAll('.acc-del-img'), // array of buttons for deletion of a particular student account 
                 stuUpdLst = document.querySelectorAll('.stu-upd-img'), // array of anchors for exposing form for updating fundamental data of the student
-                stuDelLst = document.querySelectorAll('.stu-del-a') // array of anchors for exposing form for deletion of fundamental data of the student
+                stuDelLst = document.querySelectorAll('.stu-del-img') // array of anchors for exposing form for deletion of fundamental data of the student
             stuInsBtn.addEventListener(
                     'click',
                     toStudentInsertForm
@@ -1738,33 +1738,33 @@
                     // modify form for scientific paper insertion
                     image.addEventListener('click', toScientificPaperInsertForm)
                 }) // forEach
-            certInsLst.forEach(anchor => {
+            certInsLst.forEach(image => {
                     // assign an attendance id value to an upload forms hidden input type 
-                    anchor.addEventListener(
+                    image.addEventListener(
                             'click',
                             () => {
-                                certUplFrm.querySelector('input[type=hidden]').value = anchor.getAttribute('data-id-attendances')
+                                certUplFrm.querySelector('input[type=hidden]').value = image.getAttribute('data-id-attendances')
                             }
                         ) //addEventListener
                 }) // forEach
-            certSelLst.forEach(anchor => {
+            certSelLst.forEach(image => {
                     // view certificate particulars in a form of a card in the modal
-                    anchor.addEventListener(
+                    image.addEventListener(
                             'click',
                             () => {
-                                selectGraduationCertificate(anchor.getAttribute('data-id-attendances'))
+                                selectGraduationCertificate(image.getAttribute('data-id-attendances'))
                                     // set value of id to the hidden input of the form
-                                certUplFrm.querySelector('input[name=id_attendances]').value = anchor.getAttribute('data-id-attendances')
+                                certUplFrm.querySelector('input[name=id_attendances]').value = image.getAttribute('data-id-attendances')
                             }
                         ) // addEventListener
                 }) // forEach
-            acctInsLst.forEach(a => {
+            acctInsLst.forEach(image => {
                     // pass an id and index of an attendance through forms hidden input types 
-                    a.addEventListener(
+                    image.addEventListener(
                             'click',
                             () => {
-                                acctInsFrm.querySelector('input[name=id_attendances]').value = a.dataset.idAttendances
-                                acctInsFrm.querySelector('input[name=index]').value = a.getAttribute('data-index')
+                                acctInsFrm.querySelector('input[name=id_attendances]').value = image.dataset.idAttendances
+                                acctInsFrm.querySelector('input[name=index]').value = image.getAttribute('data-index')
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1786,14 +1786,14 @@
                             }
                         ) // addEventListener
                 }) // forEach
-            stuDelLst.forEach(anchor => {
+            stuDelLst.forEach(image => {
                     // delete student from the student evidence table
-                    anchor.addEventListener(
+                    image.addEventListener(
                             'click',
                             () => {
                                 // if record deletion was confirmed
                                 if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
-                                    deleteStudent(anchor.getAttribute('data-id-attendances'), anchor.getAttribute('data-id-students'), anchor.getAttribute('data-index'))
+                                    deleteStudent(image.getAttribute('data-id-attendances'), image.getAttribute('data-id-students'), image.getAttribute('data-index'))
                             }
                         ) // addEventListener
                 }) // forEach
