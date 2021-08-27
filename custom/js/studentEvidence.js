@@ -164,7 +164,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // insertPartaker
@@ -181,7 +181,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // updatePartaker
@@ -213,7 +213,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // insertMentor
@@ -261,7 +261,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('#sicPapMdl').modal('hide'))
+                .then(() => $('div#sicPapMdl').modal('hide'))
                 .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances').value))
                 .catch(error => alert(error)) // catch
         } // uploadDocuments
@@ -319,7 +319,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
         } // insertScientificPaper
 
@@ -335,7 +335,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('#sciPapInsMdl').modal('hide'))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // updateScientificPaper
@@ -370,7 +370,7 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => loadStudentEvidenceTable())
-                .then(() => $('#certUplMdl').modal('hide'))
+                .then(() => $('div#certUplMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
         } // uploadGraduationCertificate
 
@@ -408,7 +408,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('#certUplMdl').modal('hide'))
+                .then(() => $('div#certUplMdl').modal('hide'))
                 .then(() => selectGraduationCertificate(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // updateGraduationCertificate
@@ -426,7 +426,7 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => loadStudentEvidenceTable())
-                .then(() => $('#certSelMdl').modal('hide'))
+                .then(() => $('div#certSelMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
         } // deleteGraduationCertificate
 
@@ -1136,7 +1136,7 @@
                     (new FormData(acctInsFrm))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('#acctAssignMdl').modal('hide'))
+                .then(() => $('div#acctAssignMdl').modal('hide'))
                 .then(() => loadStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // insertAccount
