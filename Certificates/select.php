@@ -27,11 +27,11 @@ if (isset($id_attendances)) {
                 <ul class="list-group-flush p-0">
                     <li class="list-group-item d-flex justify-content-between">
                         <span class="font-italic"><strong>Zagovorjen</strong></span>
-                        <span><?php echo $certificate->defended; ?></span>
+                        <span><?php echo (new DateTime($certificate->defended))->format('d-m-Y'); ?></span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <span class="font-italic"><strong>Izdan</strong></span>
-                        <span><?php echo $certificate->getIssued(); ?></span>
+                        <span><?php echo (new DateTime($certificate->getIssued()))->format('d-m-Y'); ?></span>
                     </li>
                     <li class="list-group-item text-center">
                         <a href="<?php echo "/eArchive/{$certificate->getSource()}"; ?>" target="_blank" class="btn btn-primary">Pregled</a>
@@ -42,7 +42,7 @@ if (isset($id_attendances)) {
                 if (isset($_SESSION['authorized'])) {
                 ?>
                     <div class="d-flex justify-content-around">
-                        <a href="#gradCertUpldMdl" class="card-link cert-upd-a" data-id-certificates="<?php echo $certificate->getIdCertificates(); ?>" data-defended="<?php echo $certificate->defended; ?>" data-issued="<?php echo $certificate->getIssued(); ?>" data-toggle="modal">Uredi</a>
+                        <a href="#certUplMdl" class="card-link cert-upd-a" data-id-certificates="<?php echo $certificate->getIdCertificates(); ?>" data-defended="<?php echo $certificate->defended; ?>" data-issued="<?php echo $certificate->getIssued(); ?>" data-toggle="modal">Uredi</a>
                         <a href="#" class="card-link cert-del-a" data-id-attendances="<?php echo $id_attendances; ?>" data-source="<?php echo $certificate->getSource(); ?>">Izbriši</a>
                     </div>
                 <?php
