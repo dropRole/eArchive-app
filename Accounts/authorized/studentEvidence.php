@@ -30,7 +30,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
             <button id="stuInsBtn" class="btn btn-primary" type="button" data-toggle="modal" data-target="
         #stuInsMdl">Vstavi študenta</button>
         </div>
-        <button id="repMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#repMdl"></button>
+        <button id="repMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#reportModal"></button>
     </div>
     <div class="table-responsive mt-3">
         <table class="table">
