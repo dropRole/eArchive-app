@@ -27,7 +27,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
             <input id="fltInpEl" class="form-control" type="text" placeholder="Indeks">
         </div>
         <div>
-            <button id="studtInsrBtn" class="btn btn-primary" type="button" data-toggle="modal" data-target="
+            <button id="stuInsBtn" class="btn btn-primary" type="button" data-toggle="modal" data-target="
         #stuInsMdl">Vstavi študenta</button>
         </div>
         <button id="repMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#repMdl"></button>
