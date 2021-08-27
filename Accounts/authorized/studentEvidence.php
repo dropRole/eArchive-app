@@ -72,14 +72,14 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             // if student possesses a certificate
                             if ($DBC->selectCertificate($student->id_attendances) != NULL) {
                             ?>
-                                <a href="#gradCertSelMdl" data-toggle="modal">
+                                <a href="#certSelMdl" data-toggle="modal">
                                     <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-sel-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Pregled">
                                 </a>
                             <?php
                             } // if
                             else {
                             ?>
-                                <a href="#gradCertUplMdl" data-toggle="modal">
+                                <a href="#certUplMdl" data-toggle="modal">
                                     <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" class="cert-ins-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Vstavljanje">
                                 </a>
                             <?php
@@ -109,7 +109,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             </a>
                         </td>
                         <td>
-                            <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" class="stu-del-a" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" title="Izbriši">
+                            <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" class="stu-del-img" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" title="Izbriši">
                         </td>
                     </tr>
                 <?php
