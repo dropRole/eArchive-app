@@ -659,8 +659,8 @@ class DBC extends PDO
     {
         // permanent and temporary residences
         $residences = [
-            'permResidence' => NULL,
-            'tempResidences' => []
+            'permanentResidence' => NULL,
+            'temporaryResidences' => []
         ];
         $stmt = '  SELECT 
                         residences.id_residences,
@@ -684,9 +684,9 @@ class DBC extends PDO
             foreach ($prpStmt->fetchAll(PDO::FETCH_ASSOC) as $residence) {
                 // designate residence according to its status
                 if ($residence['status'] == 'STALNO')
-                    $residences['permResidence'] = $residence;
+                    $residences['permanentResidence'] = $residence;
                 else
-                    array_push($residences['tempResidences'], $residence);
+                    array_push($residences['temporaryResidences'], $residence);
             } // foreach
         } // try
         catch (PDOException $e) {
