@@ -11,18 +11,19 @@ th {
     min-width: 150px;
 }
 
-img#addTempResBtn,
-img#addAttendanceBtn,
+img#addTempRes,
+img#addAttendance,
 img.par-del-img,
 img.doc-del-img,
 img.acc-del-img,
-img.men-del-img {
+img.men-del-img,
+img.stu-del-img {
     cursor: pointer;
 }
 
-button#addPartakerBtn,
-button#addMentorBtn,
-button#addDocBtn {
+button#addPartaker,
+button#addMentor,
+button#addDocument {
     width: 24px;
     height: 24px;
     background-image: url('../img/add.png');
@@ -30,12 +31,12 @@ button#addDocBtn {
     border: none;
 }
 
-button#addPartakerBtn:focus,
-button#addPartakerBtn:focus-visible,
-button#addMentorBtn:focus,
-button#addMentorBtn:focus-visible,
-button#addDocBtn:focus,
-button#addDocBtn:focus-visible {
+button#addPartake:focus,
+button#addPartaker:focus-visible,
+button#addMentor:focus,
+button#addMentor:focus-visible,
+button#addDocument:focus,
+button#addDocument:focus-visible {
     outline: none;
 }
 
