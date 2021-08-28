@@ -16,7 +16,7 @@ $pass = $_POST['pass'];
 
 // if credentials are succesfully passed 
 if (isset($index, $pass)) {
-    // create a new instance
+    // retrieve a PDO instance carrying database server connection
     $DBC = new DBC();
     echo $DBC->checkAcctCredentials($index, $pass);
 } // if
