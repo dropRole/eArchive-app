@@ -567,8 +567,8 @@
                             'click',
                             () => {
                                 // if data attributes value isn't empty 
-                                if (cross.getAttribute('data-id-residences') !== '')
-                                    deleteTemporaryResidence(cross.getAttribute('data-id-residences'))
+                                if (cross.dataset.idResidences !== '')
+                                    deleteTemporaryResidence(cross.dataset.idResidences)
                                 container.remove()
                             }
                         ) // addEventListener
@@ -649,7 +649,7 @@
                         certificateInput = document.createElement('input'),
                         defendedInput = document.createElement('input'),
                         issuedInput = document.createElement('input'),
-                        index = e.target.getAttribute('data-index') // get next index position for attendances array 
+                        index = e.target.dataset.index // get next index position for attendances array 
                     observer.observe(document.getElementById('attendances'), {
                         attributes: false,
                         childList: true,
@@ -1138,7 +1138,7 @@
                     (new FormData(acctInsFrm))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('div#acctAssignMdl').modal('hide'))
+                .then(() => $('div#acctInsMdl').modal('hide'))
                 .then(() => loadStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // insertAccount
@@ -1170,7 +1170,7 @@
                 idStuInpt = document.createElement('input')
             idStuInpt.type = 'hidden'
             idStuInpt.name = 'id_students'
-            idStuInpt.value = e.target.getAttribute('data-id-students')
+            idStuInpt.value = e.target.dataset.idStudents
                 // replace node with its clone
             document.getElementById('stuInsFrm').replaceWith(cloneForm)
             document.querySelector('div#stuInsMdl div.modal-header > h4.modal-title').textContent = 'Posodabljanje podatkov študenta'
@@ -1205,7 +1205,7 @@
                 idSciPapInpt = document.createElement('input')
             idSciPapInpt.type = 'hidden'
             idSciPapInpt.name = 'id_scientific_papers'
-            idSciPapInpt.value = e.target.getAttribute('data-id-scientific-papers')
+            idSciPapInpt.value = e.target.dataset.idScientificPapers
                 // replace form element node with its clone
             document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
             cloneForm.prepend(idSciPapInpt)
@@ -1241,7 +1241,7 @@
                 idPartInpt = document.createElement('input')
             idPartInpt.type = 'hidden'
             idPartInpt.name = 'id_partakings'
-            idPartInpt.value = e.target.getAttribute('data-id-partakings')
+            idPartInpt.value = e.target.dataset.idPartakings
                 // replace form node with its clone
             document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
             cloneForm.prepend(idPartInpt)
@@ -1255,8 +1255,8 @@
                             node.parentElement.removeChild(node)
                         }) // forEach
                         // populate form fields concerning data of the partaker
-                    cloneForm.querySelector('input[name="partakers[0][index]"]').value = e.target.getAttribute('data-index')
-                    cloneForm.querySelector('input[name="partakers[0][part]"]').value = e.target.getAttribute('data-part')
+                    cloneForm.querySelector('input[name="partakers[0][index]"]').value = e.target.dataset.index
+                    cloneForm.querySelector('input[name="partakers[0][part]"]').value = e.target.dataset.part
                     cloneForm.querySelector('input[type=submit]').value = 'Uredi'
                 })
             cloneForm.addEventListener(
@@ -1280,7 +1280,7 @@
                 idSciPapInpt = document.createElement('input')
             idSciPapInpt.type = 'hidden'
             idSciPapInpt.name = 'id_scientific_papers'
-            idSciPapInpt.value = e.target.getAttribute('data-id-scientific-papers')
+            idSciPapInpt.value = e.target.dataset.idScientificPapers
                 // replace form element node with its clone
             document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
             cloneForm.prepend(idSciPapInpt)
@@ -1315,7 +1315,7 @@
                 idMentInpt = document.createElement('input')
             idMentInpt.type = 'hidden'
             idMentInpt.name = 'id_mentorings'
-            idMentInpt.value = e.target.getAttribute('data-id-mentorings')
+            idMentInpt.value = e.target.dataset.idMentorings
                 // replace form element node with its clone
             document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
             cloneForm.prepend(idMentInpt)
@@ -1330,12 +1330,12 @@
                         // widen form group across the whole grid
                     cloneForm.querySelector('#mentors').classList = 'col-12'
                 }).then(() => request(
-                    `/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`,
+                    `/eArchive/Mentorings/select.php?id_mentorings=${e.target.dataset.idMentorings}`,
                     'GET',
                     'json'
                 )).then(response => {
                     // populate form fields with selected mentor data
-                    cloneForm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id-mentorings')
+                    cloneForm.querySelector('input[name=id_mentorings]').value = e.target.dataset.idMentorings
                     cloneForm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
                     cloneForm.querySelector('select[name="mentors[0][id_faculties]"]').value = response.id_faculties
                     cloneForm.querySelector('input[name="mentors[0][taught]"]').value = response.taught
@@ -1363,7 +1363,7 @@
                 idSciPapInpt = document.createElement('input')
             idSciPapInpt.type = 'hidden'
             idSciPapInpt.name = 'id_scientific_papers'
-            idSciPapInpt.value = e.target.getAttribute('data-id-scientific-papers')
+            idSciPapInpt.value = e.target.dataset.idScientificPapers
                 // replace form node with its clone
             document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
             cloneForm.prepend(idSciPapInpt)
@@ -1396,7 +1396,7 @@
                 idCertInpt = document.createElement('input')
             idCertInpt.type = 'hidden'
             idCertInpt.name = 'id_certificates'
-            idCertInpt.value = e.target.getAttribute('data-id-certificates')
+            idCertInpt.value = e.target.dataset.idCertificates
                 // replace form element node with its clone
             document.getElementById('certUplFrm').replaceWith(cloneForm)
             cloneForm.prepend(idCertInpt)
@@ -1404,8 +1404,8 @@
                 // remove certificate file input 
             cloneForm.querySelector('div.row > div.form-group').remove()
                 // fill out form fileds with carried data
-            cloneForm.querySelector('input[name=defended]').value = e.target.getAttribute('data-defended')
-            cloneForm.querySelector('input[name=issued]').value = e.target.getAttribute('data-issued')
+            cloneForm.querySelector('input[name=defended]').value = e.target.dataset.defended
+            cloneForm.querySelector('input[name=issued]').value = e.target.dataset.issued
                 // change submit buttons value
             cloneForm.querySelector('input[type=submit]').value = 'Uredi'
             cloneForm.addEventListener(
@@ -1426,7 +1426,7 @@
             document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
             let cloneForm = sciPapInsFrm.cloneNode(true)
-            cloneForm.querySelector('input[name=id_attendances]').value = e.target.getAttribute('data-id-attendances')
+            cloneForm.querySelector('input[name=id_attendances]').value = e.target.dataset.idAttendances
                 // replace form element node with its clone
             document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
             cloneForm.querySelector('input[type=submit]').value = 'Vstavi'
@@ -1596,7 +1596,7 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                deletePartaker(image.getAttribute('data-id-partakings'))
+                                deletePartaker(image.dataset.idPartakings)
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1625,7 +1625,7 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                deleteMentor(image.getAttribute('data-id-mentorings'))
+                                deleteMentor(image.dataset.idMentorings)
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1635,7 +1635,7 @@
                     // fill form fields and modify the form
                     anchor.addEventListener('click', e => {
                             request(
-                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id-scientific-papers')}`,
+                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.dataset.idMentorings}`,
                                     'GET',
                                     'json'
                                 )
@@ -1649,7 +1649,7 @@
                     anchor.addEventListener(
                             'click',
                             () => {
-                                deleteScientificPaper(anchor.getAttribute('data-id-scientific-papers'))
+                                deleteScientificPaper(anchor.dataset.idScientificPapers)
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1666,7 +1666,7 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                deleteDocument(image.getAttribute('data-source'))
+                                deleteDocument(image.dataset.source)
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1684,7 +1684,7 @@
                 modal.querySelector('.modal-content .cert-del-a').addEventListener(
                     'click',
                     e => {
-                        deleteGraduationCertificate(e.target.getAttribute('data-id-attendances'), e.target.getAttribute('data-source'))
+                        deleteGraduationCertificate(e.target.dataset.idAttendances, e.target.dataset.source)
                     }
                 ) // addEventListner
         } // listenCertificateCard
@@ -1731,8 +1731,8 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                selectScientificPapers(image.getAttribute('data-id-attendances'))
-                                sciPapInsFrm.querySelector('input[name=id_attendances]').value = image.getAttribute('data-id-attendances')
+                                selectScientificPapers(image.dataset.idAttendances)
+                                sciPapInsFrm.querySelector('input[name=id_attendances]').value = image.dataset.idAttendances
                             }
                         ) //addEventListener
                 }) // forEach
@@ -1745,7 +1745,7 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                certUplFrm.querySelector('input[type=hidden]').value = image.getAttribute('data-id-attendances')
+                                certUplFrm.querySelector('input[type=hidden]').value = image.dataset.idAttendances
                             }
                         ) //addEventListener
                 }) // forEach
@@ -1754,9 +1754,9 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                selectGraduationCertificate(image.getAttribute('data-id-attendances'))
+                                selectGraduationCertificate(image.dataset.idAttendances)
                                     // set value of id to the hidden input of the form
-                                certUplFrm.querySelector('input[name=id_attendances]').value = image.getAttribute('data-id-attendances')
+                                certUplFrm.querySelector('input[name=id_attendances]').value = image.dataset.idAttendances
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1766,7 +1766,7 @@
                             'click',
                             () => {
                                 acctInsFrm.querySelector('input[name=id_attendances]').value = image.dataset.idAttendances
-                                acctInsFrm.querySelector('input[name=index]').value = image.getAttribute('data-index')
+                                acctInsFrm.querySelector('input[name=index]').value = image.dataset.index
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1775,7 +1775,7 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                deleteAccount(image.getAttribute('data-id-attendances'), image.getAttribute('data-index'))
+                                deleteAccount(image.dataset.idAttendances, image.dataset.index)
                             }
                         ) //addEventListener
                 }) // forEach
@@ -1784,7 +1784,7 @@
                     image.addEventListener(
                             'click',
                             e => {
-                                selectStudent(e, image.getAttribute('data-id-students'))
+                                selectStudent(e, image.dataset.idStudents)
                             }
                         ) // addEventListener
                 }) // forEach
@@ -1795,7 +1795,7 @@
                             () => {
                                 // if record deletion was confirmed
                                 if (confirm('S sprejemanjem boste izbrisali vse podatke o študentu ter podatke o znanstvenih dosežkih!'))
-                                    deleteStudent(image.getAttribute('data-id-attendances'), image.getAttribute('data-id-students'), image.getAttribute('data-index'))
+                                    deleteStudent(image.dataset.idAttendances, image.dataset.idStudents, image.dataset.index)
                             }
                         ) // addEventListener
                 }) // forEach
