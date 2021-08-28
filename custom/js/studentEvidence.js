@@ -1524,7 +1524,7 @@
     // attach event listeners to corresponding input and selecet elements
     let listenStudentInsertForm = () => {
             let addTempRes = document.getElementById('addTempRes'), // button for appending addiational temporary residence section 
-                addAttendance = document.getElementById('addProgAtten'), // button for apppending additional program attendance section
+                addAttendance = document.getElementById('addProgAttend'), // button for apppending additional program attendance section
                 birthCtrySlct = document.getElementById('birthCountry'),
                 permResCtrySlct = document.getElementById('permResCtry'),
                 facultySelect = document.getElementById('faculty'), // faculty select element
