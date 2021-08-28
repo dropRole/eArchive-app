@@ -720,10 +720,10 @@ class DBC extends PDO
             try {
                 // prepare, bind params to and execute stmt
                 $prpStmt = $this->prepare($stmt);
-                $prpStmt->bindParam(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
+                $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
                 $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-                $prpStmt->bindParam(':address', $residence['address'], PDO::PARAM_STR);
-                $prpStmt->bindParam(':status', $residence['status'], PDO::PARAM_STR);
+                $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
+                $prpStmt->bindValue(':status', $residence['status'], PDO::PARAM_STR);
                 $prpStmt->execute();
                 // if single row is affected
                 if ($prpStmt->rowCount() == 1)
@@ -774,6 +774,8 @@ class DBC extends PDO
                     echo "Napaka: {$e->getMessage()}.";
                 } // catch
             } // if
+            else
+                $this->insertStudtResidences($id_students, [$residence]);
         } // foreach
         return $report;
     } // updateStudtResidences
