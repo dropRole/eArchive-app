@@ -2,7 +2,7 @@
 
 namespace Accounts;
 
-// namespace and class import declaration
+// class import declaration
 
 use DateTime;
 
@@ -23,7 +23,7 @@ class Accounts
     *   @param DateTime $granted 
     *   @param string $avatar 
     */
-    public function __construct($id_attendances, $pass, $granted, $avatar = NULL)
+    public function __construct(int $id_attendances, string $pass, DateTime $granted, string $avatar = NULL)
     {
         $this->id_attendances = $id_attendances;
         $this->pass = $pass;
@@ -41,7 +41,7 @@ class Accounts
     } // setIdAttendances
 
     // get id of attendance
-    public function gsetIdAttendances()
+    public function getIdAttendances()
     {
         return $this->id_attendances;
     } // getIdAttendances
@@ -63,7 +63,7 @@ class Accounts
 
     /*
     *   set date of grant  
-    *   @param string @granted  
+    *   @param DateTime @granted  
     */
     public function setGranted(DateTime $granted)
     {
