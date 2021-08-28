@@ -5,6 +5,15 @@
     button#studtInsrBtn {
         width: 100%;
     }
+    div#sciPapCrdCtr>div.card {
+        width: 90%;
+    }
+}
+
+@media only screen and (min-width:992px) {
+    div#sciPapCrdCtr>div.card {
+        width: 45%;
+    }
 }
 
 th {
