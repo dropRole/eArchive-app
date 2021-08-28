@@ -766,7 +766,7 @@ class DBC extends PDO
                     $prpStmt->execute();
                     // if residence record was updated
                     if ($prpStmt->rowCount() == 1)
-                        $report .= "Bivališče na naslovu {$residence['address']} evidentirano kot {$residence['status']}." . PHP_EOL;
+                        $report .= "Bivališče na naslovu {$residence['address']} je evidentirano kot {$residence['status']}." . PHP_EOL;
                     else
                         $report .= "Bivališče na naslovu {$residence['address']} ni evidentirano kot {$residence['status']}." . PHP_EOL;
                 } // try
