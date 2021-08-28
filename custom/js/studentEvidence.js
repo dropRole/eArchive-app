@@ -130,6 +130,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
+                .then(() => $('div#stuInsMdl').modal('hide'))
                 .then(() => emptyInputFields(stuInsFrm))
                 .then(() => loadStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
