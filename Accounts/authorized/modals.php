@@ -151,7 +151,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-center col-12">
-                            <img id="addProgAtten" src="/eArchive/custom/img/add.png" alt="Dodaj študij" data-toggle="tooltip" title="Dodaj">
+                            <img id="addProgAttend" src="/eArchive/custom/img/add.png" alt="Dodaj študij" data-toggle="tooltip" title="Dodaj">
                         </div>
                     </div>
                     <input class="btn btn-warning offset-lg-5 offset-3 col-lg-2 col-6 my-2" type="submit" value="Vstavi">
