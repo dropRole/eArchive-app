@@ -2,7 +2,7 @@
 
 namespace Attendances;
 
-// namespace and class import declaration
+// class import declaration
 
 use DateTime;
 
@@ -24,8 +24,8 @@ class Attendances
     *   @param int $id_students 
     *   @param int $id_faculties
     *   @param int $id_programs 
-    *   @param DatTime $enrolled 
-    *   @param int $index 
+    *   @param DateTime $enrolled 
+    *   @param string $index 
     */
     public function __construct($id_attendances, $id_students, $id_faculties,  $id_programs, $enrolled,  $index)
     {
@@ -99,9 +99,9 @@ class Attendances
 
     /*
     *   set date of enrollment 
-    *   @param string $enrolled
+    *   @param DateTime $enrolled
     */
-    public function setEnrolled(string $enrolled)
+    public function setEnrolled(DateTime $enrolled)
     {
         $this->enrolled = $enrolled;
     } // setEnrolled
