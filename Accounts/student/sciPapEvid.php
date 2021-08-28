@@ -8,32 +8,34 @@ use DBC\DBC;
 
 require_once '../../autoload.php';
 include_once '../../header.php';
-include_once '../../nav.php';
 
 $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
+
+include_once '../../nav.php';
 
 ?>
 
 <!-- Link with the custom CSS -->
-<link rel="stylesheet" href="/eArchive/custom/css/sciPapEvidence.css">
+<link rel="stylesheet" href="/eArchive/custom/css/sciPapEvid.css">
 
 <!-- Custom core JavaScript -->
-<script defer src="../../custom/js/sciPapEvidence.js"></script>
+<script defer src="../../custom/js/sciPapEvid.js"></script>
 
 <section class="container my-3 p-3">
-    <p class="h2 my-3">Evidenca znanstvenih del</p>
+    <p class="h2 my-3 text-center">Evidenca znanstvenih del</p>
     <div class="d-lg-flex justify-content-lg-between">
         <div>
-            <input id="fltrInputEl" class="form-control" type="text" placeholder="Predmet">
+            <input id="fltInpEl" class="form-control" type="text" placeholder="Predmet">
         </div>
         <div>
-            <button id="sciPapInsrBtn" class="btn btn-primary" data-toggle="modal" data-target="
-            #sciPapInsrMdl">Vstavi delo</button>
+            <button id="sciPapInsBtn" class="btn btn-primary" data-toggle="modal" data-target="
+            #sciPapInsMdl">Vstavi delo</button>
         </div>
     </div>
-    <button id="rprtMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#rprtMdl"></button>
+    <button id="repMdlBtn" class="d-none" type="button" data-toggle="modal" data-target="#reportModal"></button>
     <div class="table-responsive mt-3">
         <table class="table">
+            <caption>Zapisi znanstvenih del</caption>
             <thead>
                 <tr>
                     <th>Predmet</th>
@@ -47,21 +49,21 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
             </thead>
             <tbody>
                 <?php
-                foreach ($DBC->selectStudtSciPapers($_SESSION['index']) as $sciPap) {
+                foreach ($DBC->selectStudtSciPapers($_SESSION['index']) as $scientificPaper) {
                 ?>
                     <tr>
-                        <td><?php echo $sciPap->getTopic(); ?></td>
-                        <td><?php echo $sciPap->getType(); ?></td>
-                        <td><?php echo (new DateTime($sciPap->getWritten()))->format('d-m-Y'); ?></td>
+                        <td><?php echo $scientificPaper->getTopic(); ?></td>
+                        <td><?php echo $scientificPaper->getType(); ?></td>
+                        <td><?php echo (new DateTime($scientificPaper->getWritten()))->format('d-m-Y'); ?></td>
                         <td>
                             <ul class="list-inline">
                                 <li class="list-group-item text-center">
-                                    <a href="#sciPapInsrMdl" data-toggle="modal">
-                                        <img class="par-ins-img" src="/eArchive/custom/img/assignPartaker.png" alt="Dodeli" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Dodeli">
+                                    <a href="#sciPapInsMdl" data-toggle="modal">
+                                        <img class="par-ins-img" src="/eArchive/custom/img/assignPartaker.png" alt="Dodeli" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Dodeli">
                                     </a>
                                 </li>
                                 <?php
-                                foreach ($DBC->selectPartakings($sciPap->getIdScientificPapers()) as $partaker) {
+                                foreach ($DBC->selectPartakings($scientificPaper->getIdScientificPapers()) as $partaker) {
                                 ?>
                                     <li class="list-group-item">
                                         <p class="d-flex justify-content-between">
@@ -69,8 +71,8 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                                             <span class="w-100 text-center"><?php echo $partaker->getPart(); ?></span>
                                         </p>
                                         <p class="d-flex justify-content-around">
-                                            <a class="par-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>">Uredi</a>
-                                            <a class="par-del-a" href="#sciPapInsrMdl" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>">Izbriši</a>
+                                            <a class="par-upd-a" href="#sciPapInsMdl" data-toggle="modal" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>" data-index="<?php echo $partaker->index; ?>" data-part="<?php echo $partaker->getPart(); ?>">Uredi</a>
+                                            <a class="par-del-a" data-id-partakings="<?php echo $partaker->getIdPartakings(); ?>">Izbriši</a>
                                         </p>
                                     </li>
                                 <?php
@@ -81,12 +83,12 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         <td>
                             <ul class="list-inline">
                                 <li class="list-group-item text-center">
-                                    <a href="#sciPapInsrMdl" data-toggle="modal">
-                                        <img src="/eArchive/custom/img/assignMentor.png" alt="Dodeli" class="men-ins-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Dodeli">
+                                    <a href="#sciPapInsMdl" data-toggle="modal">
+                                        <img src="/eArchive/custom/img/assignMentor.png" alt="Dodeli" class="men-ins-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Dodeli">
                                     </a>
                                 </li>
                                 <?php
-                                foreach ($DBC->selectSciPapMentors($sciPap->getIdScientificPapers()) as $mentor) {
+                                foreach ($DBC->selectSciPapMentors($scientificPaper->getIdScientificPapers()) as $mentor) {
                                 ?>
                                     <li class="list-group-item">
                                         <p class="d-flex justify-content-between">
@@ -94,11 +96,10 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                                             <span class="w-100 text-center"><?php echo $mentor->faculty; ?></span>
                                         </p>
                                         <p class="d-flex justify-content-around">
-                                            <a class="men-upd-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
-                                            <a class="men-del-a" href="#sciPapInsrMdl" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Izbriši</a>
+                                            <a class="men-upd-a" href="#sciPapInsMdl" data-toggle="modal" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Uredi</a>
+                                            <a class="men-del-a" data-id-mentorings="<?php echo $mentor->getIdMentorings(); ?>">Izbriši</a>
                                         </p>
                                     </li>
-
                                 <?php
                                 } // forach
                                 ?>
@@ -107,16 +108,16 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         <td>
                             <ul class="list-inline">
                                 <li class="list-group-item text-center">
-                                    <a href="#sciPapInsrMdl" data-toggle="modal">
-                                        <img src="/eArchive/custom/img/upload.png" alt="Naloži" class="doc-upl-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Naloži">
+                                    <a href="#sciPapInsMdl" data-toggle="modal">
+                                        <img src="/eArchive/custom/img/upload.png" alt="Naloži" class="doc-upl-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Naloži">
                                     </a>
                                 </li>
                                 <?php
-                                foreach ($DBC->selectDocuments($sciPap->getIdScientificPapers()) as $doc) {
+                                foreach ($DBC->selectDocuments($scientificPaper->getIdScientificPapers()) as $document) {
                                 ?>
                                     <li class="list-group-item d-flex justify-content-around">
-                                        <a href="<?php echo "/eArchive/{$doc->getSource()}"; ?>" target="_blank"><?php echo $doc->getVersion(); ?></a>
-                                        <a class="doc-del-a" href="#sciPapInsrMdl" data-source="<?php echo $doc->getSource(); ?>">Izbriši</a>
+                                        <a href="<?php echo "/eArchive/{$document->getSource()}"; ?>" target="_blank"><?php echo $document->getVersion(); ?></a>
+                                        <a class="doc-del-a" href="#sciPapInsMdl" data-source="<?php echo $document->getSource(); ?>">Izbriši</a>
                                     </li>
                                 <?php
                                 } // forach
@@ -124,12 +125,12 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             </ul>
                         </td>
                         <td>
-                            <a href="#sciPapInsrMdl" data-toggle="modal">
-                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="sp-upd-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Uredi">
+                            <a href="#sciPapInsMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="sp-upd-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Uredi">
                             </a>
                         </td>
                         <td>
-                            <img src="/eArchive/custom/img/deleteDocument.png" alt="Izbriši" class="sp-del-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Izbriši">
+                            <img src="/eArchive/custom/img/deleteDocument.png" alt="Izbriši" class="sp-del-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Izbriši">
                         </td>
                     </tr>
                 <?php
