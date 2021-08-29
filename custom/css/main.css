@@ -29,21 +29,21 @@ footer {
     background-color: hsl(210, 11%, 15%);
 }
 
-nav img#avtrRmvSign {
+nav img#removeAvatar {
     position: absolute;
     top: 0;
     left: 10px;
     z-index: 2;
 }
 
-nav img#usrAvtr {
+nav img#userAvatar {
     width: 40px;
     height: 40px;
     object-fit: cover;
     border-radius: 50%;
 }
 
-nav img#defAvtr {
+nav img#defaultAvatar {
     width: 30px;
     height: 30px;
 }
