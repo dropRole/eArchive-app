@@ -480,7 +480,7 @@
             } catch (error) {
                 alert(error)
             } // catch
-        } // propagateSelEl
+        } // propagateSelectElement
 
     /*
      *  clear input field values of a form 
@@ -1350,13 +1350,13 @@
                         updateMentor(cloneForm)
                     }
                 ) // addEventListener
-        } // toMentorInsertForm
+        } // toMentorUpdateForm
 
     /*
      *   rearrange form for uploading document of the subject scientific paper
      *   @param Event e
      */
-    let toScientificPaperUploadForm = e => {
+    let toDocumentUploadForm = e => {
             document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
             let cloneForm = sciPapInsFrm.cloneNode(true),
@@ -1383,7 +1383,7 @@
                         uploadDocuments(cloneForm)
                     }
                 ) // addEventListener
-        } // toScientificPaperUploadForm
+        } // toDocumentUploadForm
 
     /*
      *  rearrange form when updating data regarding students graduation certificate  
@@ -1657,7 +1657,7 @@
             if (document.querySelectorAll('.doc-upl-img'))
                 document.querySelectorAll('.doc-upl-img').forEach(image => {
                     // delete particular document
-                    image.addEventListener('click', toScientificPaperUploadForm)
+                    image.addEventListener('click', toDocumentUploadForm)
                 }) // forEach
                 // if anchors for scientific paper documentation deletion are rendered
             if (document.querySelectorAll('.doc-del-img'))
