@@ -2,7 +2,7 @@
 
 namespace Certificates;
 
-// namespace and class import declaration
+// class import declaration
 
 use DateTime;
 use JsonSerializable;
@@ -13,13 +13,13 @@ class Certificates implements JsonSerializable
 
     // encapsulation
     private $id_certificates; // primary key
-    private $source; // multi-value attribute
+    private $source; // composite attribute
     private $issued; // composite attribute
 
     /*
     *   constructs class instance 
     *   @param int $id_certificates 
-    *   @param int $source
+    *   @param string $source
     *   @param DateTime $issued 
     */
     public function __construct($id_certificates,  $source,  $issued)
