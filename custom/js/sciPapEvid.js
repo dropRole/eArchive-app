@@ -1,296 +1,300 @@
 // IIFE
 (() => {
-    var sciPapInsrFrm = document.getElementById('sciPapInsrFrm'), // form for inserting, updating and deleting data regarding the scientific paper
-        acctAvtrUpldFrm = document.getElementById('acctAvtrUpldFrm'), // form for uploading account avatar
-        sciPapInsrBtn = document.getElementById('sciPapInsrBtn'), // button for toggling scientific paper insertion modal
-        fltrInptEl = document.getElementById('fltrInputEl') // input for filtering scientific papers by their subject
+    var fragment = new DocumentFragment(), // minimal document object structure
+        sciPapInsFrm = document.getElementById('sciPapInsFrm'), // form for scientific paper data manipulation
+        avtrUplFrm = document.getElementById('avtrUplFrm'), // form for uploading account avatar
+        sciPapInsBtn = document.getElementById('sciPapInsBtn'), // button for toggling scientific paper insertion modal
+        fltInpEl = document.getElementById('fltInpEl') // input for filtering scientific papers by their subject
 
     /*
-     *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
+     *   instantiate an XHR interface object an asynchronously perform the script   
      *   @param String script
      *   @param String method
      *   @param String responseType 
-     *   @param FormData frmData 
+     *   @param FormData formData 
      */
-    let request = (script, method, resType = '', frmData = null) => {
+    let request = (script, method, responseType = '', formData = null) => {
             return new Promise((resolve, reject) => {
                 // instanitate an XHR object
                 let xmlhttp = new XMLHttpRequest()
                 xmlhttp.addEventListener(
                         'load',
                         () => {
-                            // resolve the promise if transaction was successful
+                            // if transaction was successful
                             resolve(xmlhttp.response)
                         }
                     ) // addEventListener
                 xmlhttp.addEventListener(
                         'error',
                         () => {
-                            // reject the promise if transaction encountered an error
-                            reject('Prišlo je do napake na strežniku!')
+                            // if transaction encountered an error
+                            reject('Prišlo je do napake na strežniku pri obdelavi zahteve!')
                         }
                     ) // addEventListener
                 xmlhttp.open(method, script, true)
-                xmlhttp.responseType = resType
-                xmlhttp.send(frmData)
+                xmlhttp.responseType = responseType
+                xmlhttp.send(formData)
             })
         } // request
 
-    // load student evidence table upon latterly data amendment 
-    let loadSciPapEvidTbl = () => {
+    // load scientific paper evidence table upon latterly data amendment 
+    let loadScientificPaperEvidenceTable = () => {
             request(
-                    '/eArchive/Accounts/student/sciPapEvidence.php',
+                    '/eArchive/Accounts/student/sciPapEvid.php',
                     'GET',
                     'document'
                 )
                 .then(response => {
                     // compose node tree structure
-                    frag = response
+                    fragment = response
                         // reflect fragments body  
                     document.body.querySelector('div.table-responsive').replaceWith(frag.body.querySelector('div.table-responsive'))
                         // enabling tooltips 
                     $('[data-toggle="tooltip"]').tooltip()
                 })
-                .then(() => listenSciPapEvidTbl())
+                .then(() => listenScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
-        } // loadSciPapEvidTbl
+        } // loadScientificPaperEvidenceTable
 
     /*
-     *   asynchronous script execution for insertion data regarding scientific paper and its documents upload 
+     *   insert records of the scientific paper and its uploaded documents
      *   @param Event e
-     *   @param HTMLFormElement frm
+     *   @param HTMLFormElement form
      */
-    let insertSciPap = (e, frm) => {
+    let insertScientificPaper = (e, form) => {
             // prevent default action of submitting scientific paper data    
             e.preventDefault()
             request(
                     '/eArchive/ScientificPapers/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => loadSciPapEvidTbl())
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
+                .then(response => reportOnAction(response))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
-        } // insertSciPap
+        } // insertScientificPaper
 
     /*
-     *   asynchronous script execution for scientific paper data alteration 
-     *   @param HTMLFormElement frm
+     *   update record of the scientific paper
+     *   @param HTMLFormElement form
      */
-    let updateSciPap = frm => {
+    let updateScientificPaper = form => {
             request(
                     '/eArchive/ScientificPapers/update.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // updateSciPap
+        } // updateScientificPaper
 
     /*
-     *  asynchronous script execution for scientific paper deletion with its belonging documents     
+     *  delete record of the given scientific paper
      *  @param Number idScientificPapers
      */
-    let deleteSciPap = idScientificPapers => {
+    let deleteScientificPaper = idScientificPapers => {
             request(
                     `/eArchive/ScientificPapers/delete.php?id_scientific_papers=${idScientificPapers}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
         } // deleteScientificPaper
 
-    // asynchronous script execution for insertion of a scientific paper partaker    
-    let insertPartakerOfSciPap = frm => {
+    /* 
+     *   insert record of the scientific paper partaker     
+     *   @param HTMLFormElement form
+     */
+    let insertPartaker = form => {
             request(
                     '/eArchive/Partakings/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // insertPartakerOfSciPap
+        } // insertPartaker
 
     /*
-     *  asynchronous script execution for updating data of the scientific paper partaker    
-     *  @param HTMLFormElement frm
+     *  update record of the given scientific paper partaker
+     *  @param HTMLFormElement form
      */
-    let updatePartakerOfSciPap = frm => {
+    let updatePartaker = form => {
             request(
                     '/eArchive/Partakings/update.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // updatePartakerOfSciPap
+        } // updatePartaker
 
     /*
-     *  asynchronous script execution for deletion of the scientific paper partaker    
+     *  delete record of the given scientific paper partker    
      *  @param Number idPartakings
      */
-    let deletePartakerOfSciPap = idPartakings => {
+    let deletePartaker = idPartakings => {
             request(
                     `/eArchive/Partakings/delete.php?id_partakings=${idPartakings}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(response => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // deletePartakerOfSciPap
+        } // deletePartaker
 
     /*
-     *  asynchronous script execution for inserting submitted mentor data     
-     *  @param HTMLFormElement frm
+     *  insert record of the scientific paper mentor 
+     *  @param HTMLFormElement form
      */
-    let insertMentorOfSciPap = frm => {
+    let insertMentor = form => {
             request(
                     '/eArchive/Mentorings/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // insertMentorOfSciPap
+        } // insertMentor
 
-    // asynchronously script run for updating data regarding mentor of the scientific paper       
-    let updateMentorOfSciPap = frm => {
+    /* 
+     *   update record of scientific paper mentor       
+     *   HTMLFormElement form
+     */
+    let updateMentor = form => {
             request(
                     '/eArchive/Mentorings/update.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // updateMentorOfSciPap
+        } // updateMentor
 
     /*
-     *  asynchronously script run for deletion of data concerning scientific paper mentor       
+     *  delete record of the given scientific paper mentor       
      *  @param Number idMentorings
      */
-    let deleteMentorOfSciPap = idMentorings => {
+    let deleteMentor = idMentorings => {
             request(
                     `/eArchive/Mentorings/delete.php?id_mentorings=${idMentorings}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapInsrMdl').modal('hide'))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // deleteMentorOfSciPap
+        } // deleteMentor
 
     /*  
-     *   asynchronous script execution for scientific paper documents upload    
-     *   @param HTMLFormElement frm
+     *   upload documents testifying the scientific achievement 
+     *   @param HTMLFormElement form
      */
-    let uploadDocsOfSciPap = frm => {
+    let uploadDocuments = form => {
             request(
                     '/eArchive/Documents/insert.php',
                     'POST',
                     'text',
-                    (new FormData(frm))
+                    (new FormData(form))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#sciPapMdl').modal('hide'))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => $('div#sicPapMdl').modal('hide'))
+                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances').value))
                 .catch(error => alert(error)) // catch
-        } // uploadDocsOfSciPap
+        } // uploadDocuments
 
     /*
-     *  asynchronous script execution for scientific paper documents deletion    
+     *  physically and logically delete documents testifying the scientific achievement 
      *  @param String source  
      */
-    let deleteDocsOfSciPap = source => {
+    let deleteDocument = source => {
             request(
                     `/eArchive/Documents/delete.php?source=${source}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => loadSciPapEvidTbl())
+                .then(response => reportOnAction(response))
+                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
                 .catch(error => alert(error)) // catch
-        } // deleteDocsOfSciPap
+        } // deleteDocument
 
     /*
-     *  asynchronous script run for account avatar upload    
-     *  @param HTMLFormElement frm  
+     *  upload account avatar document
+     *  @param Event e
      */
-    let uploadAcctAvatar = e => {
+    let uploadAccountAvatar = e => {
             // prevent default action of submitting account avater through a form
             e.preventDefault()
             request(
                     '/eArchive/Accounts/student/uploadAvatar.php',
                     'POST',
                     'text',
-                    (new FormData(acctAvtrUpldFrm))
+                    (new FormData(avtrUplFrm))
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#acctAvtrUpldMdl').modal('hide'))
+                .then(response => reportOnAction(response))
+                .then(() => $('#avtrUplMdl').modal('hide'))
                 .then(() => request(
-                    '/eArchive/Accounts/student/sciPapEvidence.php',
+                    '/eArchive/Accounts/student/sciPapEvid.php',
                     'GET',
                     'document'
                 ))
                 .then(response => {
                     // compose node tree structure of passive documents body
-                    frag = response
+                    fragment = response
                         // replace nodes of the passive and active tree structures
                     document.body.querySelector('nav').replaceWith(frag.body.querySelector('nav'))
-                    document.body.querySelector('#currAvtr').replaceWith(frag.body.querySelector('#currAvtr'))
+                    document.body.querySelector('#avatar').replaceWith(frag.body.querySelector('#avatar'))
                 })
 
-            .then(() => listenAcctRmvIcon())
+            .then(() => listenAvatarRemovalSign())
                 .catch(error => alert(error)) // catch
-        } // uploadAcctAvatar
+        } // uploadAccountAvatar
 
     /*
-     *  asynchronous script run for account avatar deletion    
-     *  @param HTMLFormElement frm  
+     *  physically and logically delete account avatar    
+     *  @param Event e  
      */
-    let deleteAcctAvatar = e => {
+    let deleteAccountAvatar = e => {
             request(
                     `/eArchive/Accounts/student/deleteAvatar.php?id_attendances=${e.target.dataset.idAttendances}&avatar=${e.target.dataset.avatar}`,
                     'GET',
                     'text'
                 )
-                .then(response => rprtOnAction(response))
-                .then(() => $('#acctAvtrUpldMdl').modal('hide'))
+                .then(response => reportOnAction(response))
+                .then(() => $('#avtrUplMdl').modal('hide'))
                 .then(() => request(
-                    '/eArchive/Accounts/student/sciPapEvidence.php',
+                    '/eArchive/Accounts/student/sciPapEvid.php',
                     'GET',
                     'document'
                 ))
                 .then(response => {
                     // compose node tree structure of passive documents body
-                    frag = response
+                    fragment = response
                         // replace nodes of the passive and active tree structures
                     document.body.querySelector('nav').replaceWith(frag.body.querySelector('nav'))
-                    document.body.querySelector('#currAvtr').replaceWith(frag.body.querySelector('#currAvtr'))
+                    document.body.querySelector('#avatar').replaceWith(frag.body.querySelector('#avatar'))
                 })
                 .catch(error => alert(error)) // catch
-        } // uploadAcctAvatar
+        } // deleteAccountAvatar
 
     /*
      *   propagate passed select element with options from the requested resource 
@@ -298,19 +302,19 @@
      *   @param String script
      *   @param Number id
      */
-    let propagateSelEl = async(select, script, id = 0) => {
+    let propagateSelectElement = async(select, script, id = 0) => {
             try {
                 const response = await request(
                     script,
                     'GET',
                     'document'
                 )
-                frag = response
+                fragment = response
                     // remove previously disposable options
                 while (select.options.length)
                     select.remove(0)
                     // traverse through nodes 
-                frag.body.querySelectorAll('option').forEach(option => {
+                fragment.body.querySelectorAll('option').forEach(option => {
                         select.add(option)
                             // if id matches options value
                         if (option.value == id)
@@ -319,31 +323,31 @@
                     }) // forEach
             } catch (error) {
                 alert(error)
-            }
-        } // propagateSelEl
+            } // catch
+        } // propagateSelectElement
 
     // create and subsequently append partaker section of the scientific paper insertion form 
-    let addPartakerSect = () => {
+    let addPartakerSection = () => {
             return new Promise((resolve) => {
                     let observer = new MutationObserver(() => resolve()),
                         // create form controls 
-                        ctr = document.createElement('div'),
+                        container = document.createElement('div'),
                         headline = document.createElement('p'),
                         cross = document.createElement('span'),
                         partakerFrmGrp = document.createElement('div'),
                         partFrmGrp = document.createElement('div'),
-                        partakerLbl = document.createElement('label'),
-                        partLbl = document.createElement('label'),
-                        partakerInptEl = document.createElement('input'),
-                        partInptEl = document.createElement('input'),
-                        index = document.querySelectorAll('div#sciPapPartakers > div.row').length // the following index for an array of data on a partaker  
+                        partakerLabel = document.createElement('label'),
+                        partLabel = document.createElement('label'),
+                        partakerInput = document.createElement('input'),
+                        partInput = document.createElement('input'),
+                        index = document.querySelectorAll('div#partakers > div.row').length // the following index for an array of data on a partaker  
                         // set observation criterion
-                    observer.observe(document.getElementById('sciPapPartakers'), {
+                    observer.observe(document.getElementById('partakers'), {
                         attributes: false,
                         childList: true,
                         subtree: false
                     })
-                    ctr.classList = 'row'
+                    container.classList = 'row'
                     headline.classList = 'h6 col-12'
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
@@ -353,67 +357,67 @@
                     cross.addEventListener(
                             'click',
                             () => {
-                                document.getElementById('sciPapPartakers').removeChild(ctr)
+                                container.remove()
                             }
                         ) // addEventListener
-                    partakerFrmGrp.classList = 'form-group col-6'
-                    partFrmGrp.classList = 'form-group col-6'
-                    partakerLbl.textContent = 'Sodelovalec'
-                    partakerLbl.classList = 'w-100'
-                    partLbl.textContent = 'Vloga'
-                    partLbl.classList = 'w-100'
-                    partakerInptEl.classList = 'form-control'
-                    partakerInptEl.setAttribute('list', 'students')
-                    partakerInptEl.name = `partakers[${index}][index]`
-                    partakerInptEl.required = true
-                    partInptEl.classList = 'form-control'
-                    partInptEl.type = 'text'
-                    partInptEl.name = `partakers[${index}][part]`
-                    partInptEl.required = true
+                    partakerFrmGrp.classList = 'form-group col-lg-6 col-12'
+                    partFrmGrp.classList = 'form-group col-lg-6 col-12'
+                    partakerLabel.textContent = 'Sodelovalec'
+                    partakerLabel.classList = 'w-100'
+                    partLabel.textContent = 'Vloga'
+                    partLabel.classList = 'w-100'
+                    partakerInput.classList = 'form-control'
+                    partakerInput.setAttribute('list', 'studentDatalist')
+                    partakerInput.name = `partakers[${index}][index]`
+                    partakerInput.required = true
+                    partInput.classList = 'form-control'
+                    partInput.type = 'text'
+                    partInput.name = `partakers[${index}][part]`
+                    partInput.required = true
                         // compose a node hierarchy by appending them to active tree structure 
                     headline.appendChild(cross)
-                    partakerLbl.appendChild(partakerInptEl)
-                    partakerFrmGrp.appendChild(partakerLbl)
-                    partLbl.appendChild(partInptEl)
-                    partFrmGrp.appendChild(partLbl)
-                    ctr.appendChild(headline)
-                    ctr.appendChild(partakerFrmGrp)
-                    ctr.appendChild(partFrmGrp)
-                    document.getElementById('sciPapPartakers').appendChild(ctr)
+                    partakerLabel.appendChild(partakerInput)
+                    partakerFrmGrp.appendChild(partakerLabel)
+                    partLabel.appendChild(partInput)
+                    partFrmGrp.appendChild(partLabel)
+                    container.appendChild(headline)
+                    container.appendChild(partakerFrmGrp)
+                    container.appendChild(partFrmGrp)
+                    document.getElementById('partakers').appendChild(container)
                 }) // Promise
-        } // addPartakerSect
+        } // addPartakerSection
 
     //  create and append additional form controls for providing data on mentors 
-    let addMentorSect = () => {
+    let addMentorSection = () => {
             return new Promise((resolve) => {
-                    let ctr = document.createElement('div'), // row
+                    let container = document.createElement('div'), // row
                         observer = new MutationObserver(() => resolve()),
                         // create form controls 
                         headline = document.createElement('p'),
                         cross = document.createElement('span'), // removal sign 
-                        mentorFrmGrp = document.createElement('div'), // form group
+                        menFrmGrp = document.createElement('div'), // form group
                         facFrmGrp = document.createElement('div'), // form group
-                        taughtFrmGrp = document.createElement('div'), // form group
+                        tghtFrmGrp = document.createElement('div'), // form group
                         emailFrmGrp = document.createElement('div'), // form group
                         telFrmGrp = document.createElement('div'), // form group
-                        mentorLbl = document.createElement('label'), // mentor label
-                        facLbl = document.createElement('label'), // faculty label
-                        taughtLbl = document.createElement('label'), // subject label
-                        emailLbl = document.createElement('label'), // email label
-                        telLbl = document.createElement('label'), // telephone label
-                        facSelEl = document.createElement('select'), // faculty input
-                        mentorSelEl = document.createElement('input'), // mentor input
-                        taughtInptEl = document.createElement('input'), // subject input
-                        emailInptEl = document.createElement('input'), // email input
-                        telInptEl = document.createElement('input'), // telephone input
-                        index = document.querySelectorAll('div#sciPapMentors > div.row').length // the following index for an array of data on documents of scientific paper  
+                        mentorLabel = document.createElement('label'), // mentor label
+                        facultyLabel = document.createElement('label'), // faculty label
+                        taughtLabel = document.createElement('label'), // subject label
+                        emailLabel = document.createElement('label'), // email label
+                        telephoneLabel = document.createElement('label'), // telephone label
+                        facultySelect = document.createElement('select'), // faculty input
+                        mentorSelect = document.createElement('input'), // mentor input
+                        taughtInput = document.createElement('input'), // subject input
+                        emailInput = document.createElement('input'), // email input
+                        telephoneInput = document.createElement('input'), // telephone input
+                        index = document.querySelectorAll('div#mentors > div.row').length // the following index for an array of data on documents of scientific paper  
                         // set observation criterion
-                    observer.observe(document.getElementById('sciPapMentors'), {
+                    observer.observe(document.getElementById('mentors'), {
                         attributes: false,
                         childList: true,
                         subtree: false
                     })
-                    ctr.classList = 'row'
+                    container.classList = 'row'
                     headline.classList = 'col-12 h6'
                     cross.style.float = 'right'
                     cross.style.transform = 'scale(1.2)'
@@ -423,437 +427,437 @@
                     cross.addEventListener(
                             'click',
                             () => {
-                                document.getElementById('sciPapMentors').removeChild(ctr)
+                                container.remove()
                             }
                         ) // addEventListener
-                    mentorFrmGrp.classList = 'form-group col-12'
-                    facFrmGrp.classList = 'form-group col-6'
-                    taughtFrmGrp.classList = 'form-group col-6'
+                    menFrmGrp.classList = 'form-group col-12'
+                    facFrmGrp.classList = 'form-group col-lg-6 col-12'
+                    tghtFrmGrp.classList = 'form-group col-lg-6 col-12'
                     emailFrmGrp.classList = 'form-group col-6'
                     telFrmGrp.classList = 'form-group col-6'
-                    facLbl.textContent = 'Fakulteta'
-                    facLbl.classList = 'w-100'
-                    mentorLbl.textContent = 'Mentor'
-                    mentorLbl.classList = 'w-100'
-                    taughtLbl.textContent = 'Poučeval'
-                    taughtLbl.classList = 'w-100'
-                    emailLbl.textContent = 'E-naslov'
-                    emailLbl.classList = 'w-100'
-                    telLbl.textContent = 'Telefon'
-                    telLbl.classList = 'w-100'
-                    facSelEl.classList = 'form-control'
-                    facSelEl.name = `mentors[${index}][id_faculties]`
-                    facSelEl.required = true
-                    mentorSelEl.classList = 'form-control'
-                    mentorSelEl.type = 'text'
-                    mentorSelEl.name = `mentors[${index}][mentor]`
-                    mentorSelEl.required = true
-                    taughtInptEl.classList = 'form-control'
-                    taughtInptEl.type = 'text'
-                    taughtInptEl.name = `mentors[${index}][taught]`
-                    taughtInptEl.required = true
-                    emailInptEl.classList = 'form-control'
-                    emailInptEl.type = 'email'
-                    emailInptEl.name = `mentors[${index}][email]`
-                    emailInptEl.required = true
-                    telInptEl.classList = 'form-control'
-                    telInptEl.type = 'telephone'
-                    telInptEl.name = `mentors[${index}][telephone]`
-                    telInptEl.required = true
+                    facultyLabel.textContent = 'Fakulteta'
+                    facultyLabel.classList = 'w-100'
+                    mentorLabel.textContent = 'Mentor'
+                    mentorLabel.classList = 'w-100'
+                    taughtLabel.textContent = 'Poučeval'
+                    taughtLabel.classList = 'w-100'
+                    emailLabel.textContent = 'E-naslov'
+                    emailLabel.classList = 'w-100'
+                    telephoneLabel.textContent = 'Telefon'
+                    telephoneLabel.classList = 'w-100'
+                    facultySelect.classList = 'form-control'
+                    facultySelect.name = `mentors[${index}][id_faculties]`
+                    facultySelect.required = true
+                    mentorSelect.classList = 'form-control'
+                    mentorSelect.type = 'text'
+                    mentorSelect.name = `mentors[${index}][mentor]`
+                    mentorSelect.required = true
+                    taughtInput.classList = 'form-control'
+                    taughtInput.type = 'text'
+                    taughtInput.name = `mentors[${index}][taught]`
+                    taughtInput.required = true
+                    emailInput.classList = 'form-control'
+                    emailInput.type = 'email'
+                    emailInput.name = `mentors[${index}][email]`
+                    emailInput.required = true
+                    telephoneInput.classList = 'form-control'
+                    telephoneInput.type = 'telephone'
+                    telephoneInput.name = `mentors[${index}][telephone]`
+                    telephoneInput.required = true
                     headline.appendChild(cross)
-                    mentorLbl.appendChild(mentorSelEl)
-                    mentorFrmGrp.appendChild(mentorLbl)
-                    facLbl.appendChild(facSelEl)
-                    facFrmGrp.appendChild(facLbl)
-                    taughtLbl.appendChild(taughtInptEl)
-                    taughtFrmGrp.appendChild(taughtLbl)
-                    emailLbl.appendChild(emailInptEl)
-                    emailFrmGrp.appendChild(emailLbl)
-                    telLbl.appendChild(telInptEl)
-                    telFrmGrp.appendChild(telLbl)
-                    ctr.appendChild(headline)
-                    ctr.appendChild(mentorFrmGrp)
-                    ctr.appendChild(facFrmGrp)
-                    ctr.appendChild(taughtFrmGrp)
-                    ctr.appendChild(emailFrmGrp)
-                    ctr.appendChild(telFrmGrp)
+                    mentorLabel.appendChild(mentorSelect)
+                    menFrmGrp.appendChild(mentorLabel)
+                    facultyLabel.appendChild(facultySelect)
+                    facFrmGrp.appendChild(facultyLabel)
+                    taughtLabel.appendChild(taughtInput)
+                    tghtFrmGrp.appendChild(taughtLabel)
+                    emailLabel.appendChild(emailInput)
+                    emailFrmGrp.appendChild(emailLabel)
+                    telephoneLabel.appendChild(telephoneInput)
+                    telFrmGrp.appendChild(telephoneLabel)
+                    container.appendChild(headline)
+                    container.appendChild(menFrmGrp)
+                    container.appendChild(facFrmGrp)
+                    container.appendChild(tghtFrmGrp)
+                    container.appendChild(emailFrmGrp)
+                    container.appendChild(telFrmGrp)
                         // populate HTMLSelectElement with the data regarding faculties 
-                    propagateSelEl(
-                            facSelEl,
+                    propagateSelectElement(
+                            facultySelect,
                             '/eArchive/Faculties/select.php'
                         )
-                        .then(() => document.getElementById('sciPapMentors').appendChild(ctr))
+                        .then(() => document.getElementById('mentors').appendChild(container))
                         .catch(error => alert(error))
                 }) // Promise
-        } // addMentorSect
+        } // addMentorSection
 
     //  create and append additional form controls for uploading document of the scientific paper
-    let addDocUpldSect = () => {
+    let addDocumentUploadSection = () => {
             return new Promise((resolve) => {
                     let observer = new MutationObserver(() => resolve()),
                         // form controls 
-                        ctr = document.createElement('div'), // row
+                        container = document.createElement('div'), // row
                         cross = document.createElement('span'), // removal sign
-                        versionFrmGrp = document.createElement('div'), // form group
+                        verFrmGrp = document.createElement('div'), // form group
                         docFrmGrp = document.createElement('div'), // form group
-                        versionLbl = document.createElement('label'), // version label
-                        docLbl = document.createElement('label'), // document label
-                        versionInptEl = document.createElement('input'), // version input
-                        docInptEl = document.createElement('input'), // document input 
-                        docNameInptEl = document.createElement('input'), // document hidden input 
-                        index = document.querySelectorAll('div#sciPapDocs > div.row').length // the following index for an array of data on documents of scientific paper  
+                        versionLabel = document.createElement('label'), // version label
+                        documentLabel = document.createElement('label'), // document label
+                        versionInput = document.createElement('input'), // version input
+                        documentInput = document.createElement('input'), // document input 
+                        filenameInput = document.createElement('input'), // document hidden input 
+                        index = document.querySelectorAll('div#documents > div.row').length // the following index for an array of data on documents of scientific paper  
                         // set observation criterion
-                    observer.observe(document.getElementById('sciPapDocs'), {
+                    observer.observe(document.getElementById('documents'), {
                         attributes: false,
                         childList: true,
                         subtree: false
                     })
-                    docInptEl.addEventListener(
+                    documentInput.addEventListener(
                             'input',
                             e => {
                                 // assign chosen document name as a value to the docNameInputElement
-                                docNameInptEl.value = e.target.files[0].name
+                                filenameInput.value = e.target.files[0].name
                             }
                         ) // addEventListener
                     cross.addEventListener(
                             'click',
                             () => {
                                 // remove appended controls
-                                document.getElementById('sciPapDocs').removeChild(ctr)
+                                container.remove()
                             }
                         ) // addEventListener
-                    ctr.classList = 'row mt-2'
-                    ctr.style.position = 'relative'
-                    versionFrmGrp.classList = 'form-group col-6'
+                    container.classList = 'row mt-2'
+                    container.style.position = 'relative'
+                    verFrmGrp.classList = 'form-group col-6'
                     docFrmGrp.classList = 'form-group col-6'
-                    versionLbl.textContent = 'Verzija'
-                    versionLbl.classList = 'w-100'
-                    docLbl.textContent = 'Dokument'
-                    docLbl.classList = 'w-100 file-label'
-                    versionInptEl.classList = 'form-control'
-                    versionInptEl.type = 'text'
-                    versionInptEl.name = `documents[${index}][version]`
-                    docInptEl.type = 'file'
-                    docInptEl.accept = '.pdf'
-                    docInptEl.name = 'document[]'
-                    docInptEl.required = true
-                    docNameInptEl.type = 'hidden'
-                    docNameInptEl.name = `documents[${index}][name]`
+                    versionLabel.textContent = 'Verzija'
+                    versionLabel.classList = 'w-100'
+                    documentLabel.textContent = 'Dokument'
+                    documentLabel.classList = 'w-100 file-label'
+                    versionInput.classList = 'form-control'
+                    versionInput.type = 'text'
+                    versionInput.name = `documents[${index}][version]`
+                    documentInput.type = 'file'
+                    documentInput.accept = '.pdf'
+                    documentInput.name = 'document[]'
+                    documentInput.required = true
+                    filenameInput.type = 'hidden'
+                    filenameInput.name = `documents[${index}][name]`
                     cross.style.position = 'absolute'
                     cross.style.top = 0
                     cross.style.right = '10px'
                     cross.style.zIndex = 1
                     cross.style.cursor = 'pointer'
                     cross.innerHTML = '&times;'
-                    versionLbl.appendChild(versionInptEl)
-                    versionFrmGrp.appendChild(versionLbl)
-                    docLbl.appendChild(docInptEl)
-                    docFrmGrp.appendChild(docNameInptEl)
-                    docFrmGrp.appendChild(docLbl)
-                    ctr.appendChild(cross)
-                    ctr.appendChild(versionFrmGrp)
-                    ctr.appendChild(docFrmGrp)
+                    versionLabel.appendChild(versionInput)
+                    verFrmGrp.appendChild(versionLabel)
+                    documentLabel.appendChild(documentInput)
+                    docFrmGrp.appendChild(filenameInput)
+                    docFrmGrp.appendChild(documentLabel)
+                    container.appendChild(cross)
+                    container.appendChild(verFrmGrp)
+                    container.appendChild(docFrmGrp)
                         // append controls to scientific paper insert form
-                    document.getElementById('sciPapDocs').appendChild(ctr)
+                    document.getElementById('documents').appendChild(container)
                 }) // Promise
-        } // addDocUpldSect
+        } // addDocumentUploadSection
 
     /*
      *   rearrange form when interpolating data regarding scientific paper and uploading its documents    
      *   @param Event e
      */
-    let toSciPapInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje znanstvenega dela'
+    let toScientificPaperInsertForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true)
+            let cloneForm = sciPapInsFrm.cloneNode(true)
+            cloneForm.querySelector('input[name=id_attendances]').value = e.target.dataset.idAttendances
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.querySelector('input[type=submit]').value = 'Vstavi'
-            listenSciPapInsrFrm()
-            cloneFrm.addEventListener(
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.querySelector('input[type=submit]').value = 'Vstavi'
+                // enable tooltips
+            $('[data-toggle="tooltip"]').tooltip()
+            listenScientificPaperInsertForm()
+            cloneForm.addEventListener(
                     'submit',
-                    e => { insertSciPap(e, cloneFrm) }
+                    e => { insertScientificPaper(e, cloneForm) }
                 ) // addEventListner
-        } // toSciPapInsrFrm
+        } // toScientificPaperForm
 
     /*
      *   rearrange form and fill out form fields when updating student data
      *   @param Object sciPap
      */
-    let toSciPapUpdtFrm = sciPap => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
+    let toScientificPaperUpdateForm = sciPap => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInptEl = document.createElement('input')
-            idScientificPapersInptEl.type = 'hidden'
-            idScientificPapersInptEl.name = 'id_scientific_papers'
-            idScientificPapersInptEl.value = sciPap.id_scientific_papers
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idSciPapInpt = document.createElement('input')
+            idSciPapInpt.type = 'hidden'
+            idSciPapInpt.name = 'id_scientific_papers'
+            idSciPapInpt.value = sciPap.id_scientific_papers
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInptEl)
-            listenSciPapInsrFrm()
-            cloneFrm.querySelector('input[name="topic"]').value = sciPap.topic
-            cloneFrm.querySelector('select[name="type"]').value = sciPap.type
-            cloneFrm.querySelector('input[name="written"]').value = sciPap.written
-            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idSciPapInpt)
+            listenScientificPaperInsertForm()
+            cloneForm.querySelector('input[name="topic"]').value = sciPap.topic
+            cloneForm.querySelector('select[name="type"]').value = sciPap.type
+            cloneForm.querySelector('input[name="written"]').value = sciPap.written
+            cloneForm.querySelector('input[type=submit]').value = 'Uredi'
                 // remove determined element nodes 
-            cloneFrm.querySelectorAll('div.row:nth-child(4), div#sciPapDocs').forEach(node => {
-                    node.parentElement.removeChild(node)
+            cloneForm.querySelectorAll('div.row:nth-child(4), div#documents').forEach(node => {
+                    node.remove()
                 }) // forEach
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // prevent default action of submitting scientific paper data    
                         e.preventDefault()
-                        updateSciPap(cloneFrm)
+                        updateScientificPaper(cloneForm)
                     }
                 ) // addEventListener
-        } // toSciPapUpdtFrm
+        } // toScientificPaperUpdateForm
 
     /*
      *  rearrange form when inserting data of the scientific paper partaker   
      *  @param Event e
      */
-    let toPartakerInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
+    let toPartakerInsertForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Dodeljevanje soavtorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInptEl = document.createElement('input')
-            idScientificPapersInptEl.type = 'hidden'
-            idScientificPapersInptEl.name = 'id_scientific_papers'
-            idScientificPapersInptEl.value = e.target.getAttribute('data-id-scientific-papers')
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idSciPapInpt = document.createElement('input')
+            idSciPapInpt.type = 'hidden'
+            idSciPapInpt.name = 'id_scientific_papers'
+            idSciPapInpt.value = e.target.dataset.idScientificPapers
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInptEl)
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idSciPapInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
-            cloneFrm.querySelector('input[type=submit]').value = 'Dodeli'
-            listenSciPapInsrFrm()
-            addPartakerSect()
+            cloneForm.querySelector('#partakers').classList = 'col-12'
+            cloneForm.querySelector('input[type=submit]').value = 'Dodeli'
+            listenScientificPaperInsertForm()
+            addPartakerSection()
                 .then(() => {
                     // remove nodes except those matching given selector expression 
-                    cloneFrm.querySelectorAll('div.row:nth-child(3), div#sciPapDocs, p, button').forEach(node => {
-                            node.parentElement.removeChild(node)
+                    cloneForm.querySelectorAll('div.row:nth-child(3), div#documents, p, button').forEach(node => {
+                            node.remove()
                         }) // forEach
                 })
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // cancel submitting partaker data by default
                         e.preventDefault()
-                        insertPartakerOfSciPap(cloneFrm)
+                        insertPartaker(cloneForm)
                     }
                 ) // addEventListener
-        } // toPartakerInsrFrm
+        } // toPartakerInsertForm
 
     /*
      *  rearrange form when updating data with regard to partaker of the scientific paper 
      *  @param Event e
      */
-    let toPartakerUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
+    let toPartakerUpdateForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje vloge soavtorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idPartakingsInptEl = document.createElement('input')
-            idPartakingsInptEl.type = 'hidden'
-            idPartakingsInptEl.name = 'id_partakings'
-            idPartakingsInptEl.value = e.target.getAttribute('data-id-partakings')
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idPartInpt = document.createElement('input')
+            idPartInpt.type = 'hidden'
+            idPartInpt.name = 'id_partakings'
+            idPartInpt.value = e.target.dataset.idPartakings
                 // replace form node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idPartakingsInptEl)
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idPartInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapPartakers').classList = 'col-12'
-            listenSciPapInsrFrm()
-            addPartakerSect()
+            cloneForm.querySelector('#partakers').classList = 'col-12'
+            listenScientificPaperInsertForm()
+            addPartakerSection()
                 .then(() => {
                     // remove nodes except those matching given selector expression 
-                    cloneFrm.querySelectorAll('div#particulars, div#sciPapMentors, div#sciPapDocs, p, div.d-flex, button').forEach(node => {
+                    cloneForm.querySelectorAll('div#particulars, div#mentors, div#documents, p, div.d-flex, button').forEach(node => {
                             node.parentElement.removeChild(node)
                         }) // forEach
                         // populate form fields concerning data of the partaker
-                    cloneFrm.querySelector('input[name="partakers[0][index]"]').value = e.target.getAttribute('data-index')
-                    cloneFrm.querySelector('input[name="partakers[0][part]"]').value = e.target.getAttribute('data-part')
-                    cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
+                    cloneForm.querySelector('input[name="partakers[0][index]"]').value = e.target.dataset.index
+                    cloneForm.querySelector('input[name="partakers[0][part]"]').value = e.target.dataset.part
+                    cloneForm.querySelector('input[type=submit]').value = 'Uredi'
                 })
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // cancel submitting partaker data by default
                         e.preventDefault()
-                        updatePartakerOfSciPap(cloneFrm)
+                        updatePartaker(cloneForm)
                     }
                 ) // addEventListener
-        } // toPartakerUpdtFrm
+        } // toPartakerUpdateForm
 
     /*
      *  rearrange form when inserting data regarding mentor of the scientific paper 
      *  @param Event e
      */
-    let toMentorInsrFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
+    let toMentorInsertForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Določanje mentorja znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersInptEl = document.createElement('input')
-            idScientificPapersInptEl.type = 'hidden'
-            idScientificPapersInptEl.name = 'id_scientific_papers'
-            idScientificPapersInptEl.value = e.target.getAttribute('data-id-scientific-papers')
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idSciPapInpt = document.createElement('input')
+            idSciPapInpt.type = 'hidden'
+            idSciPapInpt.name = 'id_scientific_papers'
+            idSciPapInpt.value = e.target.dataset.idScientificPapers
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersInptEl)
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idSciPapInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
-            cloneFrm.querySelector('input[type=submit]').value = 'Določi'
-            listenSciPapInsrFrm()
-            addMentorSect()
+            cloneForm.querySelector('#mentors').classList = 'col-12'
+            cloneForm.querySelector('input[type=submit]').value = 'Določi'
+            listenScientificPaperInsertForm()
+            addMentorSection()
                 .then(() => {
                     // remove nodes except those matching given selector expression 
-                    cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
-                            node.parentElement.removeChild(node)
+                    cloneForm.querySelectorAll('div#particulars, div#partakers, div#documents, p, button').forEach(node => {
+                            node.remove()
                         }) // forEach
                 })
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // cancel submitting mentor data by default
                         e.preventDefault()
-                        insertMentorOfSciPap(cloneFrm)
+                        insertMentor(cloneForm)
                     }
                 ) // addEventListener
-        } // toMentorInsrFrm
+        } // toMentorInsertForm
 
     /*
      *  rearrange form when updating data with regard to mentor of the scientific paper  
      *  @param Event e
      */
-    let toMentorUpdtFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idMentoringsInptEl = document.createElement('input')
-            idMentoringsInptEl.type = 'hidden'
-            idMentoringsInptEl.name = 'id_mentorings'
-            idMentoringsInptEl.value = e.target.getAttribute('data-id-mentorings')
+    let toMentorUpdateFrm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idMentInpt = document.createElement('input')
+            idMentInpt.type = 'hidden'
+            idMentInpt.name = 'id_mentorings'
+            idMentInpt.value = e.target.dataset.idMentorings
                 // replace form element node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idMentoringsInptEl)
-            cloneFrm.querySelector('input[type=submit]').value = 'Uredi'
-            listenSciPapInsrFrm()
-            addMentorSect()
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idMentInpt)
+            cloneForm.querySelector('input[type=submit]').value = 'Uredi'
+            listenScientificPaperInsertForm()
+            addMentorSection()
                 .then(() => {
                     // remove DIV nodes except matching given selector expression 
-                    cloneFrm.querySelectorAll('div#particulars, div#sciPapPartakers, div#sciPapDocs, p, button').forEach(node => {
-                            node.parentElement.removeChild(node)
+                    cloneForm.querySelectorAll('div#particulars, div#partakers, div#documents, p, button').forEach(node => {
+                            node.remove()
                         }) // forEach
                         // widen form group across the whole grid
-                    cloneFrm.querySelector('#sciPapMentors').classList = 'col-12'
-                })
-                .then(() => request(
-                    `/eArchive/Mentorings/select.php?id_mentorings=${e.target.getAttribute('data-id-mentorings')}`,
+                    cloneForm.querySelector('#mentors').classList = 'col-12'
+                }).then(() => request(
+                    `/eArchive/Mentorings/select.php?id_mentorings=${e.target.dataset.idMentorings}`,
                     'GET',
                     'json'
-                ))
-                .then(response => {
+                )).then(response => {
                     // populate form fields with selected mentor data
-                    cloneFrm.querySelector('input[name=id_mentorings]').value = e.target.getAttribute('data-id-mentorings')
-                    cloneFrm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
-                    cloneFrm.querySelector('select[name="mentors[0][id_faculties]"]').value = response.id_faculties
-                    cloneFrm.querySelector('input[name="mentors[0][taught]"]').value = response.taught
-                    cloneFrm.querySelector('input[name="mentors[0][email]"]').value = response.email
-                    cloneFrm.querySelector('input[name="mentors[0][telephone]"]').value = response.telephone
-                })
-                .catch(error => alert(error)) // catch
-            cloneFrm.addEventListener(
+                    cloneForm.querySelector('input[name=id_mentorings]').value = e.target.dataset.idMentorings
+                    cloneForm.querySelector('input[name="mentors[0][mentor]"]').value = response.mentor
+                    cloneForm.querySelector('select[name="mentors[0][id_faculties]"]').value = response.id_faculties
+                    cloneForm.querySelector('input[name="mentors[0][taught]"]').value = response.taught
+                    cloneForm.querySelector('input[name="mentors[0][email]"]').value = response.email
+                    cloneForm.querySelector('input[name="mentors[0][telephone]"]').value = response.telephone
+                }).catch(error => alert(error)) // catch
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // prevent form from submitting updated mentor data 
                         e.preventDefault();
-                        updateMentorOfSciPap(cloneFrm)
+                        updateMentor(cloneForm)
                     }
                 ) // addEventListener
-        } // toMentorUpdtFrm
+        } // toMentorUpdateForm
 
     /*
      *   rearrange form for uploading document of the subject scientific paper
      *   @param Event e
      */
-    let toSciPapDocUpldFrm = e => {
-            document.querySelector('div#sciPapInsrMdl div.modal-header > h4.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
+    let toDocumentUploadForm = e => {
+            document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Nalaganje dokumentov znanstvenega dela'
                 // clone from the existing form node
-            let cloneFrm = sciPapInsrFrm.cloneNode(true),
-                idScientificPapersIntpEl = document.createElement('input')
-            idScientificPapersIntpEl.type = 'hidden'
-            idScientificPapersIntpEl.name = 'id_scientific_papers'
-            idScientificPapersIntpEl.value = e.target.getAttribute('data-id-scientific-papers')
+            let cloneForm = sciPapInsFrm.cloneNode(true),
+                idSciPapInpt = document.createElement('input')
+            idSciPapInpt.type = 'hidden'
+            idSciPapInpt.name = 'id_scientific_papers'
+            idSciPapInpt.value = e.target.dataset.idScientificPapers
                 // replace form node with its clone
-            document.getElementById('sciPapInsrFrm').replaceWith(cloneFrm)
-            cloneFrm.prepend(idScientificPapersIntpEl)
+            document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
+            cloneForm.prepend(idSciPapInpt)
                 // widen form group across the whole grid
-            cloneFrm.querySelector('#sciPapDocs').classList = 'col-12 mb-3'
-            cloneFrm.querySelector('input[type=submit]').value = 'Naloži'
-            listenSciPapInsrFrm()
+            cloneForm.querySelector('#documents').classList = 'col-12 mb-3'
+            cloneForm.querySelector('input[type=submit]').value = 'Naloži'
+            listenScientificPaperInsertForm()
                 // remove nodes except those matching given selector expression 
-            cloneFrm.querySelectorAll('div#particulars, p, div.row:nth-child(4)').forEach(node => {
-                    node.parentElement.removeChild(node)
+            cloneForm.querySelectorAll('div#particulars, div#partakers, div#mentors').forEach(node => {
+                    node.remove()
                 }) // forEach
-            cloneFrm.addEventListener(
+            cloneForm.addEventListener(
                     'submit',
                     e => {
                         // prevent upload of scientific paper documents
                         e.preventDefault()
-                        uploadDocsOfSciPap(cloneFrm)
+                        uploadDocuments(cloneForm)
                     }
                 ) // addEventListener
-        } // toSciPapDocUpldFrm
+        } // toDocumentUploadForm
 
     // attach event listeners to corresponding input element 
-    let listenSciPapInsrFrm = () => {
+    let listenScientificPaperInsertForm = () => {
             // get the form 
-            let frm = document.getElementById('sciPapInsrFrm')
+            let form = document.getElementById('sciPapInsFrm')
                 // if button for subsequent partaker section additon exists
-            if (frm.querySelector('#addPartakerBtn'))
-                frm.querySelector('#addPartakerBtn').addEventListener(
+            if (form.querySelector('#addPartaker'))
+                form.querySelector('#addPartaker').addEventListener(
                     'click',
-                    addPartakerSect
+                    addPartakerSection
                 )
                 // if file input is rendered 
-            if (frm.querySelector('input[name="document[]"]'))
-                frm.querySelector('input[name="document[]"]').addEventListener(
+            if (form.querySelector('input[name="document[]"]'))
+                form.querySelector('input[name="document[]"]').addEventListener(
                     'input',
                     e => {
                         // assign the filename of the uploaded document to the hidden input type
-                        frm.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
+                        form.querySelector('input[name="documents[0][name]"]').value = e.target.files[0].name
                     }
                 ) // addEventListener
                 // if button for subsequent mentor section additon exists 
-            if (frm.querySelector('#addMentorBtn'))
-                frm.querySelector('#addMentorBtn').addEventListener(
+            if (form.querySelector('#addMentor'))
+                form.querySelector('#addMentor').addEventListener(
                     'click',
-                    addMentorSect
+                    addMentorSection
                 )
                 // if button for subsequent document section additon exists
-            if (frm.querySelector('#addDocBtn'))
+            if (form.querySelector('#addDocument'))
             // append controls for additional scientific paper document upload
-                frm.querySelector('#addDocBtn').addEventListener(
+                form.querySelector('#addDocument').addEventListener(
                 'click',
-                addDocUpldSect
+                addDocumentUploadSection
             )
-        } // attachSciPapFrmListeners
+        } // listenScientificPaperInsertForm
 
     // attach event listeners to a scientific paper cards when rendered
-    let listenSciPapEvidTbl = () => {
+    let listenScientificPaperEvidenceTable = () => {
             // if anchor nodes for partaker insertion exist
             if (document.querySelectorAll('.par-ins-img'))
-                document.querySelectorAll('.par-ins-img').forEach(anchor => {
+                document.querySelectorAll('.par-ins-img').forEach(image => {
                     // form will contain only control for partaker insertion
-                    anchor.addEventListener('click', toPartakerInsrFrm)
+                    image.addEventListener('click', toPartakerInsertForm)
                 }) // forEach
                 // if spans for scientific paper partaker deletion exist
             if (document.querySelectorAll('.par-del-a'))
-                document.querySelectorAll('.par-del-a').forEach(span => {
+                document.querySelectorAll('.par-del-a').forEach(anchor => {
                     // attempt deletion of a partaker
-                    span.addEventListener(
+                    anchor.addEventListener(
                             'click',
                             () => {
-                                deletePartakerOfSciPap(span.getAttribute('data-id-partakings'))
+                                deletePartaker(anchor.getAttribute('data-id-partakings'))
                             }
                         ) // addEventListener
                 }) // forEach
@@ -861,25 +865,25 @@
             if (document.querySelectorAll('.par-upd-a'))
                 document.querySelectorAll('.par-upd-a').forEach(anchor => {
                     // attempt deletion of a partaker
-                    anchor.addEventListener('click', toPartakerUpdtFrm) // addEventListener
+                    anchor.addEventListener('click', toPartakerUpdateForm) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper partaker data update exist
             if (document.querySelectorAll('.par-upd-a'))
                 document.querySelectorAll('.par-upd-a').forEach(anchor => {
                     // attempt deletion of a partaker
-                    anchor.addEventListener('click', toPartakerUpdtFrm) // addEventListener
+                    anchor.addEventListener('click', toPartakerUpdateForm) // addEventListener
                 }) // forEach
                 // if anchors for mentor insertion are rendered
             if (document.querySelectorAll('.men-ins-img'))
-                document.querySelectorAll('.men-ins-img').forEach(anchor => {
+                document.querySelectorAll('.men-ins-img').forEach(image => {
                     // restructure form for document upload
-                    anchor.addEventListener('click', toMentorInsrFrm)
+                    image.addEventListener('click', toMentorInsertForm)
                 }) // forEach
                 // if anchor elements for mentor data update exist
             if (document.querySelectorAll('.men-upd-a'))
                 document.querySelectorAll('.men-upd-a').forEach(anchor => {
                     // restructure form for document upload
-                    anchor.addEventListener('click', toMentorUpdtFrm)
+                    anchor.addEventListener('click', toMentorUpdateForm)
                 }) // forEachF
                 // if span elements for mentor deletion are rendered
             if (document.querySelectorAll('.men-del-a'))
@@ -888,39 +892,39 @@
                     anchor.addEventListener(
                             'click',
                             () => {
-                                deleteMentorOfSciPap(anchor.getAttribute('data-id-mentorings'))
+                                deleteMentor(anchor.getAttribute('data-id-mentorings'))
                             }
                         ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper update are rendered
             if (document.querySelectorAll('.sp-upd-img'))
-                document.querySelectorAll('.sp-upd-img').forEach(anchor => {
+                document.querySelectorAll('.sp-upd-img').forEach(image => {
                     // fill form fields and modify the form
-                    anchor.addEventListener('click', e => {
+                    image.addEventListener('click', e => {
                             request(
-                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.getAttribute('data-id-scientific-papers')}`,
+                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${image.getAttribute('data-id-scientific-papers')}`,
                                     'GET',
                                     'json'
                                 )
-                                .then(response => toSciPapUpdtFrm(response))
+                                .then(response => toScientificPaperUpdateForm(response))
                                 .catch(error => alert(error)) // catch
                         }) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper deletion are rendered
             if (document.querySelectorAll('.sp-del-img'))
-                document.querySelectorAll('.sp-del-img').forEach(anchor => {
-                    anchor.addEventListener(
+                document.querySelectorAll('.sp-del-img').forEach(image => {
+                    image.addEventListener(
                             'click',
                             () => {
-                                deleteSciPap(anchor.getAttribute('data-id-scientific-papers'))
+                                deleteScientificPaper(image.getAttribute('data-id-scientific-papers'))
                             }
                         ) // addEventListener
                 }) // forEach
                 // if anchors for scientific paper document upload exist
             if (document.querySelectorAll('.doc-upl-img'))
-                document.querySelectorAll('.doc-upl-img').forEach(span => {
+                document.querySelectorAll('.doc-upl-img').forEach(image => {
                     // delete particular document
-                    span.addEventListener('click', toSciPapDocUpldFrm)
+                    image.addEventListener('click', toDocumentUploadForm)
                 }) // forEach
                 // if anchors for scientific paper documentation deletion are rendered
             if (document.querySelectorAll('.doc-del-a'))
@@ -929,26 +933,26 @@
                     span.addEventListener(
                             'click',
                             () => {
-                                deleteDocsOfSciPap(span.getAttribute('data-source'))
+                                deleteDocument(span.getAttribute('data-source'))
                             }
                         ) // addEventListener
                 }) // forEach
-        } // listenSciPapEvidTbl
+        } // listenScientificPaperEvidenceTable
 
-    listenSciPapEvidTbl()
+    listenScientificPaperEvidenceTable()
 
     /*  
      *   report to the user on the performed action
-     *   @param String mssg
+     *   @param String message
      */
-    let rprtOnAction = mssg => {
-            $('div#rprtMdl').modal('show')
-            $('div#rprtMdl > div.modal-dialog > div.modal-content > div.modal-body').text(mssg)
+    let reportOnAction = messae => {
+            $('div#reportModal').modal('show')
+            $('div#reportModal > div.modal-dialog > div.modal-content > div.modal-body').text(messae)
         } // rprtOnAction
 
-    acctAvtrUpldFrm.addEventListener('submit', uploadAcctAvatar)
+    avtrUplFrm.addEventListener('submit', uploadAccountAvatar)
 
-    fltrInptEl.addEventListener(
+    fltInpEl.addEventListener(
             'input',
             e => {
                 request(
@@ -958,26 +962,26 @@
                     )
                     .then(response => {
                         // compose documents node tree structure
-                        frag = response
+                        fragment = response
                             // replace passive with the active node structures
                         document.querySelector('table>tbody').replaceWith(frag.body.querySelector('table>tbody'))
                             // enable tooltips on table images
                         $('[data-toggle="tooltip"]').tooltip()
                     })
-                    .then(() => listenSciPapEvidTbl())
+                    .then(() => listenScientificPaperEvidenceTable())
                     .catch(error => alert(error))
             }
         ) // addEventListener
 
-    let listenAcctRmvIcon = () => {
+    let listenAvatarRemovalSign = () => {
             // if icon for account avatar removal exists
-            if (document.getElementById('acctAvtrRmvIcon'))
-                document.getElementById('acctAvtrRmvIcon').addEventListener('click', deleteAcctAvatar)
+            if (document.getElementById('removeAvatar'))
+                document.getElementById('removeAvatar').addEventListener('click', deleteAccountAvatar)
         } // listenAcctRmvIcon
 
-    listenAcctRmvIcon()
+    listenAvatarRemovalSign()
 
-    sciPapInsrBtn.addEventListener('click', toSciPapInsrFrm)
+    sciPapInsBtn.addEventListener('click', toScientificPaperInsertForm)
 
     // enabling tooltips 
     $('[data-toggle="tooltip"]').tooltip()
