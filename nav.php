@@ -30,7 +30,7 @@
                     </li>
                 <?php
                 } // if
-                // if authorized or student has logged 
+                // if authorized or student has been logged in  
                 if (isset($_SESSION['authorized']) || isset($_SESSION['index'])) {
                 ?>
                     <div class="btn-group">
