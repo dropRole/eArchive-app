@@ -1309,7 +1309,7 @@
      *  rearrange form when updating data with regard to mentor of the scientific paper  
      *  @param Event e
      */
-    let toMentorUpdateFrm = e => {
+    let toMentorUpdateForm = e => {
             document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneForm = sciPapInsFrm.cloneNode(true),
                 idMentInpt = document.createElement('input')
@@ -1616,7 +1616,7 @@
             if (document.querySelectorAll('.men-upd-img'))
                 document.querySelectorAll('.men-upd-img').forEach(image => {
                     // restructure form for document upload
-                    image.addEventListener('click', toMentorUpdateFrm)
+                    image.addEventListener('click', toMentorUpdateForm)
                 }) // forEachF
                 // if span elements for mentor deletion are rendered
             if (document.querySelectorAll('.men-del-img'))

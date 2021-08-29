@@ -732,7 +732,7 @@
      *  rearrange form when updating data with regard to mentor of the scientific paper  
      *  @param Event e
      */
-    let toMentorUpdateFrm = e => {
+    let toMentorUpdateForm = e => {
             document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov mentorja znanstvenega dela'
             let cloneForm = sciPapInsFrm.cloneNode(true),
                 idMentInpt = document.createElement('input')
