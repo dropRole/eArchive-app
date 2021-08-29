@@ -71,6 +71,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
+                .then(() => loadScientificPaperEvidenceTable())
                 .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
         } // insertScientificPaper
@@ -88,7 +89,7 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => $('div#sciPapInsMdl').modal('hide'))
-                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // updateScientificPaper
 
@@ -103,7 +104,7 @@
                     'text'
                 )
                 .then(response => reportOnAction(response))
-                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // deleteScientificPaper
 
@@ -120,7 +121,7 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => $('div#sciPapInsMdl').modal('hide'))
-                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // insertPartaker
 
@@ -137,7 +138,7 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => $('div#sciPapInsMdl').modal('hide'))
-                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // updatePartaker
 
@@ -152,7 +153,7 @@
                     'text'
                 )
                 .then(response => reportOnAction(response))
-                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // deletePartaker
 
@@ -169,7 +170,7 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => $('div#sciPapInsMdl').modal('hide'))
-                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // insertMentor
 
@@ -186,7 +187,7 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => $('div#sciPapInsMdl').modal('hide'))
-                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // updateMentor
 
@@ -201,7 +202,7 @@
                     'text'
                 )
                 .then(response => reportOnAction(response))
-                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // deleteMentor
 
@@ -218,7 +219,7 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => $('div#sicPapMdl').modal('hide'))
-                .then(() => selectScientificPapers(form.querySelector('input[name=id_attendances').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // uploadDocuments
 
@@ -233,7 +234,7 @@
                     'text'
                 )
                 .then(response => reportOnAction(response))
-                .then(() => selectScientificPapers(document.querySelector('form#sciPapInsFrm input[name=id_attendances]').value))
+                .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // deleteDocument
 
@@ -570,8 +571,6 @@
             document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Vstavljanje znanstvenega dela'
                 // clone from the existing form node
             let cloneForm = sciPapInsFrm.cloneNode(true)
-            cloneForm.querySelector('input[name=id_attendances]').value = e.target.dataset.idAttendances
-                // replace form element node with its clone
             document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
             cloneForm.querySelector('input[type=submit]').value = 'Vstavi'
                 // enable tooltips
