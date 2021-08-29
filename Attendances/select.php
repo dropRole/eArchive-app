@@ -27,11 +27,11 @@ if (isset($id_attendances)) {
                 if ($avatar = $DBC->hasAcctAvatar($particulars->index)) {
             ?>
 
-                <img class="acct-avtr-big mb-1" src="<?php echo "/eArchive/{$avatar}"; ?>" alt="Avatar">
+                <img class="acct-avtr-lg mb-1" src="<?php echo "/eArchive/{$avatar}"; ?>" alt="Avatar">
             <?php
                 } else {
             ?>
-                <img class="acct-avtr-small mb-1" src="/eArchive/custom/img/defaultAvatar.png" alt="Avatar">
+                <img class="acct-avtr-sm mb-1" src="/eArchive/custom/img/defaultAvatar.png" alt="Avatar">
             <?php
                 }
             ?>
