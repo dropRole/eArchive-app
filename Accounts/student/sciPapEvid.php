@@ -227,7 +227,7 @@ include_once '../../nav.php';
     </div>
 </div>
 <!-- Modal for uploading account avatar -->
-<div class="modal fade" id="acctInsMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
+<div class="modal fade" id="avtrUplMdl" tabindex="-1" role="dialog" aria-labelledby="reportMdl" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div id="avatar">
