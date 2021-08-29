@@ -22,7 +22,10 @@ td {
     position: relative;
 }
 
-img.sp-del-img {
+img.sp-del-img,
+a.par-del-a,
+a.men-del-a,
+a.doc-del-a {
     cursor: pointer;
 }
 
