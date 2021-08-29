@@ -48,7 +48,7 @@
                     // compose node tree structure
                     fragment = response
                         // reflect fragments body  
-                    document.body.querySelector('div.table-responsive').replaceWith(frag.body.querySelector('div.table-responsive'))
+                    document.body.querySelector('div.table-responsive').replaceWith(fragment.body.querySelector('div.table-responsive'))
                         // enabling tooltips 
                     $('[data-toggle="tooltip"]').tooltip()
                 })
@@ -261,8 +261,8 @@
                     // compose node tree structure of passive documents body
                     fragment = response
                         // replace nodes of the passive and active tree structures
-                    document.body.querySelector('nav').replaceWith(frag.body.querySelector('nav'))
-                    document.body.querySelector('#avatar').replaceWith(frag.body.querySelector('#avatar'))
+                    document.body.querySelector('nav').replaceWith(fragment.body.querySelector('nav'))
+                    document.body.querySelector('#avatar').replaceWith(fragment.body.querySelector('#avatar'))
                 })
 
             .then(() => listenAvatarRemovalSign())
@@ -290,8 +290,8 @@
                     // compose node tree structure of passive documents body
                     fragment = response
                         // replace nodes of the passive and active tree structures
-                    document.body.querySelector('nav').replaceWith(frag.body.querySelector('nav'))
-                    document.body.querySelector('#avatar').replaceWith(frag.body.querySelector('#avatar'))
+                    document.body.querySelector('nav').replaceWith(fragment.body.querySelector('nav'))
+                    document.body.querySelector('#avatar').replaceWith(fragment.body.querySelector('#avatar'))
                 })
                 .catch(error => alert(error)) // catch
         } // deleteAccountAvatar
@@ -945,9 +945,9 @@
      *   report to the user on the performed action
      *   @param String message
      */
-    let reportOnAction = messae => {
+    let reportOnAction = message => {
             $('div#reportModal').modal('show')
-            $('div#reportModal > div.modal-dialog > div.modal-content > div.modal-body').text(messae)
+            $('div#reportModal > div.modal-dialog > div.modal-content > div.modal-body').text(message)
         } // rprtOnAction
 
     avtrUplFrm.addEventListener('submit', uploadAccountAvatar)
@@ -964,7 +964,7 @@
                         // compose documents node tree structure
                         fragment = response
                             // replace passive with the active node structures
-                        document.querySelector('table>tbody').replaceWith(frag.body.querySelector('table>tbody'))
+                        document.querySelector('table>tbody').replaceWith(fragment.body.querySelector('table>tbody'))
                             // enable tooltips on table images
                         $('[data-toggle="tooltip"]').tooltip()
                     })
