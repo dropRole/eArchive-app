@@ -218,7 +218,7 @@
                     (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
-                .then(() => $('div#sicPapMdl').modal('hide'))
+                .then(() => $('div#sciPapInsMdl').modal('hide'))
                 .then(() => loadScientificPaperEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // uploadDocuments
