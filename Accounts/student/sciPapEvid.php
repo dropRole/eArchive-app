@@ -117,7 +117,7 @@ include_once '../../nav.php';
                                 ?>
                                     <li class="list-group-item d-flex justify-content-around">
                                         <a href="<?php echo "/eArchive/{$document->getSource()}"; ?>" target="_blank"><?php echo $document->getVersion(); ?></a>
-                                        <a class="doc-del-a" href="#sciPapInsMdl" data-source="<?php echo $document->getSource(); ?>">Izbriši</a>
+                                        <a class="doc-del-a" data-source="<?php echo $document->getSource(); ?>">Izbriši</a>
                                     </li>
                                 <?php
                                 } // forach
