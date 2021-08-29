@@ -21,7 +21,7 @@ if (isset($id_attendances)) {
     $certificate = $DBC->selectCertificate($id_attendances)[0];
     if ($certificate !== NULL) {
 ?>
-        <div class="card col-12">
+        <div class="card">
             <div class="card-body">
                 <h5 class="card-title text-center">Certifikat</h5>
                 <ul class="list-group-flush p-0">
