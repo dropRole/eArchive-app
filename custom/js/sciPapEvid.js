@@ -856,7 +856,7 @@
                     anchor.addEventListener(
                             'click',
                             () => {
-                                deletePartaker(anchor.getAttribute('data-id-partakings'))
+                                deletePartaker(anchor.dataset.idPartakings)
                             }
                         ) // addEventListener
                 }) // forEach
@@ -891,7 +891,7 @@
                     anchor.addEventListener(
                             'click',
                             () => {
-                                deleteMentor(anchor.getAttribute('data-id-mentorings'))
+                                deleteMentor(anchor.dataset.idMentorings)
                             }
                         ) // addEventListener
                 }) // forEach
@@ -901,7 +901,7 @@
                     // fill form fields and modify the form
                     image.addEventListener('click', e => {
                             request(
-                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${image.getAttribute('data-id-scientific-papers')}`,
+                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${image.dataset.idScientificPapers}`,
                                     'GET',
                                     'json'
                                 )
@@ -915,7 +915,7 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                deleteScientificPaper(image.getAttribute('data-id-scientific-papers'))
+                                deleteScientificPaper(image.dataset.idScientificPapers)
                             }
                         ) // addEventListener
                 }) // forEach
@@ -932,7 +932,7 @@
                     span.addEventListener(
                             'click',
                             () => {
-                                deleteDocument(span.getAttribute('data-source'))
+                                deleteDocument(span.dataset.source)
                             }
                         ) // addEventListener
                 }) // forEach
