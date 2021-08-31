@@ -2,10 +2,10 @@
 (() => {
     // globally encompassed variable declaration
     var frag = new DocumentFragment(), // minimal passive document object 
-        searchInptEl = document.getElementById('searchInptEl'), // input element for search of scientific papers
+        search = document.getElementById('search'), // input element for search of scientific papers
         drpDwnItms = document.getElementsByClassName('dropdown-item') // dropdown items for denoting type of search
 
-    searchInptEl.addEventListener(
+    search.addEventListener(
             'input',
             e => request(
                 `/eArchive/ScientificPapers/filter.php?${e.target.dataset.criterion}=${e.target.value}`,
@@ -20,7 +20,7 @@
                     // enable tooltips on images
                 $('[data-toggle="tooltip"]').tooltip()
             })
-            .then(() => listenSciPapEvidTbl(document.querySelector('table')))
+            .then(() => listenScientificPaperEvidenceTable(document.querySelector('table')))
             .catch(error => alert(error))
         ) // addEventListener
 
@@ -28,8 +28,8 @@
             item.addEventListener(
                     'click',
                     () => {
-                        searchInptEl.dataset.criterion = item.dataset.criterion
-                        searchInptEl.placeholder = item.dataset.placeholder
+                        search.dataset.criterion = item.dataset.criterion
+                        search.placeholder = item.dataset.placeholder
                     }
                 ) // addEventListener
         }) // from 
@@ -38,11 +38,11 @@
      *   listen to elements of the scientific paper evidence table
      *   @param HTMLTableElement tbl   
      */
-    let listenSciPapEvidTbl = tbl => {
+    let listenScientificPaperEvidenceTable = table => {
             // if superscript elements for partaker view exist
-            if (tbl.getElementsByClassName('par-vw-a'))
+            if (table.getElementsByClassName('par-vw-a'))
                 Array.from(
-                    tbl.getElementsByClassName('par-vw-a'),
+                    table.getElementsByClassName('par-vw-a'),
                     sup => {
                         sup.addEventListener(
                                 'click',
@@ -56,14 +56,14 @@
                             ) // addEventListener
                     }) // from
                 // if anchor elements for document view exist
-            if (tbl.getElementsByClassName('doc-vw-img'))
+            if (table.getElementsByClassName('doc-vw-img'))
                 Array.from(
-                    tbl.getElementsByClassName('doc-vw-img'),
-                    anchor => {
-                        anchor.addEventListener(
+                    table.getElementsByClassName('doc-vw-img'),
+                    image => {
+                        image.addEventListener(
                             'click',
                             () => request(
-                                `/eArchive/Documents/select.php?id_scientific_papers=${anchor.dataset.idScientificPapers}`,
+                                `/eArchive/Documents/select.php?id_scientific_papers=${image.dataset.idScientificPapers}`,
                                 'GET',
                                 'document'
                             )
@@ -72,14 +72,14 @@
                         )
                     }) // from
                 // if anchor elements for graduation certificate insight exist
-            if (tbl.getElementsByClassName('cert-vw-img'))
+            if (table.getElementsByClassName('cert-vw-img'))
                 Array.from(
-                    tbl.getElementsByClassName('cert-vw-img'),
-                    anchor => {
-                        anchor.addEventListener(
+                    table.getElementsByClassName('cert-vw-img'),
+                    image => {
+                        image.addEventListener(
                             'click',
                             () => request(
-                                `/eArchive/Certificates/select.php?id_attendances=${anchor.dataset.idAttendances}`,
+                                `/eArchive/Certificates/select.php?id_attendances=${image.dataset.idAttendances}`,
                                 'GET',
                                 'document'
                             )
@@ -89,9 +89,9 @@
                     }
                 ) // from
                 // if anchor elements for student particulars view exist
-            if (tbl.getElementsByClassName('stu-vw-a'))
+            if (table.getElementsByClassName('stu-vw-a'))
                 Array.from(
-                    tbl.getElementsByClassName('stu-vw-a'),
+                    table.getElementsByClassName('stu-vw-a'),
                     anchor => {
                         anchor.addEventListener(
                             'click',
@@ -106,9 +106,9 @@
                     }
                 ) // from
                 // if anchor elements for scientific paper mentor view exist
-            if (tbl.getElementsByClassName('men-vw-a'))
+            if (table.getElementsByClassName('men-vw-a'))
                 Array.from(
-                    tbl.getElementsByClassName('men-vw-a'),
+                    table.getElementsByClassName('men-vw-a'),
                     anchor => {
                         anchor.addEventListener(
                             'click',
@@ -124,36 +124,36 @@
                 ) // from
         } // listenSciPapEvidTbl
 
-    listenSciPapEvidTbl(document.querySelector('table'))
+    listenScientificPaperEvidenceTable(document.querySelector('table'))
 
     /*
-     *   instantiate an object of integrated XHR interface and make an asynchronous operation on a script   
+     *   instantiate an XHR interface object an asynchronously perform the script   
      *   @param String script
      *   @param String method
      *   @param String responseType 
-     *   @param FormData frmData 
+     *   @param FormData formData 
      */
-    let request = (script, method, resType = '', frmData = null) => {
+    let request = (script, method, responseType = '', formData = null) => {
             return new Promise((resolve, reject) => {
                 // instanitate an XHR object
                 let xmlhttp = new XMLHttpRequest()
                 xmlhttp.addEventListener(
                         'load',
                         () => {
-                            // resolve the promise if transaction was successful
+                            // if transaction was successful
                             resolve(xmlhttp.response)
                         }
                     ) // addEventListener
                 xmlhttp.addEventListener(
                         'error',
                         () => {
-                            // reject the promise if transaction encountered an error
-                            reject('Prišlo je do napake na strežniku!')
+                            // if transaction encountered an error
+                            reject('Prišlo je do napake na strežniku pri obdelavi zahteve!')
                         }
                     ) // addEventListener
                 xmlhttp.open(method, script, true)
-                xmlhttp.responseType = resType
-                xmlhttp.send(frmData)
+                xmlhttp.responseType = responseType
+                xmlhttp.send(formData)
             })
         } // request
 
