@@ -40,9 +40,9 @@
      */
     let listenScientificPaperEvidenceTable = table => {
             // if superscript elements for partaker view exist
-            if (table.getElementsByClassName('par-vw-a'))
+            if (table.getElementsByClassName('par-sel-a'))
                 Array.from(
-                    table.getElementsByClassName('par-vw-a'),
+                    table.getElementsByClassName('par-sel-a'),
                     sup => {
                         sup.addEventListener(
                                 'click',
@@ -51,7 +51,7 @@
                                     'GET',
                                     'document'
                                 )
-                                .then(response => exposeResp(response, document.getElementById('sciPapPrtViewMdl')))
+                                .then(response => exposeResp(response, document.getElementById('stuSelMdl')))
                                 .catch(error => alert(error))
                             ) // addEventListener
                     }) // from
@@ -67,7 +67,7 @@
                                 'GET',
                                 'document'
                             )
-                            .then(response => exposeResp(response, document.getElementById('sciPapDocsViewMdl')))
+                            .then(response => exposeResp(response, document.getElementById('sciPapSelMdl')))
                             .catch(error => alert(error))
                         )
                     }) // from
@@ -83,7 +83,7 @@
                                 'GET',
                                 'document'
                             )
-                            .then(response => exposeResp(response, document.getElementById('gradCertViewMdl')))
+                            .then(response => exposeResp(response, document.getElementById('certSelMdl')))
                             .catch(error => alert(error))
                         )
                     }
@@ -100,7 +100,7 @@
                                 'GET',
                                 'document'
                             )
-                            .then(response => exposeResp(response, document.getElementById('studtViewMdl')))
+                            .then(response => exposeResp(response, document.getElementById('stuSelMdl')))
                             .catch(error => alert(error))
                         )
                     }
@@ -117,7 +117,7 @@
                                 'GET',
                                 'document'
                             )
-                            .then(response => exposeResp(response, document.getElementById('sciPapMenViewMdl')))
+                            .then(response => exposeResp(response, document.getElementById('mentSelMdl')))
                             .catch(error => alert(error))
                         )
                     }
