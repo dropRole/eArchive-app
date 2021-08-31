@@ -66,7 +66,7 @@ include_once './nav.php';
                             // if author had partakers in writting 
                             if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
-                                <sup><a class="par-vw-a text-decoration-none" href="#sciPapInsMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                                <sup><a class="par-sel-a text-decoration-none" href="#sciPapInsMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php
                             }
                             ?>
