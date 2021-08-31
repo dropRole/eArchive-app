@@ -1920,7 +1920,7 @@ class DBC extends PDO
         // authentication report
         $report = [
             'logged' => FALSE,
-            'mssg' => ''
+            'message' => ''
         ];
         $stmt = '   SELECT 
                         pass 
