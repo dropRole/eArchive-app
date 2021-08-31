@@ -15,7 +15,7 @@ if (isset($id_attendances)) {
     // instantiate a PDO object carrying database connection
     $DBC = new DBC();
     // select program attendance particulars
-    $particulars = $DBC->selectProgAttnParticulars($id_attendances);
+    $particulars = $DBC->selectProgramAttendanceParticulars($id_attendances);
 
 ?>
     <div class="container">
@@ -24,7 +24,7 @@ if (isset($id_attendances)) {
             // if the subject student has been assigned with an account 
             if ($DBC->assignedWithAccount($id_attendances))
                 // if student has an account avatar
-                if ($avatar = $DBC->hasAcctAvatar($particulars->index)) {
+                if ($avatar = $DBC->hasAccountAvatar($particulars->index)) {
             ?>
 
                 <img class="acct-avtr-lg mb-1" src="<?php echo "/eArchive/{$avatar}"; ?>" alt="Avatar">

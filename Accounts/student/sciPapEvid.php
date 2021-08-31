@@ -49,7 +49,7 @@ include_once '../../nav.php';
             </thead>
             <tbody>
                 <?php
-                foreach ($DBC->selectStudtSciPapers($_SESSION['index']) as $scientificPaper) {
+                foreach ($DBC->selectScientificPapersByIndex($_SESSION['index']) as $scientificPaper) {
                 ?>
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
@@ -63,7 +63,7 @@ include_once '../../nav.php';
                                     </a>
                                 </li>
                                 <?php
-                                foreach ($DBC->selectPartakings($scientificPaper->getIdScientificPapers()) as $partaker) {
+                                foreach ($DBC->selectPartakers($scientificPaper->getIdScientificPapers()) as $partaker) {
                                 ?>
                                     <li class="list-group-item">
                                         <p class="d-flex justify-content-between">
@@ -88,7 +88,7 @@ include_once '../../nav.php';
                                     </a>
                                 </li>
                                 <?php
-                                foreach ($DBC->selectSciPapMentors($scientificPaper->getIdScientificPapers()) as $mentor) {
+                                foreach ($DBC->selectMentors($scientificPaper->getIdScientificPapers()) as $mentor) {
                                 ?>
                                     <li class="list-group-item">
                                         <p class="d-flex justify-content-between">
@@ -231,7 +231,7 @@ include_once '../../nav.php';
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div id="avatar">
-                <img src="<?php echo $DBC->hasAcctAvatar($_SESSION['index']) ? "/eArchive/{$DBC->hasAcctAvatar($_SESSION['index'])}"  : '/eArchive/custom/img/defaultAvatar.png'; ?>">
+                <img src="<?php echo $DBC->hasAccountAvatar($_SESSION['index']) ? "/eArchive/{$DBC->hasAccountAvatar($_SESSION['index'])}"  : '/eArchive/custom/img/defaultAvatar.png'; ?>">
             </div>
             <form id="avtrUplFrm">
                 <div class="form-group d-flex flex-column align-items-center">

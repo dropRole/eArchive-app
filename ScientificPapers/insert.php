@@ -22,15 +22,14 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt an insert
-    $report = $DBC->insertScientificPaper($id_attendances, $topic, $type, (new DateTime($written)));
-    echo $report['mssg'];
+    $idScientificPapers = $DBC->insertScientificPaper($id_attendances, $topic, $type, (new DateTime($written)));
     // if an attempt was successful 
-    if ($report['id_scientific_papers']) {
+    if ($idScientificPapers) {
         // if there were partakers in writting
         if (isset($_POST['partakers']))
             foreach ($_POST['partakers'] as $partaker)
                 // if partaker was succesfully inserted 
-                if ($DBC->insertPartakings($report['id_scientific_papers'], $DBC->selectStudentsByIndex($partaker['index'])[0]->id_attendances, $partaker['part']))
+                if ($DBC->insertPartaker($report['id_scientific_papers'], $DBC->selectStudentsByIndex($partaker['index'])[0]->id_attendances, $partaker['part']))
                     echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} je uspešno določen." . PHP_EOL;
                 else
                     echo "Soavtor {$DBC->selectStudentsByIndex($partaker['index'])[0]->fullname} ni uspešno določen." . PHP_EOL;
@@ -38,7 +37,7 @@ if (isset($id_attendances, $topic, $type, $written, $documents)) {
         if (isset($_POST['mentors'])) {
             foreach ($_POST['mentors'] as $mentor)
                 // if mentor was succesfully inserted 
-                if ($DBC->insertSciPapMentor($report['id_scientific_papers'], $mentor['id_faculties'], $mentor['mentor'], $mentor['taught'], $mentor['email'], $mentor['telephone']))
+                if ($DBC->insertMentor($report['id_scientific_papers'], $mentor['id_faculties'], $mentor['mentor'], $mentor['taught'], $mentor['email'], $mentor['telephone']))
                     echo "Mentor {$mentor['mentor']} je uspešno določen." . PHP_EOL;
                 else
                     echo "Mentor {$mentor['mentor']} ni uspešno določen." . PHP_EOL;

@@ -18,6 +18,6 @@ $pass = $_POST['pass'];
 if (isset($index, $pass)) {
     // retrieve a PDO instance carrying database server connection
     $DBC = new DBC();
-    echo $DBC->checkAcctCredentials($index, $pass);
+    echo $DBC->checkAccountCredentials($index, $pass);
 } // if
 

@@ -20,5 +20,5 @@ if (isset($id_attendances, $avatar)) {
     // return a new PDO object instance that carries connection with the database server 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt avatar deletion
-    echo $DBC->deleteAcctAvatar($id_attendances, $avatar);
+    echo $DBC->deleteAccountAvatar($id_attendances, $avatar);
 } // if

@@ -17,7 +17,7 @@ if (isset($_GET['id_attendances'])) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // fetch scientific papers
-    $scientificPapers = $DBC->selectSciPapsByProgAttendance($id_attendances);
+    $scientificPapers = $DBC->selectPapersByProgramAttendance($id_attendances);
     // if there're no papers at all
     if (count($scientificPapers) == 0) {
 ?>
@@ -46,7 +46,7 @@ if (isset($_GET['id_attendances'])) {
                         </div>
                         <ul class="list-group">
                             <?php
-                            $partakers = $DBC->selectPartakings($scientificPaper->getIdScientificPapers());
+                            $partakers = $DBC->selectPartakers($scientificPaper->getIdScientificPapers());
                             // if paper had partakers
                             if (count($partakers))
                                 foreach ($partakers as $partaker) {
@@ -78,7 +78,7 @@ if (isset($_GET['id_attendances'])) {
                         </div>
                         <ul class="list-group">
                             <?php
-                            $mentors = $DBC->selectSciPapMentors($scientificPaper->getIdScientificPapers());
+                            $mentors = $DBC->selectMentors($scientificPaper->getIdScientificPapers());
                             // if paper was mentored
                             if (count($mentors))
                                 foreach ($mentors as $mentor) {

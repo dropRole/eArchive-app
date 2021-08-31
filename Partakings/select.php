@@ -17,14 +17,14 @@ if (isset($id_scientific_papers)) {
     // select partakers
 ?>
     <?php
-    foreach ($DBC->selectPartakings($id_scientific_papers) as $partaker) {
+    foreach ($DBC->selectPartakers($id_scientific_papers) as $partaker) {
     ?>
         <div class="d-flex flex-column partaker-card my-2 p-3">
             <?php
             // if partaker student has an account 
             if ($DBC->assignedWithAccount($DBC->selectStudentsByIndex($partaker->index)[0]->id_attendances)) {
                 // if partaker student has an account avatar
-                if ($avatar = $DBC->hasAcctAvatar($partaker->index)) {
+                if ($avatar = $DBC->hasAccountAvatar($partaker->index)) {
             ?>
                     <div class="text-center">
                         <img class="acct-avtr-md" src="<?php echo "/eArchive/{$avatar}"; ?>" alt="Avatar">

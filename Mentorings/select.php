@@ -15,7 +15,7 @@ if (isset($_GET['id_mentorings'])) {
     // return a new PDO object instance that carries connection with the database server 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // select data of the specified mentor
-    echo $DBC->selectMentoring($id_mentorings);
+    echo $DBC->selectMentor($id_mentorings);
 } // if
 // if id of scientific paper record is successfully passed by URL query string
 else if (isset($_GET['id_scientific_papers'])) {
@@ -26,7 +26,7 @@ else if (isset($_GET['id_scientific_papers'])) {
     <div class="row p-3">
         <?php
         // select data regarding mentors of the scientific paper 
-        foreach ($DBC->selectSciPapMentors($id_scientific_papers) as $mentor) {
+        foreach ($DBC->selectMentors($id_scientific_papers) as $mentor) {
         ?>
             <div class="card p-0 col-12">
                 <div class="card-header d-flex justify-content-between">

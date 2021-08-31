@@ -18,5 +18,5 @@ if (isset($id_students)) {
     // create a new PDO interface object instance 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // select student particulars
-    echo $DBC->selectStudtParticulars($id_students);
+    echo $DBC->selectStudentParticulars($id_students);
 } // if 

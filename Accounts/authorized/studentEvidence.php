@@ -91,7 +91,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             // if student is assigned an account to  
                             if ($DBC->assignedWithAccount($student->id_attendances)) {
                             ?>
-                                <img class="acc-del-img" src="/eArchive/custom/img/unassignAccount.png" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" data-html="true" title="<p>Odvzemi<br><?php echo "(Dodeljen: {$DBC->selectAcctGrantDate($student->id_attendances)})"; ?></p>">
+                                <img class="acc-del-img" src="/eArchive/custom/img/unassignAccount.png" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" data-html="true" title="<p>Odvzemi<br><?php echo "(Dodeljen: {$DBC->selectAccountGrantDate($student->id_attendances)})"; ?></p>">
                             <?php
                             } // if
                             else {

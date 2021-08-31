@@ -21,5 +21,5 @@ if (isset($id_scientific_papers, $topic, $type, $written)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // update scientific paper
-    echo $DBC->updateScientificPapers($id_scientific_papers, $topic, $type, (new DateTime($written)));
+    echo $DBC->updateScientificPaper($id_scientific_papers, $topic, $type, (new DateTime($written)));
 } // if

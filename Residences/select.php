@@ -18,5 +18,5 @@ if (isset($id_students)) {
     // retrieve a PDO instance holding database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // select student residences
-    echo $DBC->selectStudtResidences($id_students);
+    echo $DBC->selectStudentResidences($id_students);
 } // if 

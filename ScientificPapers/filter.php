@@ -24,7 +24,7 @@ if (!empty($_GET)) {
             if (isset($_GET['topic'])) {
                 // filter scientific papers by their topics
                 $topic = $_GET['topic'];
-                foreach ($DBC->selectSciPapsByTopic($topic) as $scientificPaper) {
+                foreach ($DBC->selectScientificPapersByTopic($topic) as $scientificPaper) {
             ?>
                     <tr>
                         <td><span class="bg-warning"><?php echo substr($scientificPaper->getTopic(), 0, strlen($topic)); ?></span><?php echo substr($scientificPaper->getTopic(), strlen($topic)); ?></td>
@@ -38,7 +38,7 @@ if (!empty($_GET)) {
                                     </a>
                                 </li>
                                 <?php
-                                foreach ($DBC->selectPartakings($scientificPaper->getIdScientificPapers()) as $partaker) {
+                                foreach ($DBC->selectPartakers($scientificPaper->getIdScientificPapers()) as $partaker) {
                                 ?>
                                     <li class="list-group-item">
                                         <p class="d-flex justify-content-between">
@@ -63,7 +63,7 @@ if (!empty($_GET)) {
                                     </a>
                                 </li>
                                 <?php
-                                foreach ($DBC->selectSciPapMentors($scientificPaper->getIdScientificPapers()) as $mentor) {
+                                foreach ($DBC->selectMentors($scientificPaper->getIdScientificPapers()) as $mentor) {
                                 ?>
                                     <li class="list-group-item">
                                         <p class="d-flex justify-content-between">
@@ -115,7 +115,7 @@ if (!empty($_GET)) {
             else if (isset($_GET['author'])) {
                 $author = $_GET['author'];
                 // select scientific achievements of the given author
-                foreach ($DBC->selectSciPapsByAuthor($author) as $scientificPaper) {
+                foreach ($DBC->selectScientificPapersByAuthor($author) as $scientificPaper) {
                 ?>
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
@@ -125,7 +125,7 @@ if (!empty($_GET)) {
                             </a>
                             <?php
                             // if author had partakers in writting 
-                            if (count($DBC->selectPartakings($scientificPaper->getIdScientificPapers()))) {
+                            if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
                                 <sup><a class="par-vw-a text-decoration-none" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php
@@ -159,7 +159,7 @@ if (!empty($_GET)) {
             else if (isset($_GET['mentor'])) {
                 $mentor = $_GET['mentor'];
                 // select scientific achievements mentored by the given mentor
-                foreach ($DBC->selectSciPapsByMentor($mentor) as $scientificPaper) {
+                foreach ($DBC->selectScientificPapersByMentor($mentor) as $scientificPaper) {
                 ?>
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
@@ -167,7 +167,7 @@ if (!empty($_GET)) {
                             <a class="stu-vw-a text-decoration-nonw" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
                             <?php
                             // if author had partakers in writting 
-                            if (count($DBC->selectPartakings($scientificPaper->getIdScientificPapers()))) {
+                            if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
                                 <sup><a class="par-vw-a text-decoration-none" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php
@@ -204,7 +204,7 @@ if (!empty($_GET)) {
             else if (isset($_GET['written'])) {
                 $written = $_GET['written'];
                 // select scientific by the year of writing
-                foreach ($DBC->selectSciPapsByYear($written) as $scientificPaper) {
+                foreach ($DBC->selectScientificPapersByYear($written) as $scientificPaper) {
                 ?>
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
@@ -212,7 +212,7 @@ if (!empty($_GET)) {
                             <a class="stu-vw-a text-decoration-none" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
                             <?php
                             // if author had partakers in writting 
-                            if (count($DBC->selectPartakings($scientificPaper->getIdScientificPapers()))) {
+                            if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
                                 <sup><a class="par-vw-a text-decoration-none" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php

@@ -16,5 +16,5 @@ if (isset($id_mentorings)) {
     // return a new PDO object instance that carries connection with the database server 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // try deletion 
-    echo $DBC->deleteSciPapMentor($id_mentorings);
+    echo $DBC->deleteMentor($id_mentorings);
 } // if
