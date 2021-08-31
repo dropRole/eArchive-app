@@ -1,5 +1,5 @@
 @media only screen and (max-width:576px) {
-    form#lgnFrm {
+    form#loginForm {
         width: 80%;
     }
     p {
@@ -16,7 +16,7 @@
 }
 
 @media only screen and (min-width:992px) {
-    form#lgnFrm {
+    form#loginForm {
         width: 25%;
     }
     label {
