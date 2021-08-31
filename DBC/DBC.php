@@ -25,9 +25,9 @@ class DBC extends PDO
         } // catch 
     } // __construct
 
-    // SCIENTIFIC_PAPERS
+    // <scientific_papers>
 
-    //   select all scientific papers to form scientific papers evidence table
+    //   select all scientific papers records to form an evidence table
     public function selectScientificPapers()
     {
         $stmt = "   SELECT 
@@ -49,21 +49,21 @@ class DBC extends PDO
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->execute();
-            return  $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return  $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
     } // selectScientificPapers
 
     /*
     *   select all scientific papers written while student attended a specific program
     *   @param int $id_attendances
     */
-    public function selectSciPapsByProgAttendance(int $id_attendances)
+    public function selectPapersByProgramAttendance(int $id_attendances)
     {
         $stmt = '   SELECT 
-                        scientific_papers.*
+                        *
                     FROM
                         scientific_papers
                     WHERE 
@@ -73,23 +73,22 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage()}.";
+            echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectScientificPapers
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
+    } // selectPapersByProgramAttendance
 
     /*
     *   select scientific papers written by the given author 
     *   @param string $author
     */
-    public function selectSciPapsByAuthor(string $author)
+    public function selectScientificPapersByAuthor(string $author)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
                         scientific_papers.*,
-                        attendances.id_attendances,
                         graduations.id_certificates
                     FROM
                         students    
@@ -108,25 +107,24 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindValue(':author', "{$author}%", PDO::PARAM_STR);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectSciPapsByAuthor
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+    } // selectScientificPapersByAuthor
 
     /*
     *   select scientific papers which mentor was 
     *   @param string $mentor
     */
-    public function selectSciPapsByMentor(string $mentor)
+    public function selectScientificPapersByMentor(string $mentor)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
                         scientific_papers.*,
                         mentorings.mentor,
-                        attendances.id_attendances,
                         graduations.id_certificates
                     FROM
                         students    
@@ -147,24 +145,23 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindValue(':mentor', "%{$mentor}%", PDO::PARAM_STR);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectSciPapsByMentor
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+    } // selectScientificPapersByMentor
 
     /*
     *   select scientific papers written at the given year 
     *   @param string $year
     */
-    public function selectSciPapsByYear(string $year)
+    public function selectScientificPapersByYear(string $year)
     {
         $stmt = "   SELECT 
                         (students.name || ' ' || students.surname) AS author,
                         scientific_papers.*,
-                        attendances.id_attendances,
                         graduations.id_certificates
                     FROM
                         students    
@@ -183,19 +180,19 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':year', $year, PDO::PARAM_STR);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectSciPapsByYear
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'type', 'topic', 'written']);
+    } // selectScientificPapersByYear
 
     /*
     *   filter and select scientific papers by their topics
     *   @param string $topic
     */
-    public function selectSciPapsByTopic(string $topic)
+    public function selectScientificPapersByTopic(string $topic)
     {
         $stmt = '   SELECT 
                         scientific_papers.id_scientific_papers,
@@ -224,18 +221,18 @@ class DBC extends PDO
             $prpStmt->bindValue(':index', $_SESSION['index'], PDO::PARAM_STR);
             $prpStmt->bindValue(':topic', "{$topic}%", PDO::PARAM_STR);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage}.";
         } // catch
-    } // selectSciPapsByTopic
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
+    } // selectScientificPapersByTopic
 
     /*
     *   select all scientific papers according to the index number of the student attending the program
     *   @param string $index
     */
-    public function selectStudtSciPapers(string $index)
+    public function selectScientificPapersByIndex(string $index)
     {
         $stmt = '   SELECT 
                         scientific_papers.id_scientific_papers,
@@ -253,12 +250,12 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectStudtSciPapers
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written']);
+    } // selectScientificPapersByIndex
 
     /*
     *   select the given scientific paper 
@@ -277,15 +274,15 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written'])[0];
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, ScientificPapers::class, ['id_scientific_papers', 'id_attendances', 'topic', 'type', 'written'])[0];
     } // selectScientificPaper
 
     /*
-    *   insert scientific paper    
+    *   insert scientific paper record
     *   @param int $id_attendances
     *   @param string $topic
     *   @param string $type
@@ -293,11 +290,6 @@ class DBC extends PDO
     */
     public function insertScientificPaper(int $id_attendances, string $topic, string $type, DateTime $written)
     {
-        // insertion report
-        $report = [
-            'id_scientific_papers' => 0,
-            'mssg' => ''
-        ];
         $stmt = '   INSERT INTO 
                         scientific_papers
                     (
@@ -322,25 +314,26 @@ class DBC extends PDO
             $prpStmt->execute();
             // if scientific paper record was inserted
             if ($prpStmt->rowCount() == 1) {
-                $report['id_scientific_papers'] = $this->lastInsertId('scientific_papers_id_scientific_papers_seq');
-                $report['mssg'] = "Delo '{$topic}' je uspešno evidentirano." . PHP_EOL;
+                echo "Delo '{$topic}' je uspešno evidentirano.";
+                return $this->lastInsertId('scientific_papers_id_scientific_papers_seq');
             } // if
+            echo "Napaka: delo '{$topic}' ni uspešno evidentirano.";
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $report;
+        return FALSE;
     } // insertScientificPaper
 
     /*
-    *   update scientific paper
+    *   update given scientific paper record
     *   @param int $id_scientific_papers
     *   @param string $topic
     *   @param string $type
     *   @param DateTime $written
     */
-    public function updateScientificPapers(int $id_scientific_papers, string $topic, string $type, DateTime $written)
+    public function updateScientificPaper(int $id_scientific_papers, string $topic, string $type, DateTime $written)
     {
         $stmt = '   UPDATE  
                             scientific_papers
@@ -359,31 +352,33 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
             // if scientific paper records was updated
-            if ($prpStmt->rowCount() == 1)
-                return 'Podatki znanstvenega dela so uspešno ažurirani.';
-            return 'Podatki znanstvenega dela niso uspešno ažurirani.';
+            if ($prpStmt->rowCount() == 1) {
+                echo 'Podatki znanstvenega dela so uspešno ažurirani.';
+                return TRUE;
+            } // if
+            echo 'Napaka: podatki znanstvenega dela niso uspešno ažurirani.';
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return FALSE;
     } // updateScientificPapers
 
     /*
-    *   delete scientific paper and its belonging documents 
+    *   delete scientific paper record 
     *   @param int $id_scientific_papers
     */
     public function deleteScientificPaper(int $id_scientific_papers)
     {
-        // deletion report
-        $report = '';
-        $report .= $this->deleteDocuments($id_scientific_papers);
+        // physically and logically delete documents 
+        $this->deleteDocuments($id_scientific_papers);
         // select and delete every single partaker on a scientific paper
-        foreach ($this->selectPartakings($id_scientific_papers) as $partaker)
-            $this->deletePartakings($partaker->getIdPartakings());
+        foreach ($this->selectPartakers($id_scientific_papers) as $partaker)
+            $this->deletePartaker($partaker->getIdPartakings());
         // select and delete every single mentor of the scientific paper
-        foreach ($this->selectSciPapMentors($id_scientific_papers) as $mentor)
-            $this->deleteSciPapMentor($mentor->getIdMentorings());
+        foreach ($this->selectMentors($id_scientific_papers) as $mentor)
+            $this->deleteMentor($mentor->getIdMentorings());
         $stmt = '   DELETE FROM
                         scientific_papers 
                     WHERE 
@@ -394,21 +389,24 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
             // if scientific paper was deleted
-            if ($prpStmt->rowCount() == 1)
-                return $report .= 'Znanstveno delo je uspešno izbrisano.';
-            return $report .= 'Znanstevno delo ni uspešno izbrisano.';
+            if ($prpStmt->rowCount() == 1) {
+                echo 'Znanstveno delo je uspešno izbrisano.';
+                return TRUE;
+            } // if
+            echo 'Napaka: znanstevno delo ni uspešno izbrisano.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return FALSE;
     } // deleteScientificPaper
 
-    // SCIENTIFIC_PAPERS 
+    // </scientific_papers> 
 
-    // STUDENTS 
+    // <students> 
 
     /*
-    *   select all students 
+    *   select all students records to form an evidence table 
     *   @param string $order
     */
     public function selectStudents(string $order = 'ASC')
@@ -435,11 +433,11 @@ class DBC extends PDO
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_OBJ);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_OBJ);
     } // selectStudents
 
     /*
@@ -474,18 +472,18 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindValue(':index', "{$index}%", PDO::PARAM_STR);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_OBJ);
         } // if
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_OBJ);
     } // selectStudentsByIndex 
 
     /*
     *   select particulars of a student
     *   @param int $id_students
     */
-    public function selectStudtParticulars(int $id_students)
+    public function selectStudentParticulars(int $id_students)
     {
         $stmt = '   SELECT 
                         students.*,
@@ -501,12 +499,12 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
             $prpStmt->execute();
-            return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Students::class, ['id_students', 'id_postal_codes', 'name', 'surname', 'email', 'telephone'])[0]);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectStudtParticulars
+        return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Students::class, ['id_students', 'id_postal_codes', 'name', 'surname', 'email', 'telephone'])[0]);
+    } // selectStudentParticulars
 
     /*
     *   insert student basics  
@@ -517,7 +515,7 @@ class DBC extends PDO
     *   @param string $telephone
     *   @param array $residences
     */
-    public function insertStudent(int $id_postal_codes, string $name, string $surname, string $email = NULL, string $telephone = NULL, $residences = [])
+    public function insertStudent(int $id_postal_codes, string $name, string $surname, string $email = NULL, string $telephone = NULL, array $residences = [])
     {
         $stmt = '   INSERT INTO 
                         students 
@@ -549,15 +547,15 @@ class DBC extends PDO
                 // form a report 
                 echo 'Osnovni podatki študenta so uspešno evidentirani.';
                 $id_students = $this->lastInsertId('students_id_students_seq');
-                $this->insertStudtResidences($id_students, $residences);
+                $this->insertStudentResidences($id_students, $residences);
                 return $id_students;
             } // if
             echo 'Napaka: osnovni podakti študenta ter podatki o prebivališču niso uspešno evidentirani.';
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo  "Napaka: {$e->getMessage()}.";
         } // catch
+        return FALSE;
     } // insertStudent
 
     /*
@@ -570,10 +568,8 @@ class DBC extends PDO
     *   @param string $telephone
     *   @param array $residences
     */
-    public function updateStudent(int $id_students, int $id_postal_codes, string $name, string $surname, string $email = NULL, string $telephone = NULL, $residences = [])
+    public function updateStudent(int $id_students, int $id_postal_codes, string $name, string $surname, string $email = NULL, string $telephone = NULL, array $residences = [])
     {
-        // report on action
-        $report = '';
         $stmt = '   UPDATE 
                         students 
                     SET
@@ -596,14 +592,14 @@ class DBC extends PDO
             $prpStmt->execute();
             // if values of the single record were updated
             if ($prpStmt->rowCount() == 1)
-                $report = 'Osnovni podatki študenta so uspešno posodobljeni.' . PHP_EOL;
+                echo 'Osnovni podatki študenta so uspešno posodobljeni.';
             else
-                $report = 'Osnovni podatki študenta niso uspešno posodobljeni.' . PHP_EOL;
-            return ($report .= $this->updateStudtResidences($id_students, $residences));
+                echo 'Napaka: osnovni podatki študenta niso uspešno posodobljeni.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $this->updateStudentResidence($id_students, $residences);
     } // updateStudent
 
     /*
@@ -614,10 +610,11 @@ class DBC extends PDO
     */
     public function deleteStudent(int $id_attendances, int $id_students, string $index)
     {
-        $this->deleteStudtResidences($id_students);
-        // if graduated
+        // delete permanent and temporary student residences 
+        $this->deleteStudentResidences($id_students);
         $certificate = $this->selectCertificate($id_attendances);
-        if (count($certificate) == 1)
+        // if graduated
+        if ($certificate != NULL)
             $this->deleteGraduation($id_attendances, $certificate[0]->getSource());
         // if any scientific paper was written 
         $scientificPapers = $this->selectScientificPapers($id_attendances);
@@ -642,20 +639,23 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         // if single row is affected
-        if ($prpStmt->rowCount() == 1)
-            return 'Podatki o študentu ter znanstvenih dosežkih so uspešno izbrisani.';
-        return 'Podatki o študentu ter znanstvenih dosežkih niso uspešno izbrisani.';
+        if ($prpStmt->rowCount() == 1) {
+            echo 'Podatki o študentu ter znanstvenih dosežkih so uspešno izbrisani.';
+            return TRUE;
+        } // if
+        echo 'Napaka: podatki o študentu ter znanstvenih dosežkih niso uspešno izbrisani.';
+        return FALSE;
     } // deleteStudent
 
-    // STUDENTS
+    // </students>
 
-    // RESIDENCES
+    // <residences>
 
     /* 
-    *   select residences of the given student
+    *   select residence records of the given student
     *   @param int $id_students
     */
-    public function selectStudtResidences(int $id_students)
+    public function selectStudentResidences(int $id_students)
     {
         // permanent and temporary residences
         $residences = [
@@ -700,7 +700,7 @@ class DBC extends PDO
     *   @param int $id_students
     *   @param Array $residenes
     */
-    private function insertStudtResidences(int $id_students, array $residences)
+    private function insertStudentResidences(int $id_students, array $residences)
     {
         $stmt = '   INSERT INTO 
                         residences 
@@ -725,30 +725,28 @@ class DBC extends PDO
                 $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
                 $prpStmt->bindValue(':status', $residence['status'], PDO::PARAM_STR);
                 $prpStmt->execute();
-                // if single row is affected
+                // if residence was inserted
                 if ($prpStmt->rowCount() == 1)
-                    echo "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}." . PHP_EOL;
+                    echo "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}.";
                 else
-                    echo "Bivališče na naslovu '{$residence['address']}' ni evidentirano." . PHP_EOL;
+                    echo "Napaka: bivališče na naslovu '{$residence['address']}' ni evidentirano.";
             } // try
             catch (PDOException $e) {
                 echo "Napaka: {$e->getMessage()}.";
             } // catch 
         } // foreach
-    } // insertStudtResidences
+    } // insertStudentResidences
 
     /*
     *   update permanent and temporary residence of a student 
     *   @param int $id_students
     *   @param Array $residences
     */
-    private function updateStudtResidences(int $id_students, array $residences)
+    private function updateStudentResidence(int $id_students, array $residences)
     {
-        // update report 
-        $report = '';
         foreach ($residences as $residence) {
             // check whether student resides
-            if ($this->checkIfResides($id_students, $residence['id_postal_codes'])) {
+            if ($this->residesAt($id_students, $residence['id_postal_codes'])) {
                 $stmt = '   UPDATE
                                 residences
                             SET 
@@ -766,64 +764,24 @@ class DBC extends PDO
                     $prpStmt->execute();
                     // if residence record was updated
                     if ($prpStmt->rowCount() == 1)
-                        $report .= "Bivališče na naslovu {$residence['address']} je evidentirano kot {$residence['status']}." . PHP_EOL;
+                        echo "Bivališče na naslovu {$residence['address']} je evidentirano kot {$residence['status']}.";
                     else
-                        $report .= "Bivališče na naslovu {$residence['address']} ni evidentirano kot {$residence['status']}." . PHP_EOL;
+                        echo "Napaka: bivališče na naslovu {$residence['address']} ni evidentirano kot {$residence['status']}.";
                 } // try
                 catch (PDOException $e) {
                     echo "Napaka: {$e->getMessage()}.";
                 } // catch
             } // if
             else
-                $this->insertStudtResidences($id_students, [$residence]);
+                $this->insertStudentResidences($id_students, [$residence]);
         } // foreach
-        return $report;
-    } // updateStudtResidences
-
-    /*
-    *   insert student temporary residence
-    *   @param int $id_students
-    *   @param Array $residence
-    */
-    private function insertStudtTempResidence(int $id_students, array $residence)
-    {
-        $stmt = '   INSERT INTO
-                        residences
-                    (
-                        id_postal_codes,
-                        id_students,
-                        address,
-                        status
-                    )
-                    VALUES(
-                        :id_postal_codes,
-                        :id_students,
-                        :address,
-                        :status
-                    )   ';
-        try {
-            // prepare, bind params to and execute stmt
-            $prpStmt = $this->prepare($stmt);
-            $prpStmt->bindValue(':id_postal_codes', $residence['id_postal_codes'], PDO::PARAM_INT);
-            $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
-            $prpStmt->bindValue(':address', $residence['address'], PDO::PARAM_STR);
-            $prpStmt->bindValue(':status', 'ZAČASNO', PDO::PARAM_STR);
-            $prpStmt->execute();
-            // if single residence record was inserted 
-            if ($prpStmt->rowCount() == 1)
-                return 'so uspešno vstavljeni.' . PHP_EOL;
-            return 'niso uspešno vstavljeni.' . PHP_EOL;
-        } // try
-        catch (PDOException $e) {
-            echo "Napaka {$e->getMessage()}.";
-        } // catch
-    } // insertStudtTempResidence
+    } // updateStudentResidence
 
     /*
     *   delete the given temporary residence of a student 
     *   @param int $id_residences
     */
-    public function deleteStudtTempResidence(int $id_residences)
+    public function deleteStudentTemporaryResidence(int $id_residences)
     {
         $stmt = '   DELETE FROM
                         residences
@@ -834,21 +792,24 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_residences', $id_residences, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if single row is affected
-            if ($prpStmt->rowCount() == 1)
-                return 'Bivališče je uspešno izbrisano.';
-            return 'Bivališče ni uspešno izbrisano.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // deleteStudtTempResidence
+        // if single row is affected
+        if ($prpStmt->rowCount() == 1) {
+            echo 'Bivališče je uspešno izbrisano.';
+            return TRUE;
+        }
+        echo 'Napaka: bivališče ni uspešno izbrisano.';
+        return FALSE;
+    } // deleteStudentTemporaryResidence
 
     /*
     *   delete all of student residences
     *   @param int $id_students
     */
-    private function deleteStudtResidences(int $id_students)
+    private function deleteStudentResidences(int $id_students)
     {
         $stmt = '   DELETE FROM 
                         residences
@@ -862,14 +823,18 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // deleteStudtResidences
+        // if student residences were deleted 
+        if ($prpStmt->rowCount() >= 1)
+            return TRUE;
+        return FALSE;
+    } // deleteStudentResidences
 
     /*
     *   check if student resides at 
     *   @param int id_students
     *   @param int id_postal_codes
     */
-    private function checkIfResides(int $id_students, int $id_postal_codes)
+    private function residesAt(int $id_students, int $id_postal_codes)
     {
         $stmt = '   SELECT 
                         TRUE 
@@ -883,19 +848,19 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_students', $id_students, PDO::PARAM_INT);
             $prpStmt->bindParam(':id_postal_codes', $id_postal_codes, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if single row is affected
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // checkIfResides
+        // if resides at
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
+    } // residesAt
 
-    // RESIDENCES
+    // </residences>
 
-    // POSTAL_CODES
+    // <postal_codes>
 
     /*
     *   select postal codes of the given country 
@@ -916,16 +881,16 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam('id_countries', $id_countries, PDO::PARAM_INT);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, PostalCodes::class, ['id_postal_codes', 'id_countries', 'municipality', 'code']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, PostalCodes::class, ['id_postal_codes', 'id_countries', 'municipality', 'code']);
     } // selectPostalCodes
 
-    // POSTAL_CODES
+    // </postal_codes>
 
-    // COUNTRIES
+    // <countries>
 
     // select all countries
     public function selectCountries()
@@ -938,16 +903,16 @@ class DBC extends PDO
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Countries::class, ['id_countries', 'name', 'iso_3_code']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Countries::class, ['id_countries', 'name', 'iso_3_code']);
     } // selectCountries
 
-    // COUNTRIES
+    // </countries>
 
-    // FACULTIES
+    // <faculties>
 
     // select all faculties 
     public function selectFaculties()
@@ -960,16 +925,16 @@ class DBC extends PDO
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Faculties::class, ['id_faculties', 'id_postal_codes', 'name', 'address', 'email', 'telephone', 'dean']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Faculties::class, ['id_faculties', 'id_postal_codes', 'name', 'address', 'email', 'telephone', 'dean']);
     } // selectFaculties
 
-    // FACULTIES
+    // </faculties>
 
-    // PROGRAMS
+    // <programs>
 
     /*
     *   select faculty offered programs 
@@ -990,22 +955,22 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_faculties', $id_faculties, PDO::PARAM_INT);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Programs::class, ['id_programs', 'name', 'degree', 'duration', 'field']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Programs::class, ['id_programs', 'name', 'degree', 'duration', 'field']);
     } // selectPrograms
 
-    // PROGRAMS
+    // </programs>
 
-    // ATTENDANCES
+    // <attendances>
 
     /* 
     *   select particulars of the program attendance by the student
     *   @param int $id_attendances
     */
-    public function selectProgAttnParticulars(int $id_attendances)
+    public function selectProgramAttendanceParticulars(int $id_attendances)
     {
         $stmt = '   SELECT 
                         (students.name || students.surname) AS student,
@@ -1032,12 +997,12 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_OBJ)[0];
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectProgAttnParticulars
+        return $prpStmt->fetchAll(PDO::FETCH_OBJ)[0];
+    } // selectProgramAttendanceParticulars
 
     /*
     *   insert attendance of a student
@@ -1045,7 +1010,7 @@ class DBC extends PDO
     *   @param int $id_faculties
     *   @param int $id_programs
     *   @param DateTime $enrolled 
-    *   @param int $index 
+    *   @param string $index 
     */
     public function insertAttendance(int $id_students, int $id_faculties, int $id_programs, DateTime $enrolled, string $index)
     {
@@ -1074,19 +1039,19 @@ class DBC extends PDO
             $prpStmt->bindValue(':enrolled', $enrolled->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
             $prpStmt->execute();
-            // if attendance record was inserted
-            if ($prpStmt->rowCount() == 1) {
-                // form a report 
-                echo 'Študijski program ' . $this->selectStudentsByIndex($index)[0]->program . ' je uspešno evidentiran.';
-                return $this->lastInsertId('attendances_id_attendances_seq');
-            } // if
-            // form a report
-            echo 'Študijski program ' . $this->selectStudentsByIndex($index)[0]->program . ' ni uspešno evidentiran.';
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // if attendance record was inserted
+        if ($prpStmt->rowCount() == 1) {
+            // form a report 
+            echo 'Študijski program ' . $this->selectStudentsByIndex($index)[0]->program . ' je uspešno evidentiran.';
+            return $this->lastInsertId('attendances_id_attendances_seq');
+        } // if
+        // form a report
+        echo 'Napaka: študijski program ' . $this->selectStudentsByIndex($index)[0]->program . ' ni uspešno evidentiran.';
+        return FALSE;
     } // insertAttendance
 
     /*
@@ -1105,18 +1070,21 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
             // if single attendance record was deleted
-            if ($prpStmt->rowCount() == 1)
-                return 'Podatki o poteku izobraževanja na danem študijskem programu so uspešno izbrisani.';
-            return 'Podatki o poteku izobraževanja na danem študijskem programu niso uspešno izbrisani.';
+            if ($prpStmt->rowCount() == 1) {
+                echo 'Podatki o poteku izobraževanja na danem študijskem programu so uspešno izbrisani.';
+                return TRUE;
+            } // if
+            echo 'Napaka: podatki o poteku izobraževanja na danem študijskem programu niso uspešno izbrisani.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return FALSE;
     } // deleteAttendance
 
-    // ATTENDANCES
+    // </attendance>
 
-    // CERTIFICATES
+    // <certificate>
 
     /*
     *   select graduation certificate for the given program attendance
@@ -1124,7 +1092,6 @@ class DBC extends PDO
     */
     public function selectCertificate(int $id_attendances)
     {
-        $certificate = NULL;
         $stmt = '   SELECT 
                         certificates.*,
                         graduations.defended 
@@ -1139,12 +1106,11 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
-            $certificate = $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        return $certificate;
+        $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued'])[0];
     } // selectCertificate
 
     /* 
@@ -1170,18 +1136,18 @@ class DBC extends PDO
             $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
             $prpStmt->bindValue(':issued', $issued->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->execute();
-            // if certificate record was inserted 
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // if certificate record was inserted 
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
     } // insertCertficate
 
     /*
-    *   insert graduation of a student
+    *   upload graduation certificate
     *   @param int $id_attendances
     *   @param string $certificate
     *   @param DateTime $defended
@@ -1197,32 +1163,34 @@ class DBC extends PDO
                 foreach ($_FILES['certificate']['tmp_name'] as $indx => $tmp_name) {
                     // if certificate is among uploaded files
                     if ($_FILES['certificate']['name'][$indx] == $certificate) {
-                        // if certificate is uploaded successfully 
+                        // if certificate is successfully uploaded 
                         if ($_FILES['certificate']['error'][$indx] == UPLOAD_ERR_OK) {
                             $finfo = new finfo();
                             $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
                             // if MIME type is not application/pdf
-                            if ($mimetype != 'application/pdf')
-                                return "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
+                            if ($mimetype != 'application/pdf') {
+                                echo "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
+                                return FALSE;
+                            } // if
                             // set destination of the uploaded certificate
                             $dir = 'uploads/certificates/';
                             $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['certificate']['name'][$indx]);
                             // if certificate was inserted into db and moved to a new destination  
                             if ($this->insertCertficate($destination, $issued) && move_uploaded_file($tmp_name, "../{$destination}")) {
-                                echo "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno naložen." . PHP_EOL;
+                                echo "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno naložen.";
                                 $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
                                 // if single row is affected 
                                 if ($this->insertGraduation($id_certificates, $id_attendances, $defended)) {
+                                    echo 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
                                     // commit current transaction
-                                    $this->commit();
-                                    return 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
+                                    return $this->commit();
                                 } // if
                             } // if
+                            echo 'Napaka: postopek nalaganja certifikata in določanja datuma zagovora ter izdajanja je bil neuspešen.';
                             // rollback current transaction
-                            $this->rollBack();
-                            return 'Napaka: postopek nalaganja certifikata in določanja datuma zagovora ter izdajanja je bil neuspešen.';
+                            return $this->rollBack();
                         } // if
-                        return "Napaka: certifikat {$_FILES['certificate']['name'][$indx]} ni uspešno naložen.";
+                        echo "Napaka: certifikat {$_FILES['certificate']['name'][$indx]} ni uspešno naložen.";
                     } // if
                 } // foreach
             } // try
@@ -1231,7 +1199,8 @@ class DBC extends PDO
                 echo "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
+        echo 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
+        return FALSE;
     } // uploadCertificate
 
     /*
@@ -1239,7 +1208,7 @@ class DBC extends PDO
     *   @param int $id_certificates
     *   @param DateTime $issued
     */
-    public function updateCertIssDate(int $id_certificates, DateTime $issued)
+    public function updateCertificateIssuingDate(int $id_certificates, DateTime $issued)
     {
         $stmt = '   UPDATE
                         certificates 
@@ -1253,15 +1222,18 @@ class DBC extends PDO
             $prpStmt->bindValue(':issued', $issued->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if issuance date was updated
-            if ($prpStmt->rowCount() == 1)
-                return 'Datum izdajanja certifikata je uspešno spremenjen.';
-            return 'Datum izdajanja certifikata ni uspešno spremenjen.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // updateCertIssDate
+        // if issuance date was updated
+        if ($prpStmt->rowCount() == 1) {
+            echo 'Datum izdajanja certifikata je uspešno spremenjen.';
+            return TRUE;
+        } // if
+        echo 'Napaka: datum izdajanja certifikata ni uspešno spremenjen.';
+        return FALSE;
+    } // updateCertificateIssuingDate
 
     /*
     *   delete certificate by its server location 
@@ -1278,19 +1250,19 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':source', $source);
             $prpStmt->execute();
-            // if certificate was deleted 
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // if certificate was deleted 
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
     } // deleteCertificate
 
-    // CERTIFICATES
+    // </certificates>
 
-    // GRADUATIONS
+    // <graduations>
 
     /* 
     *   insert graduation of the student
@@ -1319,14 +1291,14 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->bindValue(':defended', $defended->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->execute();
-            // if graduation record was inserted
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // if graduation record was inserted
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
     } // insertGraduation
 
     /*
@@ -1353,20 +1325,20 @@ class DBC extends PDO
                 if ($prpStmt->rowCount() == 1) {
                     // attempt graduation certificate deletion
                     if ($this->deleteCertificate($source) && unlink("../{$source}")) {
+                        echo 'Podatki o zaključku študija ter certifikat ' . basename($source) . ' so uspešno izbrisani.';
                         // committ the current transation
-                        $this->commit();
-                        return 'Podatki o zaključku študija ter certifikat ' . basename($source) . ' so uspešno izbrisani.';
+                        return $this->commit();
                     } // if
-                    // roll back current transaction
-                    $this->rollBack();
                 } // if 
-                return 'Podatki o zaključku študija ter certifikat niso uspešno izbrisani.';
+                echo 'Napaka: podatki o zaključku študija ter certifikat niso uspešno izbrisani.';
+                return $this->rollback();
             } // try
             catch (PDOException $e) {
                 echo "Napaka: {$e->getMessage()}.";
             } // catch
         } // if
-        return 'Opozorilo: transkacija s podatkovno zbriko je v izvajanju.';
+        echo 'Opozorilo: transkacija s podatkovno zbriko je v izvajanju.';
+        return FALSE;
     } // deleteGraduation
 
     /*
@@ -1374,7 +1346,7 @@ class DBC extends PDO
     *   @param int $id_certificates
     *   @param DateTime $defended
     */
-    public function updateGradDefDate(int $id_certificates, DateTime $defended)
+    public function updateCertificateDefenceDate(int $id_certificates, DateTime $defended)
     {
         $stmt = '   UPDATE 
                         graduations 
@@ -1388,25 +1360,28 @@ class DBC extends PDO
             $prpStmt->bindValue(':defended', $defended->format('d-m-Y'), PDO::PARAM_INT);
             $prpStmt->bindParam(':id_certificates', $id_certificates, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if date was updated
-            if ($prpStmt->rowCount() == 1)
-                return 'Datum zagovora diplome je uspešno spremenjen.';
-            return 'Datum zagovora diplome ni uspešno spremenjen.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // updateGradDefDate
+        // if date was updated
+        if ($prpStmt->rowCount() == 1) {
+            echo 'Datum zagovora diplome je uspešno spremenjen.';
+            return TRUE;
+        } // if
+        echo 'Napaka: datum zagovora diplome ni uspešno spremenjen.';
+        return FALSE;
+    } // updateCertificateDefenceDate
 
-    // GRADUATIONS
+    // </graduations>
 
-    // PARTAKINGS
+    // <partakings>
 
     /*
-    *   select partakings on the scientific paper
+    *   select partakers on the scientific paper
     *   @param int $id_scientific_papers
     */
-    public function selectPartakings(int $id_scientific_papers)
+    public function selectPartakers(int $id_scientific_papers)
     {
         $stmt = "   SELECT 
                         attendances.id_attendances,
@@ -1432,13 +1407,13 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectPartakings
+    } // selectPartakers
 
     /*
-    *   delete partaking on the scientific paper
+    *   delete partaker on the scientific paper
     *   @param int $id_partakings
     */
-    public function deletePartakings(int $id_partakings)
+    public function deletePartaker(int $id_partakings)
     {
         $stmt = '   DELETE FROM 
                         partakings
@@ -1449,15 +1424,18 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_partakings', $id_partakings, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if partakigns record was deleted
-            if ($prpStmt->rowCount() == 1)
-                return 'Soavtor je uspešno odstranjen.';
-            return 'Soavtor ni uspešno odstranjen.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // deletePartakings
+        // if partakigns record was deleted
+        if ($prpStmt->rowCount() == 1) {
+            echo 'Soavtor je uspešno odstranjen.';
+            return TRUE;
+        } // if
+        echo 'Napaka: soavtor ni uspešno odstranjen.';
+        return FALSE;
+    } // deletePartaker
 
     /*
     *   insert partaking on a scientific paper 
@@ -1465,7 +1443,7 @@ class DBC extends PDO
     *   @param int $id_attendances
     *   @param string $part
     */
-    public function insertPartakings(int $id_scientific_papers, int $id_attendances, string $part)
+    public function insertPartaker(int $id_scientific_papers, int $id_attendances, string $part)
     {
         $stmt = '   INSERT INTO 
                         partakings
@@ -1486,15 +1464,15 @@ class DBC extends PDO
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->bindParam(':part', $part, PDO::PARAM_STR);
             $prpStmt->execute();
-            // if partaking was inserted 
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // insertPartakings
+        // if partaking was inserted 
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
+    } // insertPartaker
 
     /*
     *   update partakers role in writing of the scientific paper 
@@ -1515,25 +1493,28 @@ class DBC extends PDO
             $prpStmt->bindParam(':part', $part, PDO::PARAM_STR);
             $prpStmt->bindParam(':id_partakings', $id_partakings, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if part was updated 
-            if ($prpStmt->rowCount() == 1)
-                return 'Vloga soavtorja študija je uspešno ažurirana.';
-            return 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // if part was updated 
+        if ($prpStmt->rowCount() == 1) {
+            echo 'Vloga soavtorja študija je uspešno ažurirana.';
+            return TRUE;
+        } // if
+        echo 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
+        return FALSE;
     } // updatePartInWriting
 
-    // PARTAKINGS
+    // </partakings>
 
-    // MENTORINGS
+    // <mentorings>
 
     /*
     *   select mentors of the scientific paper
     *   @param int $id_scientific_papers
     */
-    public function selectSciPapMentors(int $id_scientific_papers)
+    public function selectMentors(int $id_scientific_papers)
     {
         $stmt = '   SELECT 
                         mentorings.id_mentorings,
@@ -1552,15 +1533,15 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectSciPapMentors
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone']);
+    } // selectMentors
 
     /*
-    *   insert mentoring of the scientific paper
+    *   insert mentor of the scientific paper
     *   @param int $id_scientific_papers
     *   @param int $id_faculties
     *   @param string $mentor
@@ -1568,7 +1549,7 @@ class DBC extends PDO
     *   @param string $email
     *   @param string $telephone
     */
-    public function insertSciPapMentor(int $id_scientific_papers, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
+    public function insertMentor(int $id_scientific_papers, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
     {
         $stmt = '   INSERT INTO 
                         mentorings
@@ -1598,18 +1579,18 @@ class DBC extends PDO
             $prpStmt->bindParam(':email', $email, PDO::PARAM_STR);
             $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $prpStmt->execute();
-            // if mentor record was inserted 
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // insertSciPapMentor
+        // if mentor record was inserted 
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
+    } // insertMentor
 
     /*
-    *   update mentoring of the scientific paper
+    *   update mentor of the scientific paper
     *   @param int $id_mentorings
     *   @param int $id_faculties
     *   @param string $mentor
@@ -1617,7 +1598,7 @@ class DBC extends PDO
     *   @param string $email
     *   @param string $telephone
     */
-    public function updateMentoring(int $id_mentorings, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
+    public function updateMentor(int $id_mentorings, int $id_faculties, string $mentor, string $taught, string $email, string $telephone)
     {
         $stmt = '   UPDATE 
                         mentorings 
@@ -1639,21 +1620,24 @@ class DBC extends PDO
             $prpStmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
             $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if mentoring was updated 
-            if ($prpStmt->rowCount() == 1)
-                return 'Podatki o mentorju znanstvenega dela so uspešno ažurirani.';
-            return 'Napaka: podatki o mentorju znanstvenega dela niso uspešno ažurirani.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // updateMentoring
+        // if mentor data was updated 
+        if ($prpStmt->rowCount() == 1) {
+            echo 'Podatki o mentorju znanstvenega dela so uspešno ažurirani.';
+            return TRUE;
+        } // if
+        echo 'Napaka: podatki o mentorju znanstvenega dela niso uspešno ažurirani.';
+        return FALSE;
+    } // updateMentor
 
     /*
-    *   delete mentoring of the scientific paper
+    *   delete mentor of the scientific paper
     *   @param int $id_mentorings
     */
-    public function deleteSciPapMentor(int $id_mentorings)
+    public function deleteMentor(int $id_mentorings)
     {
         $stmt = '   DELETE FROM 
                         mentorings 
@@ -1664,22 +1648,25 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if mentoring was deleted
-            if ($prpStmt->rowCount() == 1)
-                return 'Podatki o mentorstvu so uspešno izbrisani.';
-            return 'Podatki o mentorstvu niso uspešno izbrisani.';
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // deleteSciPapMentor
+        // if mentoring was deleted
+        if ($prpStmt->rowCount() == 1) {
+            echo 'Podatki o mentorstvu so uspešno izbrisani.';
+            return TRUE;
+        } // if
+        echo 'Napaka: podatki o mentorstvu niso uspešno izbrisani.';
+        return FALSE;
+    } // deleteMentor
 
     /*
-    *   select mentoring of the scientific paper 
+    *   select mentor of the scientific paper 
     *   @param int $id_mentorings
     */
-    public function selectMentoring(int $id_mentorings)
+    public function selectMentor(int $id_mentorings)
     {
         $stmt = '   SELECT 
                         mentorings.id_faculties,
@@ -1698,20 +1685,20 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':id_mentorings', $id_mentorings, PDO::PARAM_INT);
             $prpStmt->execute();
-            return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone'])[0]);
         } // try
         catch (PDOException $e) {
             // output error message 
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectMentoring
+        return json_encode($prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Mentorings::class, ['id_mentorings', 'id_scientific_papers', 'id_faculties', 'mentor', 'taught', 'email', 'telephone'])[0]);
+    } // selectMentor
 
-    // MENTORINGS
+    // </mentorings>
 
-    // DOCUMENTS
+    // <documents>
 
     /*
-    *   select the documents belonging to the scientific paper
+    *   select the document belonging to the given scientific paper
     *   @param int id_scientific_papers
     */
     public function selectDocuments(int $id_scientific_papers)
@@ -1727,11 +1714,11 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_scientific_papers', $id_scientific_papers, PDO::PARAM_INT);
             $prpStmt->execute();
-            return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Documents::class, ['id_documents', 'source', 'published', 'version']);
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Documents::class, ['id_documents', 'source', 'published', 'version']);
     } // selectDocuments
 
     /* 
@@ -1765,14 +1752,14 @@ class DBC extends PDO
             $prpStmt->bindValue(':published', $published->format('d-m-Y'), PDO::PARAM_STR);
             $prpStmt->bindParam(':version', $version, PDO::PARAM_STR);
             $prpStmt->execute();
-            // if document record was inserted
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // if document record was inserted
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
     } // insertDocument
 
     /*
@@ -1796,36 +1783,35 @@ class DBC extends PDO
                             $finfo = new finfo();
                             $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
                             // if document is not of the application/pdf mimetype
-                            if ($mimetype != 'application/pdf')
-                                return "Napaka: dokument '{$_FILES['document']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
-                            $upload = TRUE;
-                            // if document meets the condition 
-                            if ($upload) {
-                                // set destination of the uploded file
-                                $dir = 'uploads/documents/';
-                                $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['document']['name'][$indx]);
-                                // if document was logically and physically interpolated
-                                if ($this->insertDocument($id_scientific_papers, $destination, new DateTime(), $version) == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
-                                    // commit current transaction
-                                    $this->commit();
-                                    return "Dokument {$_FILES['document']['name'][$indx]} je uspešno naložen." . PHP_EOL;
-                                } // if
-                                // rollback current transaction
-                                $this->rollBack();
-                                return 'Napaka: podatki dokumenta niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.' . PHP_EOL;
+                            if ($mimetype != 'application/pdf') {
+                                echo "Napaka: dokument '{$_FILES['document']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
+                                return FALSE;
                             } // if
-                            return "Napaka: dokument {$_FILES['document']['name'][$indx]} ni zadostil kriterij nalaganja." . PHP_EOL;
+                            // set destination of the uploded file
+                            $dir = 'uploads/documents/';
+                            $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['document']['name'][$indx]);
+                            // if document was logically and physically interpolated
+                            if ($this->insertDocument($id_scientific_papers, $destination, new DateTime(), $version) == 1 && move_uploaded_file($tmp_name, "../{$destination}")) {
+                                echo "Dokument {$_FILES['document']['name'][$indx]} je uspešno naložen.";
+                                // commit current transaction
+                                return $this->commit();
+                            } // if
+                            echo 'Napaka: podatki dokumenta niso uspešno vstavljeni v zbirko ali datoteka ni uspešno prenesena na strežnik.';
+                            // rollback current transaction
+                            return $this->rollBack();
                         } // if
-                        return "Napaka: dokument {$_FILES['document']['name'][$indx]} ni uspešno naložen." . PHP_EOL;
+                        echo "Napaka: dokument {$_FILES['document']['name'][$indx]} ni zadostil kriterij nalaganja.";
                     } // if
+                    echo "Napaka: dokument {$_FILES['document']['name'][$indx]} ni uspešno naložen.";
                 } // foreach
             } // try
             catch (PDOException $e) {
                 // output error message 
-                echo "Napaka: {$e->getMessage()}." . PHP_EOL;
+                echo "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return 'Nakapa: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
+        echo 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
+        return FALSE;
     } // uploadDocument
 
     /*
@@ -1843,51 +1829,52 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt);
             $prpStmt->bindParam(':source', $source, PDO::PARAM_STR);
             $prpStmt->execute();
-            // if document was logically and physically deleted
-            if ($prpStmt->rowCount() == 1 && unlink("../{$source}"))
-                return 'Dokument ' . basename($source) . ' je uspešno izbrisan.';
-            return 'Dokument ' . basename($source) . ' ni uspešno izbrisan.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // if document was logically and physically deleted
+        if ($prpStmt->rowCount() == 1 && unlink("../{$source}")) {
+            echo 'Dokument ' . basename($source) . ' je uspešno izbrisan.';
+            return TRUE;
+        } // if
+        echo 'Napaka: dokument ' . basename($source) . ' ni uspešno izbrisan.';
+        return FALSE;
     } // deleteDocument
 
     /*
-    *   delete all document records the given of scientific paper and remove them from the server
+    *   delete all document records in a relationship with the given scientific paper id
     *   @param int $id_scientific_papers
     */
     public function deleteDocuments(int $id_scientific_papers)
     {
-        // deletion report
-        $report = '';
         // traverse through scientific paper documents
-        foreach ($this->selectDocuments($id_scientific_papers) as $doc) {
+        foreach ($this->selectDocuments($id_scientific_papers) as $document) {
             $stmt = '   DELETE FROM 
                             documents
                         WHERE 
                             id_documents = :id_documents    ';
             try {
-                // prepare, bind param to and execute stmt 
+                // prepare, bind value to and execute stmt 
                 $prpStmt = $this->prepare($stmt);
-                $prpStmt->bindValue(':id_documents', $doc->getIdDocuments(), PDO::PARAM_INT);
+                $prpStmt->bindValue(':id_documents', $document->getIdDocuments(), PDO::PARAM_INT);
                 $prpStmt->execute();
                 // if document was logically and physically deleted
-                if ($prpStmt->rowCount() == 1 && unlink("../{$doc->getSource()}"))
-                    $report .= 'Dokument ' . basename($doc->getSource()) . ' je uspešno izbrisan.' . PHP_EOL;
+                if ($prpStmt->rowCount() == 1 && unlink("../{$document->getSource()}"))
+                    echo 'Dokument ' . basename($document->getSource()) . ' je uspešno izbrisan.';
                 else
-                    $report .= 'Dokument ' . basename($doc->getSource()) . ' ni uspešno izbrisan.' . PHP_EOL;
+                    echo 'Napaka: dokument ' . basename($document->getSource()) . ' ni uspešno izbrisan.';
             } // try
             catch (PDOException $e) {
                 echo "Napaka: {$e->getMessage()}.";
             } // catch
         } // foreach
-        return $report;
+        return;
     } // deleteDocuments          
 
-    // DOCUMENTS 
+    // </documents> 
 
-    // ACCOUNTS
+    // <accounts>
 
     /*
     *   checkout whether the student has been assigned an account to
@@ -1906,14 +1893,14 @@ class DBC extends PDO
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if account has been assigned to
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
+        // if account has been assigned to
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
     } // assignedWithAccount
 
     /*
@@ -1921,7 +1908,7 @@ class DBC extends PDO
     *   @param string $index
     *   @param string $pass
     */
-    public function checkAcctCredentials(string $index, string $pass)
+    public function checkAccountCredentials(string $index, string $pass)
     {
         // authentication report
         $report = [
@@ -1980,7 +1967,7 @@ class DBC extends PDO
         } // catch
         // return JSON  
         return json_encode($report);
-    } // checkAcctCredentials
+    } // checkAccountCredentials
 
     /*
     *   !DML 
@@ -1988,7 +1975,7 @@ class DBC extends PDO
     *   @param string $index
     *   @param string $hash
     */
-    private function createStudtUser(string $index, string $hash)
+    private function createStudentUser(string $index, string $hash)
     {
         $stmt = "   CREATE USER 
                         stu_$index
@@ -1999,22 +1986,22 @@ class DBC extends PDO
         try {
             // prepare and execute stmt
             $prpStmt = $this->prepare($stmt);
-            // if stmt executed successfully 
+            // if stmt successfully executed  
             if ($prpStmt->execute())
                 return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
-            return "Napaka: {$e->getMessage}.";
+            echo "Napaka: {$e->getMessage}.";
         } // catch
-    } // createStudtUser
+        return FALSE;
+    } // createStudentUser
 
     /*
     *   !DML 
     *   revoke privileges on database objects for the given student role  
     *   @param string $index
     */
-    private function revokeStudtPrivileges(string $index)
+    private function revokeStudentPrivileges(string $index)
     {
         $stmt = "   REVOKE  
                         ALL PRIVILEGES 
@@ -2056,22 +2043,22 @@ class DBC extends PDO
             // prepare and execute stmts
             $prpStmt = $this->prepare($stmt);
             $prpStmt2 = $this->prepare($stmt2);
-            // if stmts were successfully executed
-            if ($prpStmt->execute() && $prpStmt2->execute())
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // revokeStudtPrivileges
+        // if stmts were successfully executed
+        if ($prpStmt->execute() && $prpStmt2->execute())
+            return TRUE;
+        return FALSE;
+    } // revokeStudentPrivileges
 
     /*
     *   !DML 
     *   drop database user in the cluster with the student role privileges
     *   @param string $index
     */
-    private function dropStudtUser(string $index)
+    private function dropStudentUser(string $index)
     {
         $stmt = "   DROP USER 
                         stu_$index  ";
@@ -2081,12 +2068,12 @@ class DBC extends PDO
             // if stmt executed successfully 
             if ($prpStmt->execute())
                 return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage}.";
         } // catch
-    } // dropStudtUser
+        return FALSE;
+    } // dropStudentUser
 
     /*
     *   insert account record with credentials for database access and assign it to the student
@@ -2103,7 +2090,7 @@ class DBC extends PDO
                 $this->beginTransaction();
                 $hash = password_hash($pass, PASSWORD_BCRYPT);
                 // if database user with the student privileges has been created
-                if ($this->createStudtUser($index, $hash)) {
+                if ($this->createStudentUser($index, $hash)) {
                     $stmt = '   INSERT INTO 
                                 accounts
                             (  
@@ -2126,28 +2113,29 @@ class DBC extends PDO
                     $prpStmt->execute();
                     // if account records was inserted 
                     if ($prpStmt->rowCount() == 1) {
+                        echo 'Račun je uspešno ustvarjen.';
                         // commit the changes
-                        $this->commit();
-                        return 'Račun je uspešno ustvarjen.';
+                        return $this->commit();
                     } // if 
                 } // if
+                echo 'Napaka: račun ni uspešno ustvarjen.';
                 // rollback the changes
-                $this->rollback();
-                return 'Račun ni uspešno ustvarjen.';
+                return $this->rollback();
             } // try
             catch (PDOException $e) {
                 // output error message
                 echo "Napaka: {$e->getMessage()}.";
             } // catch
         } // if
-        return 'Opozorilo: transkacija s podatkovno zbirko je v izvajanju.';
+        echo 'Opozorilo: transkacija s podatkovno zbirko je v izvajanju.';
+        return FALSE;
     } // insertStudentAccount
 
     /*
     *   select grant date of the given account
     *   @param int $id_attendances
     */
-    public function selectAcctGrantDate(int $id_attendances)
+    public function selectAccountGrantDate(int $id_attendances)
     {
         $stmt = '   SELECT
                         granted
@@ -2168,7 +2156,7 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // selectAcctGrantDate
+    } // selectAccountGrantDate
 
     /*
     *   drop the subject user and delete account credentials
@@ -2183,9 +2171,9 @@ class DBC extends PDO
                 // begin a new one
                 $this->beginTransaction();
                 // if the user was droped
-                if ($this->revokeStudtPrivileges($index) && $this->dropStudtUser($index)) {
+                if ($this->revokeStudentPrivileges($index) && $this->dropStudentUser($index)) {
                     // if student had account avatar 
-                    if ($avatar = $this->hasAcctAvatar($index))
+                    if ($avatar = $this->hasAccountAvatar($index))
                         unlink("../../{$avatar}");
                     $stmt = '   DELETE FROM 
                                     accounts
@@ -2197,30 +2185,28 @@ class DBC extends PDO
                     $prpStmt->execute();
                     // if account record was deleted
                     if ($prpStmt->rowCount() == 1) {
+                        echo 'Račun je uspešno izbrisan.';
                         // commit the current transaction
-                        $this->commit();
-                        return 'Račun je uspešno izbrisan.';
+                        return $this->commit();
                     } // if
-                    // rollback the current transaction
-                    $this->rollback();
-                    return 'Napaka: račun ni uspešno izbrisan.';
                 } // if
+                echo 'Napaka: račun ni uspešno izbrisan.';
+                // rollback the current transaction
+                return $this->rollback();
             } // try
             catch (PDOException $e) {
                 echo "Napaka: {$e->getMessage()}.";
             } // catch
-            // rollback the current transaction
-            $this->rollback();
-            return 'Napaka: račun ni uspešno izbrisan.';
         } // if
-        return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
+        echo 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
+        return FALSE;
     } // deleteStudentAccount
 
     /*
     *   if student has an account avatar
     *   @param string $index
     */
-    public function hasAcctAvatar(string $index)
+    public function hasAccountAvatar(string $index)
     {
         $stmt = '   SELECT 
                         avatar 
@@ -2241,22 +2227,22 @@ class DBC extends PDO
             $prpStmt->bindParam(':index', $index, PDO::PARAM_STR);
             $prpStmt->execute();
             $avatar = $prpStmt->fetch(PDO::FETCH_COLUMN);
-            // if avatar was uploaded
-            if (isset($avatar))
-                return $avatar;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // hasAcctAvatar
+        // if avatar was uploaded
+        if (isset($avatar))
+            return $avatar;
+        return FALSE;
+    } // hasAccountAvatar
 
     /* 
     *   update account avatar location on the server
     *   @param int $id_attendances
     *   @param string $avatar
     */
-    private function updateAcctAvatar(int $id_attendances, string $avatar)
+    private function updateAccountAvatar(int $id_attendances, string $avatar)
     {
         $stmt = '   UPDATE 
                         accounts
@@ -2270,22 +2256,22 @@ class DBC extends PDO
             $prpStmt->bindParam(':avatar', $avatar, PDO::PARAM_STR);
             $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
             $prpStmt->execute();
-            // if avatar location was updated
-            if ($prpStmt->rowCount() == 1)
-                return TRUE;
-            return FALSE;
         } // try
         catch (PDOException $e) {
             // output the excpetion error message
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-    } // updateAcctAvatar
+        // if avatar location was updated
+        if ($prpStmt->rowCount() == 1)
+            return TRUE;
+        return FALSE;
+    } // updateAccountAvatar
 
     /* 
     *   upload avatar for the given account 
     *   @param int $id_attendances
     */
-    public function uploadAcctAvatar(int $id_attendances)
+    public function uploadAccountAvatar(int $id_attendances)
     {
         // if not already running a transaction
         if (!$this->inTransaction()) {
@@ -2297,42 +2283,40 @@ class DBC extends PDO
                     $finfo = new finfo();
                     $mimetype = $finfo->file($_FILES['avatar']['tmp_name'], FILEINFO_MIME_TYPE);
                     // if it's not a PNG document
-                    if ($mimetype != 'image/jpeg')
-                        return "Napaka: avatar '{$_FILES['avatar']['name']}' ni uspešno naložen saj ni tipa .jpg.";
-                    $upload = TRUE;
-                    // if document meets the condition 
-                    if ($upload) {
+                    if ($mimetype != 'image/jpeg'){
+                        echo "Napaka: avatar '{$_FILES['avatar']['name']}' ni uspešno naložen saj ni tipa .jpg.";
+                        return FALSE;
+                    } // if
                         // set destination of the uploded file
                         $dir = 'uploads/avatars/';
                         $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['avatar']['name']);
                         // if account record was updated and avatar moved to the server
-                        if ($this->updateAcctAvatar($id_attendances, $destination) == 1 && move_uploaded_file($_FILES['avatar']['tmp_name'], "../../{$destination}")) {
+                        if ($this->updateAccountAvatar($id_attendances, $destination) == 1 && move_uploaded_file($_FILES['avatar']['tmp_name'], "../../{$destination}")) {
+                            echo "Avatar {$_FILES['avatar']['name']} je uspešno naložen.";
                             // commit current transaction
-                            $this->commit();
-                            return "Avatar {$_FILES['avatar']['name']} je uspešno naložen." . PHP_EOL;
+                            return $this->commit();
                         } // if
+                        echo 'Napaka: lokacija ni uspešno spremenjena ali avatar ni uspešno naložen na strežnik.';
                         // rollback current transaction
-                        $this->rollBack();
-                        return 'Napaka: lokacija ni uspešno spremenjena ali avatar ni uspešno naložen na strežnik.' . PHP_EOL;
+                        return $this->rollBack();
                     } // if
-                    return "Napaka: avatar {$_FILES['avatar']['name']} ni zadostil kriterij nalaganja." . PHP_EOL;
-                } // if
-                return "Napaka: avatar {$_FILES['avatar']['name']} ni uspešno naložen." . PHP_EOL;
+                echo "Napaka: avatar {$_FILES['avatar']['name']} ni uspešno naložen.";
             } // try
             catch (PDOException $e) {
                 // output error message 
-                echo "Napaka: {$e->getMessage()}." . PHP_EOL;
+                echo "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
-    } // uploadAcctAvatar
+        echo 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
+        return FALSE;
+    } // uploadAccountAvatar
 
     /* 
     *   delete the given account avatar from the server and nullify the location  
     *   @param int $id_attendances
     *   @param string $avatar 
     */
-    public function deleteAcctAvatar(int $id_attendances, string $avatar)
+    public function deleteAccountAvatar(int $id_attendances, string $avatar)
     {
         // if not already running a transaction
         if (!$this->inTransaction()) {
@@ -2351,21 +2335,22 @@ class DBC extends PDO
                 $prpStmt->execute();
                 // if avatar was set to NULL and document removed from the server  
                 if ($prpStmt->rowCount() == 1 && unlink("../../{$avatar}")) {
+                    echo "Avatar je uspešno izbrisan.";
                     // commit current transaction
                     $this->commit();
-                    return "Avatar je uspešno izbrisan.";
                 } // if
+                echo 'Napaka: avatar ni uspešno logično ali fizično odstranjen.';
                 // rollback current transaction
-                $this->rollBack();
-                return 'Napaka: avatar ni uspešno logično ali fizično odstranjen.';
+                return $this->rollBack();
             } // try
             catch (PDOException $e) {
                 // output error message 
-                echo "Napaka: {$e->getMessage()}." . PHP_EOL;
+                echo "Napaka: {$e->getMessage()}.";
             } // catch 
         } // if
-        return 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.' . PHP_EOL;
-    } // deleteAcctAvatar
+        echo 'Opozorilo: transakcija s podatkovno zbirko je v izvajanju.';
+        return FALSE;
+    } // deleteAccountAvatar
 
     // ACCOUNTS
 
