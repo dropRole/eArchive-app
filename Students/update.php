@@ -22,7 +22,7 @@ if (isset($id_students, $id_postal_codes, $name, $surname, $residences)) {
     // establish a new connection with the database server
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // report on update
-    echo $DBC->updateStudent($id_students, $id_postal_codes, $name, $surname, $email, $telephone, $residences);
+    $DBC->updateStudent($id_students, $id_postal_codes, $name, $surname, $email, $telephone, $residences);
 } // if 
 
 ?>

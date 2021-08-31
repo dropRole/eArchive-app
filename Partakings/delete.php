@@ -16,5 +16,5 @@ if (isset($id_partakings)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt deletion of a partaker
-    echo $DBC->deletePartaker($id_partakings);
+    $DBC->deletePartaker($id_partakings);
 } // if

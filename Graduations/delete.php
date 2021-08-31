@@ -19,5 +19,5 @@ if (isset($id_attendances, $source)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // try to select certificate particulars
-    echo $DBC->deleteGraduation($id_attendances, $source);
+    $DBC->deleteGraduation($id_attendances, $source);
 } // if

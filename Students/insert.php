@@ -29,12 +29,10 @@
             foreach ($attendances as $attendance) {
                 $id_attendances = $DBC->insertAttendance($id_students, $attendance['id_faculties'], $attendance['id_programs'], (new DateTime($attendance['enrolled'])), $attendance['index']);
                 // if student program attendance data was prosperously inserted 
-                if ($id_attendances) {
+                if ($id_attendances)
                     // if student graduated
-                    if (isset($attendance['certificate'])) {
-                        echo $DBC->uploadCertificate($id_attendances, $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued']))) . PHP_EOL;
-                    } // if
-                } // if 
+                    if (isset($attendance['certificate']))
+                        $DBC->uploadCertificate($id_attendances, $attendance['certificate'], (new DateTime($attendance['defended'])), (new DateTime($attendance['issued'])));
             } // foreach
         } // if
     } // if 

@@ -18,5 +18,5 @@ if (isset($id_scientific_papers)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // try a scientific papers deletion with belonging documentation
-    echo $DBC->deleteScientificPaper($id_scientific_papers);
+    $DBC->deleteScientificPaper($id_scientific_papers);
 } // if

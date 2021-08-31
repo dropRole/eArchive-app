@@ -18,9 +18,5 @@ if (isset($id_scientific_papers, $mentors)) {
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // insert data of each mentor
     foreach ($mentors as $mentor)
-        // if data was successfully inserted 
-        if ($DBC->insertMentor($id_scientific_papers, $mentor['id_faculties'], $mentor['mentor'], $mentor['taught'], $mentor['email'], $mentor['telephone']))
-            echo "Mentor {$mentor['mentor']} je uspešno določen.";
-        else
-            echo "Mentor {$mentor['mentor']} ni uspešno določen.";
+        $DBC->insertMentor($id_scientific_papers, $mentor['id_faculties'], $mentor['mentor'], $mentor['taught'], $mentor['email'], $mentor['telephone']);
 } // if

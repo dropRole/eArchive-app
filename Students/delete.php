@@ -21,5 +21,5 @@ if (isset($id_attendances, $id_students, $index)) {
     // create a new PDO interface object instance 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attemt a deletion
-    echo $DBC->deleteStudent($id_attendances, $id_students, $index);
+    $DBC->deleteStudent($id_attendances, $id_students, $index);
 } // if 

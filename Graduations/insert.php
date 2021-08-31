@@ -21,5 +21,5 @@ if (isset($id_attendances, $certificate, $issued, $defended)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt an insertion of graduation data 
-    echo $DBC->insertGraduation($id_attendances, $certificate, (new DateTime($issued)), (new DateTime($defended)));
+    $DBC->uploadCertificate($id_attendances, $certificate, (new DateTime($issued)), (new DateTime($defended)));
 } // if

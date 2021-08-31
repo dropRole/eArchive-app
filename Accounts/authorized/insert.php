@@ -20,5 +20,5 @@ if (isset($id_attendances, $index, $pass)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt an account insertion
-    echo $DBC->insertStudentAccount($id_attendances, $index, $pass);
+    $DBC->insertStudentAccount($id_attendances, $index, $pass);
 } // if

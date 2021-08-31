@@ -18,5 +18,5 @@ if (isset($source)) {
     // establish a new database connection
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt a document deletion
-    echo $DBC->deleteDocument($source);
+    $DBC->deleteDocument($source);
 } // if

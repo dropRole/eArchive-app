@@ -20,7 +20,7 @@ if (isset($id_certificates, $defended, $issued)) {
     // return a new PDO object instance that carries connection with the database server 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // update date of issuing 
-    echo $DBC->updateCertificateIssuingDate($id_certificates, (new DateTime($issued)));
+    $DBC->updateCertificateIssuingDate($id_certificates, (new DateTime($issued)));
     // update date of defenense
-    echo $DBC->updateCertificateDefenceDate($id_certificates, (new DateTime($defended)));
+    $DBC->updateCertificateDefenceDate($id_certificates, (new DateTime($defended)));
 } // if

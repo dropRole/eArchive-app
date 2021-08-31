@@ -19,5 +19,5 @@ if (isset($id_residences)) {
     // drive a new connection with the database server 
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     // attempt student residence deletion 
-    echo $DBC->deleteStudentTemporaryResidence($id_residences);
+    $DBC->deleteStudentTemporaryResidence($id_residences);
 } // if
