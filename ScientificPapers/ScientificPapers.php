@@ -4,7 +4,7 @@
 
 namespace ScientificPapers;
 
-use JsonSerializable;
+use JsonSerializable, DateTime;
 
 // table scientific_papers class definition
 class ScientificPapers implements JsonSerializable
@@ -104,7 +104,7 @@ class ScientificPapers implements JsonSerializable
     *   set date of writting
     *   @param string $written   
     */
-    public function setWritten(string $written)
+    public function setWritten(DateTime $written)
     {
         $this->written = $written;
     } // setWritten

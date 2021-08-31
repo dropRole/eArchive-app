@@ -83,7 +83,7 @@ class Documents
     *   set date of publishing 
     *   @param string @published  
     */
-    public function setPublished(string $published)
+    public function setPublished(DateTime $published)
     {
         $this->published = $published;
     } // setPublished

@@ -62,7 +62,7 @@ class Graduations
     *   set date of defending 
     *   @param string @defended
     */
-    public function setDefended(string $defended)
+    public function setDefended(DateTime $defended)
     {
         $this->defended = $defended;
     } // setDefended
