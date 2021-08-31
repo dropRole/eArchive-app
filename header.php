@@ -19,5 +19,9 @@ require_once __DIR__ . './session.php';
     <link href='/eArchive/vendor/bootstrap/css/bootstrap.css' rel='stylesheet' />
     <!-- Custom CSS design -->
     <link href='/eArchive/custom/css/main.css' rel='stylesheet' />
+    <!-- Bootstrap core JavaScript -->
+    <script defer src="/eArchive/vendor/jquery/jquery.slim.min.js"></script>
+    <script defer src="/eArchive/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
