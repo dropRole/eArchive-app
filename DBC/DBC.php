@@ -1441,9 +1441,10 @@ class DBC extends PDO
     *   insert partaking on a scientific paper 
     *   @param int $id_scientific_papers
     *   @param int $id_attendances
+    *   @param string $partaker
     *   @param string $part
     */
-    public function insertPartaker(int $id_scientific_papers, int $id_attendances, string $part)
+    public function insertPartaker(int $id_scientific_papers, int $id_attendances, string $partaker, string $part)
     {
         $stmt = '   INSERT INTO 
                         partakings
@@ -1469,8 +1470,11 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         // if partaking was inserted 
-        if ($prpStmt->rowCount() == 1)
+        if ($prpStmt->rowCount() == 1){
+            echo "Soavtor {$partaker} je uspešno dodeljen.";
             return TRUE;
+        } // if
+        echo "Soavtor {$partaker} ni uspešno dodeljen.";
         return FALSE;
     } // insertPartaker
 
@@ -1584,8 +1588,11 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         // if mentor record was inserted 
-        if ($prpStmt->rowCount() == 1)
+        if ($prpStmt->rowCount() == 1){
+            echo "Mentor {$mentor} je uspešno izbrisan.";
             return TRUE;
+        } // if
+        echo "Mentor {$mentor} ni uspešno izbrisan.";
         return FALSE;
     } // insertMentor
 
