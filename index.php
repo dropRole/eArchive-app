@@ -23,12 +23,12 @@ include_once './nav.php';
 
 <div class="container my-5">
     <div class="h2 mb-4 p-4 text-center">
-        Digitalna arhiva<br>znanstvenih dosežkov
+        Digitalni arhiv<br>znanstvenih dosežkov
         <div class="heading-border-top-left"></div>
         <div class="heading-border-bottom-right"></div>
     </div>
     <div class="input-group mb-2">
-        <input id="searchInptEl" type="text" class="form-control" data-criterion="author" placeholder="Ime in priimek avtorja dela" aria-label="Text input with segmented dropdown button">
+        <input id="search" type="text" class="form-control" data-criterion="author" placeholder="Ime in priimek avtorja dela" aria-label="Text input with segmented dropdown button">
         <div class="input-group-append">
             <button type="button" class="btn btn-dark">Pregled</button>
             <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -43,8 +43,8 @@ include_once './nav.php';
     </div>
     <div id="sciPapSrchRslt" class="table-responsive">
         <table class="table table-hover">
-            <caption>EVIDENCA ZNANSTVENIH DOSEŽKOV</caption>
-            <thead class="thead-dark">
+            <caption>Evidenca znanstvenih dosežkov</caption>
+            <thead>
                 <tr>
                     <th>Predmet</th>
                     <th>Avtor</th>
@@ -56,35 +56,35 @@ include_once './nav.php';
             </thead>
             <tbody>
                 <?php
-                foreach ($DBC->selectScientificPapers() as $sciPap) {
+                foreach ($DBC->selectScientificPapers() as $scientificPaper) {
                 ?>
                     <tr>
-                        <td><?php echo $sciPap->getTopic(); ?></td>
+                        <td><?php echo $scientificPaper->getTopic(); ?></td>
                         <td>
-                            <a class="stu-vw-a text-decoration-none" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>"><?php echo $sciPap->author; ?></a>
+                            <a class="stu-vw-a text-decoration-none" href="#stuSelMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
                             <?php
                             // if author had partakers in writting 
-                            if (count($DBC->selectPartakers($sciPap->getIdScientificPapers()))) {
+                            if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
-                                <sup><a class="par-vw-a text-decoration-none" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                                <sup><a class="par-vw-a text-decoration-none" href="#sciPapInsMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php
                             }
                             ?>
                         </td>
-                        <td><?php echo $sciPap->getType(); ?></td>
-                        <td><?php echo (new DateTime($sciPap->getWritten()))->format('d-m-Y'); ?></td>
+                        <td><?php echo $scientificPaper->getType(); ?></td>
+                        <td><?php echo (new DateTime($scientificPaper->getWritten()))->format('d-m-Y'); ?></td>
                         <td>
-                            <a href="#sciPapDocsViewMdl" data-toggle="modal">
-                            <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled"  class="doc-vw-img" data-id-scientific-papers="<?php echo $sciPap->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
+                            <a href="#sciPapSelMdl" data-toggle="modal">
+                            <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled"  class="doc-vw-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
                         </a>
                         </td>
                         <td>
                             <?php
                             // if graduated on the scientific paper
-                            if ($sciPap->id_certificates != NULL) {
+                            if ($scientificPaper->id_certificates != NULL) {
                             ?>
-                                <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal">
-                            <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-vw-img" data-id-attendances="<?php echo $sciPap->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
+                                <a href="#certSelMdl" data-toggle="modal">
+                            <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-vw-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
                             </a>
                             <?php
                             } // if
