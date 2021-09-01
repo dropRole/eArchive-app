@@ -19,6 +19,7 @@ if (isset($index)) {
     $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
 ?>
     <table class="table">
+        <caption>Zapisi študentov na univerzi</caption>
         <thead>
             <tr>
                 <th>Ime in priimek</th>
@@ -34,8 +35,10 @@ if (isset($index)) {
         </thead>
         <tbody>
             <?php
-            // for each student in the record
-            foreach ($DBC->selectStudentsByIndex($index) as $student) {
+            // if student records in the evidence
+            if (count($DBC->selectStudentsByIndex($index)))
+                // for each student in the record
+                foreach ($DBC->selectStudentsByIndex($index) as $student) {
             ?>
                 <tr>
                     <td><?php echo $student->fullname; ?></td>
@@ -100,7 +103,16 @@ if (isset($index)) {
                     </td>
                 </tr>
             <?php
-            } // foreach
+                } // foreach
+            else {
+            ?>
+            <tr>
+                <td colspan="3">
+                    <p class="font-italic text-muted">Ni študentov z dano indeks številko.</p>
+                </td>
+            </tr>
+            <?php
+            } // else
             ?>
         </tbody>
     </table>
