@@ -34,7 +34,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
     </div>
     <div class="table-responsive mt-3">
         <table class="table">
-            <caption>Zapisi študentov na univerzi </caption>
+            <caption>Zapisi študentov na univerzi</caption>
             <thead>
                 <tr>
                     <th>Ime in priimek</th>
