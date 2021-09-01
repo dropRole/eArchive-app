@@ -114,8 +114,10 @@ if (!empty($_GET)) {
             // if author searched for was passed
             else if (isset($_GET['author'])) {
                 $author = $_GET['author'];
-                // select scientific achievements of the given author
-                foreach ($DBC->selectScientificPapersByAuthor($author) as $scientificPaper) {
+                // if any scientific paper written by the author
+                if (count($DBC->selectScientificPapersByAuthor($author)))
+                    // select scientific achievements of the given author
+                    foreach ($DBC->selectScientificPapersByAuthor($author) as $scientificPaper) {
                 ?>
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
@@ -153,11 +155,22 @@ if (!empty($_GET)) {
                         </td>
                     </tr>
                 <?php
-                } // foreach
+                    } // foreach
+                else {
+                ?>
+                <tr>
+                    <td colspan="6">
+                        <p class="font-italic text-muted">Ni znanstvenih del danega avtorja.</p>
+                    </td>
+                </tr>
+                <?php
+                } // if
             } // else if
             // if mentor searched for is succesfully passed
             else if (isset($_GET['mentor'])) {
                 $mentor = $_GET['mentor'];
+                // if any scientific paper mentored by 
+                if(count($DBC->selectScientificPapersByMentor($mentor)))
                 // select scientific achievements mentored by the given mentor
                 foreach ($DBC->selectScientificPapersByMentor($mentor) as $scientificPaper) {
                 ?>
@@ -199,10 +212,21 @@ if (!empty($_GET)) {
                     </tr>
                 <?php
                 } // foreach
+                else{
+                    ?>
+                <tr>
+                    <td colspan="6">
+                        <p class="font-italic text-muted">Ni znanstvenih del mentoriranih s strani danega mentorja.</p>
+                    </td>
+                </tr>
+                    <?php
+                }
             } // else if
             // if date of writing searched for is prosperously passed
             else if (isset($_GET['written'])) {
                 $written = $_GET['written'];
+                // if any scientific paper written at the given year
+                if(count($DBC->selectScientificPapersByYear($written)))
                 // select scientific by the year of writing
                 foreach ($DBC->selectScientificPapersByYear($written) as $scientificPaper) {
                 ?>
@@ -243,6 +267,15 @@ if (!empty($_GET)) {
                     </tr>
             <?php
                 } // foreach
+                else{
+                    ?>
+                    <tr>
+                        <td colspan="6">
+                            <p class="font-italic text-muted">Ni znanstvenih del napisanih v danem letu.</p>
+                        </td>
+                    </tr>
+                    <?php
+                }
             } // else if
             ?>
         </tbody>
