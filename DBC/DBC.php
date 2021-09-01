@@ -1110,7 +1110,7 @@ class DBC extends PDO
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
         } // catch
-        $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued'])[0];
+        return $prpStmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Certificates::class, ['id_certificates', 'source', 'issued']);
     } // selectCertificate
 
     /* 
