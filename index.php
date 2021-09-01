@@ -61,12 +61,12 @@ include_once './nav.php';
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
                         <td>
-                            <a class="stu-vw-a text-decoration-none" href="#stuSelMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
+                            <a class="stu-sel-a text-decoration-none" href="#stuSelMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
                             <?php
                             // if author had partakers in writting 
                             if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
-                                <sup><a class="par-sel-a text-decoration-none" href="#sciPapInsMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                                <sup><a class="par-sel-a text-decoration-none" href="#partSelMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php
                             }
                             ?>
@@ -74,8 +74,8 @@ include_once './nav.php';
                         <td><?php echo $scientificPaper->getType(); ?></td>
                         <td><?php echo (new DateTime($scientificPaper->getWritten()))->format('d-m-Y'); ?></td>
                         <td>
-                            <a href="#sciPapSelMdl" data-toggle="modal">
-                            <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled"  class="doc-vw-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
+                            <a href="#docSelMdl" data-toggle="modal">
+                            <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled"  class="doc-sel-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
                         </a>
                         </td>
                         <td>
@@ -84,7 +84,7 @@ include_once './nav.php';
                             if ($scientificPaper->id_certificates != NULL) {
                             ?>
                                 <a href="#certSelMdl" data-toggle="modal">
-                            <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-vw-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
+                            <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-sel-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
                             </a>
                             <?php
                             } // if
@@ -100,7 +100,7 @@ include_once './nav.php';
 </div>
 
 <!-- Modal for scientific paper partakers view -->
-<div class="modal fade" id="sciPapInsMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="partSelMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -116,7 +116,7 @@ include_once './nav.php';
     </div>
 </div>
 <!-- Modal for scientific paper document view -->
-<div class="modal fade" id="sciPapSelMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="docSelMdl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
