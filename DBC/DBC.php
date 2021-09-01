@@ -2097,7 +2097,7 @@ class DBC extends PDO
                 $this->beginTransaction();
                 $hash = password_hash($pass, PASSWORD_BCRYPT);
                 // if database user with the student privileges has been created
-                if ($this->createStudentUser($index, $hash)) {
+                if ($this->createStudentUser($index, $pass)) {
                     $stmt = '   INSERT INTO 
                                 accounts
                             (  
