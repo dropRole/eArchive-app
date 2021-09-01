@@ -22,13 +22,10 @@ else if (isset($_GET['id_scientific_papers'])) {
     $id_scientific_papers = $_GET['id_scientific_papers'];
     // return a new PDO object instance that carries connection with the database server 
     $DBC = new DBC();
-?>
-    <div class="row p-3">
-        <?php
         // select data regarding mentors of the scientific paper 
         foreach ($DBC->selectMentors($id_scientific_papers) as $mentor) {
         ?>
-            <div class="card p-0 col-12">
+            <div class="card my-3">
                 <div class="card-header d-flex justify-content-between">
                     <span><strong><?php echo $mentor->getMentor(); ?></strong></span>
                     <span><?php echo $mentor->getEmail(); ?></span>
@@ -40,7 +37,4 @@ else if (isset($_GET['id_scientific_papers'])) {
             </div>
         <?php
         } // foreach
-        ?>
-    </div>
-<?php
 } // else if 
