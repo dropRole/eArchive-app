@@ -50,8 +50,10 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
             </thead>
             <tbody>
                 <?php
-                // for each student in the record
-                foreach ($DBC->selectStudents() as $student) {
+                // if students in the evidence
+                if (count($DBC->selectStudents()))
+                    // for each student in the record
+                    foreach ($DBC->selectStudents() as $student) {
                 ?>
                     <tr>
                         <td><?php echo $student->fullname; ?></td>
@@ -113,7 +115,16 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                         </td>
                     </tr>
                 <?php
-                } // foreach
+                    } // foreach
+                else {
+                ?>
+                <tr>
+                    <td colspan="9">
+                        <p class="font-italic text-muted">Študentov ni v evidenci.</p>
+                    </td>
+                </tr>
+                <?php
+                }
                 ?>
             </tbody>
         </table>
@@ -324,7 +335,7 @@ $DBC = new DBC($_SESSION['user'], $_SESSION['pass']);
                             </label>
                         </div>
                     </div>
-                    <div class="row">   
+                    <div class="row">
                         <div id="partakers" class="col-lg-6 col-12 mb-3">
                             <p class="h6"><strong>Soavtorji</strong></p>
                             <div class="d-flex justify-content-center col-12">
