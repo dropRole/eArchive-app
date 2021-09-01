@@ -56,6 +56,8 @@ include_once './nav.php';
             </thead>
             <tbody>
                 <?php
+                // if scientific papers in evidence
+                if(count($DBC->selectScientificPapers()))
                 foreach ($DBC->selectScientificPapers() as $scientificPaper) {
                 ?>
                     <tr>
@@ -93,6 +95,15 @@ include_once './nav.php';
                     </tr>
                 <?php
                 } // foreach
+                else{
+                    ?>
+                    <tr>
+                        <td colspan="6">
+                            <p class="font-italic text-muted">Znanstvenih del ni v evidenci.</p>
+                        </td>
+                    </tr>
+                    <?php
+                } // else
                 ?>
             </tbody>
         </table>
