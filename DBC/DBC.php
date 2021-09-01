@@ -1585,7 +1585,7 @@ class DBC extends PDO
         } // catch
         // if mentor record was inserted 
         if ($prpStmt->rowCount() == 1) {
-            echo "Mentor {$mentor} je uspešno izbrisan.";
+            echo "Mentor {$mentor} je uspešno določen.";
             return TRUE;
         } // if
         echo "Mentor {$mentor} ni uspešno izbrisan.";
@@ -1803,10 +1803,12 @@ class DBC extends PDO
                             // rollback current transaction
                             return $this->rollBack();
                         } // if
-                        echo "Napaka: dokument {$_FILES['document']['name'][$indx]} ni zadostil kriterij nalaganja.";
+                        echo "Napaka: dokument {$_FILES['document']['name'][$indx]} ni uspešno naložen.";
+                        return FALSE;
                     } // if
-                    echo "Napaka: dokument {$_FILES['document']['name'][$indx]} ni uspešno naložen.";
                 } // foreach
+                echo "Napaka: dokument {$_FILES['document']['name'][$indx]} ni med naloženimi dokumenti.";
+                return FALSE;
             } // try
             catch (PDOException $e) {
                 // output error message 
