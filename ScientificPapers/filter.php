@@ -92,7 +92,7 @@ if (!empty($_GET)) {
                                 ?>
                                     <li class="list-group-item d-flex justify-content-around">
                                         <a href="<?php echo "/eArchive/{$document->getSource()}"; ?>" target="_blank"><?php echo $document->getVersion(); ?></a>
-                                        <a class="doc-del-a" href="#sciPapInsMdl" data-source="<?php echo $document->getSource(); ?>">Izbriši</a>
+                                        <a class="doc-del-a" data-source="<?php echo $document->getSource(); ?>">Izbriši</a>
                                     </li>
                                 <?php
                                 } // forach
@@ -120,14 +120,14 @@ if (!empty($_GET)) {
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
                         <td>
-                            <a class="stu-vw-a text-decoration-none" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>">
+                            <a class="stu-sel-a text-decoration-none" href="#stuSelMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>">
                                 <span class="bg-warning"><?php echo substr($scientificPaper->author, 0, strlen($author)); ?></span><?php echo substr($scientificPaper->author, strlen($author)); ?>
                             </a>
                             <?php
                             // if author had partakers in writting 
                             if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
-                                <sup><a class="par-vw-a text-decoration-none" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                                <sup><a class="par-sel-a text-decoration-none" href="#partSelMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php
                             }
                             ?>
@@ -135,8 +135,8 @@ if (!empty($_GET)) {
                         <td><?php echo $scientificPaper->getType(); ?></td>
                         <td><?php echo (new DateTime($scientificPaper->getWritten()))->format('d-m-Y'); ?></td>
                         <td>
-                            <a class="doc-vw-a" href="#sciPapDocsViewMdl" data-toggle="modal">
-                                <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" class="doc-vw-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
+                            <a class="doc-sel-a" href="#docSelMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" class="doc-sel-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
                             </a>
                         </td>
                         <td>
@@ -144,8 +144,8 @@ if (!empty($_GET)) {
                             // if graduated on the scientific paper
                             if ($scientificPaper->id_certificates != NULL) {
                             ?>
-                                <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal">
-                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-vw-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
+                                <a class="cert-sel-a" href="#gradCertViewMdl" data-toggle="modal">
+                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-sel-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
                                 </a>
                             <?php
                             } // if
@@ -164,12 +164,12 @@ if (!empty($_GET)) {
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
                         <td>
-                            <a class="stu-vw-a text-decoration-nonw" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
+                            <a class="stu-sel-a text-decoration-nonw" href="#stuSelMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
                             <?php
                             // if author had partakers in writting 
                             if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
-                                <sup><a class="par-vw-a text-decoration-none" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                                <sup><a class="par-sel-a text-decoration-none" href="#partSelMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php
                             }
                             ?>
@@ -177,11 +177,11 @@ if (!empty($_GET)) {
                         <td><?php echo $scientificPaper->getType(); ?></td>
                         <td><?php echo (new DateTime($scientificPaper->getWritten()))->format('d-m-Y'); ?></td>
                         <td>
-                            <a class="text-decoration-none" href="#sciPapDocsViewMdl" data-toggle="modal">
-                                <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" class="doc-vw-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
+                            <a class="text-decoration-none" href="#docSelMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" class="doc-sel-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
                             </a>
                             <sup>
-                                <a class="men-vw-a text-decoration-none" href="#sciPapMenViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-mentor="<?php echo $scientificPaper->mentor; ?>">Mentorji</a>
+                                <a class="men-sel-a text-decoration-none" href="#mentSelMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-mentor="<?php echo $scientificPaper->mentor; ?>">Mentorji</a>
                             </sup>
                         </td>
                         <td>
@@ -189,8 +189,8 @@ if (!empty($_GET)) {
                             // if graduated on the scientific paper
                             if ($scientificPaper->id_certificates != NULL) {
                             ?>
-                                <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal">
-                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-vw-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
+                                <a class="cert-sel-a" href="#certSelMdl" data-toggle="modal">
+                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-sel-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
                                 </a>
                             <?php
                             } // if
@@ -209,12 +209,12 @@ if (!empty($_GET)) {
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
                         <td>
-                            <a class="stu-vw-a text-decoration-none" href="#studtViewMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
+                            <a class="stu-sel-a text-decoration-none" href="#stuSelMdl" data-toggle="modal" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>"><?php echo $scientificPaper->author; ?></a>
                             <?php
                             // if author had partakers in writting 
                             if (count($DBC->selectPartakers($scientificPaper->getIdScientificPapers()))) {
                             ?>
-                                <sup><a class="par-vw-a text-decoration-none" href="#sciPapPrtViewMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
+                                <sup><a class="par-sel-a text-decoration-none" href="#partSelMdl" data-toggle="modal" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>">Soavtorji</a></sup>
                             <?php
                             }
                             ?>
@@ -224,8 +224,8 @@ if (!empty($_GET)) {
                             <span class="bg-warning"><?php echo (new DateTime($scientificPaper->getWritten()))->format('Y') ?></span>
                         </td>
                         <td>
-                            <a class="doc-vw-a" href="#sciPapDocsViewMdl" data-toggle="modal">
-                                <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" class="doc-vw-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
+                            <a class="doc-sel-a" href="#docSelMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" class="doc-sel-img" data-id-scientific-papers="<?php echo $scientificPaper->getIdScientificPapers(); ?>" data-toggle="tooltip" title="Pregled">
                             </a>
                         </td>
                         <td>
@@ -233,8 +233,8 @@ if (!empty($_GET)) {
                             // if graduated on the scientific paper
                             if ($scientificPaper->id_certificates != NULL) {
                             ?>
-                                <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal">
-                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-vw-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
+                                <a class="cert-sel-a" href="#certSelMdl" data-toggle="modal">
+                                    <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-sel-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
                                 </a>
                             <?php
                             } // if
