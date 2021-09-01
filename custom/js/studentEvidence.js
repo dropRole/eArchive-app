@@ -361,22 +361,18 @@
      *   upload graduation certificate document
      *   @param Event e
      */
-    let uploadGraduationCertificate = e => {
-            // prevent default action of submitting certificate upload form
-            e.preventDefault()
+    let uploadGraduationCertificate = form => {
             request(
                     '/eArchive/Certificates/insert.php',
                     'POST',
                     'text',
-                    (new FormData(certUplFrm))
+                    (new FormData(form))
                 )
                 .then(response => reportOnAction(response))
                 .then(() => loadStudentEvidenceTable())
                 .then(() => $('div#certUplMdl').modal('hide'))
                 .catch(error => alert(error)) // catch
         } // uploadGraduationCertificate
-
-    certUplFrm.addEventListener('submit', uploadGraduationCertificate)
 
     /*
      *  select the graduation certificate issued while attending the given program
@@ -1386,6 +1382,27 @@
         } // toDocumentUploadForm
 
     /*
+     *  rearrange form when inserting data regarding students graduation certificate  
+     *  @param Event e
+     */
+    let toCertificateUploadForm = e => {
+            document.querySelector('div#certUplMdl div.modal-header > h5.modal-title').textContent = 'Nalaganje certifikata'
+                // clone from the existing form node
+            let cloneForm = certUplFrm.cloneNode(true)
+                // replace form element node with its clone
+            document.getElementById('certUplFrm').replaceWith(cloneForm)
+            document.querySelector('form#certUplFrm input[name="id_attendances"]').value = e.target.dataset.idAttendances
+            cloneForm.addEventListener(
+                    'submit',
+                    e => {
+                        // cancel submitting updated certificate data by default
+                        e.preventDefault()
+                        uploadGraduationCertificate(cloneForm)
+                    }
+                ) // addEventListener
+        } // toCertificateUploadForm
+
+    /*
      *  rearrange form when updating data regarding students graduation certificate  
      *  @param Event e
      */
@@ -1744,9 +1761,7 @@
                     // assign an attendance id value to an upload forms hidden input type 
                     image.addEventListener(
                             'click',
-                            () => {
-                                certUplFrm.querySelector('input[type=hidden]').value = image.dataset.idAttendances
-                            }
+                            toCertificateUploadForm
                         ) //addEventListener
                 }) // forEach
             certSelLst.forEach(image => {
