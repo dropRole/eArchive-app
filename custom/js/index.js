@@ -51,14 +51,14 @@
                                     'GET',
                                     'document'
                                 )
-                                .then(response => exposeResp(response, document.getElementById('stuSelMdl')))
+                                .then(response => exposeResp(response, document.getElementById('partSelMdl')))
                                 .catch(error => alert(error))
                             ) // addEventListener
                     }) // from
                 // if anchor elements for document view exist
-            if (table.getElementsByClassName('doc-vw-img'))
+            if (table.getElementsByClassName('doc-sel-img'))
                 Array.from(
-                    table.getElementsByClassName('doc-vw-img'),
+                    table.getElementsByClassName('doc-sel-img'),
                     image => {
                         image.addEventListener(
                             'click',
@@ -67,14 +67,14 @@
                                 'GET',
                                 'document'
                             )
-                            .then(response => exposeResp(response, document.getElementById('sciPapSelMdl')))
+                            .then(response => exposeResp(response, document.getElementById('docSelMdl')))
                             .catch(error => alert(error))
                         )
                     }) // from
                 // if anchor elements for graduation certificate insight exist
-            if (table.getElementsByClassName('cert-vw-img'))
+            if (table.getElementsByClassName('cert-sel-img'))
                 Array.from(
-                    table.getElementsByClassName('cert-vw-img'),
+                    table.getElementsByClassName('cert-sel-img'),
                     image => {
                         image.addEventListener(
                             'click',
@@ -89,9 +89,9 @@
                     }
                 ) // from
                 // if anchor elements for student particulars view exist
-            if (table.getElementsByClassName('stu-vw-a'))
+            if (table.getElementsByClassName('stu-sel-a'))
                 Array.from(
-                    table.getElementsByClassName('stu-vw-a'),
+                    table.getElementsByClassName('stu-sel-a'),
                     anchor => {
                         anchor.addEventListener(
                             'click',
@@ -106,9 +106,9 @@
                     }
                 ) // from
                 // if anchor elements for scientific paper mentor view exist
-            if (table.getElementsByClassName('men-vw-a'))
+            if (table.getElementsByClassName('men-sel-a'))
                 Array.from(
-                    table.getElementsByClassName('men-vw-a'),
+                    table.getElementsByClassName('men-sel-a'),
                     anchor => {
                         anchor.addEventListener(
                             'click',
