@@ -17,7 +17,7 @@ class DBC extends PDO
     {
         try {
             // call a parent object class method
-            parent::__construct("pgsql:host=localhost;dbname=eArchive;port=5432;user={$user};password=" . password_hash($pass, PASSWORD_BCRYPT) . ";");
+            parent::__construct("pgsql:host=localhost;dbname=eArchive;port=5432;user={$user};password={$pass};");
         } // try
         catch (PDOException $e) {
             // compose an error message
@@ -1951,10 +1951,10 @@ class DBC extends PDO
                     $_SESSION['pass'] = $pass;
                     $_SESSION['index'] = $index;
                     $report['logged'] = TRUE;
-                    $report['mssg'] = 'Prijava študenta je bila uspešna.';
+                    $report['message'] = 'Prijava študenta je bila uspešna.';
                 } // if
                 else
-                    $report['mssg'] = 'Geslo računa z dano indeks številko ni pravilno.';
+                    $report['message'] = 'Geslo računa z dano indeks številko ni pravilno.';
             } // if
             // if superuser has attempted login 
             else if (strpos(self::SUPERUSER, $index) && self::PASS == $pass) {
@@ -1964,10 +1964,10 @@ class DBC extends PDO
                 $_SESSION['pass'] = self::PASS;
                 $_SESSION['authorized'] = TRUE;
                 $report['logged'] = TRUE;
-                $report['mssg'] = 'Prijava pooblaščenega je bila uspešna.';
+                $report['message'] = 'Prijava pooblaščenega je bila uspešna.';
             } // else if
             else
-                $report['mssg'] = 'Račun z dano indeks številko ne obstaja.';
+                $report['message'] = 'Račun z dano indeks številko ne obstaja.';
         } // try
         catch (PDOException $e) {
             echo "Napaka: {$e->getMessage()}.";
