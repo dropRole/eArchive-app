@@ -1160,39 +1160,35 @@ class DBC extends PDO
             try {
                 // begin a new transaction
                 $this->beginTransaction();
-                foreach ($_FILES['certificate']['tmp_name'] as $indx => $tmp_name) {
-                    // if certificate is among uploaded files
-                    if ($_FILES['certificate']['name'][$indx] == $certificate) {
-                        // if certificate is successfully uploaded 
-                        if ($_FILES['certificate']['error'][$indx] == UPLOAD_ERR_OK) {
-                            $finfo = new finfo();
-                            $mimetype = $finfo->file($tmp_name, FILEINFO_MIME_TYPE);
-                            // if MIME type is not application/pdf
-                            if ($mimetype != 'application/pdf') {
-                                echo "Napaka: certifikat '{$_FILES['certificate']['name'][$indx]}' ni uspešno naložen saj ni tipa .pdf .";
-                                return FALSE;
-                            } // if
-                            // set destination of the uploaded certificate
-                            $dir = 'uploads/certificates/';
-                            $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['certificate']['name'][$indx]);
-                            // if certificate was inserted into db and moved to a new destination  
-                            if ($this->insertCertficate($destination, $issued) && move_uploaded_file($tmp_name, "../{$destination}")) {
-                                echo "Certifikat {$_FILES['certificate']['name'][$indx]} je uspešno naložen.";
-                                $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
-                                // if single row is affected 
-                                if ($this->insertGraduation($id_certificates, $id_attendances, $defended)) {
-                                    echo 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
-                                    // commit current transaction
-                                    return $this->commit();
-                                } // if
-                            } // if
-                            echo 'Napaka: postopek nalaganja certifikata in določanja datuma zagovora ter izdajanja je bil neuspešen.';
-                            // rollback current transaction
-                            return $this->rollBack();
-                        } // if
-                        echo "Napaka: certifikat {$_FILES['certificate']['name'][$indx]} ni uspešno naložen.";
+                // if certificate is successfully uploaded 
+                if ($_FILES['certificate']['error'][0] == UPLOAD_ERR_OK) {
+                    $finfo = new finfo();
+                    $mimetype = $finfo->file($_FILES['certificate']['tmp_name'][0], FILEINFO_MIME_TYPE);
+                    // if MIME type is not application/pdf
+                    if ($mimetype != 'application/pdf') {
+                        echo "Napaka: certifikat '{$_FILES['certificate']['name'][0]}' ni uspešno naložen saj ni tipa .pdf .";
+                        return FALSE;
                     } // if
-                } // foreach
+                    // set destination of the uploaded certificate
+                    $dir = 'uploads/certificates/';
+                    $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['certificate']['name'][0]);
+                    // if certificate was inserted into db and moved to a new destination  
+                    if ($this->insertCertficate($destination, $issued) && move_uploaded_file($_FILES['certificate']['tmp_name'][0], "../{$destination}")) {
+                        echo "Certifikat {$_FILES['certificate']['name'][0]} je uspešno naložen.";
+                        $id_certificates = $this->lastInsertId('certificates_id_certificates_seq');
+                        // if single row is affected 
+                        if ($this->insertGraduation($id_certificates, $id_attendances, $defended)) {
+                            echo 'Datuma zagovora diplome ter izdajanja certifikata sta uspešno določena.';
+                            // commit current transaction
+                            return $this->commit();
+                        } // if
+                    } // if
+                    echo 'Napaka: postopek nalaganja certifikata in določanja datuma zagovora ter izdajanja je bil neuspešen.';
+                    // rollback current transaction
+                    return $this->rollBack();
+                } // if
+                echo "Napaka: certifikat {$_FILES['certificate']['name'][0]} ni uspešno naložen.";
+                return FALSE;
             } // try
             catch (PDOException $e) {
                 // output error message 
@@ -1470,7 +1466,7 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         // if partaking was inserted 
-        if ($prpStmt->rowCount() == 1){
+        if ($prpStmt->rowCount() == 1) {
             echo "Soavtor {$partaker} je uspešno dodeljen.";
             return TRUE;
         } // if
@@ -1588,7 +1584,7 @@ class DBC extends PDO
             echo "Napaka: {$e->getMessage()}.";
         } // catch
         // if mentor record was inserted 
-        if ($prpStmt->rowCount() == 1){
+        if ($prpStmt->rowCount() == 1) {
             echo "Mentor {$mentor} je uspešno izbrisan.";
             return TRUE;
         } // if
@@ -2290,23 +2286,23 @@ class DBC extends PDO
                     $finfo = new finfo();
                     $mimetype = $finfo->file($_FILES['avatar']['tmp_name'], FILEINFO_MIME_TYPE);
                     // if it's not a PNG document
-                    if ($mimetype != 'image/jpeg'){
+                    if ($mimetype != 'image/jpeg') {
                         echo "Napaka: avatar '{$_FILES['avatar']['name']}' ni uspešno naložen saj ni tipa .jpg.";
                         return FALSE;
                     } // if
-                        // set destination of the uploded file
-                        $dir = 'uploads/avatars/';
-                        $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['avatar']['name']);
-                        // if account record was updated and avatar moved to the server
-                        if ($this->updateAccountAvatar($id_attendances, $destination) == 1 && move_uploaded_file($_FILES['avatar']['tmp_name'], "../../{$destination}")) {
-                            echo "Avatar {$_FILES['avatar']['name']} je uspešno naložen.";
-                            // commit current transaction
-                            return $this->commit();
-                        } // if
-                        echo 'Napaka: lokacija ni uspešno spremenjena ali avatar ni uspešno naložen na strežnik.';
-                        // rollback current transaction
-                        return $this->rollBack();
+                    // set destination of the uploded file
+                    $dir = 'uploads/avatars/';
+                    $destination = $dir . (new DateTime())->format('dmYHsi') . basename($_FILES['avatar']['name']);
+                    // if account record was updated and avatar moved to the server
+                    if ($this->updateAccountAvatar($id_attendances, $destination) == 1 && move_uploaded_file($_FILES['avatar']['tmp_name'], "../../{$destination}")) {
+                        echo "Avatar {$_FILES['avatar']['name']} je uspešno naložen.";
+                        // commit current transaction
+                        return $this->commit();
                     } // if
+                    echo 'Napaka: lokacija ni uspešno spremenjena ali avatar ni uspešno naložen na strežnik.';
+                    // rollback current transaction
+                    return $this->rollBack();
+                } // if
                 echo "Napaka: avatar {$_FILES['avatar']['name']} ni uspešno naložen.";
             } // try
             catch (PDOException $e) {
