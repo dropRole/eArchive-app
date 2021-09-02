@@ -25,7 +25,7 @@ if (isset($id_scientific_papers)) {
                     Verzija <?php echo $doc->getVersion(); ?>
                 </div>
                 <div class="card-body">
-                    <p class="card-text">Dokument je objavljen <span class="font-italic"><?php echo $doc->getPublished(); ?></span>.</p>
+                    <p class="card-text">Dokument je objavljen <span class="font-italic"><?php echo (new DateTime($doc->getPublished()))->format('d-m-Y'); ?></span>.</p>
                     <a href="<?php echo "/eArchive/{$doc->getSource()}"; ?>" class="btn btn-primary" target="_blank">Pregled</a>
                 </div>
             </div>
