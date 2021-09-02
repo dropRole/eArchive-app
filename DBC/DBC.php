@@ -2342,7 +2342,7 @@ class DBC extends PDO
                 if ($prpStmt->rowCount() == 1 && unlink("../../{$avatar}")) {
                     echo "Avatar je uspešno izbrisan.";
                     // commit current transaction
-                    $this->commit();
+                    return $this->commit();
                 } // if
                 echo 'Napaka: avatar ni uspešno logično ali fizično odstranjen.';
                 // rollback current transaction
