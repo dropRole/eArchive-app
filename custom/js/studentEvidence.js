@@ -1460,21 +1460,21 @@
      *   rearrange form and fill out form fields when updating student data
      *   @param Object sciPap
      */
-    let toScientificPaperUpdateForm = sciPap => {
+    let toScientificPaperUpdateForm = scientificPaper => {
             document.querySelector('div#sciPapInsMdl div.modal-header > h4.modal-title').textContent = 'Urejanje podatkov znanstvenega dela'
                 // clone from the existing form node
             let cloneForm = sciPapInsFrm.cloneNode(true),
                 idSciPapInpt = document.createElement('input')
             idSciPapInpt.type = 'hidden'
             idSciPapInpt.name = 'id_scientific_papers'
-            idSciPapInpt.value = sciPap.id_scientific_papers
+            idSciPapInpt.value = scientificPaper.id_scientific_papers
                 // replace form element node with its clone
             document.getElementById('sciPapInsFrm').replaceWith(cloneForm)
             cloneForm.prepend(idSciPapInpt)
             listenScientificPaperInsertForm()
-            cloneForm.querySelector('input[name="topic"]').value = sciPap.topic
-            cloneForm.querySelector('select[name="type"]').value = sciPap.type
-            cloneForm.querySelector('input[name="written"]').value = sciPap.written
+            cloneForm.querySelector('input[name="topic"]').value = scientificPaper.topic
+            cloneForm.querySelector('select[name="type"]').value = scientificPaper.type
+            cloneForm.querySelector('input[name="written"]').value = scientificPaper.written
             cloneForm.querySelector('input[type=submit]').value = 'Uredi'
                 // remove determined element nodes 
             cloneForm.querySelectorAll('div.row:nth-child(4), div#documents').forEach(node => {
@@ -1652,7 +1652,7 @@
                     // fill form fields and modify the form
                     anchor.addEventListener('click', e => {
                             request(
-                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.dataset.idMentorings}`,
+                                    `/eArchive/ScientificPapers/select.php?id_scientific_papers=${anchor.dataset.idScientificPapers}`,
                                     'GET',
                                     'json'
                                 )
