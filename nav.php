@@ -39,10 +39,10 @@
                             // if student has logged in
                             if (isset($_SESSION['index'])) {
                                 // if student has account avatar
-                                if ($avatar = $DBC->hasAcctAvatar($_SESSION['index'])) {
+                                if ($avatar = $DBC->hasAccountAvatar($_SESSION['index'])) {
                             ?>
                                     <img id="removeAvatar" src="/eArchive/custom/img/removeAvatar.png" data-id-attendances="<?php echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->id_attendances; ?>" data-avatar="<?php echo $avatar; ?>">
-                                    <img id="userAvatar" src="<?php echo "/eArchive/{$DBC->hasAcctAvatar($_SESSION['index'])}"; ?>">
+                                    <img id="userAvatar" src="<?php echo "/eArchive/{$DBC->hasAccountAvatar($_SESSION['index'])}"; ?>">
                                 <?php
                                 } else {
                                 ?>
@@ -60,7 +60,7 @@
                             // if student has logged in
                             if (isset($_SESSION['index'])) {
                                 // if student doesn't have account avatar
-                                if ($DBC->hasAcctAvatar($_SESSION['index']) == NULL) {
+                                if ($DBC->hasAccountAvatar($_SESSION['index']) == NULL) {
                             ?>
                                     <a class="dropdown-item" href="#avtrUplMdl" data-toggle="modal">Avatar</a>
                             <?php
