@@ -58,7 +58,7 @@
                         <div class="dropdown-menu">
                             <?php
                             // if student has logged in
-                            if (isset($_SESSION['index'])) {
+                            if (isset($_SESSION['index']) && basename($_SERVER['REQUEST_URI']) == 'sciPapEvid.php') {
                                 // if student doesn't have account avatar
                                 if ($DBC->hasAccountAvatar($_SESSION['index']) == NULL) {
                             ?>
