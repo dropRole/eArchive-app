@@ -1780,6 +1780,7 @@
                     image.addEventListener(
                             'click',
                             () => {
+                                emptyInputFields(acctInsFrm)
                                 acctInsFrm.querySelector('input[name=id_attendances]').value = image.dataset.idAttendances
                                 acctInsFrm.querySelector('input[name=index]').value = image.dataset.index
                             }
