@@ -728,9 +728,9 @@ class DBC extends PDO
                 $prpStmt->execute();
                 // if residence was inserted
                 if ($prpStmt->rowCount() == 1)
-                    echo "Bivališče na naslovu '{$residence['address']}' je evidentirano kot {$residence['status']}.";
+                    echo "Bivališče na naslovu {$residence['address']} je evidentirano kot {$residence['status']}.";
                 else
-                    echo "Napaka: bivališče na naslovu '{$residence['address']}' ni evidentirano.";
+                    echo "Napaka: bivališče na naslovu {$residence['address']} ni evidentirano.";
             } // try
             catch (PDOException $e) {
                 echo "Napaka: {$e->getMessage()}.";
