@@ -157,7 +157,7 @@ if (!empty($_GET)) {
                             // if graduated on the scientific paper
                             if ($scientificPaper->id_certificates != NULL) {
                             ?>
-                                <a class="cert-sel-a" href="#gradCertViewMdl" data-toggle="modal">
+                                <a class="cert-sel-a" href="#certSelMdl" data-toggle="modal">
                                     <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-sel-img" data-id-attendances="<?php echo $scientificPaper->getIdAttendances(); ?>" data-toggle="tooltip" title="Pregled">
                                 </a>
                             <?php
