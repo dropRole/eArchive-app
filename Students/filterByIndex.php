@@ -47,11 +47,11 @@ if (isset($index)) {
                     <td><?php echo $student->degree; ?></td>
                     <td><?php echo $student->faculty; ?></td>
                     <td>
-                        <a class="sp-vw-a text-decoration-none mr-3" href="#sciPapViewMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
-                            <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" data-toggle="tooltip" title="Pregled">
+                        <a class="text-decoration-none mr-3" href="#sciPapSelMdl" data-toggle="modal">
+                            <img src="/eArchive/custom/img/previewSciPapers.png" alt="Pregled" class="sp-sel-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Pregled">
                         </a>
-                        <a class="sp-ins-a" href="#sciPapInsrMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
-                            <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" data-toggle="tooltip" title="Vstavljanje">
+                        <a href="#sciPapInsMdl" data-toggle="modal">
+                            <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" class="sp-ins-img" data-toggle="tooltip" title="Vstavljanje" data-id-attendances="<?php echo $student->id_attendances; ?>">
                         </a>
                     </td>
                     <td>
@@ -59,19 +59,18 @@ if (isset($index)) {
                         // if student possesses a certificate
                         if ($DBC->selectCertificate($student->id_attendances) != NULL) {
                         ?>
-                            <a class="cert-vw-a" href="#gradCertViewMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
-                                <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" data-toggle="tooltip" title="Pregled">
+                            <a href="#certSelMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/previewCertificate.png" alt="Pregled" class="cert-sel-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Pregled">
                             </a>
                         <?php
                         } // if
-                        // if student doesn't  possess a certificate
-                        if ($DBC->selectCertificate($student->id_attendances) == NULL) {
+                        else {
                         ?>
-                            <a class="cert-ins-a" href="#gradCertUpldMdl" data-toggle="modal" data-id-attendances="<?php echo $student->id_attendances; ?>">
-                                <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" data-toggle="tooltip" title="Vstavljanje">
+                            <a href="#certUplMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/insert.png" alt="Vstavljanje" class="cert-ins-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-toggle="tooltip" title="Vstavljanje">
                             </a>
                         <?php
-                        } // if
+                        } // else
                         ?>
                     </td>
                     <td>
@@ -79,38 +78,36 @@ if (isset($index)) {
                         // if student is assigned an account to  
                         if ($DBC->assignedWithAccount($student->id_attendances)) {
                         ?>
-                            <img class="acc-del-btn" src="/eArchive/custom/img/unassignAccount.png" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" data-html="true" title="<p>Odvzemi<br><?php echo "(Dodeljen: {$DBC->selectAccountGrantDate($student->id_attendances)})"; ?></p>">
+                            <img class="acc-del-img" src="/eArchive/custom/img/unassignAccount.png" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" data-html="true" title="<p>Odvzemi<br><?php echo "(Dodeljen: {$DBC->selectAccountGrantDate($student->id_attendances)})"; ?></p>">
                         <?php
                         } // if
                         else {
                         ?>
-                            <a class="acc-ins-btn" href="#acctAssignMdl" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="modal">
-                                <img src="/eArchive/custom/img/assignAccount.png" alt="Dodeli" data-toggle="tooltip" title="Dodeli">
+                            <a href="#acctInsMdl" data-toggle="modal">
+                                <img src="/eArchive/custom/img/assignAccount.png" alt="Dodeli" class="acc-ins-img" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" title="Dodeli">
                             </a>
                         <?php
                         } // else
                         ?>
                     </td>
                     <td>
-                        <a class="stu-upd-a" href="#studtInsrMdl" data-toggle="modal" data-id-students="<?php echo $student->id_students; ?>">
-                            <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" data-toggle="tooltip" title="Uredi">
+                        <a href="#stuInsMdl" data-toggle="modal">
+                            <img src="/eArchive/custom/img/updateRecord.png" alt="Uredi" class="stu-upd-img" data-id-students="<?php echo $student->id_students; ?>" data-toggle="tooltip" title="Uredi">
                         </a>
                     </td>
                     <td>
-                        <a class="stu-del-a" href="#" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>">
-                            <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" data-toggle="tooltip" title="Izbriši">
-                        </a>
+                        <img src="/eArchive/custom/img/deleteRecord.png" alt="Izbriši" class="stu-del-img" data-id-students="<?php echo $student->id_students; ?>" data-id-attendances="<?php echo $student->id_attendances; ?>" data-index="<?php echo $student->index; ?>" data-toggle="tooltip" title="Izbriši">
                     </td>
                 </tr>
             <?php
                 } // foreach
             else {
             ?>
-            <tr>
-                <td colspan="3">
-                    <p class="font-italic text-muted">Ni študentov z dano indeks številko.</p>
-                </td>
-            </tr>
+                <tr>
+                    <td colspan="3">
+                        <p class="font-italic text-muted">Ni študentov z dano indeks številko.</p>
+                    </td>
+                </tr>
             <?php
             } // else
             ?>
