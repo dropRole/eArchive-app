@@ -22,9 +22,11 @@ if (!empty($_GET)) {
             <?php
             // if topic searched for was passed
             if (isset($_GET['topic'])) {
-                // filter scientific papers by their topics
                 $topic = $_GET['topic'];
-                foreach ($DBC->selectScientificPapersByTopic($topic) as $scientificPaper) {
+                // if any scientific paper of the given topic
+                if (count($DBC->selectScientificPapersByTopic($topic)))
+                    // filter scientific papers by their topics
+                    foreach ($DBC->selectScientificPapersByTopic($topic) as $scientificPaper) {
             ?>
                     <tr>
                         <td><span class="bg-warning"><?php echo substr($scientificPaper->getTopic(), 0, strlen($topic)); ?></span><?php echo substr($scientificPaper->getTopic(), strlen($topic)); ?></td>
@@ -109,7 +111,16 @@ if (!empty($_GET)) {
                         </td>
                     </tr>
                 <?php
-                }  // foreach
+                    }  // foreach
+                else {
+                ?>
+                    <tr>
+                        <td colspan="9">
+                            <p class="font-italic text-muted">Ni znanstvenih del z dano temo.</p>
+                        </td>
+                    </tr>
+                <?php
+                } // else
             } // if
             // if author searched for was passed
             else if (isset($_GET['author'])) {
@@ -158,11 +169,11 @@ if (!empty($_GET)) {
                     } // foreach
                 else {
                 ?>
-                <tr>
-                    <td colspan="6">
-                        <p class="font-italic text-muted">Ni znanstvenih del danega avtorja.</p>
-                    </td>
-                </tr>
+                    <tr>
+                        <td colspan="6">
+                            <p class="font-italic text-muted">Ni znanstvenih del danega avtorja.</p>
+                        </td>
+                    </tr>
                 <?php
                 } // if
             } // else if
@@ -170,9 +181,9 @@ if (!empty($_GET)) {
             else if (isset($_GET['mentor'])) {
                 $mentor = $_GET['mentor'];
                 // if any scientific paper mentored by 
-                if(count($DBC->selectScientificPapersByMentor($mentor)))
-                // select scientific achievements mentored by the given mentor
-                foreach ($DBC->selectScientificPapersByMentor($mentor) as $scientificPaper) {
+                if (count($DBC->selectScientificPapersByMentor($mentor)))
+                    // select scientific achievements mentored by the given mentor
+                    foreach ($DBC->selectScientificPapersByMentor($mentor) as $scientificPaper) {
                 ?>
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
@@ -211,24 +222,24 @@ if (!empty($_GET)) {
                         </td>
                     </tr>
                 <?php
-                } // foreach
-                else{
-                    ?>
-                <tr>
-                    <td colspan="6">
-                        <p class="font-italic text-muted">Ni znanstvenih del mentoriranih s strani danega mentorja.</p>
-                    </td>
-                </tr>
-                    <?php
+                    } // foreach
+                else {
+                ?>
+                    <tr>
+                        <td colspan="6">
+                            <p class="font-italic text-muted">Ni znanstvenih del mentoriranih s strani danega mentorja.</p>
+                        </td>
+                    </tr>
+                <?php
                 }
             } // else if
             // if date of writing searched for is prosperously passed
             else if (isset($_GET['written'])) {
                 $written = $_GET['written'];
                 // if any scientific paper written at the given year
-                if(count($DBC->selectScientificPapersByYear($written)))
-                // select scientific by the year of writing
-                foreach ($DBC->selectScientificPapersByYear($written) as $scientificPaper) {
+                if (count($DBC->selectScientificPapersByYear($written)))
+                    // select scientific by the year of writing
+                    foreach ($DBC->selectScientificPapersByYear($written) as $scientificPaper) {
                 ?>
                     <tr>
                         <td><?php echo $scientificPaper->getTopic(); ?></td>
@@ -265,16 +276,16 @@ if (!empty($_GET)) {
                             ?>
                         </td>
                     </tr>
-            <?php
-                } // foreach
-                else{
-                    ?>
+                <?php
+                    } // foreach
+                else {
+                ?>
                     <tr>
                         <td colspan="6">
                             <p class="font-italic text-muted">Ni znanstvenih del napisanih v danem letu.</p>
                         </td>
                     </tr>
-                    <?php
+            <?php
                 }
             } // else if
             ?>
