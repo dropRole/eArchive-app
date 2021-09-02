@@ -143,7 +143,7 @@ class DBC extends PDO
         try {
             // prepare, bind params to and execute stmt
             $prpStmt = $this->prepare($stmt, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
-            $prpStmt->bindValue(':mentor', "%{$mentor}%", PDO::PARAM_STR);
+            $prpStmt->bindValue(':mentor', "{$mentor}%", PDO::PARAM_STR);
             $prpStmt->execute();
         } // try
         catch (PDOException $e) {
