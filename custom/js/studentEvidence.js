@@ -109,7 +109,6 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => loadStudentEvidenceTable())
-                .then(() => emptyInputFields(stuInsFrm))
                 .then(() => document.getElementById('stuInsBtn').click())
                 .then(() => interpolateDatalist())
                 .catch(error => alert(error)) // catch
@@ -131,7 +130,6 @@
                 )
                 .then(response => reportOnAction(response))
                 .then(() => $('div#stuInsMdl').modal('hide'))
-                .then(() => emptyInputFields(stuInsFrm))
                 .then(() => loadStudentEvidenceTable())
                 .catch(error => alert(error)) // catch
         } // updateStudent
@@ -477,16 +475,6 @@
                 alert(error)
             } // catch
         } // propagateSelectElement
-
-    /*
-     *  clear input field values of a form 
-     *  @param HTMLFormElement form
-     */
-    let emptyInputFields = form => {
-            form.querySelectorAll('input:not(input[type=hidden]').forEach(input => {
-                    input.value = ''
-                }) // forEach
-        } // emptyInputFields
 
     /*  
      *   interpolate datalist with name, surname and index number of the momentarily inserted student
@@ -1780,7 +1768,6 @@
                     image.addEventListener(
                             'click',
                             () => {
-                                emptyInputFields(acctInsFrm)
                                 acctInsFrm.querySelector('input[name=id_attendances]').value = image.dataset.idAttendances
                                 acctInsFrm.querySelector('input[name=index]').value = image.dataset.index
                             }
