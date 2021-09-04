@@ -110,7 +110,6 @@
                 .then(response => reportOnAction(response))
                 .then(() => loadStudentEvidenceTable())
                 .then(() => document.getElementById('stuInsBtn').click())
-                .then(() => interpolateDatalist())
                 .catch(error => alert(error)) // catch
         } // insertStudent
 
@@ -476,17 +475,19 @@
             } // catch
         } // propagateSelectElement
 
-    /*  
-     *   interpolate datalist with name, surname and index number of the momentarily inserted student
-     *   @param String fullname
-     *   @param String index
-     */
-    let interpolateDatalist = (fullname, index) => {
-            let option = document.createElement('option')
-            option.value = index
-            option.textContent = fullname
-            document.querySelector('div#sciPapInsMdl datalist#studentDatalist').appendChild(option)
-        } // interpolateDatalist
+    // repopulate student datalist upon subsequent partaker section addition
+    let repopulateDatalist = () => {
+            request(
+                    '/eArchive/Accounts/authorized/studentEvidence.php',
+                    'GET',
+                    'document'
+                )
+                .then(response => {
+                    // replace student datalists
+                    document.getElementById('studentDatalist').replaceWith(response.getElementById('studentDatalist'))
+                })
+                .catch(error => alert(error))
+        } // repopulateDatalist
 
     /*  
      *   report to the user on the performed action
@@ -809,7 +810,10 @@
     // create and subsequently append partaker section of the scientific paper insertion form 
     let addPartakerSection = () => {
             return new Promise((resolve) => {
-                    let observer = new MutationObserver(() => resolve()),
+                    let observer = new MutationObserver(() => {
+                            resolve()
+                            repopulateDatalist()
+                        }),
                         // create form controls 
                         container = document.createElement('div'),
                         headline = document.createElement('p'),
