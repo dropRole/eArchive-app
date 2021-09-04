@@ -188,7 +188,7 @@ include_once '../../nav.php';
                                 // denote student as potential partaker on a scientific paper
                                 foreach ($DBC->selectStudents() as $student) {
                                     // exclude currently logged in student
-                                    if ($student->index == $_SESSION['index']) {
+                                    if ($student->index != $_SESSION['index']) {
                                 ?>
                                         <option value="<?php echo $student->index; ?>"><?php echo $student->fullname; ?></option>
                                 <?php
