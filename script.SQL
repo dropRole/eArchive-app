@@ -395,13 +395,7 @@ ALTER TABLE "accounts" ADD CONSTRAINT "Relationship3" FOREIGN KEY ("id_attendanc
 -- Create roles section -------------------------------------------------
 
 CREATE ROLE
-    authorized
-WITH
-    SUPERUSER
-    CREATEROLE
-    INHERIT
-    LOGIN
-    CONNECTION LIMIT 1;
+    authorized;
 
 GRANT
     SELECT,
@@ -462,7 +456,8 @@ TO
 CREATE ROLE
     student
 WITH
-    LOGIN;
+    LOGIN
+    CONNECTION LIMIT 1;
 
 GRANT
     SELECT,
@@ -572,12 +567,16 @@ ON SEQUENCE
 TO
     visitor;
 
-CREATE USER
+CREATE ROLE
     auth_69141238
 WITH
+    SUPERUSER
+    CREATEROLE
+    LOGIN
     PASSWORD 'gZ7NVqMHrE'
     IN ROLE authorized
-    VALID UNTIL 'infinity';
+    VALID UNTIL 'infinity'
+    CONNECTION LIMIT 1;
 
 -- Grant permissions section -------------------------------------------------
 
