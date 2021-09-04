@@ -15,12 +15,12 @@ if (isset($id_scientific_papers)) {
     // retrieve an instance of PDO holding database server connection
     $DBC = new DBC();
 ?>
-    <div class="row p-2">
+    <div id="documentContainer" class="d-flex justify-content-between flex-wrap">
         <?php
         // select documents of the givne scientific paper
         foreach ($DBC->selectDocuments($id_scientific_papers) as $doc) {
         ?>
-            <div class="card p-0 col-lg-6 col-12">
+            <div class="card my-2">
                 <div class="card-header">
                     Verzija <?php echo $doc->getVersion(); ?>
                 </div>
