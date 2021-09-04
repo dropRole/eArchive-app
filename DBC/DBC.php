@@ -314,10 +314,10 @@ class DBC extends PDO
             $prpStmt->execute();
             // if scientific paper record was inserted
             if ($prpStmt->rowCount() == 1) {
-                echo "Delo '{$topic}' je uspešno evidentirano.";
+                echo "Delo {$topic} je uspešno evidentirano.";
                 return $this->lastInsertId('scientific_papers_id_scientific_papers_seq');
             } // if
-            echo "Napaka: delo '{$topic}' ni uspešno evidentirano.";
+            echo "Napaka: delo {$topic} ni uspešno evidentirano.";
         } // try
         catch (PDOException $e) {
             // output error message 
