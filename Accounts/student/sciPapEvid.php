@@ -177,7 +177,7 @@ include_once '../../nav.php';
                             </label>
                         </div>
                     </div>
-                    <div class="row">   
+                    <div class="row">
                         <div id="partakers" class="col-lg-6 col-12 mb-3">
                             <p class="h6"><strong>Soavtorji</strong></p>
                             <div class="d-flex justify-content-center col-12">
@@ -187,9 +187,12 @@ include_once '../../nav.php';
                                 <?php
                                 // denote student as potential partaker on a scientific paper
                                 foreach ($DBC->selectStudents() as $student) {
+                                    // exclude currently logged in student
+                                    if ($student->index == $_SESSION['index']) {
                                 ?>
-                                    <option value="<?php echo $student->index; ?>"><?php echo $student->fullname; ?></option>
+                                        <option value="<?php echo $student->index; ?>"><?php echo $student->fullname; ?></option>
                                 <?php
+                                    } // if
                                 } // foreach
                                 ?>
                             </datalist>
