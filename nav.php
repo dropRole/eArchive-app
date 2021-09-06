@@ -49,10 +49,11 @@
                                     <img id="defaultAvatar" src="/eArchive/custom/img/defaultAvatar.png">
                             <?php
                                 } // else
+                                echo $DBC->selectStudentsByIndex($_SESSION['index'])[0]->fullname;
                             } // if
                             // if authorized has logged in 
                             else if (isset($_SESSION['authorized']))
-                                echo 'Račun';
+                                echo 'Admin';
                             ?>
                         </button>
                         <div class="dropdown-menu">
