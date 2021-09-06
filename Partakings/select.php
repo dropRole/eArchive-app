@@ -47,11 +47,8 @@ if (isset($id_scientific_papers)) {
                 </div>
             </div>
         </div>
-    <?php
+    <?php   
     } // foreach
-    ?>
-    </div>
-<?php
 } // if
 
 ?>
