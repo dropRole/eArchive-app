@@ -620,8 +620,11 @@ class DBC extends PDO
         // if any scientific paper was written 
         $scientificPapers = $this->selectPapersByProgramAttendance($id_attendances);
         if (count($scientificPapers) >= 1)
-            foreach ($scientificPapers as $scientificPaper) 
+            foreach ($scientificPapers as $scientificPaper)
                 $this->deleteScientificPaper($scientificPaper->getIdScientificPapers());
+        // if student took part in writting of any scientific paper
+        if($this->tookPartInWriting($id_attendances))
+            $this->deleteStudentPartakings($id_attendances);
         // if account was granted to
         if ($this->assignedWithAccount($id_attendances))
             $this->deleteStudentAccount($id_attendances, $index);
@@ -1434,6 +1437,31 @@ class DBC extends PDO
         return FALSE;
     } // deletePartaker
 
+    /* 
+    *   delete the partakings on any scientific paper of the given student attending the program 
+    *   @param int $id_attendances
+    */
+    private function deleteStudentPartakings(int $id_attendances)
+    {
+        $stmt = '   DELETE FROM 
+                        partakings
+                    WHERE 
+                        id_attendances = :id_attendances    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if partakings were deleted 
+        if ($prpStmt->rowCount())
+            return TRUE;
+        return FALSE;
+    } // deleteStudentPartakings
+
     /*
     *   insert partaking on a scientific paper 
     *   @param int $id_scientific_papers
@@ -1506,6 +1534,33 @@ class DBC extends PDO
         echo 'Napaka: vloga soavtorja študija ni uspešno ažurirana.';
         return FALSE;
     } // updatePartInWriting
+
+    /*
+    *   if the student attending the program participated in writing scientific papers
+    *   @param int $id_attendnaces
+    */
+    private function tookPartInWriting(int $id_attendances)
+    {
+        $stmt = '   SELECT 
+                        TRUE 
+                    FROM 
+                        partakings 
+                    WHERE 
+                        id_attendances = :id_attendances    ';
+        try {
+            // prepare, bind param to and execute stmt
+            $prpStmt = $this->prepare($stmt);
+            $prpStmt->bindParam(':id_attendances', $id_attendances, PDO::PARAM_INT);
+            $prpStmt->execute();
+        } // try
+        catch (PDOException $e) {
+            echo "Napaka: {$e->getMessage()}.";
+        } // catch
+        // if took part
+        if ($prpStmt->rowCount())
+            return TRUE;
+        return FALSE;
+    } // tookPartInWriting
 
     // </partakings>
 
@@ -2179,7 +2234,7 @@ class DBC extends PDO
                 if ($this->revokeStudentPrivileges($index) && $this->dropStudentUser($index)) {
                     // if student had account avatar 
                     if ($avatar = $this->hasAccountAvatar($index))
-                        unlink("../../{$avatar}");
+                        unlink("../{$avatar}");
                     $stmt = '   DELETE FROM 
                                     accounts
                                 WHERE 
